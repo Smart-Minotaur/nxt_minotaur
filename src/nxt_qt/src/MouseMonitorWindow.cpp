@@ -4,6 +4,8 @@
 #include <QMouseEvent>
 #include <QToolTip>
 #include <QMessageBox>
+#include <QToolBar>
+#include <QToolButton>
 #include <string>
 #include <iostream>
 #include "ros/ros.h"
@@ -31,14 +33,28 @@ namespace minotaur
         initWidgets();
         initTable();
         initPlots();
+        initToolbar();
 
+        connectSlots();
+
+        initTimer();
+    }
+
+    MouseMonitorWindow::~MouseMonitorWindow()
+    {
+        delete directionWidget1;
+        delete directionWidget2;
+        delete pathWidget;
+        delete timer;
+    }
+
+    void MouseMonitorWindow::connectSlots()
+    {
         connect(&monitorNode, SIGNAL(measuredMouseData(const MouseData)),
                 this, SLOT(processMouseData(const MouseData)));
 
-        connect(&monitorNode, SIGNAL(measuredMouseSettings(const std::string,
-                                     const pln_minotaur::PLN2033_Settings)),
-                this, SLOT(processMouseSettings(const std::string,
-                                                const pln_minotaur::PLN2033_Settings)));
+        connect(&monitorNode, SIGNAL(measuredMouseSettings(const pln_minotaur::PLN2033_Settings)),
+                this, SLOT(processMouseSettings(const pln_minotaur::PLN2033_Settings)));
 
         connect(zoomSlider, SIGNAL(valueChanged(int)),
                 pathWidget, SLOT(zoomValueChanged(const int)));
@@ -54,11 +70,39 @@ namespace minotaur
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
     }
 
-    MouseMonitorWindow::~MouseMonitorWindow()
+    void MouseMonitorWindow::initTimer()
     {
-        delete directionWidget1;
-        delete directionWidget2;
-        delete pathWidget;
+        sampleRateMs = 10;
+
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
+        // timer->start(sampleRateMs);
+    }
+
+    void MouseMonitorWindow::initToolbar()
+    {
+        toolBar->setMovable(false);
+
+        sampleRateBtn = new QToolButton(this);
+        sampleRateBtn->setText("Set Sample Rate");
+        sampleRateBtn->setArrowType(Qt::DownArrow);
+        sampleRateBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+        resolutionBtn = new QToolButton(this);
+        resolutionBtn->setText("Set Resolution");
+        resolutionBtn->setArrowType(Qt::DownArrow);
+        resolutionBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+        QLineEdit *sampleRateEdit = new QLineEdit(this);
+        QLineEdit *resolutionInit = new QLineEdit(this);
+
+        toolBar->addWidget(sampleRateBtn);
+        toolBar->addWidget(sampleRateEdit);
+        toolBar->addWidget(resolutionBtn);
+        toolBar->addWidget(resolutionInit);
+
+        connect(sampleRateBtn, SIGNAL(clicked()), this, SLOT(sampleRateBtnClicked()));
+        connect(resolutionBtn, SIGNAL(clicked()), this, SLOT(resolutionBtnClicked()));
     }
 
     void MouseMonitorWindow::initWidgets()
@@ -76,7 +120,6 @@ namespace minotaur
 
     void MouseMonitorWindow::initTable()
     {
-        // TODO: Add table initialization
         sensorSettingsTable->setColumnCount(13);
         sensorSettingsTable->setRowCount(2);
 
@@ -225,6 +268,12 @@ namespace minotaur
         return monitorNode;
     }
 
+    void MouseMonitorWindow::timerTimeout()
+    {
+        processMouseData(monitorNode.getMouseData(SENSOR1));
+        processMouseData(monitorNode.getMouseData(SENSOR2));
+    }
+
     void MouseMonitorWindow::processMouseData(const MouseData data)
     {
         if (data.id == SENSOR1) {
@@ -250,12 +299,9 @@ namespace minotaur
         }
     }
 
-    void MouseMonitorWindow::processMouseSettings(
-        const std::string id,
-        const pln_minotaur::PLN2033_Settings settings)
+    void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
     {
-        // TODO: Insert settings values into the table
-        if (id == SENSOR1) {
+        if (settings.spiDevice == SENSOR1) {
             sensorSettingsTable->setItem(0, 0, new QTableWidgetItem(settings.status_register));
             sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
             sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
@@ -284,7 +330,6 @@ namespace minotaur
             sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
             sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
         }
-        std::cout << "settujng";
     }
 
     void MouseMonitorWindow::openResolutionSettings()
@@ -301,6 +346,16 @@ namespace minotaur
     {
         QMessageBox::about(this, tr("About MouseMonitor"),
                            tr("This application allows to monitor two Philips PLN2033 Sensors."));
+    }
+
+    void MouseMonitorWindow::sampleRateBtnClicked()
+    {
+
+    }
+
+    void MouseMonitorWindow::resolutionBtnClicked()
+    {
+
     }
 
     // Widgets ========================================================
@@ -348,8 +403,6 @@ namespace minotaur
         translatey = 0.0;
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);
-
-        //setMouseTracking(true);
 
         zoom = 1;
         sensor1_enable = true;

@@ -8,9 +8,9 @@ namespace minotaur
         sensor2(new pln_minotaur::PLN2033(SENSOR2))
     {
         pubData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
-                           ROS_MOUSE_DATA_TOPIC, 100);
+                      ROS_MOUSE_DATA_TOPIC, 100);
         pubSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
-                               ROS_MOUSE_SETTINGS_TOPIC, 100);
+                          ROS_MOUSE_SETTINGS_TOPIC, 100);
 
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
@@ -24,50 +24,76 @@ namespace minotaur
 
     void MouseMonitorNodeBeagle::run()
     {
-        ros::Rate loop_rate(100);
+        //ros::Rate loop_rate(10);
+        ros::spin();
 
-        //ros::spin();
-
-        while (ros::ok()) {
+        /*while (ros::ok()) {
             publishData(sensor1);
             publishData(sensor2);
+
             publishSettings(sensor1);
             publishSettings(sensor2);
 
             ros::spinOnce();
             loop_rate.sleep();
-        }
+        }*/
     }
 
-    bool MouseMonitorNodeBeagle::sendData(nxt_beagle::MouseMonitorSensorGetData::Request  &req,
-              nxt_beagle::MouseMonitorSensorGetData::Response &res)
+    bool MouseMonitorNodeBeagle::sendData(
+        nxt_beagle::MouseMonitorSensorGetData::Request &req,
+        nxt_beagle::MouseMonitorSensorGetData::Response &res)
     {
+        if (req.id == SENSOR1)
+            res.data = getData(sensor1);
+        else if (req.id == SENSOR2)
+            res.data = getData(sensor2);
+        else
+            return false;
 
+        return true;
     }
 
-    bool MouseMonitorNodeBeagle::sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request  &req,
-              nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
+    bool MouseMonitorNodeBeagle::sendSettings(
+        nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
+        nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
     {
+        if (req.id == SENSOR1)
+            res.settings = getSettings(sensor1);
+        else if (req.id == SENSOR2)
+            res.settings = getSettings(sensor2);
+        else
+            return false;
 
+        return true;
     }
 
-    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
+    nxt_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
+        pln_minotaur::IPLNTrackingDevice *sensor)
     {
         nxt_beagle::MouseMonitorSensorData data;
-        pln_minotaur::IPLNTrackingDevice *tmp;
 
         data.id = sensor->readPLNSettings().spiDevice;
 
-        if (sensor->readStatusAndDisplacementAndSpeed(
+        if (!sensor->readStatusAndDisplacementAndSpeed(
                     data.x_speed,
                     data.y_speed,
                     data.x_disp,
                     data.y_disp)) {
-            pubData.publish(data);
+            data.id = "";
         }
+
+        return data;
     }
 
-    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice *sensor)
+    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
+    {
+        nxt_beagle::MouseMonitorSensorData data = getData(sensor);
+
+        pubData.publish(data);
+    }
+
+    nxt_beagle::MouseMonitorSensorSettings MouseMonitorNodeBeagle::getSettings(
+        pln_minotaur::IPLNTrackingDevice *sensor)
     {
         nxt_beagle::MouseMonitorSensorSettings settingsMsg;
         pln_minotaur::PLN2033_Settings settings;
@@ -88,6 +114,13 @@ namespace minotaur
         settingsMsg.system_control_register = settings.system_control_register;
         settingsMsg.miscellaneous_register = settings.miscellaneous_register;
         settingsMsg.interrupt_output_register = settings.interrupt_output_register;
+
+        return settingsMsg;
+    }
+
+    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice *sensor)
+    {
+        nxt_beagle::MouseMonitorSensorSettings settingsMsg = getData(sensor);
 
         pubSettings.publish(settingsMsg);
     }
