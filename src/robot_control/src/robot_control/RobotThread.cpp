@@ -2,7 +2,6 @@
 #include "robot_control/RobotThread.hpp"    
 #include "minotaur_common/RAIILock.hpp"
 #include "minotaur_common/Math.hpp"
-#include "nxt_control/NxtExceptions.hpp"
 
 #define DEF_SAMPLING_INTERVAL 25
 
@@ -51,8 +50,8 @@ namespace minotaur
         try {
             robotCommunicator.stepController(p_samplingInterval);
             robotCommunicator.publish();
-        }  catch(const nxtcon::USBException &ue) {
-            ROS_ERROR("RobotThread: %s.", ue.what());
+        }  catch(const nxt::NXTException &e) {
+            ROS_ERROR("RobotThread: %s.", e.what());
             stop();
         } catch(const std::exception &e) {
             ROS_WARN("RobotThread: %s.", e.what());

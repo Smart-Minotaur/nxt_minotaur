@@ -8,6 +8,9 @@
 #define SENSOR_MEDIAN_SIZE 3
 #define ANG_VEL_MEDIAN_SIZE 7
 
+#define LINEAR_FACTOR 6.25f
+#define LINEAR_THRESHOLD 0.02f
+
 #define THRESHOLD_FACTOR 0.7f
 #define FUNCTION_FACTOR 5830.0f
 #define X_AXIS_DISPLACEMENT 0.005f
@@ -161,11 +164,11 @@ namespace minotaur
         float angVelFactor = 0;
         int distanceCount = 0;
         if(leftDistance <= distanceThreshold) {
-            angVelFactor += calcAngularVelocityFactor(leftDistance - distanceToHold);
+            angVelFactor += linearFunction(leftDistance - distanceToHold);
             distanceCount++;
         }
         if(rightDistance <= distanceThreshold) {
-            angVelFactor += calcAngularVelocityFactor(distanceToHold - rightDistance);
+            angVelFactor += linearFunction(distanceToHold - rightDistance);
             distanceCount++;
         }
         if(distanceCount > 1)
@@ -208,6 +211,14 @@ namespace minotaur
         float xVal = fabs(p_distanceDiff) - X_AXIS_DISPLACEMENT;
         return ((p_distanceDiff / fabs(p_distanceDiff)) * FUNCTION_FACTOR * (xVal * xVal * xVal)) + Y_AXIS_DISPLACEMENT;
     }
+	
+	float StayInMidNavigator::linearFunction(const float p_x)
+	{
+		if(fabs(p_x) <= LINEAR_THRESHOLD)
+			return 0;
+		
+		return (fabs(p_x) / p_x) * LINEAR_FACTOR * (fabs(p_x) - LINEAR_THRESHOLD);
+	}
     
     void StayInMidNavigator::setTurnVelocity(const minotaur_common::UltrasonicData &p_sensorData)
     {

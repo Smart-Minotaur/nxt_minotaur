@@ -1,7 +1,6 @@
 #include <exception>
+#include <nxt/NXTControl.hpp>
 #include "robot_control/SensorCommunicator.hpp"
-#include "nxt_control/NxtOpcodes.hpp"
-#include "nxt_control/NxtExceptions.hpp"
 #include "minotaur_common/UltrasonicData.h"
 #include "minotaur_common/MinotaurTopics.hpp"
 #include "minotaur_common/RAIILock.hpp"
@@ -10,7 +9,8 @@
 
 namespace minotaur
 {
-    SensorCommunicator::SensorCommunicator()
+    SensorCommunicator::SensorCommunicator(nxt::Brick *p_brick)
+	:sensorController(p_brick)
     {
         pthread_mutex_init(&sensorMutex, NULL);
     }
@@ -20,12 +20,11 @@ namespace minotaur
         pthread_mutex_destroy(&sensorMutex);
     }
     
-    void SensorCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
+    void SensorCommunicator::init(ros::NodeHandle &p_handle)
     {
         RAIILock lock(&sensorMutex);
         
         ROS_INFO("-- Setting up SensorController.");
-        sensorController.setBrick(p_brick);
         
         ROS_INFO("-- Publishing on topic \"%s\".", MINOTAUR_MEASURE_SENSOR_TOPIC);
         sensorDataPub = p_handle.advertise<minotaur_common::UltrasonicData>(MINOTAUR_MEASURE_SENSOR_TOPIC, ROS_MSG_QUEUE_LENGTH); 
@@ -50,7 +49,7 @@ namespace minotaur
                 msg.sensorID = i;
                 msg.distance = sensorController.getDistance(i);
                 sensorDataPub.publish(msg);
-            } catch (const nxtcon::NXTTimeoutException &e) {
+            } catch (const nxt::TimeoutException &e) {
                 ROS_WARN("SensorCommunicator: %s.", e.what());
             } catch (const std::exception &e) {
                 ROS_ERROR("SensorCommunicator: %s.", e.what());
@@ -105,7 +104,7 @@ namespace minotaur
         bool result = true;
         try {
             res.distance = sensorController.getDistance(req.sensorID);
-        } catch(const nxtcon::NXTTimeoutException &te) {
+        } catch(const nxt::TimeoutException &te) {
             ROS_WARN("GetUltrasonicData: %s.", te.what());
             result = false;
         } catch(const std::exception &e) {

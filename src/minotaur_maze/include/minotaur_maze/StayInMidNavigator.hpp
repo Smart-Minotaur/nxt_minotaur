@@ -47,6 +47,7 @@ namespace minotaur
         void setMovementVelocity(const minotaur_common::UltrasonicData &p_sensorData);
         bool obstacleIsCloseEnough(const minotaur_common::UltrasonicData &p_sensorData);
         float calcAngularVelocityFactor(const float p_distanceDiff);
+		float linearFunction(const float p_x);
         
         void setTurnVelocity(const minotaur_common::UltrasonicData &p_sensorData);
         

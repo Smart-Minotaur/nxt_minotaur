@@ -4,13 +4,18 @@
 
 namespace minotaur
 {
-    RobotController::RobotController()
-    : odometry(), velocity(), wheelTrack(0.0f), pidController()
+    RobotController::RobotController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor)
+    : odometry(), velocity(), wheelTrack(0.0f), pidController(p_leftMotor, p_rightMotor)
     {
         initOdometry(odometry);
     }
+	
+	RobotController::~RobotController()
+	{
+		
+	}
     
-    IPIDController& RobotController::getPIDController()
+    PIDController& RobotController::getPIDController()
     {
         return pidController;
     }

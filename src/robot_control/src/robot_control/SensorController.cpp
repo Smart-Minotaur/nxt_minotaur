@@ -4,11 +4,18 @@
 
 namespace minotaur
 {
-    void SensorController::setBrick(nxtcon::Brick *p_brick)
-    {
-        brick = p_brick;
-    }
         
+    SensorController::SensorController(nxt::Brick *p_brick)
+    :brick(p_brick)
+    {
+        
+    }
+	
+	SensorController::~SensorController()
+	{
+		
+	}
+    
     uint8_t SensorController::getDistance(const uint8_t p_id)
     {
         if(p_id < 0 || p_id >= sensors.size())
@@ -23,7 +30,7 @@ namespace minotaur
     
     uint8_t SensorController::addSensor(const uint8_t p_port)
     {
-        sensors.push_back(nxtcon::UltrasonicSensor(brick, p_port));
+        sensors.push_back(nxt::UltrasonicSensor(brick, p_port));
         return sensors.size() - 1;
     }
     

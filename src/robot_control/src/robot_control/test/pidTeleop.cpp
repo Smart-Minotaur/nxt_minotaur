@@ -3,9 +3,8 @@
 #include <termios.h>
 #include <signal.h>
 #include <exception>
+#include <nxt/NXTControl.hpp>
 #include "robot_control/PIDController.hpp"
-#include "nxt_control/Brick.hpp"
-#include "nxt_control/NxtOpcodes.hpp"
 #include "minotaur_common/MinotaurTopics.hpp"
 
 #define SAMPLE_INTERVALL 100
@@ -18,11 +17,11 @@
 #define LEFT_PORT PORT_A
 #define RIGHT_PORT PORT_B
 
-nxtcon::Brick brick;
-nxtcon::Motor leftMotor;
-nxtcon::Motor rightMotor;
+nxt::Brick brick;
+nxt::Motor leftMotor(&brick, LEFT_PORT);
+nxt::Motor rightMotor(&brick, RIGHT_PORT);
 
-minotaur::PIDController pidController;
+minotaur::PIDController pidController(leftMotor, rightMotor);
 pthread_t thread;
 struct termios oldtio, currtio;
 pthread_mutex_t motorMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -63,18 +62,10 @@ void signalHandler(int sig)
 
 bool initPIDController()
 {
-    try
-    {
-        ROS_INFO("Initialize USBConnection to Brick...");
-        brick.find();
-        leftMotor.setBrick(&brick);
-        leftMotor.setPort(LEFT_PORT);
-        
-        rightMotor.setBrick(&brick);
-        rightMotor.setPort(RIGHT_PORT);
-    }
-    catch (std::exception const &e)
-    {
+	ROS_INFO("Initialize USBConnection to Brick...");
+    try {
+        brick.connect();
+    } catch (std::exception const &e) {
         ROS_ERROR("Exception on initializing Brick: %s.", e.what());
         return false;
     }
@@ -82,8 +73,6 @@ bool initPIDController()
     ROS_INFO("Initializing PIDController...");
     // left and right motor of pid-controller have to be
     // set before using "step()"
-    pidController.setLeftMotor(&leftMotor);
-    pidController.setRightMotor(&rightMotor);
     
     return true;
 }
@@ -91,8 +80,7 @@ bool initPIDController()
 int startThread()
 {
     ROS_INFO("Starting thread...");
-    if(pthread_create(&thread, NULL, pidThread, NULL))
-    {
+    if(pthread_create(&thread, NULL, pidThread, NULL)) {
         ROS_ERROR("Could not create Thread");
         return -1;
     }
@@ -113,12 +101,9 @@ void *pidThread(void *arg)
         pthread_mutex_lock(&motorMutex);
         
         // catch exceptions to prevent the thread from terminating
-        try
-        {
+        try {
             pidController.step(SAMPLE_INTERVALL);
-        }
-        catch(std::exception const &e)
-        {
+        } catch(std::exception const &e) {
             ROS_ERROR("===Step encountered an exception==");
             ROS_ERROR("%s", e.what());
             ROS_ERROR("==================================");

@@ -2,8 +2,7 @@
 #define ROBOT_CONTROL_SENSOR_CONTROLLER_HPP_
 
 #include <vector>
-#include "nxt_control/Brick.hpp"
-#include "nxt_control/UltrasonicSensor.hpp"
+#include <nxt/NXTControl.hpp>
 
 namespace minotaur
 {
@@ -15,16 +14,13 @@ namespace minotaur
     class SensorController
     {
     private:
-        nxtcon::Brick *brick;
-        std::vector<nxtcon::UltrasonicSensor> sensors;
+        nxt::Brick *brick;
+        std::vector<nxt::UltrasonicSensor> sensors;
         
     public:
-        SensorController()
-        { }
+        SensorController(nxt::Brick *p_brick);
         
-        virtual ~SensorController() { }
-        
-        void setBrick(nxtcon::Brick *p_brick);
+        ~SensorController();
         
 	/**
 	 * get the last measured distance from a specific sensor
