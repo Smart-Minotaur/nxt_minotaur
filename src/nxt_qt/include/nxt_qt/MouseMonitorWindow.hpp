@@ -22,7 +22,7 @@ namespace minotaur
 			MouseMonitorWindow(QWidget *parent = 0);
 			virtual ~MouseMonitorWindow();
 		
-		MouseMonitorNode& getMonitorNode();
+			MouseMonitorNode& getMonitorNode();
 	};
 
 }

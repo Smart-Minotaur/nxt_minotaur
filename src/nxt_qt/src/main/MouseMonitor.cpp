@@ -1,9 +1,9 @@
 #include <QtGui>
 #include <QApplication>
 #include <ros/ros.h>
-#include "nxt_qt/MouseMonitorWindow.h"
+#include "nxt_qt/MouseMonitorWindow.hpp"
 
-#define NODE_NAME "QMouseMonitor"
+#define NODE_NAME "MouseMonitor"
 
 int main(int argc, char **argv)
 {
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     minotaur::MouseMonitorWindow window;
     
     window.show();
-    //window.getPIDNode().start();
+    window.getMonitorNode().start();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();

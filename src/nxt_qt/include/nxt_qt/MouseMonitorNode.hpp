@@ -49,7 +49,7 @@ namespace minotaur
 
 }
 	
-	Q_DECLARE_METATYPE(minotaur::MouseData);
-	//Q_DECLARE_METATYPE(minotaur::QUltraSensor); // TODO: From the SPI lib
+Q_DECLARE_METATYPE(minotaur::MouseData);
+//Q_DECLARE_METATYPE(minotaur::QUltraSensor); // TODO: From the SPI lib
 
 #endif
