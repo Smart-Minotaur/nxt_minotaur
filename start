@@ -11,12 +11,24 @@
 # mbug_p = minotaur_pc buggyMinotaur
 # mb_b = robot_control_beagle: Move base
 
+HOSTNAME=$(hostname)
+
+# Change only if on PC
 BEAGLE_IP=141.37.31.128
-PC_IP=141.37.31.115
+
+# Change only if on beagle
+PC_IP=141.37.31.114
 
 if [ -z "$1" ]
 then
 	echo "Give package to start."
+fi
+
+if [ "$HOSTNAME" == "ubuntu-armhf" ]
+then
+	BEAGLE_IP=$(ifconfig wlan0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+else
+	PC_IP=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
 fi
 
 source devel/setup.bash
