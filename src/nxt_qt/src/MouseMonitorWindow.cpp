@@ -279,8 +279,8 @@ namespace minotaur
 
     void MouseMonitorWindow::timerTimeout()
     {
-        processMouseData(monitorNode.getMouseData(SENSOR1));
-        processMouseData(monitorNode.getMouseData(SENSOR2));
+        //processMouseData(monitorNode.getMouseData(SENSOR1));
+        //processMouseData(monitorNode.getMouseData(SENSOR2));
     }
 
     MouseMonitorNode& MouseMonitorWindow::getMonitorNode()

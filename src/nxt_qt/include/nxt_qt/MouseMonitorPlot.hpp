@@ -14,10 +14,14 @@ namespace minotaur
         private:
             QwtPlotCurve curve;
 
+            //double values[];
+
         public:
             MouseMonitorPlot(QwtPlot *parent = 0) : QwtPlot(parent) {}
             virtual ~MouseMonitorPlot() {}
 
+            void init(std::string title, QColor color);
+            void updatePlot();
     };
 
 }
