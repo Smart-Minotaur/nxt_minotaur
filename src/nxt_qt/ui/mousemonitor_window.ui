@@ -698,7 +698,10 @@ QGroupBox::title {
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
-            <widget class="QCheckBox" name="checkBox">
+            <widget class="QCheckBox" name="detailDebugging">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>Enable detail debugging (this disables the polling for data)</string>
              </property>
@@ -829,20 +832,12 @@ QGroupBox::title {
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-    <addaction name="actionSetResolution"/>
-    <addaction name="actionSetIntervall"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
-   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionSetResolution">

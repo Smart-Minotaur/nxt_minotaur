@@ -3,71 +3,28 @@
 
 #include <QtGui/QMainWindow>
 #include <QWidget>
-#include <QPainterPath>
+#include <QTimer>
+#include <QToolButton>
+
+// TODO: Remove that
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
-#include <QTimer>
 
 #include "nxt_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
 #include "nxt_qt/MouseMonitorNode.hpp"
 
-#include <QToolButton>
+#include "nxt_qt/MouseMonitorDirectionWidget.hpp"
+#include "nxt_qt/MouseMonitorTrackPathWidget.hpp"
 
 #define SAMPLE_RANGE 500
 
 namespace minotaur
 {
 
-    class TrackPathWidget : public QWidget
-    {
-            Q_OBJECT
-
-        private:
-            double startx;
-            double starty;
-            QPointF lastMousePos;
-            double translatex;
-            double translatey;
-            QPainterPath sensor1_path;
-            QPainterPath sensor2_path;
-
-            int zoom;
-            bool sensor1_enable;
-            bool sensor2_enable;
-
-        protected:
-            void paintEvent(QPaintEvent *event);
-            void mouseMoveEvent(QMouseEvent *event);
-            void mouseReleaseEvent(QMouseEvent *event);
-
-        public:
-            TrackPathWidget(QWidget *parent = 0) : QWidget(parent) {}
-            virtual ~TrackPathWidget() {}
-
-            void init();
-            void updateWidget(MouseData data);
-
-        public Q_SLOTS:
-            void zoomValueChanged(const int value);
-            void sensor1Enable(const int status);
-            void sensor2Enable(const int status);
-    };
-
-    class DirectionWidget : public QWidget
-    {
-            Q_OBJECT
-        protected:
-            void paintEvent(QPaintEvent *event);
-
-        public:
-            DirectionWidget(QWidget *parent = 0) : QWidget(parent) {}
-            virtual ~DirectionWidget() {}
-
-            void updateWidget(MouseData data);
-    };
-
-    class MouseMonitorWindow : public QMainWindow, public Ui::MouseMonitorMainWindow
+    class MouseMonitorWindow :
+        public QMainWindow,
+        public Ui::MouseMonitorMainWindow
     {
             Q_OBJECT
 
@@ -78,8 +35,13 @@ namespace minotaur
             DirectionWidget *directionWidget2;
             TrackPathWidget *pathWidget;
 
+            // Toolbar
             QToolButton *sampleRateBtn;
-            QToolButton *resolutionBtn;
+            QLineEdit *sampleRateEdit;
+            QToolButton *resolution1Btn;
+            QLineEdit *resolution1Edit;
+            QToolButton *resolution2Btn;
+            QLineEdit *resolution2Edit;
 
             QTimer *timer;
             int sampleRateMs;
@@ -129,15 +91,20 @@ namespace minotaur
             void updatePlotSensor1(MouseData data);
             void updatePlotSensor2(MouseData data);
 
+            QString uintToQString(uint data);
+
         private Q_SLOTS:
             void processMouseData(const MouseData data);
             void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
-            void openResolutionSettings();
-            void openSamplingRateSettings();
             void openAboutWindow();
+
             void sampleRateBtnClicked();
-            void resolutionBtnClicked();
+            void resolution1BtnClicked();
+            void resolution2BtnClicked();
+
+            void detailDebuggingEnable(const int status);
+
             void getSensorSettingsBtnClicked();
 
             void timerTimeout();

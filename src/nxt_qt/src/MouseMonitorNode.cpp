@@ -80,7 +80,7 @@ namespace minotaur
         if (serviceSettings.call(srv))
             settings = convertMouseSettingsMessage(srv.response.settings);
         else {
-            ROS_ERROR("Failed to call service getSensorData");
+            ROS_ERROR("Failed to call service getSensorSettings");
             settings.spiDevice = "";
         }
 
