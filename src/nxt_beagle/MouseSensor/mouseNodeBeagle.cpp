@@ -96,6 +96,7 @@ int main(int argc, char **argv)
     if (!sensor2->readStatusAndDisplacementAndSpeed(
     		mouse.mouse2_x_speed, mouse.mouse2_y_speed,
       		mouse.mouse2_x_disp, mouse.mouse2_y_disp))
+    {
       // Send default values if there is no movement.
       mouse.mouse2_x_speed = 0.0;
       mouse.mouse2_y_speed = 0.0;
