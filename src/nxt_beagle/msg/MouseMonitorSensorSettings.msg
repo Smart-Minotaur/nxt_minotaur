@@ -1,4 +1,4 @@
-string id
+string spiDevice
 uint16 status_register
 uint16 delta_x_disp_register
 uint16 delta_y_disp_register

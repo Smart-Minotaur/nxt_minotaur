@@ -68,15 +68,17 @@ namespace minotaur
         connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openResolutionSettings()));
         connect(actionSetIntervall, SIGNAL(triggered()), this, SLOT(openSamplingRateSettings()));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
+
+        connect(getSensorSettingsBtn, SIGNAL(clicked()), this, SLOT(getSensorSettingsBtnClicked()));
     }
 
     void MouseMonitorWindow::initTimer()
     {
-        sampleRateMs = 10;
+        sampleRateMs = 1000;
 
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
-        // timer->start(sampleRateMs);
+        timer->start(sampleRateMs);
     }
 
     void MouseMonitorWindow::initToolbar()
@@ -271,6 +273,7 @@ namespace minotaur
     void MouseMonitorWindow::timerTimeout()
     {
         processMouseData(monitorNode.getMouseData(SENSOR1));
+
         processMouseData(monitorNode.getMouseData(SENSOR2));
     }
 
@@ -356,6 +359,13 @@ namespace minotaur
     void MouseMonitorWindow::resolutionBtnClicked()
     {
 
+    }
+
+    void MouseMonitorWindow::getSensorSettingsBtnClicked()
+    {
+        processMouseSettings(monitorNode.getMouseSettings(SENSOR1));
+
+        processMouseSettings(monitorNode.getMouseSettings(SENSOR2));
     }
 
     // Widgets ========================================================
