@@ -28,7 +28,7 @@ namespace minotaur
 			virtual ~MouseMonitorNodeBeagle();
 
 			void run();
-	}
+	};
 
 }
 
