@@ -1,0 +1,14 @@
+string id
+uint16 mouse1_status_register
+uint16 mouse1_delta_x_disp_register
+uint16 mouse1_delta_y_disp_register
+uint16 mouse1_command_high_register
+uint16 mouse1_command_low_register
+uint16 mouse1_memory_pointer_register
+uint16 mouse1_memory_data_register
+uint16 mouse1_mode_control_register
+uint16 mouse1_power_control_register
+uint16 mouse1_mode_status_register
+uint16 mouse1_system_control_register
+uint16 mouse1_miscellaneous_register
+uint16 mouse1_interrupt_output_register
