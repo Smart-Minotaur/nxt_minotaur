@@ -6,99 +6,143 @@
 #include <QTimer>
 #include <QToolButton>
 
-#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
-#include "mouse_monitor_pc/MouseMonitorNode.hpp"
 
+#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
+
+#include "mouse_monitor_pc/MouseMonitorNode.hpp"
 #include "mouse_monitor_pc/MouseMonitorDirectionWidget.hpp"
 #include "mouse_monitor_pc/MouseMonitorTrackPathWidget.hpp"
 #include "mouse_monitor_pc/MouseMonitorPlot.hpp"
+#include "mouse_monitor_pc/MouseMonitorMedianFilterDialog.hpp"
+#include "mouse_monitor_pc/MouseMonitorLogDialog.hpp"
+#include "mouse_monitor_pc/MouseMonitorCalibrationWizard.hpp"
+#include "mouse_monitor_pc/MouseMonitorCalibrationData.hpp"
+
+#include "minotaur_common/MedianFilter.hpp"
 
 #define SAMPLE_RANGE 500
 
 namespace minotaur
 {
 
-    class MouseMonitorWindow :
-        public QMainWindow,
-        public Ui::MouseMonitorMainWindow
-    {
-            Q_OBJECT
+	class MouseMonitorWindow :
+		public QMainWindow,
+		public Ui::MouseMonitorMainWindow
+	{
+			Q_OBJECT
 
-        private:
-            MouseMonitorNode monitorNode;
+		private:
+			MouseMonitorNode monitorNode;
 
-            DirectionWidget *directionWidget1;
-            DirectionWidget *directionWidget2;
-            TrackPathWidget *pathWidget;
+			MouseMonitorMedianFilterDialog *medianFilterDialog;
+			MedianFilter *medianFilter_sensor1_yDisp;
+			MedianFilter *medianFilter_sensor1_xDisp;
+			MedianFilter *medianFilter_sensor2_yDisp;
+			MedianFilter *medianFilter_sensor2_xDisp;
 
-            // Toolbar
-            QToolButton *sampleRateBtn;
-            QLineEdit *sampleRateEdit;
-            QToolButton *resolution1Btn;
-            QLineEdit *resolution1Edit;
-            QToolButton *resolution2Btn;
-            QLineEdit *resolution2Edit;
+			MouseMonitorLogDialog *logDialog;
+			MouseMonitorCalibrationWizard *calibrationWizard;
+			MouseMonitorCalibrationData calibrationData;
 
-            QTimer *timer;
-            int sampleRateMs;
+			DirectionWidget *directionWidget1;
+			DirectionWidget *directionWidget2;
+			TrackPathWidget *pathWidget;
 
-            // Plot stuff
-            MouseMonitorPlot *xDisp1Plot;
-            MouseMonitorPlot *yDisp1Plot;
-            MouseMonitorPlot *xDisp2Plot;
-            MouseMonitorPlot *yDisp2Plot;
+			QTimer *timer;
+			int sampleRate;
 
-            MouseMonitorPlot *xSpeed1Plot;
-            MouseMonitorPlot *ySpeed1Plot;
-            MouseMonitorPlot *xSpeed2Plot;
-            MouseMonitorPlot *ySpeed2Plot;
+			// Toolbar
+			QToolButton *sampleRateBtn;
+			QLineEdit *sampleRateEdit;
+			QToolButton *resolution1Btn;
+			QLineEdit *resolution1Edit;
+			QToolButton *resolution2Btn;
+			QLineEdit *resolution2Edit;
 
-            // TODO
-            MouseMonitorPlot *detail1Plot;
-            MouseMonitorPlot *detail2Plot;
+			// Plot stuff
+			MouseMonitorPlot *xDisp1Plot;
+			MouseMonitorPlot *yDisp1Plot;
+			MouseMonitorPlot *xDisp2Plot;
+			MouseMonitorPlot *yDisp2Plot;
 
-            // Init functions
-            void initWidgets();
-            void initTable();
-            void initPlots();
-            void initToolbar();
-            void initTimer();
-            void initDetail();
-            void connectSlots();
+			MouseMonitorPlot *xSpeed1Plot;
+			MouseMonitorPlot *ySpeed1Plot;
+			MouseMonitorPlot *xSpeed2Plot;
+			MouseMonitorPlot *ySpeed2Plot;
 
-            void updateAbsValue(MouseData data);
-            void updatePlot(MouseData data);
-            void updateDirectionWidgets(MouseData data);
-            void updateData(MouseData data);
+			// TODO
+			MouseMonitorPlot *detail1Plot;
+			MouseMonitorPlot *detail2Plot;
 
-            QString uintToQString(uint data);
+			// Init functions
+			void initWidgets();
+			void initTable();
+			void initPlots();
+			void initToolbar();
+			void initTimer();
+			void initDetail();
+			void initMedianFilter();
+			void initSensorCalibration();
+			void connectSlots();
 
-            void processMouseData(const MouseData data);
-            void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
+			/**
+			 * This function is called to process the received data and
+			 * update all display widgets with the new sensor data.
+			 */
+			void processMouseData(const MouseData data);
 
-        private Q_SLOTS:
-            void openAboutWindow();
+			/**
+			* This function is used to update the table with the sensors settings.
+			*/
+			void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
-            void sampleRateBtnClicked();
-            void resolution1BtnClicked();
-            void resolution2BtnClicked();
-            void getSensorSettingsBtnClicked();
-            void trackPathResetBtnClicked();
-            void getData1BtnClicked();
-            void getData2BtnClicked();
+			MouseData correctMouseData(MouseData data);
+			void applyMedianFilter(MouseData &data);
+			void calibrate(MouseData &data);
 
-            void detailDebuggingEnable(const int status);
+			void updateDataDisplay(MouseData data);
+			void updateAbsoluteValueDisplay(MouseData data);
+			void updatePlots(MouseData data);
+			void updateDirectionWidgets(MouseData data);
 
-            void timerTimeout();
+			QString uintToQString(uint data);
+			int sampleRateToInterval(int sampleRate);
 
-        public:
-            MouseMonitorWindow(QWidget *parent = 0);
-            virtual ~MouseMonitorWindow();
+		private Q_SLOTS:
+			void openCalibrateSensorsWizard();
+			void openAboutWindow();
+			void openLogDialog();
+			void openMedianFilterSettingsDialog();
 
-            MouseMonitorNode& getMonitorNode();
-      
-    };
+			void sampleRateBtnClicked();
+			void resolution1BtnClicked();
+			void resolution2BtnClicked();
+			void getSensorSettingsBtnClicked();
+			void trackPathResetBtnClicked();
+			void getData1BtnClicked();
+			void getData2BtnClicked();
+			void resetGraphsDispBtnClicked();
+			void resetGraphsSpeedBtnClicked();
+
+			// Median filter settings dialog
+			void newMedianFilterSettings(MedianFilterSettings settings);
+			void clearMedianFilterClicked();
+			
+			// Calibration wizard
+			void startCalibrateSensors(MouseMonitorCalibrationData data);
+			void stopCalibrateSensors();
+
+			void detailDebuggingEnable(const int status);
+
+			void timerTimeout();
+
+		public:
+			MouseMonitorWindow(QWidget *parent = 0);
+			virtual ~MouseMonitorWindow();
+
+			MouseMonitorNode& getMonitorNode();
+	};
 
 }
 

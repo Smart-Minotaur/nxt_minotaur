@@ -1,12 +1,10 @@
+# Koordinatensystem des Roboters:
+# X-Achse zeigt nach vorne
+# Y-Achse zeigt nach links
+# Winkel werden in Grad angegeben (positiv = gegen Uhrzeigersinn)
+# Abstände sind in Meter angegeben
 minotaur:
     models:
-        Heracles:
-            wheel_track: 0.11
-            wheel_radius: 0.025
-            kp: 0.5
-            ki: 0.2
-            kd: 0.1
-            sampling_interval: 25
         Theseus:
             wheel_track: 0.12
             wheel_radius: 0.025
@@ -16,15 +14,48 @@ minotaur:
             sampling_interval: 25
             sensor_0:
                 direction: -90.0
-                dx: 0.03
-                dy: 0.03
+                x: 0.03
+                y: -0.03
             sensor_1:
                 direction: 90.0
-                dx: 0.03
-                dy: 0.03
+                x: 0.03
+                y: 0.03
             sensor_2:
                 direction: 0.0
-                dx: 0.03
-                dy: 0.0
+                x: 0.03
+                y: 0.0
+        Heracles:
+            wheel_track: 0.12
+            wheel_radius: 0.025
+            kp: 0.5
+            ki: 0.2
+            kd: 0.1
+            sampling_interval: 25
+            sensor_0:
+                direction: -90.0
+                x: 0.03
+                y: -0.03
+            sensor_1:
+                direction: 90.0
+                x: 0.03
+                y: 0.03
+            sensor_2:
+                direction: 0.0
+                x: 0.03
+                y: 0.0
+            mouse_0:
+                device: "/dev/bla1"
+                x: -0.03
+                y: 0.01
+                error_angle: 5.0
+                x_resolution: 6400
+                y_resolution: 6400
+            mouse_1:
+                device: "/dev/bla2"
+                x: -0.03
+                y: 0.01
+                error_angle: 5.0
+                x_resolution: 6400
+                y_resolution: 6400
         CurrentModel: "Theseus"
         

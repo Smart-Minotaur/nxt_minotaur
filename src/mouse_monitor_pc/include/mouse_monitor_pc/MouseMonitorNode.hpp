@@ -42,7 +42,7 @@ namespace minotaur
 
             void run();
             pln_minotaur::PLN2033_Settings getMouseSettings(std::string id);
-            MouseData getMouseData(std::string id);
+		MouseData getMouseData(std::string id);
             bool sendResolution(std::string id, int resolution);
 
         Q_SIGNALS:

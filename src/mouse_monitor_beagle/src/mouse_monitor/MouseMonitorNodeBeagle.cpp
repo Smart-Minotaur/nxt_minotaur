@@ -5,116 +5,151 @@
 namespace minotaur
 {
 
-    MouseMonitorNodeBeagle::MouseMonitorNodeBeagle() :
-        sensor1(new pln_minotaur::PLN2033(SENSOR1)),
-        sensor2(new pln_minotaur::PLN2033(SENSOR2))
-    {
-        serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
-        serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
-        serviceSetResolution = nodeHandle.advertiseService("setResolution", &MouseMonitorNodeBeagle::setResolution, this);
-    }
+	MouseMonitorNodeBeagle::MouseMonitorNodeBeagle() :
+		sensor1(new pln_minotaur::PLN2033(SENSOR1)),
+		sensor2(new pln_minotaur::PLN2033(SENSOR2)),
+		sensor1Data(SENSOR1),
+		sensor2Data(SENSOR2),
+		sampleFrequency(SENSOR_SAMPLE_FREQUENCY),
+		debug(DEBUG_ENABLE) // TODO
+	{
+		serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
+		serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
+		serviceSetResolution = nodeHandle.advertiseService("setResolution", &MouseMonitorNodeBeagle::setResolution, this);
+	}
 
-    MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
-    {
-        delete sensor1;
-        delete sensor2;
-    }
+	MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
+	{
+		delete sensor1;
+		delete sensor2;
+	}
 
-    void MouseMonitorNodeBeagle::run()
-    {
-        ros::spin();
-    }
+	void MouseMonitorNodeBeagle::run()
+	{
+		ros::Rate r(sampleFrequency);
 
-    bool MouseMonitorNodeBeagle::sendData(
-        mouse_monitor_beagle::MouseMonitorSensorGetData::Request &req,
-        mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res)
-    {
-        if (req.id == SENSOR1) {
-            res.data = getData(sensor1);
-        } else if (req.id == SENSOR2) {
-            res.data = getData(sensor2);
-        } else
-            return false;
+		while (true) {
+			processSensorData(sensor1, &sensor1Data);
+			processSensorData(sensor2, &sensor2Data);
 
-        return true;
-    }
+			ros::spinOnce();
+			r.sleep();
+		}
+	}
 
-    bool MouseMonitorNodeBeagle::sendSettings(
-        mouse_monitor_beagle::MouseMonitorSensorGetSettings::Request &req,
-        mouse_monitor_beagle::MouseMonitorSensorGetSettings::Response &res)
-    {
-        if (req.id == SENSOR1)
-            res.settings = getSettings(sensor1);
-        else if (req.id == SENSOR2)
-            res.settings = getSettings(sensor2);
-        else
-            return false;
+	void MouseMonitorNodeBeagle::processSensorData(
+	    pln_minotaur::IPLNTrackingDevice *sensor,
+	    ProcessedSensorData *data)
+	{
+		double xs, ys; // Speed
+		double xd, yd; // Displacement
 
-        return true;
-    }
+		// TODO: Check lift bit
 
-    bool MouseMonitorNodeBeagle::setResolution(mouse_monitor_beagle::MouseMonitorSensorSetResolution::Request &req,
-            mouse_monitor_beagle::MouseMonitorSensorSetResolution::Response &res)
-    {
-        if (req.id == SENSOR1) {
-            sensor1->setXResolution(req.newResolution);
-            sensor1->setYResolution(req.newResolution);
-        } else if (req.id == SENSOR2) {
-            sensor2->setXResolution(req.newResolution);
-            sensor2->setYResolution(req.newResolution);
-        } else
-            return false;
+		if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
+			data->xDisplacement += xd;
+			data->yDisplacement += yd;
+			data->xSpeed = xs;
+			data->ySpeed = ys;
+		} else {
 
-        return true;
-    }
+		}
+	}
 
-    mouse_monitor_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
-        pln_minotaur::IPLNTrackingDevice *sensor)
-    {
-        mouse_monitor_beagle::MouseMonitorSensorData data;
-        double xs, ys; // Speed
-        double xd, yd; // Displacement
+	bool MouseMonitorNodeBeagle::sendData(
+	    mouse_monitor_beagle::MouseMonitorSensorGetData::Request &req,
+	    mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res)
+	{
+		if (req.id == SENSOR1) {
+			res.data = getData(&sensor1Data);
+		} else if (req.id == SENSOR2) {
+			res.data = getData(&sensor2Data);
+		} else
+			return false;
 
-		// TODO: Bug here
-		// TODO: Sleep
+		return true;
+	}
 
-        if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
-			pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
-            data.id = s.spiDevice;
-            data.x_speed = xs;
-            data.y_speed = ys;
-            data.x_disp = xd;
-            data.y_disp = yd;
-        } else
-            data.id = "";
+	bool MouseMonitorNodeBeagle::sendSettings(
+	    mouse_monitor_beagle::MouseMonitorSensorGetSettings::Request &req,
+	    mouse_monitor_beagle::MouseMonitorSensorGetSettings::Response &res)
+	{
+		if (req.id == SENSOR1)
+			res.settings = getSettings(sensor1);
+		else if (req.id == SENSOR2)
+			res.settings = getSettings(sensor2);
+		else
+			return false;
 
-        return data;
-    }
+		if (debug) {
+			// TODO: Output it.
+		}
 
-    mouse_monitor_beagle::MouseMonitorSensorSettings MouseMonitorNodeBeagle::getSettings(
-        pln_minotaur::IPLNTrackingDevice *sensor)
-    {
-        mouse_monitor_beagle::MouseMonitorSensorSettings settingsMsg;
-        pln_minotaur::PLN2033_Settings settings;
+		return true;
+	}
 
-        settings = sensor->readPLNSettings();
+	bool MouseMonitorNodeBeagle::setResolution(mouse_monitor_beagle::MouseMonitorSensorSetResolution::Request &req,
+	        mouse_monitor_beagle::MouseMonitorSensorSetResolution::Response &res)
+	{
+		if (req.id == SENSOR1) {
+			sensor1->setXResolution(req.newResolution);
+			sensor1->setYResolution(req.newResolution);
+		} else if (req.id == SENSOR2) {
+			sensor2->setXResolution(req.newResolution);
+			sensor2->setYResolution(req.newResolution);
+		} else
+			return false;
+			
+		if (debug) {
+			// TODO: Output it.
+		}
 
-        settingsMsg.spiDevice = settings.spiDevice;
-        settingsMsg.status_register = settings.status_register;
-        settingsMsg.delta_x_disp_register = 0; // TODO
-        settingsMsg.delta_y_disp_register = 0; // TODO
-        settingsMsg.command_high_register = settings.command_high_register;
-        settingsMsg.command_low_register = settings.command_low_register;
-        settingsMsg.memory_pointer_register = settings.memory_pointer_register;
-        settingsMsg.memory_data_register = settings.memory_data_register;
-        settingsMsg.mode_control_register = settings.mode_control_register;
-        settingsMsg.power_control_register = settings.power_control_register;
-        settingsMsg.mode_status_register = settings.mode_status_register;
-        settingsMsg.system_control_register = settings.system_control_register;
-        settingsMsg.miscellaneous_register = settings.miscellaneous_register;
-        settingsMsg.interrupt_output_register = settings.interrupt_output_register;
+		return true;
+	}
 
-        return settingsMsg;
-    }
+	mouse_monitor_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
+	    ProcessedSensorData *data)
+	{
+		mouse_monitor_beagle::MouseMonitorSensorData dataMsg;
+
+		dataMsg.id = data->spiDevice;
+		dataMsg.x_disp = data->xDisplacement;
+		dataMsg.y_disp = data->yDisplacement;
+		dataMsg.x_speed = data->xSpeed;
+		dataMsg.y_speed = data->ySpeed;
+
+		data->reset();
+
+		return dataMsg;
+	}
+
+	mouse_monitor_beagle::MouseMonitorSensorSettings MouseMonitorNodeBeagle::getSettings(
+	    pln_minotaur::IPLNTrackingDevice *sensor)
+	{
+		mouse_monitor_beagle::MouseMonitorSensorSettings settingsMsg;
+		pln_minotaur::PLN2033_Settings settings;
+
+		settings = sensor->readPLNSettings();
+
+		settingsMsg.spiDevice = settings.spiDevice;
+
+		settingsMsg.status_register = sensor->readPLNStatusRegister;
+		// Unused user registers
+		settingsMsg.delta_x_disp_register = 0; // Unused
+		settingsMsg.delta_y_disp_register = 0; // Unused
+
+		settingsMsg.command_high_register = settings.command_high_register;
+		settingsMsg.command_low_register = settings.command_low_register;
+		settingsMsg.memory_pointer_register = settings.memory_pointer_register;
+		settingsMsg.memory_data_register = settings.memory_data_register;
+		settingsMsg.mode_control_register = settings.mode_control_register;
+		settingsMsg.power_control_register = settings.power_control_register;
+		settingsMsg.mode_status_register = settings.mode_status_register;
+		settingsMsg.system_control_register = settings.system_control_register;
+		settingsMsg.miscellaneous_register = settings.miscellaneous_register;
+		settingsMsg.interrupt_output_register = settings.interrupt_output_register;
+
+		return settingsMsg;
+	}
 
 }

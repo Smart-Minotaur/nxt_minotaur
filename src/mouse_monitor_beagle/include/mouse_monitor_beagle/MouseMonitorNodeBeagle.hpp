@@ -9,40 +9,106 @@
 #include "PLN2033.h"
 #include "PLN2033_Settings.h"
 
+// Outputs debug messages if true
+#define DEBUG_ENABLE 1
+
 namespace minotaur
 {
 
-    class MouseMonitorNodeBeagle
-    {
-        private:
-            ros::NodeHandle nodeHandle;
-            ros::ServiceServer serviceData;
-            ros::ServiceServer serviceSettings;
-            ros::ServiceServer serviceSetResolution;
+	/**
+	 * Sums up the sensor data.
+	 */
+	struct ProcessedSensorData {
+		std::string spiDevice;
 
-            pln_minotaur::IPLNTrackingDevice *sensor1;
-            pln_minotaur::IPLNTrackingDevice *sensor2;
+		double xDisplacement;
+		double yDisplacement;
 
-            bool sendData(mouse_monitor_beagle::MouseMonitorSensorGetData::Request &req,
-                          mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res);
-            bool sendSettings(mouse_monitor_beagle::MouseMonitorSensorGetSettings::Request &req,
-                              mouse_monitor_beagle::MouseMonitorSensorGetSettings::Response &res);
+		double xSpeed; //< Last x speed value
+		double ySpeed; //< Last y speed value
 
-            bool setResolution(mouse_monitor_beagle::MouseMonitorSensorSetResolution::Request &req,
-                                mouse_monitor_beagle::MouseMonitorSensorSetResolution::Response &res);
+		int liftBitErrors;
+		int otherErros;
 
-            mouse_monitor_beagle::MouseMonitorSensorSettings getSettings(
-                pln_minotaur::IPLNTrackingDevice *sensor);
+		ProcessedSensorData(std::string spiDevice) :
+			spiDevice(spiDevice) {
+			reset();
+		}
 
-            mouse_monitor_beagle::MouseMonitorSensorData getData(
-                pln_minotaur::IPLNTrackingDevice *sensor);
+		void reset() {
+			xDisplacement = 0.0;
+			yDisplacement = 0.0;
+			xSpeed = 0.0;
+			ySpeed = 0.0;
+			liftBitErrors = 0;
+			otherErros = 0;
+		}
+	};
 
-        public:
-            MouseMonitorNodeBeagle();
-            virtual ~MouseMonitorNodeBeagle();
+	class MouseMonitorNodeBeagle
+	{
+		private:
+			ros::NodeHandle nodeHandle;
+			ros::ServiceServer serviceData;
+			ros::ServiceServer serviceSettings;
+			ros::ServiceServer serviceSetResolution;
 
-            void run();
-    };
+			pln_minotaur::IPLNTrackingDevice *sensor1;
+			pln_minotaur::IPLNTrackingDevice *sensor2;
+
+			ProcessedSensorData sensor1Data;
+			ProcessedSensorData sensor2Data;
+
+			/**
+			 * Sample frequency for the sensors.
+			 */
+			double sampleFrequency;
+
+			/**
+			 * If debug output is enabled.
+			 */
+			bool debug;
+
+			/**
+			 * @name Triggered from PC.
+			 */
+			///@{
+			bool sendData(mouse_monitor_beagle::MouseMonitorSensorGetData::Request &req,
+			              mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res);
+			bool sendSettings(mouse_monitor_beagle::MouseMonitorSensorGetSettings::Request &req,
+			                  mouse_monitor_beagle::MouseMonitorSensorGetSettings::Response &res);
+			bool setResolution(mouse_monitor_beagle::MouseMonitorSensorSetResolution::Request &req,
+			                   mouse_monitor_beagle::MouseMonitorSensorSetResolution::Response &res);
+			///@}
+
+			/**
+			 * @name Converting
+			 *
+			 * Converts sensor data to ros messages.
+			 */
+			///@{
+			mouse_monitor_beagle::MouseMonitorSensorSettings getSettings(
+			    pln_minotaur::IPLNTrackingDevice *sensor);
+
+			mouse_monitor_beagle::MouseMonitorSensorData getData(
+			    ProcessedSensorData *data);
+			///@}
+
+			/**
+			 * Reads sensor data and saves it.
+			 *
+			 * Displacement values are summed up. Lift bit is checked.
+			 */
+			void processSensorData(
+			    pln_minotaur::IPLNTrackingDevice *sensor,
+			    ProcessedSensorData *data);
+
+		public:
+			MouseMonitorNodeBeagle();
+			virtual ~MouseMonitorNodeBeagle();
+
+			void run();
+	};
 
 }
 

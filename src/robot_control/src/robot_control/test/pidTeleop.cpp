@@ -34,7 +34,7 @@ int startThread();
 void initKeyHandling();
 void *pidThread(void *arg);
 void eventLoop();
-void setMotor(const float p_leftmps, const float p_rightmps);
+void setVelocity(const float p_linearVelocity, const float p_angularVelocity);
 
 int main(int argc, char **argv)
 {
@@ -156,23 +156,23 @@ void eventLoop()
         {
             case KEYCODE_L:
                 ROS_DEBUG("LEFT");
-                setMotor(-0.3f, 0.3f);
+                setVelocity(0, 1.0);
                 break;
             case KEYCODE_R:
                 ROS_DEBUG("RIGHT");
-                setMotor(0.3f, -0.3f);
+                setVelocity(0, -1.0);
                 break;
             case KEYCODE_U:
                 ROS_DEBUG("UP");
-                setMotor(0.3f, 0.3f);
+                setVelocity(0.15, 0);
                 break;
             case KEYCODE_D:
                 ROS_DEBUG("DOWN");
-                setMotor(-0.3f, -0.3f);
+                setVelocity(-0.15, 0);
                 break;
             case KEYCODE_Q:
                 ROS_DEBUG("STOP");
-                setMotor(0,0);
+                setVelocity(0,0);
                 break;
         }
             
@@ -183,13 +183,12 @@ void eventLoop()
     ROS_INFO("Eventloop terminated.");
 }
 
-void setMotor(const float p_leftmps, const float p_rightmps)
+void setVelocity(const float p_linearVelocity, const float p_angularVelocity)
 {
-    minotaur::MotorVelocity velocity(p_leftmps, p_rightmps);
     pthread_mutex_lock(&motorMutex);
     
     // set velocity for left and right motor
-    pidController.setVelocity(velocity);
+    pidController.setVelocity(p_linearVelocity, p_angularVelocity);
     
     pthread_mutex_unlock(&motorMutex);
 }

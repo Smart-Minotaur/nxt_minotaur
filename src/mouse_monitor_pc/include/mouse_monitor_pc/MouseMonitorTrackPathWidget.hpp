@@ -5,9 +5,14 @@
 #include <QPainterPath>
 
 #include "mouse_monitor_pc/MouseMonitorNode.hpp"
+#include "mouse_monitor_pc/Robot.hpp"
 
 namespace minotaur
 {
+	
+	struct coordinateSystem {
+		
+	};
 
     class TrackPathWidget : public QWidget
     {
@@ -28,6 +33,11 @@ namespace minotaur
             int zoom;
             bool sensor1_enable;
             bool sensor2_enable;
+			
+			Robot robot;
+			
+			void drawGrid(QPainter &painter);
+			void drawRobot(QPainter &painter);
 
         protected:
             void paintEvent(QPaintEvent *event);
@@ -41,6 +51,8 @@ namespace minotaur
             void init(double posx, double posy);
             void updateWidget(MouseData data);
             void reset();
+			
+			void updateRobot(Robot robot);
 
         public Q_SLOTS:
             void zoomValueChanged(const int value);

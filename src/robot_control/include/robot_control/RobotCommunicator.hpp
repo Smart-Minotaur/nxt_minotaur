@@ -62,8 +62,10 @@ namespace minotaur
 	 * @param p_samplingIntervalMsec duration of one sampling interval in MSec
 	 */
         void stepController(const int p_samplingIntervalMsec);
+		
         void applySettings(const RobotSettings &p_settings);
-        
+        void applySettings(const MouseSensorSettings &p_settings);
+		
         void shutdown();
     };
 }

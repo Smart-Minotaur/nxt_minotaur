@@ -3,8 +3,6 @@
 #include "minotaur_common/MinotaurParam.hpp"
 #include "minotaur_common/Math.hpp"
 
-#define DEG_TO_RAD(deg) ((M_PI * deg) / 180)
-
 namespace minotaur
 {
     std::vector<SensorSetting> loadSensorSettings(const std::string &p_modelName)
@@ -22,12 +20,12 @@ namespace minotaur
             
             // get direction and convert to radian
             ros::param::get(PARAM_SENSOR_DIRECTION(p_modelName, i), result.back().direction);
-            result.back().direction = DEG_TO_RAD(result.back().direction);
+            result.back().direction = degreeToRadian(result.back().direction);
             result.back().direction = normalizeRadian(result.back().direction);
             
             // get x and y positions relative to robot
-            ros::param::get(PARAM_SENSOR_DX(p_modelName, i), result.back().x);
-            ros::param::get(PARAM_SENSOR_DY(p_modelName, i), result.back().y);
+            ros::param::get(PARAM_SENSOR_X(p_modelName, i), result.back().x);
+            ros::param::get(PARAM_SENSOR_Y(p_modelName, i), result.back().y);
             
             ++i;
         }

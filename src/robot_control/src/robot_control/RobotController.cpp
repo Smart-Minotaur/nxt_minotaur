@@ -5,7 +5,7 @@
 namespace minotaur
 {
     RobotController::RobotController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor)
-    : odometry(), velocity(), wheelTrack(0.0f), pidController(p_leftMotor, p_rightMotor)
+    : odometry(), pidController(p_leftMotor, p_rightMotor)
     {
         initOdometry(odometry);
     }
@@ -20,11 +20,6 @@ namespace minotaur
         return pidController;
     }
     
-    float RobotController::getWheelTrack() const
-    {
-        return wheelTrack;
-    }
-    
     const nav_msgs::Odometry& RobotController::getOdometry()
     {
         return odometry;
@@ -32,28 +27,7 @@ namespace minotaur
 
     void RobotController::setVelocity(const geometry_msgs::Twist& p_velocity)
     {
-        velocity = p_velocity;
-        calculateMotorVelocity();
-    }
-    
-    void RobotController::setWheelTrack(const float p_wheelTrack)
-    {
-        wheelTrack = p_wheelTrack;
-        calculateMotorVelocity();
-    }
-
-    void RobotController::calculateMotorVelocity()
-    {
-        MotorVelocity targetVelocity;
-        
-        //to get the formula see kinematic of two wheeled robots
-        double theta = getTheta(odometry);
-        float linearVelocity = getLinearVelocity(velocity, theta);
-        float angularVelocity = getAngularVelocity(velocity);
-        targetVelocity.leftMPS = linearVelocity - (angularVelocity * wheelTrack) / 2;
-        targetVelocity.rightMPS = linearVelocity + (angularVelocity * wheelTrack) / 2;
-        
-        pidController.setVelocity(targetVelocity);
+		pidController.setVelocity(getLinearVelocity(p_velocity, getTheta(odometry)), getAngularVelocity(p_velocity));
     }
     
     void RobotController::setPose(const geometry_msgs::PoseWithCovariance& p_pose)
@@ -87,14 +61,10 @@ namespace minotaur
     geometry_msgs::Twist RobotController::getMeasuredVelocity(const float p_theta)
     {
         geometry_msgs::Twist result;
-        MotorVelocity motorVel = pidController.getMeasuredVelocity();
-        //to get the formula see kinematic of two wheeled robots
-        float linearVelocity = (motorVel.rightMPS + motorVel.leftMPS) / 2;
-        float angularVelocity = (motorVel.rightMPS - motorVel.leftMPS) / wheelTrack;
         
         initTwist(result);
-        setLinearVelocity(result, p_theta, linearVelocity);
-        setAngularVelocity(result, angularVelocity);
+        setLinearVelocity(result, p_theta, pidController.getLinearVelocity());
+        setAngularVelocity(result, pidController.getAngularVelocity());
         
         return result;
     }

@@ -1,27 +1,27 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robot_control)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x")
+if ( ${USE_MOUSE_SENSOR} )
 
-add_subdirectory("lib/NXTControl")
+    set(CMAKE_CXX_FLAGS "-std=c++0x")
 
-find_package(catkin REQUIRED COMPONENTS
-    std_msgs
-    roscpp
-    tf
-    message_generation
-    minotaur_common
-)
+    add_subdirectory("lib/NXTControl")
 
-# export info
-catkin_package(
-    INCLUDE_DIRS include
-    CATKIN_DEPENDS message_runtime
-)
+    find_package(catkin REQUIRED COMPONENTS
+        std_msgs
+        roscpp
+        tf
+        message_generation
+        minotaur_common
+    )
 
-include_directories(include ${catkin_INCLUDE_DIRS} "lib/NXTControl/include")
+    # export info
+    catkin_package(
+        INCLUDE_DIRS include
+        CATKIN_DEPENDS message_runtime
+    )
 
-if(${USE_MOUSE_SENSOR})
+    include_directories(include ${catkin_INCLUDE_DIRS} "lib/NXTControl/include" "../../../pln_minotaur/trunk/src")
 
     set(ROBOT_CONTROL_DIR src/robot_control)
     file(GLOB ROBOT_CONTROL_LIB_SRC ${ROBOT_CONTROL_DIR}/*.cpp)
@@ -52,4 +52,5 @@ if(${USE_MOUSE_SENSOR})
         endforeach(TEST_SRC_FILE ${NXT_CONTROL_TEST_SRC})
     endif(${BUILD_TEST_FILES})
 
-endif(${USE_MOUSE_SENSOR})
+endif ( ${USE_MOUSE_SENSOR} )
+

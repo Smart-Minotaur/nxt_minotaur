@@ -4,6 +4,7 @@
 
 #define DEG_PER_TICK 1.0f
 #define DEF_WHEEL_RADIUS 0.1f
+#define DEF_WHEEL_TRACK 0.1f
 
 #define DEF_KP 0.5f
 #define DEF_KI 0.3f
@@ -17,9 +18,9 @@
 namespace minotaur
 {
     PIDController::PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor)
-    :leftMotor(p_leftMotor), rightMotor(p_rightMotor), targetVelocity(),measuredVelocity(),
+    :leftMotor(p_leftMotor), rightMotor(p_rightMotor), targetVelocity(), measuredVelocity(),
     currentDiff(), lastDiff(), diffSum(), pidParameter(),
-    wheelRadius(DEF_WHEEL_RADIUS)
+    wheelRadius(DEF_WHEEL_RADIUS), wheelTrack(DEF_WHEEL_TRACK)
     {
         pidParameter.Kp = DEF_KP;
         pidParameter.Ki = DEF_KI;
@@ -29,35 +30,60 @@ namespace minotaur
     PIDController::~PIDController()
     { }
     
-    void PIDController::setVelocity(const MotorVelocity& p_velocity)
+    void PIDController::setVelocity(const float p_linearVelocity, const float p_angularVelocity)
     {
-        targetVelocity = p_velocity;
+		//to get the formula see kinematic of two wheeled robots
+        targetVelocity.leftMPS = p_linearVelocity - (p_angularVelocity * wheelTrack) / 2;
+		targetVelocity.rightMPS = p_linearVelocity + (p_angularVelocity * wheelTrack) / 2;
     }
 
     void PIDController::setWheelRadius(const float p_meter)
     {
         wheelRadius = p_meter;
     }
+	
+	void PIDController::setWheelTrack(const float p_meter)
+	{
+		wheelTrack = p_meter;
+	}
     
     void PIDController::setPIDParameter(const minotaur_common::PIDParameter& p_param)
     {
         pidParameter = p_param;
     }
+	
+	void PIDController::setMouseSensorSettings(const MouseSensorSettings &p_mouseSettings)
+	{
+		mouseSettings = p_mouseSettings;
+		mouseSensors.clear();
+		for(int i = 0; i < mouseSettings.size(); ++i) {
+			mouseSensors.push_back(pln_minotaur::PLN2033(mouseSettings[i].device));
+			mouseSensors[i].setXResolution(mouseSettings[i].xResolution);
+			mouseSensors[i].setXResolution(mouseSettings[i].yResolution);
+		}
+	}
 
-    const MotorVelocity& PIDController::getVelocity() const
-    {
-        return targetVelocity;
-    }
+    float PIDController::getLinearVelocity() const
+	{
+		//to get the formula see kinematic of two wheeled robots
+		return (measuredVelocity.rightMPS + measuredVelocity.leftMPS) / 2;
+	}
+	
+	float PIDController::getAngularVelocity() const
+	{
+		//to get the formula see kinematic of two wheeled robots
+		return (measuredVelocity.rightMPS - measuredVelocity.leftMPS) / wheelTrack;
+	}
     
-    const MotorVelocity& PIDController::getMeasuredVelocity() const
-    {
-        return measuredVelocity;
-    }
-
     float PIDController::getWheelRadius() const
     {
         return wheelRadius;
     }
+	
+	float PIDController::getWheelTrack() const
+	{
+		return wheelTrack;
+	}
     
      const minotaur_common::PIDParameter& PIDController::getPIDParameter() const
      {
@@ -73,19 +99,19 @@ namespace minotaur
         
         setMotorPower(samplingSec);
         
-        printDebugInfoPerStep();
     }
 
     void PIDController::measureCurrentVelocity(const float p_samplingIntervalSecs)
     {
-        MotorVelocity tickVel, mouseVel;
-        
-        tickVel = measureTickVelocity(p_samplingIntervalSecs);
+		// only use motors if no mouse sensors are available.
+		// reading motors has high latency due to slow
+		// ultrasonic sensors blocking the USB connection.
+		if(mouseSettings.size() != 0)
+			measuredVelocity = measureMouseVelocity(p_samplingIntervalSecs);
+		else
+			measuredVelocity = measureTickVelocity(p_samplingIntervalSecs);
         //TODO mouse velocity must be measured, currently only tickVel is used 
         //mouseVel = measureMouseVelocity();
-        mouseVel = tickVel;
-        
-        measuredVelocity = (tickVel + mouseVel) / 2;
     }
 
     MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervalSecs)
@@ -116,8 +142,36 @@ namespace minotaur
 
     MotorVelocity PIDController::measureMouseVelocity(const float p_samplingIntervalSecs)
     {
-        MotorVelocity result;
-        
+		 MotorVelocity result;
+		 result.leftMPS = 0;
+		 result.rightMPS = 0;
+		
+		for(int i = 0; i < mouseSensors.size(); ++i) {
+			double dx, dy;
+			if(!mouseSensors[i].readStatusAndDisplacement(dx, dy)) {
+				dx = 0;
+				dy = 0;
+			}
+			Vector2 measurement, angularVec;
+			
+			measurement.x = cmToMeter(dx);
+			measurement.y = cmToMeter(dy);
+			
+			measurement = rotateVec(measurement, mouseSettings[i].errorAngle);
+			
+			angularVec.x = (measurement.y * mouseSettings[i].y) / (2 * mouseSettings[i].x);
+			angularVec.y = measurement.y;
+			
+			float angularVelocity = angularVec.length();
+			float linearVelocity = measurement.x - angularVec.x;
+			
+			result.leftMPS += linearVelocity - (angularVelocity * wheelTrack) / 2;
+			result.rightMPS += linearVelocity + (angularVelocity * wheelTrack) / 2;
+		}
+		
+		result.leftMPS /= mouseSensors.size();
+		result.rightMPS /= mouseSensors.size();
+		
         return result;
     }
 
@@ -188,18 +242,5 @@ namespace minotaur
             result = MIN_MOTOR_POWER;
         
         return result;
-    }
-    
-    void PIDController::printDebugInfoPerStep()
-    {
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Target Vel:     left = %.2f mps; right = %.2f mps", targetVelocity.leftMPS, targetVelocity.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Measured Vel:   left = %.2f mps; right = %.2f mps", measuredVelocity.leftMPS, measuredVelocity.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Cur Diff Vel:   left = %.2f mps; right = %.2f mps", currentDiff.leftMPS, currentDiff.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Last Diff Vel:  left = %.2f mps; right = %.2f mps", lastDiff.leftMPS, lastDiff.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Diff Sum:       left = %.2f mps; right = %.2f mps", diffSum.leftMPS, diffSum.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Power:          left = %d; right = %d", powerLeft, powerRight);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Radius = %.4f m", wheelRadius);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
     }
 }

@@ -2,8 +2,10 @@
 #define ROBOT_CONTROL_PID_CONTROLLER_HPP
 
 #include <nxt/NXTControl.hpp>
+#include <PLN2033.h>
 #include "minotaur_common/MotorVelocity.hpp"
 #include "minotaur_common/PIDParameter.h"
+#include "minotaur_common/MouseSensorSettings.hpp"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
 
@@ -24,19 +26,22 @@ namespace minotaur
     private:
         nxt::Motor &leftMotor;
         nxt::Motor &rightMotor;
-        
+        std::vector<pln_minotaur::PLN2033> mouseSensors;
+		
         MotorVelocity targetVelocity;
         MotorVelocity measuredVelocity;
         MotorVelocity currentDiff;
         MotorVelocity lastDiff;
         MotorVelocity diffSum;
         
+		MouseSensorSettings mouseSettings;
         minotaur_common::PIDParameter pidParameter;
         
         int powerLeft;
         int powerRight;
-        
+		
         float wheelRadius;
+		float wheelTrack;
         
         void measureCurrentVelocity(const float p_samplingIntervalSecs);
         MotorVelocity measureTickVelocity(const float p_samplingIntervalSecs);
@@ -62,20 +67,22 @@ namespace minotaur
                                  const float p_diffSum,
                                  const int p_motorPercent,
                                  const float p_samplingIntervalSecs);
-       void printDebugInfoPerStep(); 
        
         
     public:
         PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor);
         ~PIDController();
         
-        void setVelocity(const MotorVelocity& p_velocity);
+        void setVelocity(const float p_linearVelocity, const float p_angularVelocity);
         void setWheelRadius(const float p_meter);
+		void setWheelTrack(const float p_meter);
         void setPIDParameter(const minotaur_common::PIDParameter& p_param);
+		void setMouseSensorSettings(const MouseSensorSettings &p_mouseSettings);
         
-        const MotorVelocity& getVelocity() const;
-        const MotorVelocity& getMeasuredVelocity() const;
+        float getLinearVelocity() const;
+		float getAngularVelocity() const;
         float getWheelRadius() const;
+		float getWheelTrack() const;
         const minotaur_common::PIDParameter& getPIDParameter() const;
         
 	/**
