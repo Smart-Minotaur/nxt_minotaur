@@ -14,6 +14,11 @@ namespace minotaur
 
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
+
+	sensor1->setXResolution(100);
+	sensor1->setYResolution(100);
+	sensor2->setXResolution(100);
+	sensor2->setYResolution(100);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
@@ -120,7 +125,7 @@ namespace minotaur
 
     void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice *sensor)
     {
-        nxt_beagle::MouseMonitorSensorSettings settingsMsg = getData(sensor);
+        nxt_beagle::MouseMonitorSensorSettings settingsMsg = getSettings(sensor);
 
         pubSettings.publish(settingsMsg);
     }
