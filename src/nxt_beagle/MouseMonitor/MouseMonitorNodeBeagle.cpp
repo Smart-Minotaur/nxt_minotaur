@@ -39,13 +39,13 @@ namespace minotaur
         }
     }
 
-    bool sendData(nxt_beagle::MouseMonitorSensorGetData::Request  &req,
+    bool MouseMonitorNodeBeagle::sendData(nxt_beagle::MouseMonitorSensorGetData::Request  &req,
               nxt_beagle::MouseMonitorSensorGetData::Response &res)
     {
 
     }
 
-    bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request  &req,
+    bool MouseMonitorNodeBeagle::sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request  &req,
               nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
     {
 
