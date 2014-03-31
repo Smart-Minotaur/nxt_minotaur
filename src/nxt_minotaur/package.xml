@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+    <name>nxt_minotaur</name>
+    <version>0.0.0</version>
+    <description>The nxt_minotaur package</description>
+
+    <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
+
+    <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+    <license>TODO</license>
+
+    <author email="fameyer@htwg-konstanz.de">Fabian Meyer</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>message_generation</build_depend>
+    <run_depend>message_runtime</run_depend>
+
+    <!-- The export tag contains other, unspecified, tags -->
+    <export>
+
+    </export>
+</package>
