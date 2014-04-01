@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nxt_beagle)
 
+#set Version
+set(NXT_BEAGLE_MAJOR_VERSION 0)
+set(NXT_BEAGLE_MINOR_VERSION 1)
+set(NXT_BEAGLE_PATCH_VERSION 0)
+set(NXT_BEAGLE_VERSION "${NXT_BEAGLE_MAJOR_VERSION}.${NXT_BEAGLE_MINOR_VERSION}.${NXT_BEAGLE_PATCH_VERSION}")
+
 find_package(catkin REQUIRED COMPONENTS
     std_msgs
     roscpp
@@ -29,6 +35,18 @@ generate_messages(
 )
 
 catkin_package( )
+
+#configure headers with cmake metainfo
+file( GLOB CONFIGURE_HEADERS global/*.hpp.in)
+
+foreach(configheader ${CONFIGURE_HEADERS})
+    get_filename_component(configheadername ${configheader} NAME_WE)
+     get_filename_component(configheaderpath ${configheader} PATH)
+    configure_file (
+        "${configheader}"
+        "${configheaderpath}/${configheadername}.hpp"
+        )
+endforeach( configheader ${CONFIGURE_HEADERS} )
 
 include_directories(include ${catkin_INCLUDE_DIRS} motorControl)
 
