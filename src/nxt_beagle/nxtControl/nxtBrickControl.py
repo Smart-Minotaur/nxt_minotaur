@@ -3,8 +3,8 @@
 import rospy
 import nxtBrick
 import nxt.locator
-from nxt_minotaur.msg import nxtPower
-from nxt_minotaur.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
+from nxt_beagle.msg import nxtPower
+from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
 
 brick = nxtBrick.BrickController()
 _pow_topic = "cmd_pow"

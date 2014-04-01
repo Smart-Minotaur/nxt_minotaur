@@ -1,6 +1,6 @@
 #include <ros/ros.h>
-#include "nxt_minotaur/nxtUltrasonic.h"
-#include "nxt_minotaur/nxtAddUltrasonic.h"
+#include "nxt_beagle/nxtUltrasonic.h"
+#include "nxt_beagle/nxtAddUltrasonic.h"
 #include <signal.h>
 
 #define GET_UTLTRASONIC_SRV "get_ultrasonic"
@@ -53,13 +53,13 @@ void initClients(ros::NodeHandle &p_handle)
     
     // to connect to certain services its name is needed
     // the templyte types are the message types used to communicate
-    ultrasonicClient = p_handle.serviceClient<nxt_minotaur::nxtUltrasonic>(GET_UTLTRASONIC_SRV);
-    addUltrasonicClient = p_handle.serviceClient<nxt_minotaur::nxtAddUltrasonic>(ADD_UTLTRASONIC_SRV);
+    ultrasonicClient = p_handle.serviceClient<nxt_beagle::nxtUltrasonic>(GET_UTLTRASONIC_SRV);
+    addUltrasonicClient = p_handle.serviceClient<nxt_beagle::nxtAddUltrasonic>(ADD_UTLTRASONIC_SRV);
 }
 
 void addUltrasonic()
 {
-    nxt_minotaur::nxtAddUltrasonic srv;
+    nxt_beagle::nxtAddUltrasonic srv;
     srv.request.port = ULTRASONIC_PORT;
     
     ROS_INFO("Adding Ultrasonicsensor...");
@@ -76,7 +76,7 @@ void addUltrasonic()
 
 void measureLoop()
 {
-    nxt_minotaur::nxtUltrasonic srv;
+    nxt_beagle::nxtUltrasonic srv;
     srv.request.sensorID = ultrasonicID;
     ros::Rate loopRate(MEASSURE_FREQ);
     unsigned int distance;

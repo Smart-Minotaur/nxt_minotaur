@@ -2,7 +2,7 @@
 #include <termios.h>
 #include <poll.h>
 #include "ros/ros.h"
-#include "nxt_minotaur/nxtPower.h"
+#include "nxt_beagle/nxtPower.h"
 
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
@@ -17,7 +17,7 @@ bool run = true;
 
 void setSignalAction();
 void sighandler(int sig);
-void sendMsg(nxt_minotaur::nxtPower msg);
+void sendMsg(nxt_beagle::nxtPower msg);
 void initKeyHandling();
 void eventLoop();
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     
     ros::NodeHandle n;
     
-    powerPub = n.advertise<nxt_minotaur::nxtPower>("cmd_pow", 1000);
+    powerPub = n.advertise<nxt_beagle::nxtPower>("cmd_pow", 1000);
     
     initKeyHandling();
     eventLoop();
@@ -72,7 +72,7 @@ void eventLoop()
 {
     char keycode;
     ros::Rate loop_rate(60);
-    nxt_minotaur::nxtPower msg;
+    nxt_beagle::nxtPower msg;
     msg.leftMotor = 0;
     msg.rightMotor = 0;
     
@@ -125,7 +125,7 @@ void eventLoop()
     ROS_INFO("Eventloop terminated.");
 }
 
-void sendMsg(nxt_minotaur::nxtPower msg)
+void sendMsg(nxt_beagle::nxtPower msg)
 {
     powerPub.publish(msg);
     ros::spinOnce();

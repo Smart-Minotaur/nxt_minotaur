@@ -4,8 +4,8 @@
 #include <signal.h>
 #include <exception>
 #include "PIDController.hpp"
-#include "nxt_minotaur/nxtPower.h"
-#include "nxt_minotaur/nxtTicks.h"
+#include "nxt_beagle/nxtPower.h"
+#include "nxt_beagle/nxtTicks.h"
 
 #define SAMPLE_INTERVALL 0.1f
 #define KEYCODE_R 0x43
@@ -61,8 +61,8 @@ void initPIDController(ros::NodeHandle p_handle)
 {
     ROS_INFO("Initializing PIDController...");
     
-    powerPublisher = p_handle.advertise<nxt_minotaur::nxtPower>(SET_MOTOR_POWER, 1000);
-    tickClient = p_handle.serviceClient<nxt_minotaur::nxtTicks>(GET_TICKS_SRV);
+    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(SET_MOTOR_POWER, 1000);
+    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(GET_TICKS_SRV);
     
     pidController.setMotorPublisher(&powerPublisher);
     pidController.setMotorClient(&tickClient);

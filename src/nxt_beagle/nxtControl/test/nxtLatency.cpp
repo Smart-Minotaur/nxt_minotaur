@@ -1,7 +1,7 @@
 #include <ros/ros.h>
-#include "nxt_minotaur/nxtTicks.h"
-#include "nxt_minotaur/nxtUltrasonic.h"
-#include "nxt_minotaur/nxtAddUltrasonic.h"
+#include "nxt_beagle/nxtTicks.h"
+#include "nxt_beagle/nxtUltrasonic.h"
+#include "nxt_beagle/nxtAddUltrasonic.h"
 
 #define GET_TICKS_SRV "get_ticks"
 #define GET_UTLTRASONIC_SRV "get_ultrasonic"
@@ -47,14 +47,14 @@ void initClients(ros::NodeHandle &p_handle)
     
     // to connect to certain services its name is needed
     // the templyte types are the message types used to communicate
-    tickClient = p_handle.serviceClient<nxt_minotaur::nxtTicks>(GET_TICKS_SRV);
-    ultrasonicClient = p_handle.serviceClient<nxt_minotaur::nxtUltrasonic>(GET_UTLTRASONIC_SRV);
-    addUltrasonicClient = p_handle.serviceClient<nxt_minotaur::nxtAddUltrasonic>(ADD_UTLTRASONIC_SRV);
+    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(GET_TICKS_SRV);
+    ultrasonicClient = p_handle.serviceClient<nxt_beagle::nxtUltrasonic>(GET_UTLTRASONIC_SRV);
+    addUltrasonicClient = p_handle.serviceClient<nxt_beagle::nxtAddUltrasonic>(ADD_UTLTRASONIC_SRV);
 }
 
 void addUltrasonic()
 {
-    nxt_minotaur::nxtAddUltrasonic srv;
+    nxt_beagle::nxtAddUltrasonic srv;
     srv.request.port = ULTRASONIC_PORT;
     
     ROS_INFO("Adding Ultrasonicsensor...");
@@ -75,7 +75,7 @@ void testUltrasonicLatency()
         return;
     
     ros::Time begin, end;
-    nxt_minotaur::nxtUltrasonic srv;
+    nxt_beagle::nxtUltrasonic srv;
     srv.request.sensorID = ultrasonicID;
     
     ROS_INFO("Testing Ultrasonic Latency...");
@@ -97,7 +97,7 @@ void testUltrasonicLatency()
 
 void testTicksLatency()
 {
-    nxt_minotaur::nxtTicks srv;
+    nxt_beagle::nxtTicks srv;
     ros::Time begin, end;
     
     ROS_INFO("Testing Ticks Latency...");
