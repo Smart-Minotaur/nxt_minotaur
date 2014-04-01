@@ -6,6 +6,7 @@
 
 * Python 2.x is required
 * not compatible with 1.x and 3.x
++ if __py_compile__ is missing run __opkg install python-pyserial__
 
 ### install PyUSB
 
