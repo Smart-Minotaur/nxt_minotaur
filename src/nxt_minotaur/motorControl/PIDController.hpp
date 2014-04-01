@@ -25,9 +25,9 @@ namespace minotaur
         unsigned int measureMS;
         float circumference;
         
-        void measureCurrentVelocity();
-        MotorVelocity measureTickVelocity();
-        MotorVelocity measureMouseVelocity();
+        void measureCurrentVelocity(const float p_samplingIntervallSecs);
+        MotorVelocity measureTickVelocity(const float p_samplingIntervallSecs);
+        MotorVelocity measureMouseVelocity(const float p_samplingIntervallSecs);
         float ticksToMPS(unsigned long p_ticks);
         void calculateDifference();
         void setMotorPower(const float p_samplingIntervallSecs);
@@ -43,12 +43,10 @@ namespace minotaur
         
         void setMotorPublisher(ros::Publisher *p_motorPublisher );
         void setMotorClient(ros::ServiceClient *p_motorClient);
-        void setMeasureDuration(const unsigned int p_milli);
         void setWheelCircumference(const float p_meter);
         
         void setLeftMPS(const float p_mps);
         void setRightMPS(const float p_mps);
-        unsigned int getMeasureDurationMilli() const;
         float getWheelCircumference() const;
         
         float getLeftMPS() const;

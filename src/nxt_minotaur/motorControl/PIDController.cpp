@@ -47,11 +47,6 @@ void PIDController::setRightMPS(const float p_mps)
     targetVelocity.rightMPS = p_mps;
 }
 
-void PIDController::setMeasureDuration(const unsigned int p_milli)
-{
-    measureMS = p_milli;
-}
-
 void PIDController::setWheelCircumference(const float p_meter)
 {
     circumference = p_meter;
@@ -67,11 +62,6 @@ float PIDController::getRightMPS() const
     return targetVelocity.rightMPS;
 }
 
-unsigned int PIDController::getMeasureDurationMilli() const
-{
-    return measureMS;
-}
-
 float PIDController::getWheelCircumference() const
 {
     return circumference;
@@ -79,18 +69,18 @@ float PIDController::getWheelCircumference() const
 
 void PIDController::step(const float p_samplingIntervallSecs)
 {
-    measureCurrentVelocity();
+    measureCurrentVelocity(p_samplingIntervallSecs);
     
     calculateDifference();
     
     setMotorPower(p_samplingIntervallSecs);
 }
 
-void PIDController::measureCurrentVelocity()
+void PIDController::measureCurrentVelocity(const float p_samplingIntervallSecs)
 {
     MotorVelocity tickVel, mouseVel;
     
-    tickVel = measureTickVelocity();
+    tickVel = measureTickVelocity(p_samplingIntervallSecs);
     //TODO mouse velocity must be measured, currently only tickVel is used 
     //mouseVel = measureMouseVelocity();
     mouseVel = tickVel;
@@ -100,25 +90,19 @@ void PIDController::measureCurrentVelocity()
     ROS_INFO("Measured Velocity: left = %.2fmps; right = %.2fmps", measuredVelocity.leftMPS, measuredVelocity.rightMPS);
 }
 
-MotorVelocity PIDController::measureTickVelocity()
+MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervallSecs)
 {
     MotorVelocity result;
     ros::Time begin, end;
-    nxt_minotaur::nxtTicks beginSrv, endSrv;
+    nxt_minotaur::nxtTicks tickSrv;
     unsigned long ticksPSLeft, ticksPSRight;
     
-    //measure ticks for 'meaureDuration' milliseconds
-    begin = ros::Time::now();
-    
-    motorClient->call(beginSrv);
-    ros::Duration(measureMS / MS_PER_SECOND).sleep();
-    motorClient->call(endSrv);
-    
-    end = ros::Time::now();
+    //measure ticks, tick_count is automatically reset
+    motorClient->call(tickSrv);
     
     //calculate ticks per second
-    ticksPSLeft = (endSrv.response.leftTicks - beginSrv.response.leftTicks) / (end.toSec() - begin.toSec());
-    ticksPSRight = (endSrv.response.rightTicks - beginSrv.response.rightTicks) / (end.toSec() - begin.toSec());
+    ticksPSLeft = tickSrv.response.leftTicks / p_samplingIntervallSecs;
+    ticksPSRight = tickSrv.response.rightTicks / p_samplingIntervallSecs;
     
     //convert ticks per second to meter per second
     result.set(ticksToMPS(ticksPSLeft), ticksToMPS(ticksPSRight));
@@ -133,7 +117,7 @@ float PIDController::ticksToMPS(unsigned long p_ticks)
     return result;
 }
 
-MotorVelocity PIDController::measureMouseVelocity()
+MotorVelocity PIDController::measureMouseVelocity(const float p_samplingIntervallSecs)
 {
     MotorVelocity result;
     

@@ -59,5 +59,5 @@ class BrickController:
         
     def resetMotors(self):
         for motor in self.__motors:
-            motor.reset_position()
+            motor.reset_position(True)
         

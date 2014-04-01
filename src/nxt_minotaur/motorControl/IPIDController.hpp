@@ -16,12 +16,10 @@ namespace minotaur
             
             virtual void setLeftMPS(const float p_mps) = 0;
             virtual void setRightMPS(const float p_mps) = 0;
-            virtual void setMeasureDuration(const unsigned int p_milli) = 0;
             virtual void setWheelCircumference(const float p_meter) = 0;
             
             virtual float getLeftMPS() const = 0;
             virtual float getRightMPS() const = 0;
-            virtual unsigned int getMeasureDurationMilli() const = 0;
             virtual float getWheelCircumference() const = 0;
             
             virtual void step(const float p_samplingIntervallSecs) = 0;

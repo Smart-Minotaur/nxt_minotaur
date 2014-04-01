@@ -18,8 +18,9 @@ def processMotorPowerMsg(power_msg):
     
 def handleGetTicksRqt(ticks_rqt):
     response = nxtTicksResponse()
-    response.leftTicks = brick.getMotorTicks(brick.id_left).tacho_count
-    response.rightTicks = brick.getMotorTicks(brick.id_right).tacho_count
+    response.leftTicks = brick.getMotorTicks(brick.id_left).block_tacho_count
+    response.rightTicks = brick.getMotorTicks(brick.id_right).block_tacho_count
+    brick.resetMotors()
     return response
 
 def handleGetUltrasonicRqt(ulso_rqt):
