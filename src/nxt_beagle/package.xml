@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-    <name>nxt_minotaur</name>
+    <name>nxt_beagle</name>
     <version>0.0.0</version>
-    <description>The nxt_minotaur package</description>
+    <description>Package that contains nodes for the Beagle Bone Black</description>
 
     <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
 
