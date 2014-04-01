@@ -8,11 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
 )
 
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
 ## Generate messages in the 'msg' folder
 add_message_files(
     FILES
@@ -27,46 +22,25 @@ add_service_files(
     nxtAddUltrasonic.srv
 )
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
 ## Generate added messages and services with any dependencies listed here
 generate_messages(   
     DEPENDENCIES
     std_msgs
 )
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
+catkin_package( )
 
-catkin_package(
-#    INCLUDE_DIRS include
-#  LIBRARIES nxt_minotaur
-#  CATKIN_DEPENDS message_runtime
-#  DEPENDS system_lib
-)
+include_directories(include ${catkin_INCLUDE_DIRS} motorControl)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+file( GLOB MOTOR_CONTROL_SOURCES motorControl/*.cpp )
+file( GLOB MOTOR_CONTROL_HEADERS motorControl/*.hpp )
+add_library(MotorControl ${MOTOR_CONTROL_SOURCES} ${MOTOR_CONTROL_HEADERS})
 
-add_executable(nxtTeleop nxtControl/test/nxtTeleop.cpp)
-target_link_libraries(nxtTeleop ${catkin_LIBRARIES})
-add_dependencies(nxtTeleop nxt_minotaur_generate_messages_cpp)
+file( GLOB TEST_SOURCES */test/*.cpp)
 
-add_executable(nxtLatency nxtControl/test/nxtLatency.cpp)
-target_link_libraries(nxtLatency ${catkin_LIBRARIES})
-add_dependencies(nxtLatency nxt_minotaur_generate_messages_cpp)
-
-add_executable(nxtMeassure nxtControl/test/nxtMeassure.cpp)
-target_link_libraries(nxtMeassure ${catkin_LIBRARIES})
-add_dependencies(nxtMeassure nxt_minotaur_generate_messages_cpp)
+#compile all test executeables
+foreach( testsourcefile ${TEST_SOURCES} )
+    get_filename_component(testname ${testsourcefile} NAME_WE)
+    add_executable(${testname} ${testsourcefile})
+    target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
+endforeach( testsourcefile ${TEST_SOURCES} )

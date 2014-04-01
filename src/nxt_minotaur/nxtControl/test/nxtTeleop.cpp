@@ -11,9 +11,9 @@
 #define KEYCODE_Q 0x71
 
 ros::Publisher powerPub;
-int kfd = 0;
 struct termios oldtio, currtio;
 struct sigaction sa;
+bool run = true;
 
 void setSignalAction();
 void sighandler(int sig);
@@ -33,6 +33,7 @@ int main(int argc, char** argv)
     
     initKeyHandling();
     eventLoop();
+    ros::shutdown();
     
     return 0;
 }
@@ -48,9 +49,7 @@ void setSignalAction()
 
 void sighandler(int sig)
 {
-    tcsetattr(0, TCSANOW, &oldtio);
-    ros::shutdown();
-    exit(0);
+    run = false;
 }
 
 void initKeyHandling()
@@ -77,12 +76,12 @@ void eventLoop()
     msg.leftMotor = 0;
     msg.rightMotor = 0;
     
-    while(true)
+    while(run)
     {
-        if(read(kfd, &keycode, 1) < 0)
+        if(read(0, &keycode, 1) < 0)
         {
             perror("read():");
-            exit(-1);
+            break;
         }
 
         switch(keycode)
@@ -121,6 +120,9 @@ void eventLoop()
             
         loop_rate.sleep();
     }
+    
+    tcsetattr(0, TCSANOW, &oldtio);
+    ROS_INFO("Eventloop terminated.");
 }
 
 void sendMsg(nxt_minotaur::nxtPower msg)
