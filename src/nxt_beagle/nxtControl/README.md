@@ -1,4 +1,8 @@
-# nxtInterface
+# nxtBrickControl
+
+##Description
+
+nxtBrickControl is a ROS-Node that provides an Interface to control the NXT-Brick via ROS. Furthermore UltrasonicSensor data and motor ticks can be read.
 
 ## Preparation
 
