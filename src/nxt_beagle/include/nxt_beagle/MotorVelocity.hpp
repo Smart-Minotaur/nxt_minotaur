@@ -18,6 +18,7 @@ namespace minotaur
         virtual ~MotorVelocity() { }
         
         void set(const float p_leftMPS, const float p_rightMPS);
+        void zero();
         
         MotorVelocity& operator+=(MotorVelocity const& motorVel);
         MotorVelocity& operator-=(MotorVelocity const& motorVel);

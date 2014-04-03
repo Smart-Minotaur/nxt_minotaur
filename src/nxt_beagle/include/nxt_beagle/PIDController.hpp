@@ -1,8 +1,9 @@
 #ifndef PID_CONTROLLER_HPP
 #define PID_CONTROLLER_HPP
 
-#include "IPIDController.hpp"
-#include "MotorVelocity.hpp"
+#include "nxt_beagle/IPIDController.hpp"
+
+#define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
 
 namespace minotaur
 {
@@ -19,16 +20,17 @@ namespace minotaur
         MotorVelocity lastDiff;
         MotorVelocity diffSum;
         
+        PIDParameter pidParameter;
+        
         int powerLeft;
         int powerRight;
         
-        unsigned int measureMS;
         float circumference;
         
         void measureCurrentVelocity(const float p_samplingIntervallSecs);
         MotorVelocity measureTickVelocity(const float p_samplingIntervallSecs);
         MotorVelocity measureMouseVelocity(const float p_samplingIntervallSecs);
-        float ticksToMPS(unsigned long p_ticks);
+        float ticksToMPS(const float p_ticksPS);
         void calculateDifference();
         void setMotorPower(const float p_samplingIntervallSecs);
         int pidMotorPower(const float p_currentDiff,
@@ -36,6 +38,8 @@ namespace minotaur
                                  const float p_diffSum,
                                  const int p_motorPercent,
                                  const float p_samplingIntervallSecs);
+       void printDebugInfoPerStep(); 
+       
         
     public:
         PIDController();
@@ -43,14 +47,15 @@ namespace minotaur
         
         void setMotorPublisher(ros::Publisher *p_motorPublisher );
         void setMotorClient(ros::ServiceClient *p_motorClient);
+        
+        void setVelocity(const MotorVelocity& p_velocity);
         void setWheelCircumference(const float p_meter);
+        void setPIDParameter(const PIDParameter& p_param);
         
-        void setLeftMPS(const float p_mps);
-        void setRightMPS(const float p_mps);
+        const MotorVelocity& getVelocity() const;
+        const MotorVelocity& getMeasuredVelocity() const;
         float getWheelCircumference() const;
-        
-        float getLeftMPS() const;
-        float getRightMPS() const;
+        const PIDParameter& getPIDParameter() const;
         
         void step(const float p_samplingIntervallSecs);
     };

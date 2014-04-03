@@ -1,16 +1,15 @@
-#include "PIDController.hpp"
+#include "nxt_beagle/PIDController.hpp"
 #include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/nxtPower.h"
 
-#define DEF_MEASURE_MS 15
 #define MS_PER_SECOND 1000
-#define DEGREE_PER_TICK 1
-#define DEGREE_PER_CIRCLE 360
+#define DEGREE_PER_TICK 1.0f
+#define DEGREE_PER_CIRCLE 360.0f
 #define DEF_WHEEL_CIRCUMFERENCE 0.16f
 
-#define KP 0.5f
-#define KI 0.3f
-#define KD 0.0f
+#define DEF_KP 0.5f
+#define DEF_KI 0.3f
+#define DEF_KD 0.1f
 
 #define MAX_MOTOR_POWER 90
 #define MIN_MOTOR_POWER -90
@@ -19,11 +18,10 @@
 
 namespace minotaur
 {
-
     PIDController::PIDController()
     :motorPublisher(NULL), motorClient(NULL), targetVelocity(),measuredVelocity(),
-    currentDiff(), lastDiff(), diffSum(),
-    measureMS(DEF_MEASURE_MS), circumference(DEF_WHEEL_CIRCUMFERENCE)
+    currentDiff(), lastDiff(), diffSum(), pidParameter(DEF_KP, DEF_KI, DEF_KD),
+    circumference(DEF_WHEEL_CIRCUMFERENCE)
     { }
 
     PIDController::~PIDController()
@@ -39,34 +37,40 @@ namespace minotaur
         motorClient = p_motorClient;
     }
 
-    void PIDController::setLeftMPS(const float p_mps)
+    void PIDController::setVelocity(const MotorVelocity& p_velocity)
     {
-        targetVelocity.leftMPS = p_mps;
-    }
-    void PIDController::setRightMPS(const float p_mps)
-    {
-        targetVelocity.rightMPS = p_mps;
+        targetVelocity = p_velocity;
     }
 
     void PIDController::setWheelCircumference(const float p_meter)
     {
         circumference = p_meter;
     }
-
-    float PIDController::getLeftMPS() const
+    
+    void PIDController::setPIDParameter(const PIDParameter& p_param)
     {
-        return targetVelocity.leftMPS;
+        pidParameter = p_param;
     }
 
-    float PIDController::getRightMPS() const
+    const MotorVelocity& PIDController::getVelocity() const
     {
-        return targetVelocity.rightMPS;
+        return targetVelocity;
+    }
+    
+    const MotorVelocity& PIDController::getMeasuredVelocity() const
+    {
+        return measuredVelocity;
     }
 
     float PIDController::getWheelCircumference() const
     {
         return circumference;
     }
+    
+     const PIDParameter& PIDController::getPIDParameter() const
+     {
+         return pidParameter;
+     }
 
     void PIDController::step(const float p_samplingIntervallSecs)
     {
@@ -75,6 +79,8 @@ namespace minotaur
         calculateDifference();
         
         setMotorPower(p_samplingIntervallSecs);
+        
+        printDebugInfoPerStep();
     }
 
     void PIDController::measureCurrentVelocity(const float p_samplingIntervallSecs)
@@ -87,8 +93,6 @@ namespace minotaur
         mouseVel = tickVel;
         
         measuredVelocity = (tickVel + mouseVel) / 2;
-        
-        ROS_INFO("Measured Velocity: left = %.2fmps; right = %.2fmps", measuredVelocity.leftMPS, measuredVelocity.rightMPS);
     }
 
     MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervallSecs)
@@ -96,14 +100,16 @@ namespace minotaur
         MotorVelocity result;
         ros::Time begin, end;
         nxt_beagle::nxtTicks tickSrv;
-        unsigned long ticksPSLeft, ticksPSRight;
+        float ticksPSLeft, ticksPSRight;
         
         //measure ticks, tick_count is automatically reset
         motorClient->call(tickSrv);
         
         //calculate ticks per second
-        ticksPSLeft = tickSrv.response.leftTicks / p_samplingIntervallSecs;
-        ticksPSRight = tickSrv.response.rightTicks / p_samplingIntervallSecs;
+        //samplingIntervall is needed, provided by the caller of step()
+        //if the time is really correct must ensured by the caller
+        ticksPSLeft = (float) (tickSrv.response.leftTicks) / p_samplingIntervallSecs;
+        ticksPSRight = (float) (tickSrv.response.rightTicks) / p_samplingIntervallSecs;
         
         //convert ticks per second to meter per second
         result.set(ticksToMPS(ticksPSLeft), ticksToMPS(ticksPSRight));
@@ -111,10 +117,10 @@ namespace minotaur
         return result;
     }
 
-    float PIDController::ticksToMPS(unsigned long p_ticks)
+    float PIDController::ticksToMPS(const float p_ticksPS)
     {
         float result;
-        result = ((p_ticks * DEGREE_PER_TICK) / DEGREE_PER_CIRCLE) * circumference;
+        result = ((p_ticksPS * DEGREE_PER_TICK) / DEGREE_PER_CIRCLE) * circumference;
         return result;
     }
 
@@ -127,10 +133,12 @@ namespace minotaur
 
     void PIDController::calculateDifference()
     {
+        //calculate difference between 'should be' and 'currently is' velocity
         lastDiff = currentDiff;
         currentDiff = targetVelocity - measuredVelocity;
         diffSum += currentDiff;
         
+        //diff sum has to be limited to prevent type overflow
         if(diffSum.leftMPS > MAX_DIFF_SUM_MPS)
             diffSum.leftMPS = MAX_DIFF_SUM_MPS;
         else if( diffSum.leftMPS < MIN_DIFF_SUM_MPS)
@@ -140,14 +148,14 @@ namespace minotaur
             diffSum.rightMPS = MAX_DIFF_SUM_MPS;
         else if( diffSum.rightMPS < MIN_DIFF_SUM_MPS)
             diffSum.rightMPS = MIN_DIFF_SUM_MPS;
-        
-        ROS_INFO("diffSum left = %.2f; right = %.2f", diffSum.leftMPS, diffSum.rightMPS);
-        ROS_INFO("currentDiff left = %.2f; right = %.2f",currentDiff.leftMPS, currentDiff.rightMPS);
     }
 
     void PIDController::setMotorPower(const float p_samplingIntervallSecs)
     {
         nxt_beagle::nxtPower msg;
+        
+        //if motor should stay still, no PID-Controller is needed
+        //just put power to 0
         if(targetVelocity.leftMPS != 0)
             powerLeft = pidMotorPower(currentDiff.leftMPS,
                                     lastDiff.leftMPS,
@@ -181,22 +189,31 @@ namespace minotaur
     {
         int tmp, result;
         float u_motor;
-
-        u_motor = KP * p_currentDiff + KI * p_samplingIntervallSecs * p_diffSum + KD * (p_currentDiff - p_lastDiff) / p_samplingIntervallSecs;
-
-        // attenuation of the sensibility of the sensor
+        
+        //calculate power factor via PID-Controller
+        u_motor = pidParameter.Kp * p_currentDiff + pidParameter.Ki * p_samplingIntervallSecs * p_diffSum + pidParameter.Kd * (p_currentDiff - p_lastDiff) / p_samplingIntervallSecs;
         tmp = u_motor * MAX_MOTOR_POWER;
 
-        // limitation of the minimum and maximum rotational speed
+        //limit motorpower
         result = p_motorPercent + tmp;
         if(result > MAX_MOTOR_POWER)
             result = MAX_MOTOR_POWER;
         if(result < MIN_MOTOR_POWER)
             result = MIN_MOTOR_POWER;
         
-        ROS_INFO("Power = %d",result);
-        ROS_INFO("U_MOTOR = %f", u_motor);
-        
         return result;
+    }
+    
+    void PIDController::printDebugInfoPerStep()
+    {
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Target Vel:     left = %.2f mps; right = %.2f mps", targetVelocity.leftMPS, targetVelocity.rightMPS);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Measured Vel:   left = %.2f mps; right = %.2f mps", measuredVelocity.leftMPS, measuredVelocity.rightMPS);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Cur Diff Vel:   left = %.2f mps; right = %.2f mps", currentDiff.leftMPS, currentDiff.rightMPS);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Last Diff Vel:  left = %.2f mps; right = %.2f mps", lastDiff.leftMPS, lastDiff.rightMPS);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Diff Sum:       left = %.2f mps; right = %.2f mps", diffSum.leftMPS, diffSum.rightMPS);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Power:          left = %d; right = %d", powerLeft, powerRight);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Circumference = %.4f m", circumference);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
     }
 }

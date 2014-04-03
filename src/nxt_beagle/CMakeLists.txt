@@ -7,6 +7,10 @@ set(NXT_BEAGLE_MINOR_VERSION 1)
 set(NXT_BEAGLE_PATCH_VERSION 0)
 set(NXT_BEAGLE_VERSION "${NXT_BEAGLE_MAJOR_VERSION}.${NXT_BEAGLE_MINOR_VERSION}.${NXT_BEAGLE_PATCH_VERSION}")
 
+set(NXT_BEAGLE_INCLUDE_DIRS "include")
+set(NXT_BEAGLE_HEADER_DIR "${NXT_BEAGLE_INCLUDE_DIRS}/nxt_beagle")
+get_filename_component(ABS_NXT_BEAGLE_HEADER_DIR ${NXT_BEAGLE_HEADER_DIR} ABSOLUTE)
+
 find_package(catkin REQUIRED COMPONENTS
     std_msgs
     roscpp
@@ -36,29 +40,30 @@ generate_messages(
 
 catkin_package( )
 
+include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS})
+
 #configure headers with cmake metainfo
-file( GLOB CONFIGURE_HEADERS global/*.hpp.in)
+file( GLOB CONFIGURE_HEADERS config_headers/*.hpp.in)
 
 foreach(configheader ${CONFIGURE_HEADERS})
     get_filename_component(configheadername ${configheader} NAME_WE)
-     get_filename_component(configheaderpath ${configheader} PATH)
     configure_file (
         "${configheader}"
-        "${configheaderpath}/${configheadername}.hpp"
+        "${ABS_NXT_BEAGLE_HEADER_DIR}/${configheadername}.hpp"
         )
-endforeach( configheader ${CONFIGURE_HEADERS} )
+endforeach(configheader ${CONFIGURE_HEADERS})
 
-include_directories(include ${catkin_INCLUDE_DIRS} motorControl)
-
+#compile MotorControl lib
 file( GLOB MOTOR_CONTROL_SOURCES motorControl/*.cpp )
-file( GLOB MOTOR_CONTROL_HEADERS motorControl/*.hpp )
-add_library(MotorControl ${MOTOR_CONTROL_SOURCES} ${MOTOR_CONTROL_HEADERS})
-
-file( GLOB TEST_SOURCES */test/*.cpp)
+add_library(MotorControl ${MOTOR_CONTROL_SOURCES})
+add_dependencies(MotorControl nxt_minotaur_generate_messages_cpp)
 
 #compile all test executeables
+file( GLOB TEST_SOURCES */test/*.cpp)
+
 foreach( testsourcefile ${TEST_SOURCES} )
     get_filename_component(testname ${testsourcefile} NAME_WE)
     add_executable(${testname} ${testsourcefile})
     target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
+    add_dependencies(${testname} nxt_minotaur_generate_messages_cpp)
 endforeach( testsourcefile ${TEST_SOURCES} )

@@ -1,4 +1,4 @@
-#include "MotorVelocity.hpp"
+#include "nxt_beagle/MotorVelocity.hpp"
 
 namespace minotaur
 {
@@ -7,6 +7,11 @@ namespace minotaur
     {
         leftMPS = p_leftMPS;
         rightMPS = p_rightMPS;
+    }
+    
+    void MotorVelocity::zero()
+    {
+        set(0,0);
     }
             
     const MotorVelocity operator+(MotorVelocity const& op_a, MotorVelocity const& op_b)

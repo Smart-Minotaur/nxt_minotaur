@@ -3,7 +3,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <exception>
-#include "PIDController.hpp"
+#include "nxt_beagle/PIDController.hpp"
 #include "nxt_beagle/nxtPower.h"
 #include "nxt_beagle/nxtTicks.h"
 
@@ -177,10 +177,10 @@ void eventLoop()
 
 void setMotor(const float p_leftmps, const float p_rightmps)
 {
+    minotaur::MotorVelocity velocity(p_leftmps, p_rightmps);
     pthread_mutex_lock(&motorMutex);
     
-    pidController.setLeftMPS(p_leftmps);
-    pidController.setRightMPS(p_rightmps);
+    pidController.setVelocity(velocity);
     
     pthread_mutex_unlock(&motorMutex);
 }
