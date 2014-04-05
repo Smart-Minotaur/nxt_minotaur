@@ -6,6 +6,7 @@
 #include "nxt_beagle/PIDController.hpp"
 #include "nxt_beagle/nxtPower.h"
 #include "nxt_beagle/nxtTicks.h"
+#include "nxt_beagle/Config.hpp"
 
 #define SAMPLE_INTERVALL 0.1f
 #define KEYCODE_R 0x43
@@ -13,9 +14,6 @@
 #define KEYCODE_U 0x41
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
-
-#define GET_TICKS_SRV "get_ticks"
-#define SET_MOTOR_POWER "cmd_pow"
 
 minotaur::PIDController pidController;
 pthread_t thread;
@@ -61,8 +59,8 @@ void initPIDController(ros::NodeHandle p_handle)
 {
     ROS_INFO("Initializing PIDController...");
     
-    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(SET_MOTOR_POWER, 1000);
-    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(GET_TICKS_SRV);
+    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
+    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
     
     pidController.setMotorPublisher(&powerPublisher);
     pidController.setMotorClient(&tickClient);

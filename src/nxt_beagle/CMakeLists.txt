@@ -22,6 +22,11 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
     FILES
     nxtPower.msg
+    MVelocity.msg
+    RVelocity.msg
+    SamplingInterval.msg
+    UltraSensor.msg
+    PIDParam.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -38,7 +43,10 @@ generate_messages(
     std_msgs
 )
 
-catkin_package( )
+catkin_package(
+    INCLUDE_DIRS include
+    CATKIN_DEPENDS message_runtime
+)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS})
 
@@ -56,7 +64,7 @@ endforeach(configheader ${CONFIGURE_HEADERS})
 #compile MotorControl lib
 file( GLOB MOTOR_CONTROL_SOURCES motorControl/*.cpp )
 add_library(MotorControl ${MOTOR_CONTROL_SOURCES})
-add_dependencies(MotorControl nxt_minotaur_generate_messages_cpp)
+add_dependencies(MotorControl nxt_beagle_generate_messages_cpp)
 
 #compile all test executeables
 file( GLOB TEST_SOURCES */test/*.cpp)
@@ -65,5 +73,5 @@ foreach( testsourcefile ${TEST_SOURCES} )
     get_filename_component(testname ${testsourcefile} NAME_WE)
     add_executable(${testname} ${testsourcefile})
     target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
-    add_dependencies(${testname} nxt_minotaur_generate_messages_cpp)
+    add_dependencies(${testname} nxt_beagle_generate_messages_cpp)
 endforeach( testsourcefile ${TEST_SOURCES} )

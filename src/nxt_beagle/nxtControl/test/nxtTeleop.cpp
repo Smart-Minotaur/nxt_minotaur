@@ -3,6 +3,7 @@
 #include <poll.h>
 #include "ros/ros.h"
 #include "nxt_beagle/nxtPower.h"
+#include "nxt_beagle/Config.hpp"
 
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
@@ -29,7 +30,7 @@ int main(int argc, char** argv)
     
     ros::NodeHandle n;
     
-    powerPub = n.advertise<nxt_beagle::nxtPower>("cmd_pow", 1000);
+    powerPub = n.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
     
     initKeyHandling();
     eventLoop();

@@ -2,27 +2,10 @@
 #define IROBOT_CONTROLLER_HPP_
 
 #include "nxt_beagle/IPIDController.hpp"
+#include "nxt_beagle/RobotVelocity.hpp"
 
 namespace minotaur
 {
-    class RobotVelocity
-    {
-    public:
-        float linearVelocity;
-        float angularVelocity;
-        
-        RobotVelocity()
-        :linearVelocity(0.0f), angularVelocity(0.0f) { }
-        
-        RobotVelocity(const float p_linearVel, const float p_angularVel)
-        :linearVelocity(p_linearVel), angularVelocity(p_angularVel) { }
-        
-        virtual ~RobotVelocity() { }
-        
-        void set(const float p_linearVel, const float p_angularVel)
-        { linearVelocity = p_linearVel; angularVelocity = p_angularVel;}
-    };
-        
     class IRobotController
     {
     public:

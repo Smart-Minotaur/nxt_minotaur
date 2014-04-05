@@ -6,10 +6,28 @@
 #define NXT_BEAGLE_PATCH_VERSION @NXT_BEAGLE_PATCH_VERSION@
 #define NXT_BEAGLE_VERSION @NXT_BEAGLE_VERSION@
 
-#define NXT_POWER_TOPIC "cmd_pow"
-#define NXT_GET_TICKS_SRV "get_ticks"
-#define NXT_GET_ULTRASONIC_SRV "get_ultrasonic"
-#define NXT_ADD_ULTRASONIC_SRV "add_ultrasonic"
+#define NXT_PORT1 1
+#define NXT_PORT2 2
+#define NXT_PORT3 3
+#define NXT_PORT4 4
+
+#define NXT_BEAGLE_DIR "/nxt_beagle"
+
+#define NXT_POWER_TOPIC "/cmd_pow"
+#define NXT_ULTRA_SENSOR_TOPIC "/measure_ultrasensor"
+#define NXT_SET_ROBOT_VELOCITY_TOPIC "/cmd_rvel"
+#define NXT_TARGET_ROBOT_VELOCITY_TOPIC "/target_rvel"
+#define NXT_TARGET_MOTOR_VELOCITY_TOPIC "/target_mvel"
+#define NXT_MEASURE_ROBOT_VELOCITY_TOPIC "/measure_rvel"
+#define NXT_MEASURE_MOTOR_VELOCITY_TOPIC "/measure_mvel"
+#define NXT_SET_SAMPLING_INTERVAL_TOPIC "/set_sampling_intervall"
+#define NXT_SET_PID_PARAMETER "/set_pid_param"
+
+#define NXT_GET_TICKS_SRV "/get_ticks"
+#define NXT_GET_ULTRASONIC_SRV "/get_ultrasonic"
+#define NXT_ADD_ULTRASONIC_SRV "/add_ultrasonic"
+
+
 
 #endif
 

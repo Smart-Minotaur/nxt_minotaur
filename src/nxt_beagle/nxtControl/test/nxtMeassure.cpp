@@ -1,11 +1,9 @@
 #include <ros/ros.h>
 #include "nxt_beagle/nxtUltrasonic.h"
 #include "nxt_beagle/nxtAddUltrasonic.h"
+#include "nxt_beagle/Config.hpp"
 #include <signal.h>
 
-#define GET_UTLTRASONIC_SRV "get_ultrasonic"
-#define ADD_UTLTRASONIC_SRV "add_ultrasonic"
-#define ULTRASONIC_PORT 1
 #define MEASSURE_FREQ 60
 
 int ultrasonicID = -1;
@@ -53,14 +51,14 @@ void initClients(ros::NodeHandle &p_handle)
     
     // to connect to certain services its name is needed
     // the templyte types are the message types used to communicate
-    ultrasonicClient = p_handle.serviceClient<nxt_beagle::nxtUltrasonic>(GET_UTLTRASONIC_SRV);
-    addUltrasonicClient = p_handle.serviceClient<nxt_beagle::nxtAddUltrasonic>(ADD_UTLTRASONIC_SRV);
+    ultrasonicClient = p_handle.serviceClient<nxt_beagle::nxtUltrasonic>(NXT_GET_ULTRASONIC_SRV);
+    addUltrasonicClient = p_handle.serviceClient<nxt_beagle::nxtAddUltrasonic>(NXT_ADD_ULTRASONIC_SRV);
 }
 
 void addUltrasonic()
 {
     nxt_beagle::nxtAddUltrasonic srv;
-    srv.request.port = ULTRASONIC_PORT;
+    srv.request.port = NXT_PORT1;
     
     ROS_INFO("Adding Ultrasonicsensor...");
     if(addUltrasonicClient.call(srv))
@@ -70,7 +68,7 @@ void addUltrasonic()
     }
     else
     {
-        ROS_ERROR("Could not add UltrasonicSensor on port %d.", ULTRASONIC_PORT);
+        ROS_ERROR("Could not add UltrasonicSensor on port %d.", NXT_PORT1);
     }
 }
 
