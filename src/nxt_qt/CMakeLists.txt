@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 file( GLOB NXT_QT_INCLUDE_DIRS "include")
-include_directories(${catkin_INCLUDE_DIRS} ${NXT_QT_INCLUDE_DIRS} /usr/include/qwt)
+include_directories(${catkin_INCLUDE_DIRS} ${NXT_QT_INCLUDE_DIRS})
 
 catkin_package()
 

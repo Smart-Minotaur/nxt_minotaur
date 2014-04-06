@@ -62,7 +62,7 @@ foreach(configheader ${CONFIGURE_HEADERS})
 endforeach(configheader ${CONFIGURE_HEADERS})
 
 #compile MotorControl lib
-file( GLOB MOTOR_CONTROL_SOURCES motorControl/*.cpp )
+file( GLOB MOTOR_CONTROL_SOURCES MotorControl/*.cpp )
 add_library(MotorControl ${MOTOR_CONTROL_SOURCES})
 add_dependencies(MotorControl nxt_beagle_generate_messages_cpp)
 
@@ -75,3 +75,8 @@ foreach( testsourcefile ${TEST_SOURCES} )
     target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
     add_dependencies(${testname} nxt_beagle_generate_messages_cpp)
 endforeach( testsourcefile ${TEST_SOURCES} )
+
+#compile RobotControl node
+add_executable(RobotControl RobotControl/RobotControl.cpp)
+target_link_libraries(RobotControl ${catkin_LIBRARIES} MotorControl)
+add_dependencies(RobotControl nxt_beagle_generate_messages_cpp)
