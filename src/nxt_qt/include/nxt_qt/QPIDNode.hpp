@@ -3,10 +3,24 @@
 
 #include <ros/ros.h>
 #include <QThread>
+#include <QMetaType>
 #include "nxt_beagle/MVelocity.h"
+#include "nxt_beagle/MotorVelocity.hpp"
 
 namespace minotaur
 {
+    class QMotorVelocity : public MotorVelocity
+    {
+    public:
+        QMotorVelocity()
+        :MotorVelocity() { }
+        QMotorVelocity(const float p_left, const float p_right)
+        :MotorVelocity(p_left, p_right) { }
+        QMotorVelocity(const QMotorVelocity& p_velocity)
+        :MotorVelocity(p_velocity) { }
+        virtual ~QMotorVelocity() { }
+    };
+    
     class QPIDNode : public QThread
     {
         Q_OBJECT
@@ -36,9 +50,11 @@ namespace minotaur
         
     Q_SIGNALS:
         void rosShutdown();
-        void targetMotorVelocityUpdated(const nxt_beagle::MVelocity& p_msg);
-        void measuredMotorVelocityUpdated(const nxt_beagle::MVelocity& p_msg);
+        void targetMotorVelocityUpdated(const QMotorVelocity p_msg);
+        void measuredMotorVelocityUpdated(const QMotorVelocity p_msg);
     };
 }
+
+Q_DECLARE_METATYPE(minotaur::QMotorVelocity);
 
 #endif

@@ -22,14 +22,16 @@ namespace minotaur {
         float getKI();
         float getKD();
         
+        void updateProgressBarColor(QProgressBar *p_progressbar);
+        
     private Q_SLOTS:
         void brake();
         void setPID();
         void updatePIDValues();
         void setVelocity();
         void updateVelocityValues();
-        void processTargetMotorVelocity(const nxt_beagle::MVelocity& p_msg);
-        void processMeasuredMotorVelocity(const nxt_beagle::MVelocity& p_msg);
+        void processTargetMotorVelocity(const QMotorVelocity p_velocity);
+        void processMeasuredMotorVelocity(const QMotorVelocity p_velocity);
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();

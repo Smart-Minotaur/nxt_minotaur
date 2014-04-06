@@ -57,11 +57,13 @@ namespace minotaur
     
     void QPIDNode::processTargetMotorVelocity(const MVelocity& p_msg)
     {
-       Q_EMIT targetMotorVelocityUpdated(p_msg);
+       QMotorVelocity vel(p_msg.leftVelocity, p_msg.rightVelocity);
+       Q_EMIT targetMotorVelocityUpdated(vel);
     }
     
     void QPIDNode::processMeasuredMotorVelocity(const MVelocity& p_msg)
     {
-        Q_EMIT measuredMotorVelocityUpdated(p_msg);
+        QMotorVelocity vel(p_msg.leftVelocity, p_msg.rightVelocity);
+        Q_EMIT measuredMotorVelocityUpdated(vel);
     }
 }
