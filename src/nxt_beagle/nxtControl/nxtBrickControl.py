@@ -5,7 +5,7 @@ import thread
 import time
 import nxtBrick
 import nxt.locator
-from nxt_beagle.msg import nxtPower
+from nxt_beagle.msg import nxtPower, SamplingInterval, UltraSensor
 from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
 
 brick = nxtBrick.BrickController()
@@ -31,11 +31,11 @@ def getSleepTime(delta):
         result = 0.0
     return result
 
-def measureUltraSonicThread(sensor_id):
+def measureUltraSonicThread(*sensor_id):
     #create publisher for each ultrasonic sensor
-    sensor_publisher = rospy.Publisher(_measure_ultra_topic + str(sensor_id), UltraSensor)
+    sensor_publisher = rospy.Publisher(_measure_ultra_topic + str(sensor_id[0]), UltraSensor)
     msg = UltraSensor()
-    rospy.loginfo("Added Ultrasonic Sensor with ID: %d", sensor_id)
+    rospy.loginfo("Added Ultrasonic Sensor with ID: %d", sensor_id[0])
     
     #as long as ros runs thread has to run
     while not rospy.is_shutdown():
@@ -44,7 +44,7 @@ def measureUltraSonicThread(sensor_id):
         sleep_time = 0.2
         if sample:
             begin = rospy.get_rostime()
-            msg.distance = brick.getUltrasonicData(sensor_id)
+            msg.distance = brick.getUltrasonicData(sensor_id[0])
             sensor_publisher.publish(msg)
             end = rospy.get_rostime()
             diff = end - begin
@@ -71,7 +71,7 @@ def handleAddUltrasonicRqt(addulso_rqt):
     response.sensorID = brick.addUltrasonicSensor(addulso_rqt.port)
     
     #create ultrasonic publisher thread
-    _threads.append(thread.start_new_thread(measureUltraSonicThread,response.sensorID))
+    _threads.append(thread.start_new_thread(measureUltraSonicThread,(response.sensorID,)))
     return response
 
 def initNodeCommunication():
