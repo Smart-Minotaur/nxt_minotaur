@@ -13,10 +13,13 @@
 #define NODE_NAME "RobotControl"
 #define WHEEL_TRACK 0.2f
 #define WHEEL_CIRCUMFERENCE 0.16f
+#define DEF_SAMPLING_INTERVAL 0.1f
 
-volatile float samplingSec;
+volatile float samplingSec = DEF_SAMPLING_INTERVAL;
 minotaur::RobotController robotController;
-bool publishTargetMVel = true, publishMeasuredMvel = true, publishTargetRVel = false;
+bool publishTargetMVel = true;
+bool publishMeasuredMvel = true;
+bool publishTargetRVel = false;
 
 ros::Publisher targetMVelPub;
 ros::Publisher measuredMVelPub;
@@ -92,7 +95,6 @@ bool init(ros::NodeHandle& p_handle)
         return false;
     }
     
-    
     ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_MOTOR_VELOCITY_TOPIC);
     targetMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_TARGET_MOTOR_VELOCITY_TOPIC, 1000);
     ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_MOTOR_VELOCITY_TOPIC);
@@ -162,6 +164,8 @@ void* robotThread(void *arg)
 {
     ros::Time begin, end;
     float sleepSec;
+    
+    ROS_INFO("RobotThread started.");
     
     while(run)
     {

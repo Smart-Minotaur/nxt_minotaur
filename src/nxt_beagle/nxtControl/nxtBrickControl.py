@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import threading
 import thread
 import time
 import nxtBrick
@@ -9,15 +10,49 @@ from nxt_beagle.msg import nxtPower, SamplingInterval, UltraSensor
 from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
 
 brick = nxtBrick.BrickController()
-_pow_topic = "cmd_pow"
-_ticks_srv = "get_ticks"
-_ulso_srv = "get_ultrasonic"
-_addulso_srv = "add_ultrasonic"
-_measure_ultra_topic = "measure_ultrasensor"
-_set_sampling_topic = "set_sampling_interval"
+_pow_topic = "/cmd_pow"
+_ticks_srv = "/get_ticks"
+_ulso_srv = "/get_ultrasonic"
+_addulso_srv = "/add_ultrasonic"
+_measure_ultra_topic = "/measure_ultrasensor"
+_set_sampling_topic = "/set_sampling_interval"
 _sampling_interval = 0.0
 _threads = []
 _sampling_lock = thread.allocate_lock()
+
+class UltraSensorThread (threading.Thread):
+    
+    __sensorID = -1
+    
+    def __init__(self, p_sensorID):
+        threading.Thread.__init__(self)
+        self.__sensorID = p_sensorID
+    
+    def run(self):
+        __threadTopic = _measure_ultra_topic + str(self.__sensorID)
+        rospy.loginfo("Added Ultrasonic Sensor with ID: %d", self.__sensorID)
+        
+        try:
+            sensor_publisher = rospy.Publisher(__threadTopic, UltraSensor)
+            msg = UltraSensor()
+            
+            #as long as ros runs thread has to run
+            while not rospy.is_shutdown():
+                with _sampling_lock:
+                    sample = _sampling_interval > 0
+                sleep_time = 0.2
+                if sample:
+                    begin = rospy.get_rostime()
+                    msg.distance = brick.getUltrasonicData(self.__sensorID)
+                    sensor_publisher.publish(msg)
+                    end = rospy.get_rostime()
+                    diff = end - begin
+                    sleep_time = getSleepTime(diff.secs)
+                
+                time.sleep(sleep_time)
+        except nxt.locator.BrickNotFoundError as e:
+            rospy.logerr("SensorID: %d. Thread crashed: %s ", self.__sensorID, e.what())
+        rospy.loginfo("Thread \"%s\" terminated", __threadTopic)
 
 def processSamplingIntervalMsg(sampling_msg):
     with _sampling_lock:
@@ -30,27 +65,6 @@ def getSleepTime(delta):
     if(result < 0.0):
         result = 0.0
     return result
-
-def measureUltraSonicThread(*sensor_id):
-    #create publisher for each ultrasonic sensor
-    sensor_publisher = rospy.Publisher(_measure_ultra_topic + str(sensor_id[0]), UltraSensor)
-    msg = UltraSensor()
-    rospy.loginfo("Added Ultrasonic Sensor with ID: %d", sensor_id[0])
-    
-    #as long as ros runs thread has to run
-    while not rospy.is_shutdown():
-        with _sampling_lock:
-            sample = _sampling_interval > 0
-        sleep_time = 0.2
-        if sample:
-            begin = rospy.get_rostime()
-            msg.distance = brick.getUltrasonicData(sensor_id[0])
-            sensor_publisher.publish(msg)
-            end = rospy.get_rostime()
-            diff = end - begin
-            sleep_time = getSleepTime(diff.secs)
-        
-        time.sleep(sleep_time)
 
 def processMotorPowerMsg(power_msg):
     rospy.logdebug("nxtPower Message: left: %s right: %s", power_msg.leftMotor, power_msg.rightMotor)
@@ -71,7 +85,8 @@ def handleAddUltrasonicRqt(addulso_rqt):
     response.sensorID = brick.addUltrasonicSensor(addulso_rqt.port)
     
     #create ultrasonic publisher thread
-    _threads.append(thread.start_new_thread(measureUltraSonicThread,(response.sensorID,)))
+    _threads.append(UltraSensorThread(response.sensorID))
+    _threads[len(_threads) - 1].start()
     return response
 
 def initNodeCommunication():

@@ -21,6 +21,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "nxtUltrasonicSensor");
     ros::NodeHandle n;
     
+    setSignalAction();
+    
     initClients(n);
     addUltrasonic();
     
@@ -87,7 +89,6 @@ void measureLoop()
         ultrasonicClient.call(srv);
         distance = srv.response.distance;
         ROS_INFO("Distance: %d", distance);
-        ros::spinOnce();
         loopRate.sleep();
     }
 }
