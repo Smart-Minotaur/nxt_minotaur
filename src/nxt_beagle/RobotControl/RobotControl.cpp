@@ -11,8 +11,8 @@
 #include "nxt_beagle/nxtTicks.h"
 
 #define NODE_NAME "RobotControl"
-#define WHEEL_TRACK 0.2f
-#define WHEEL_CIRCUMFERENCE 0.16f
+#define WHEEL_TRACK HERACLES_WHEEL_TRACK
+#define WHEEL_CIRCUMFERENCE HERACLES_WHEEL_CIRCUMFERENCE
 #define DEF_SAMPLING_INTERVAL 0.1f
 
 volatile float samplingSec = DEF_SAMPLING_INTERVAL;

@@ -11,6 +11,9 @@
 #define NXT_PORT3 3
 #define NXT_PORT4 4
 
+#define HERACLES_WHEEL_CIRCUMFERENCE 0.16f
+#define HERACLES_WHEEL_TRACK 0.11f
+
 #define NXT_BEAGLE_DIR "/nxt_beagle"
 
 #define NXT_POWER_TOPIC "/cmd_pow"
@@ -26,8 +29,6 @@
 #define NXT_GET_TICKS_SRV "/get_ticks"
 #define NXT_GET_ULTRASONIC_SRV "/get_ultrasonic"
 #define NXT_ADD_ULTRASONIC_SRV "/add_ultrasonic"
-
-
 
 #endif
 

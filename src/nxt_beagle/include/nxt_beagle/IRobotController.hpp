@@ -15,6 +15,7 @@ namespace minotaur
         virtual const RobotVelocity& getRobotVelocity() const = 0;
         virtual IPIDController& getPIDController() = 0;
         virtual float getWheelTrack() const = 0;
+        virtual RobotVelocity getMeasuredVelocity() const = 0;
         
         virtual void setRobotVelocity(const RobotVelocity& p_velocity) = 0;
         virtual void setWheelTrack(const float p_wheelTrack) = 0;
