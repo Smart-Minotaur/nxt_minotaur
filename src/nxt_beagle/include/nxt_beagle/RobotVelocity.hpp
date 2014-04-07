@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef ROBOT_VELOCITY_HPP_
 #define ROBOT_VELOCITY_HPP_
 

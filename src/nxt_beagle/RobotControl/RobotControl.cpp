@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include <ros/ros.h>
 #include <pthread.h>
 #include <signal.h>

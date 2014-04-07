@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Author: Fabian Meyer
+
 import nxt.locator
 import nxt.motor
 import nxt.sensor

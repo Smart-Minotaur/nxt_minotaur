@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef IPID_CONTROLLER_HPP
 #define IPID_CONTROLLER_HPP
 
@@ -6,7 +10,10 @@
 #include "nxt_beagle/PIDParameter.hpp"
 
 namespace minotaur
-{ 
+{
+    /* This class provides an Interface for a PID-controller.
+     * Look up PID-controller for more information about PID-controller.
+     * The controller is used to regulate the velocity of the robot. */
     class IPIDController
     {
         public:

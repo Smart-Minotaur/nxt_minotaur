@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include "nxt_beagle/PIDController.hpp"
 #include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/nxtPower.h"

@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include <ros/ros.h>
 #include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/nxtUltrasonic.h"

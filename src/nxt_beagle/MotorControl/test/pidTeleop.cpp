@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include <pthread.h>
 #include <ros/ros.h>
 #include <termios.h>

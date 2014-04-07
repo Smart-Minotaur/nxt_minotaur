@@ -7,8 +7,9 @@ find_package(catkin REQUIRED COMPONENTS
     nxt_beagle
 )
 
-file( GLOB NXT_QT_INCLUDE_DIRS "include")
+file( GLOB NXT_QT_INCLUDE_DIRS "include" "/usr/local/qwt-6.0.1/include")
 include_directories(${catkin_INCLUDE_DIRS} ${NXT_QT_INCLUDE_DIRS} ${QT_USE_FILE})
+link_directories("/usr/local/qwt-6.0.1/lib")
 
 catkin_package()
 
@@ -30,7 +31,7 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 
 add_executable(QPIDControl ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(QPIDControl ${QT_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(QPIDControl ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt)
 add_dependencies(QPIDControl nxt_beagle_generate_messages_cpp)
 install(TARGETS QPIDControl RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

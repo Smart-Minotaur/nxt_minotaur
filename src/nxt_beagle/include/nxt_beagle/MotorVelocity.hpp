@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef MOTOR_VELOCITY_HPP
 #define MOTOR_VELOCITY_HPP
 

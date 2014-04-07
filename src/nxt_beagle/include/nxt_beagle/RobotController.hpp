@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef ROBOT_CONTROLLER_HPP_
 #define ROBOT_CONTROLLER_HPP_
 

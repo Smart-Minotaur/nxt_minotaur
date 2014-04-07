@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef PID_CONTROLLER_HPP
 #define PID_CONTROLLER_HPP
 

@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef IROBOT_CONTROLLER_HPP_
 #define IROBOT_CONTROLLER_HPP_
 
@@ -6,6 +10,9 @@
 
 namespace minotaur
 {
+    /* This class provides an Interface to control the Robot.
+     * The robot is controlled by setting the linear- and angular velocity.
+     * To keep the right velocity, a PID controller is used (see IPIDController.hpp). */
     class IRobotController
     {
     public:
