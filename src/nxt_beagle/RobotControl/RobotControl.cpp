@@ -146,6 +146,7 @@ void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg)
 
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
 {
+    ROS_INFO("Sampling Interval changed to %.3f sec.", p_msg.sec);
     pthread_mutex_lock(&robotMutex);
     
     samplingSec = p_msg.sec;
@@ -156,9 +157,11 @@ void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg)
 void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg)
 {
     minotaur::PIDParameter params(p_msg.Kp, p_msg.Ki, p_msg.Kd);
-    
+    ROS_INFO("PIDParameter changed to: Kp = %.4f; Ki = %.4f; Kd = %.4f.",params.Kp, params.Ki, params.Kd);
+             
     pthread_mutex_lock(&robotMutex);
     
+     
     robotController.getPIDController().setPIDParameter(params);
     
     pthread_mutex_unlock(&robotMutex);

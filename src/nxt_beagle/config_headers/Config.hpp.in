@@ -23,7 +23,7 @@
 #define NXT_TARGET_MOTOR_VELOCITY_TOPIC "/target_mvel"
 #define NXT_MEASURE_ROBOT_VELOCITY_TOPIC "/measure_rvel"
 #define NXT_MEASURE_MOTOR_VELOCITY_TOPIC "/measure_mvel"
-#define NXT_SET_SAMPLING_INTERVAL_TOPIC "/set_sampling_intervall"
+#define NXT_SET_SAMPLING_INTERVAL_TOPIC "/set_sampling_interval"
 #define NXT_SET_PID_PARAMETER "/set_pid_param"
 
 #define NXT_GET_TICKS_SRV "/get_ticks"

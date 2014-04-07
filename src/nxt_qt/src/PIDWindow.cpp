@@ -3,6 +3,7 @@
 
 #define MAX_LIN_VEL 0.5f
 #define MAX_ANG_VEL 2.0f
+#define MAX_PLOT_VEL 0.3
 
 #define MAX_KP 2.0f
 #define MAX_KI 2.0f
@@ -15,8 +16,6 @@ using namespace Qt;
 
 namespace minotaur
 {
-    
-    
     PIDWindow::PIDWindow(QWidget *parent)
     :QMainWindow(parent)
     {
@@ -65,6 +64,40 @@ namespace minotaur
         RightTargetProgressBar->setProperty("defaultStyleSheet", RightTargetProgressBar->styleSheet());
         LeftMeasuredProgressBar->setProperty("defaultStyleSheet", LeftMeasuredProgressBar->styleSheet());
         RightMeasuredProgressBar->setProperty("defaultStyleSheet", RightMeasuredProgressBar->styleSheet());
+        
+        initPlotComponents();
+    }
+
+    void PIDWindow::initPlotComponents()
+    {
+        memset(leftSamples, 0, SAMPLE_RANGE * sizeof (double));
+        memset(rightSamples, 0, SAMPLE_RANGE * sizeof (double)); 
+        for(int i = 0; i < SAMPLE_RANGE; i++)
+            xSamples[i] = i;
+        
+        sampleCount = 0;
+        
+        leftCurve.setPen(QColor(Qt::red));
+        leftCurve.setSamples(xSamples, leftSamples, SAMPLE_RANGE);
+        rightCurve.setPen(QColor(Qt::green));
+        rightCurve.setSamples(xSamples, rightSamples, SAMPLE_RANGE);
+        
+        leftCurve.attach(MeasureLeftPlot);
+        rightCurve.attach(MeasureRightPlot);
+        
+        MeasureLeftPlot->setTitle("Left Motor");
+        MeasureLeftPlot->setCanvasBackground(QColor(Qt::white));
+        MeasureLeftPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
+        MeasureLeftPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_VEL, MAX_PLOT_VEL, 0.05);
+        MeasureLeftPlot->setAxisTitle(QwtPlot::xBottom, "step");
+        MeasureLeftPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
+        
+        MeasureRightPlot->setTitle("Right Motor");
+        MeasureRightPlot->setCanvasBackground(QColor(Qt::white));
+        MeasureRightPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
+        MeasureRightPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_VEL, MAX_PLOT_VEL, 0.05);
+        MeasureRightPlot->setAxisTitle(QwtPlot::xBottom, "step");
+        MeasureRightPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
     }
     
     QPIDNode& PIDWindow::getPIDNode()
@@ -144,6 +177,12 @@ namespace minotaur
     
     void PIDWindow::processMeasuredMotorVelocity(const QMotorVelocity p_velocity)
     {
+        updateMeasuredProgressBars(p_velocity);
+        updateMeasuredPlot(p_velocity);
+    }
+    
+    void PIDWindow::updateMeasuredProgressBars(const QMotorVelocity& p_velocity)
+    {
         int value = abs((p_velocity.leftMPS / MAX_LIN_VEL) * 100);
         LeftMeasuredProgressBar->setValue(value);
         updateProgressBarColor(LeftMeasuredProgressBar);
@@ -155,6 +194,21 @@ namespace minotaur
         RightMeasuredValueLabel->setText(QString::number(p_velocity.rightMPS, 'f', 2));
     }
     
+    void PIDWindow::updateMeasuredPlot(const QMotorVelocity& p_velocity)
+    {
+        leftSamples[sampleCount] = p_velocity.leftMPS;
+        rightSamples[sampleCount] = p_velocity.rightMPS;
+        
+        leftCurve.setSamples(xSamples, leftSamples, SAMPLE_RANGE);
+        rightCurve.setSamples(xSamples, rightSamples, SAMPLE_RANGE);
+        
+        MeasureLeftPlot->replot();
+        MeasureRightPlot->replot();
+        
+        ++sampleCount;
+        sampleCount %= SAMPLE_RANGE;
+    }
+    
     void PIDWindow::updateProgressBarColor(QProgressBar *p_progressbar)
     {
         if(p_progressbar->value() <= 50)
@@ -163,6 +217,11 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: yellow; }");
         else
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
+    }
+    
+    void PIDWindow::setInitInterval()
+    {
+        pidNode.setSamplingInterval(0.02f);
     }
     
 }
