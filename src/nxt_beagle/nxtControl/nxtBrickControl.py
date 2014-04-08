@@ -8,7 +8,7 @@ import thread
 import time
 import nxtBrick
 import nxt.locator
-from nxt_beagle.msg import nxtPower, SamplingInterval, UltraSensor
+from nxt_beagle.msg import nxtPower, SamplingInterval, UltraSensor, ClearSensor
 from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
 
 brick = nxtBrick.BrickController()
@@ -18,9 +18,11 @@ _ulso_srv = "/get_ultrasonic"
 _addulso_srv = "/add_ultrasonic"
 _measure_ultra_topic = "/measure_ultrasensor"
 _set_sampling_topic = "/set_sampling_interval"
+_clear_sensor_topic = "/clear_sensor"
 _sampling_interval = 0.0
 _threads = []
 _sampling_lock = thread.allocate_lock()
+_run_sensor = True
 
 class UltraSensorThread (threading.Thread):
     
@@ -39,7 +41,7 @@ class UltraSensorThread (threading.Thread):
             msg = UltraSensor()
             
             #as long as ros runs thread has to run
-            while not rospy.is_shutdown():
+            while not rospy.is_shutdown() and _run_sensor:
                 with _sampling_lock:
                     sample = _sampling_interval > 0
                 sleep_time = 0.2
@@ -56,6 +58,19 @@ class UltraSensorThread (threading.Thread):
             rospy.logerr("SensorID: %d. Thread crashed: %s ", self.__sensorID, e.what())
         rospy.loginfo("Thread \"%s\" terminated", __threadTopic)
 
+def joinSensorThreads():
+    for t in _threads:
+        t.join()
+        
+def processClearSensorMsg(clear_msg):
+    ROS_INFO("Joining Sensor threads...")
+    _run_sensor = False
+    joinSensorThreads()
+    _threads[:] = []
+    ROS_INFO("Clear sensor from Brick...")
+    _brick.clearSensors()
+    _run_sensor = True
+        
 def processSamplingIntervalMsg(sampling_msg):
     with _sampling_lock:
         _sampling_interval = sampling_msg.msec / 1000.0
@@ -98,6 +113,9 @@ def initNodeCommunication():
     rospy.loginfo("Subscribing to topic \"%s\"...", _set_sampling_topic)
     rospy.Subscriber(_set_sampling_topic, SamplingInterval, processSamplingIntervalMsg)
     
+    rospy.loginfo("Subscribing to topic \"%s\"...", _clear_sensor_topic)
+    rospy.Subscriber(_clear_sensor_topic, ClearSensor, processClearSensorMsg)
+    
     rospy.loginfo("Offering service \"%s\"...", _ticks_srv)
     rospy.Service(_ticks_srv, nxtTicks, handleGetTicksRqt)
     
@@ -121,8 +139,7 @@ def startControl():
     
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
-    for t in _threads:
-        t.join()
+    joinSensorThreads()
 
 if __name__ == '__main__':
     startControl()

@@ -62,4 +62,7 @@ class BrickController:
     def resetMotors(self):
         for motor in self.__motors:
             motor.reset_position(True)
+            
+    def clearSensors(self):
+        self.__ultrasonic_sensors[:] = []
         
