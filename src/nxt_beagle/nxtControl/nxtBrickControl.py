@@ -58,7 +58,7 @@ class UltraSensorThread (threading.Thread):
 
 def processSamplingIntervalMsg(sampling_msg):
     with _sampling_lock:
-        _sampling_interval = sampling_msg.sec
+        _sampling_interval = sampling_msg.msec / 1000.0
 
 def getSleepTime(delta):
     result = 0.0

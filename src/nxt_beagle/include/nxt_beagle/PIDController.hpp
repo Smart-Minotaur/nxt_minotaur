@@ -8,6 +8,7 @@
 #include "nxt_beagle/IPIDController.hpp"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
+#define MS_TO_SEC(ms) (((float) ms) / 1000.0f)
 
 namespace minotaur
 {
@@ -61,7 +62,7 @@ namespace minotaur
         float getWheelCircumference() const;
         const PIDParameter& getPIDParameter() const;
         
-        void step(const float p_samplingIntervallSecs);
+        void step(const int p_samplingIntervallMSec);
     };
 
 }

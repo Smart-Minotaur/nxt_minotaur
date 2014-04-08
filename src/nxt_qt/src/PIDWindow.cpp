@@ -221,7 +221,7 @@ namespace minotaur
     
     void PIDWindow::setInitInterval()
     {
-        pidNode.setSamplingInterval(0.02f);
+        pidNode.setSamplingInterval(20);
     }
     
 }

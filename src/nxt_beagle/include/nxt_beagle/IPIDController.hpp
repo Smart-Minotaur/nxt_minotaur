@@ -32,7 +32,7 @@ namespace minotaur
             virtual float getWheelCircumference() const = 0;
             virtual const PIDParameter& getPIDParameter() const = 0;
             
-            virtual void step(const float p_samplingIntervallSecs) = 0;
+            virtual void step(const int p_samplingIntervallMSec) = 0;
     };
 }
 

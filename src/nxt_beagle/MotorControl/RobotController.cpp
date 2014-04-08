@@ -56,8 +56,8 @@ namespace minotaur
         pidController.setVelocity(targetVelocity);
     }
     
-    void RobotController::step(const float p_samplingIntervall)
+    void RobotController::step(const int p_samplingIntervallMsec)
     {
-        pidController.step(p_samplingIntervall);
+        pidController.step(p_samplingIntervallMsec);
     }
 }

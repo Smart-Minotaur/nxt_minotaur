@@ -27,7 +27,7 @@ namespace minotaur
         virtual void setRobotVelocity(const RobotVelocity& p_velocity) = 0;
         virtual void setWheelTrack(const float p_wheelTrack) = 0;
         
-        virtual void step(const float p_samplingIntervall) = 0;
+        virtual void step(const int p_samplingIntervallMSec) = 0;
     };
 }
 

@@ -28,11 +28,11 @@ namespace minotaur
         pidPramPublisher = nodeHandle.advertise<nxt_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 1000);
     }
     
-    void QPIDNode::setSamplingInterval(const float p_sec)
+    void QPIDNode::setSamplingInterval(const int p_msec)
     {
-        ROS_INFO("Sending Interval: %.3f sec.", p_sec);
+        ROS_INFO("Sending Interval: %d msec.", p_msec);
         nxt_beagle::SamplingInterval msg;
-        msg.sec = p_sec;
+        msg.msec = p_msec;
         samplingIntervalPublisher.publish(msg);
     }
     

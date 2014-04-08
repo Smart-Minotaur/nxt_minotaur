@@ -33,7 +33,7 @@ namespace minotaur
         void setRobotVelocity(const RobotVelocity& p_velocity);
         void setWheelTrack(const float p_wheelTrack);
         
-        void step(const float p_samplingIntervall);
+        void step(const int p_samplingIntervallMSec);
     };
 }
 

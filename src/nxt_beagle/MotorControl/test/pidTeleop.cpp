@@ -12,7 +12,7 @@
 #include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/Config.hpp"
 
-#define SAMPLE_INTERVALL 0.1f
+#define SAMPLE_INTERVALL 100
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
 #define KEYCODE_U 0x41

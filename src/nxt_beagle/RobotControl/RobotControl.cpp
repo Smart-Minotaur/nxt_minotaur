@@ -17,9 +17,9 @@
 #define NODE_NAME "RobotControl"
 #define WHEEL_TRACK HERACLES_WHEEL_TRACK
 #define WHEEL_CIRCUMFERENCE HERACLES_WHEEL_CIRCUMFERENCE
-#define DEF_SAMPLING_INTERVAL 0.1f
+#define DEF_SAMPLING_INTERVAL 100
 
-volatile float samplingSec = DEF_SAMPLING_INTERVAL;
+volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
 minotaur::RobotController robotController;
 bool publishTargetMVel = true;
 bool publishMeasuredMvel = true;
@@ -146,10 +146,10 @@ void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg)
 
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
 {
-    ROS_INFO("Sampling Interval changed to %.3f sec.", p_msg.sec);
+    ROS_INFO("Sampling Interval changed to %d msec.", p_msg.msec);
     pthread_mutex_lock(&robotMutex);
     
-    samplingSec = p_msg.sec;
+    samplingMSec = p_msg.msec;
     
     pthread_mutex_unlock(&robotMutex);
 }
@@ -181,14 +181,14 @@ void* robotThread(void *arg)
         //lock robotMutex
         pthread_mutex_lock(&robotMutex);
         
-        robotController.step(samplingSec);
+        robotController.step(samplingMSec);
         //TODO is this the right place to send infos, maybe bad for performance
         //better to do it asynch?
         sendStatusInformation();
         
         end = ros::Time::now();
         
-        sleepSec = samplingSec - (end - begin).toSec();
+        sleepSec = MS_TO_SEC(samplingMSec) - (end - begin).toSec();
         
         //unlock robotMutex
         pthread_mutex_unlock(&robotMutex);

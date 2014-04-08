@@ -3,7 +3,7 @@
 #include "nxt_qt/PIDWindow.hpp"
 
 #define NODE_NAME "QPIDControl"
-#define INTERVAL 0.025f
+#define INTERVAL 25
 
 int main(int argc, char **argv)
 {

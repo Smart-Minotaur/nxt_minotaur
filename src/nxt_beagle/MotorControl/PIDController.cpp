@@ -76,13 +76,14 @@ namespace minotaur
          return pidParameter;
      }
 
-    void PIDController::step(const float p_samplingIntervallSecs)
+    void PIDController::step(const int p_samplingIntervallMSec)
     {
-        measureCurrentVelocity(p_samplingIntervallSecs);
+        float samplingSec = MS_TO_SEC(p_samplingIntervallMSec);
+        measureCurrentVelocity(samplingSec);
         
         calculateDifference();
         
-        setMotorPower(p_samplingIntervallSecs);
+        setMotorPower(samplingSec);
         
         printDebugInfoPerStep();
     }
