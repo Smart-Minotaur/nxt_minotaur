@@ -1,0 +1,9 @@
+minotaur:
+    Heracles:
+        wheel_track: 0.11
+        wheel_circumference: 0.16
+        kp: 0.5
+        ki: 0.2
+        kd: 0.1
+        sampling_interval: 25
+        

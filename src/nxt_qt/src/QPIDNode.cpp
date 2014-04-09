@@ -4,6 +4,7 @@
 #include "nxt_beagle/SamplingInterval.h"
 #include "nxt_beagle/RVelocity.h"
 #include "nxt_beagle/PIDParam.h"
+#include "nxt_beagle/SetModel.h"
 
 namespace minotaur
 {
@@ -26,6 +27,8 @@ namespace minotaur
         robotVelocityPublisher = nodeHandle.advertise<nxt_beagle::RVelocity>(NXT_SET_ROBOT_VELOCITY_TOPIC, 1000);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
         pidPramPublisher = nodeHandle.advertise<nxt_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 1000);
+        ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_MODEL_TOPIC);
+        setModelPublisher = nodeHandle.advertise<nxt_beagle::SetModel>(NXT_SET_MODEL_TOPIC, 1000);
     }
     
     void QPIDNode::setSamplingInterval(const int p_msec)
@@ -51,6 +54,13 @@ namespace minotaur
         msg.Ki = p_Ki;
         msg.Kd = p_Kd;
         pidPramPublisher.publish(msg);
+    }
+    
+    void QPIDNode::setModel(const std::string& p_name)
+    {
+        nxt_beagle::SetModel msg;
+        msg.name = p_name;
+        setModelPublisher.publish(msg);
     }
     
     void QPIDNode::run()

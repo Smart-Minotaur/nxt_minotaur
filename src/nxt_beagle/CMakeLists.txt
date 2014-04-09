@@ -28,6 +28,7 @@ add_message_files(
     UltraSensor.msg
     PIDParam.msg
     ClearSensor.msg
+    SetModel.msg
 )
 
 ## Generate services in the 'srv' folder

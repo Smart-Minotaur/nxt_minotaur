@@ -5,6 +5,8 @@
 #include <ros/ros.h>
 #include <pthread.h>
 #include <signal.h>
+#include <exception>
+#include <string>
 #include "nxt_beagle/Config.hpp"
 #include "nxt_beagle/RobotController.hpp"
 #include "nxt_beagle/MVelocity.h"
@@ -13,10 +15,11 @@
 #include "nxt_beagle/PIDParam.h"
 #include "nxt_beagle/nxtPower.h"
 #include "nxt_beagle/nxtTicks.h"
+#include "nxt_beagle/SetModel.h"
 
 #define NODE_NAME "RobotControl"
-#define WHEEL_TRACK HERACLES_WHEEL_TRACK
-#define WHEEL_CIRCUMFERENCE HERACLES_WHEEL_CIRCUMFERENCE
+#define WHEEL_TRACK 0.12f
+#define WHEEL_CIRCUMFERENCE 0.16f
 #define DEF_SAMPLING_INTERVAL 100
 
 volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
@@ -34,6 +37,7 @@ ros::Publisher powerPublisher;
 ros::Subscriber setRVelSub;
 ros::Subscriber setSampIntSub;
 ros::Subscriber setPIDParamSub;
+ros::Subscriber setModelSub;
 
 ros::ServiceClient tickClient;
 
@@ -48,6 +52,7 @@ void signalHandler(int sig);
 void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg);
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) ;
 void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg);
+void processSetModelMsg(const nxt_beagle::SetModel& p_msg);
 void* robotThread(void *arg);
 void sendStatusInformation();
 nxt_beagle::MVelocity motorVelocityToMsg(const minotaur::MotorVelocity& p_velocity);
@@ -118,6 +123,8 @@ bool init(ros::NodeHandle& p_handle)
     setSampIntSub = p_handle.subscribe(NXT_SET_SAMPLING_INTERVAL_TOPIC, 1000, processSamplingIntervallMsg);
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_PID_PARAMETER);
     setPIDParamSub = p_handle.subscribe(NXT_SET_PID_PARAMETER, 1000, processPIDParamMsg);
+    ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_MODEL_TOPIC);
+    setModelSub = p_handle.subscribe(NXT_SET_MODEL_TOPIC, 1000, processSetModelMsg);
     
     ROS_INFO("Using Servics \"%s\"...", NXT_GET_TICKS_SRV);
     tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
@@ -161,10 +168,69 @@ void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg)
              
     pthread_mutex_lock(&robotMutex);
     
-     
     robotController.getPIDController().setPIDParameter(params);
     
     pthread_mutex_unlock(&robotMutex);
+}
+
+void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
+{
+    ROS_INFO("Set robot model \"%s\"...", p_msg.name.c_str());
+    int samplingTmp, hadError = 0;
+    float wheelTrack, wheelCircumference;
+    minotaur::PIDParameter pidParams;
+    
+    //read parameter from ros parameter server
+    if(!ros::param::get(PARAM_WHEEL_TRACK(p_msg.name), wheelTrack))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_TRACK(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!ros::param::get(PARAM_WHEEL_CIRCUMFERENCE(p_msg.name), wheelCircumference))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_CIRCUMFERENCE(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!ros::param::get(PARAM_KP(p_msg.name), pidParams.Kp))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KP(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!ros::param::get(PARAM_KI(p_msg.name), pidParams.Ki))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KI(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!ros::param::get(PARAM_KD(p_msg.name), pidParams.Kd))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KD(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!ros::param::get(PARAM_SAMPLING_INTERVAL(p_msg.name), samplingTmp))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_SAMPLING_INTERVAL(p_msg.name).c_str());
+        hadError = 1;
+    }
+    
+    if(!hadError)
+    {
+        ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
+        ROS_INFO("Kp = %.2f; Ki = %.2f; Kd = %.2f", pidParams.Kp, pidParams.Ki, pidParams.Kd);
+        
+        pthread_mutex_lock(&robotMutex);
+        
+        robotController.getPIDController().setPIDParameter(pidParams);
+        robotController.getPIDController().setWheelCircumference(wheelCircumference);
+        robotController.setWheelTrack(wheelTrack);
+        samplingMSec = samplingTmp;
+        
+        pthread_mutex_unlock(&robotMutex);
+    }
 }
 
 void* robotThread(void *arg)
@@ -181,15 +247,21 @@ void* robotThread(void *arg)
         //lock robotMutex
         pthread_mutex_lock(&robotMutex);
         
-        robotController.step(samplingMSec);
-        //TODO is this the right place to send infos, maybe bad for performance
-        //better to do it asynch?
-        sendStatusInformation();
-        
-        end = ros::Time::now();
-        
-        sleepSec = MS_TO_SEC(samplingMSec) - (end - begin).toSec();
-        
+        try
+        {
+            robotController.step(samplingMSec);
+            //TODO is this the right place to send infos, maybe bad for performance
+            //better to do it asynch?
+            sendStatusInformation();
+            
+            end = ros::Time::now();
+            
+            sleepSec = MS_TO_SEC(samplingMSec) - (end - begin).toSec();
+        }
+        catch(std::exception e)
+        {
+            ROS_ERROR("RobotThread: Exception occured : %s.", e.what());
+        }
         //unlock robotMutex
         pthread_mutex_unlock(&robotMutex);
         

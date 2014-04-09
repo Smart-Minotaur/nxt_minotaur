@@ -45,7 +45,7 @@ namespace minotaur {
         void updateVelocityValues();
         void processTargetMotorVelocity(const QMotorVelocity p_velocity);
         void processMeasuredMotorVelocity(const QMotorVelocity p_velocity);
-        void setInitInterval();
+        void setInitModel();
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();

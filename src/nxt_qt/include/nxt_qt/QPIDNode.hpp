@@ -1,6 +1,7 @@
 #ifndef QPID_NODE_HPP_
 #define QPID_NODE_HPP_
 
+#include <string>
 #include <ros/ros.h>
 #include <QThread>
 #include <QMetaType>
@@ -34,6 +35,7 @@ namespace minotaur
         ros::Publisher samplingIntervalPublisher;
         ros::Publisher robotVelocityPublisher;
         ros::Publisher pidPramPublisher;
+        ros::Publisher setModelPublisher;
         
         void processTargetMotorVelocity(const nxt_beagle::MVelocity& p_msg);
         void processMeasuredMotorVelocity(const nxt_beagle::MVelocity& p_msg);
@@ -45,6 +47,7 @@ namespace minotaur
         void setSamplingInterval(const int p_msec);
         void setRobotVelocity(const float p_linVel, const float p_angVel);
         void setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd);
+        void setModel(const std::string& p_name);
         
         void run();
         

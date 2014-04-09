@@ -1,3 +1,8 @@
+/*
+ * Author: Fabian Meyer
+ */
+
+#include "nxt_beagle/Config.hpp"
 #include <cstdio>
 #include "nxt_qt/PIDWindow.hpp"
 
@@ -219,9 +224,9 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
     }
     
-    void PIDWindow::setInitInterval()
+    void PIDWindow::setInitModel()
     {
-        pidNode.setSamplingInterval(20);
+        pidNode.setModel(HERACLES_NAME);
     }
     
 }
