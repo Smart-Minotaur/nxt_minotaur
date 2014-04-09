@@ -1,13 +1,22 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef PID_CONTROLLER_HPP
 #define PID_CONTROLLER_HPP
 
 #include "nxt_beagle/IPIDController.hpp"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
+#define MS_TO_SEC(ms) (((float) ms) / 1000.0f)
 
 namespace minotaur
 {
-    
+    /* This class implements an PID-Controller.
+     * The motor-publisher is used to set the "power" of the robot motors.
+     * The motor-client is used to read the current "tick count" of each motor.
+     * Communication is done via the ROS-network. Publisher, Client and the
+     * wheel-circumference have to be set manually before using the "step()" method.*/
     class PIDController: public IPIDController
     {
     private:
@@ -57,7 +66,7 @@ namespace minotaur
         float getWheelCircumference() const;
         const PIDParameter& getPIDParameter() const;
         
-        void step(const float p_samplingIntervallSecs);
+        void step(const int p_samplingIntervallMSec);
     };
 
 }

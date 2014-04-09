@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include "nxt_beagle/MotorVelocity.hpp"
 
 namespace minotaur

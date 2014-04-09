@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+# Author: Fabian Meyer
+
 import nxt.locator
 import nxt.motor
 import nxt.sensor
 
 class BrickController:
-    ""
+    "This class is used to control a NXT-Brick."
     
     left_motor_port = nxt.motor.PORT_A
     right_motor_port = nxt.motor.PORT_B
@@ -57,7 +59,10 @@ class BrickController:
     def getUltrasonicData(self, sensor_id):
         return self.__ultrasonic_sensors[sensor_id].get_distance()
         
-    def resetMotors(self):
+    def resetMotorTicks(self):
         for motor in self.__motors:
             motor.reset_position(True)
+            
+    def clearSensors(self):
+        self.__ultrasonic_sensors[:] = []
         

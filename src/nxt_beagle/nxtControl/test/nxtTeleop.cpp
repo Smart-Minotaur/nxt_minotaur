@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include <signal.h>
 #include <termios.h>
 #include <poll.h>

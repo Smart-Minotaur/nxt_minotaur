@@ -1,8 +1,14 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef ROBOT_VELOCITY_HPP_
 #define ROBOT_VELOCITY_HPP_
 
 namespace minotaur
 {
+    /* A simple container to store the linear and angular velocity
+     * of a robot. */
     class RobotVelocity
     {
     public:

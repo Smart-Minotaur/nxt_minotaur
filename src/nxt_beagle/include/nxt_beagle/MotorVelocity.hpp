@@ -1,8 +1,15 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef MOTOR_VELOCITY_HPP
 #define MOTOR_VELOCITY_HPP
 
 namespace minotaur
 {
+    /* This Class is used as simple Container for the velocities of the left and right
+     * motor of a robot. The velocity ist stored as meter per second.
+     * Mathoperators provide a simpler usage of its values. */
     class MotorVelocity
     {
     public:
@@ -11,6 +18,9 @@ namespace minotaur
         
         MotorVelocity()
         :leftMPS(0.0f), rightMPS(0.0f) { }
+        
+        MotorVelocity(const MotorVelocity& p_velocity)
+        :leftMPS(p_velocity.leftMPS), rightMPS(p_velocity.rightMPS) { }
         
         MotorVelocity(const float p_leftMPS, const float p_rightMPS)
         :leftMPS(p_leftMPS), rightMPS(p_rightMPS) { }

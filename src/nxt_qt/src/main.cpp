@@ -3,6 +3,7 @@
 #include "nxt_qt/PIDWindow.hpp"
 
 #define NODE_NAME "QPIDControl"
+#define INTERVAL 25
 
 int main(int argc, char **argv)
 {
@@ -13,10 +14,13 @@ int main(int argc, char **argv)
         return -1;
     }
     
+    qRegisterMetaType<minotaur::QMotorVelocity>("QMotorVelocity");
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
-    w.show();
     
+    QTimer::singleShot(1000, &w, SLOT(setInitInterval()));
+    
+    w.show();
     w.getPIDNode().start();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

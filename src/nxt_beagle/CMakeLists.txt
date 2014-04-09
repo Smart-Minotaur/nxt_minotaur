@@ -27,6 +27,7 @@ add_message_files(
     SamplingInterval.msg
     UltraSensor.msg
     PIDParam.msg
+    ClearSensor.msg
 )
 
 ## Generate services in the 'srv' folder

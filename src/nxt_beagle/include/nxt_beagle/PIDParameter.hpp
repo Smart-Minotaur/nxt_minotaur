@@ -1,8 +1,14 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #ifndef PID_PARAMETER_HPP_
 #define PID_PARAMETER_HPP_
 
 namespace minotaur
 {
+    /* A simple container class to store the proportinal, integral and differential values
+     * of a pid-controller. */
     class PIDParameter
     {
     public:

@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include <ros/ros.h>
 #include <pthread.h>
 #include <signal.h>
@@ -11,11 +15,11 @@
 #include "nxt_beagle/nxtTicks.h"
 
 #define NODE_NAME "RobotControl"
-#define WHEEL_TRACK 0.2f
-#define WHEEL_CIRCUMFERENCE 0.16f
-#define DEF_SAMPLING_INTERVAL 0.1f
+#define WHEEL_TRACK HERACLES_WHEEL_TRACK
+#define WHEEL_CIRCUMFERENCE HERACLES_WHEEL_CIRCUMFERENCE
+#define DEF_SAMPLING_INTERVAL 100
 
-volatile float samplingSec = DEF_SAMPLING_INTERVAL;
+volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
 minotaur::RobotController robotController;
 bool publishTargetMVel = true;
 bool publishMeasuredMvel = true;
@@ -142,9 +146,10 @@ void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg)
 
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
 {
+    ROS_INFO("Sampling Interval changed to %d msec.", p_msg.msec);
     pthread_mutex_lock(&robotMutex);
     
-    samplingSec = p_msg.sec;
+    samplingMSec = p_msg.msec;
     
     pthread_mutex_unlock(&robotMutex);
 }
@@ -152,9 +157,11 @@ void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg)
 void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg)
 {
     minotaur::PIDParameter params(p_msg.Kp, p_msg.Ki, p_msg.Kd);
-    
+    ROS_INFO("PIDParameter changed to: Kp = %.4f; Ki = %.4f; Kd = %.4f.",params.Kp, params.Ki, params.Kd);
+             
     pthread_mutex_lock(&robotMutex);
     
+     
     robotController.getPIDController().setPIDParameter(params);
     
     pthread_mutex_unlock(&robotMutex);
@@ -174,14 +181,14 @@ void* robotThread(void *arg)
         //lock robotMutex
         pthread_mutex_lock(&robotMutex);
         
-        robotController.step(samplingSec);
+        robotController.step(samplingMSec);
         //TODO is this the right place to send infos, maybe bad for performance
         //better to do it asynch?
         sendStatusInformation();
         
         end = ros::Time::now();
         
-        sleepSec = samplingSec - (end - begin).toSec();
+        sleepSec = MS_TO_SEC(samplingMSec) - (end - begin).toSec();
         
         //unlock robotMutex
         pthread_mutex_unlock(&robotMutex);

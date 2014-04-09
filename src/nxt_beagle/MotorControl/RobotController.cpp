@@ -1,3 +1,7 @@
+/*
+ * Author: Fabian Meyer 
+ */
+
 #include "nxt_beagle/RobotController.hpp"
 #include "nxt_beagle/MotorVelocity.hpp"
 
@@ -17,6 +21,17 @@ namespace minotaur
     {
         return wheelTrack;
     }
+    
+    RobotVelocity RobotController::getMeasuredVelocity() const
+    {
+        RobotVelocity result;
+        MotorVelocity motorVel = pidController.getMeasuredVelocity();
+        
+        //to get the formula see kinematic of two wheeled robots
+        result.linearVelocity = (motorVel.rightMPS + motorVel.leftMPS) / 2;
+        result.angularVelocity = (motorVel.rightMPS - motorVel.leftMPS) / wheelTrack;
+        return result;
+    }
 
     void RobotController::setRobotVelocity(const RobotVelocity& p_velocity)
     {
@@ -34,15 +49,15 @@ namespace minotaur
     {
         MotorVelocity targetVelocity;
         
-        //to get the formular see kinematic of two wheeled robots
+        //to get the formula see kinematic of two wheeled robots
         targetVelocity.leftMPS = velocity.linearVelocity - (velocity.angularVelocity * wheelTrack) / 2;
         targetVelocity.rightMPS = velocity.linearVelocity + (velocity.angularVelocity * wheelTrack) / 2;
         
         pidController.setVelocity(targetVelocity);
     }
     
-    void RobotController::step(const float p_samplingIntervall)
+    void RobotController::step(const int p_samplingIntervallMsec)
     {
-        pidController.step(p_samplingIntervall);
+        pidController.step(p_samplingIntervallMsec);
     }
 }
