@@ -7,6 +7,8 @@
 
 namespace minotaur
 {
+    /* A simple container to store the linear and angular velocity
+     * of a robot. */
     class RobotVelocity
     {
     public:

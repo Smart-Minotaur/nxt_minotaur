@@ -107,7 +107,7 @@ namespace minotaur
         nxt_beagle::nxtTicks tickSrv;
         float ticksPSLeft, ticksPSRight;
         
-        //measure ticks, tick_count is automatically reset
+        //measure ticks, tick_count is automatically reset to zero
         motorClient->call(tickSrv);
         
         //calculate ticks per second
@@ -138,12 +138,13 @@ namespace minotaur
 
     void PIDController::calculateDifference()
     {
-        //calculate difference between 'should be' and 'currently is' velocity
+        //calculate difference between 'should be' (target)
+        //and 'currently is' (measured) velocity
         lastDiff = currentDiff;
         currentDiff = targetVelocity - measuredVelocity;
         diffSum += currentDiff;
         
-        //diff sum has to be limited to prevent type overflow
+        //diffSum has to be limited to prevent type overflow
         if(diffSum.leftMPS > MAX_DIFF_SUM_MPS)
             diffSum.leftMPS = MAX_DIFF_SUM_MPS;
         else if( diffSum.leftMPS < MIN_DIFF_SUM_MPS)

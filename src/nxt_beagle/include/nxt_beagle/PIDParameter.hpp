@@ -7,6 +7,8 @@
 
 namespace minotaur
 {
+    /* A simple container class to store the proportinal, integral and differential values
+     * of a pid-controller. */
     class PIDParameter
     {
     public:

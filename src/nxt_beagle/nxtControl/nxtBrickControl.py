@@ -2,6 +2,7 @@
 
 # Author: Fabian Meyer
 
+import exceptions
 import rospy
 import threading
 import thread
@@ -12,6 +13,8 @@ from nxt_beagle.msg import nxtPower, SamplingInterval, UltraSensor, ClearSensor
 from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltrasonicResponse, nxtAddUltrasonic, nxtAddUltrasonicResponse
 
 brick = nxtBrick.BrickController()
+
+# constants for topics and services
 _pow_topic = "/cmd_pow"
 _ticks_srv = "/get_ticks"
 _ulso_srv = "/get_ultrasonic"
@@ -19,6 +22,8 @@ _addulso_srv = "/add_ultrasonic"
 _measure_ultra_topic = "/measure_ultrasensor"
 _set_sampling_topic = "/set_sampling_interval"
 _clear_sensor_topic = "/clear_sensor"
+
+# parameter for sensor threads
 _sampling_interval = 0.0
 _threads = []
 _sampling_lock = thread.allocate_lock()
@@ -43,8 +48,10 @@ class UltraSensorThread (threading.Thread):
             #as long as ros runs thread has to run
             while not rospy.is_shutdown() and _run_sensor:
                 with _sampling_lock:
+                    #check if sampling should be done
                     sample = _sampling_interval > 0
                 sleep_time = 0.2
+                
                 if sample:
                     begin = rospy.get_rostime()
                     msg.distance = brick.getUltrasonicData(self.__sensorID)
@@ -54,7 +61,7 @@ class UltraSensorThread (threading.Thread):
                     sleep_time = getSleepTime(diff.secs)
                 
                 time.sleep(sleep_time)
-        except nxt.locator.BrickNotFoundError as e:
+        except exceptions.Exception as e:
             rospy.logerr("SensorID: %d. Thread crashed: %s ", self.__sensorID, e.what())
         rospy.loginfo("Thread \"%s\" terminated", __threadTopic)
 
@@ -91,7 +98,7 @@ def handleGetTicksRqt(ticks_rqt):
     response = nxtTicksResponse()
     response.leftTicks = brick.getMotorTicks(brick.id_left).block_tacho_count
     response.rightTicks = brick.getMotorTicks(brick.id_right).block_tacho_count
-    brick.resetMotors()
+    brick.resetMotorTicks()
     return response
 
 def handleGetUltrasonicRqt(ulso_rqt):
@@ -107,6 +114,7 @@ def handleAddUltrasonicRqt(addulso_rqt):
     return response
 
 def initNodeCommunication():
+    "Creates and initializes all Subscriber and services"
     rospy.loginfo("Subscribing to topic \"%s\"...", _pow_topic)
     rospy.Subscriber(_pow_topic, nxtPower, processMotorPowerMsg)
     

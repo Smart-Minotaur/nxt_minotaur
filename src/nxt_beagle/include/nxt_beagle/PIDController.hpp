@@ -12,7 +12,11 @@
 
 namespace minotaur
 {
-    
+    /* This class implements an PID-Controller.
+     * The motor-publisher is used to set the "power" of the robot motors.
+     * The motor-client is used to read the current "tick count" of each motor.
+     * Communication is done via the ROS-network. Publisher, Client and the
+     * wheel-circumference have to be set manually before using the "step()" method.*/
     class PIDController: public IPIDController
     {
     private:

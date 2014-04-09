@@ -66,6 +66,8 @@ void initPIDController(ros::NodeHandle p_handle)
     powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
     tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
     
+    // publisher and client of pid-controller have to be
+    // set before using "step()"
     pidController.setMotorPublisher(&powerPublisher);
     pidController.setMotorClient(&tickClient);
 }
@@ -94,6 +96,7 @@ void *pidThread(void *arg)
         begin = ros::Time::now();
         pthread_mutex_lock(&motorMutex);
         
+        // catch exceptions to prevent the thread from terminating
         try
         {
             pidController.step(SAMPLE_INTERVALL);
@@ -108,6 +111,7 @@ void *pidThread(void *arg)
         pthread_mutex_unlock(&motorMutex);
         end = ros::Time::now();
         
+        // sleep the remaining time of SAMPLE_INTERVALL 
         sleeptime = SAMPLE_INTERVALL - (end.toSec() - begin.toSec());
         if(sleeptime > 0)
             ros::Duration(sleeptime).sleep();
@@ -121,7 +125,7 @@ void initKeyHandling()
     //save for restore
     tcgetattr(0, &oldtio);
     
-    // put the console in raw mode
+    // put the console in raw mode to catch key events
     tcgetattr(0, &currtio);
     currtio.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(0, TCSANOW, &currtio);
@@ -140,12 +144,13 @@ void eventLoop()
     
     while(run)
     {
+        // read key events
         if(read(0, &keycode, 1) < 0)
         {
             perror("read():");
             exit(-1);
         }
-
+        
         switch(keycode)
         {
             case KEYCODE_L:
@@ -182,6 +187,7 @@ void setMotor(const float p_leftmps, const float p_rightmps)
     minotaur::MotorVelocity velocity(p_leftmps, p_rightmps);
     pthread_mutex_lock(&motorMutex);
     
+    // set velocity for left and right motor
     pidController.setVelocity(velocity);
     
     pthread_mutex_unlock(&motorMutex);
