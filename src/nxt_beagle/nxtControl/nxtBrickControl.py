@@ -15,13 +15,14 @@ from nxt_beagle.srv import nxtTicks, nxtTicksResponse, nxtUltrasonic, nxtUltraso
 brick = nxtBrick.BrickController()
 
 # constants for topics and services
-_pow_topic = "/cmd_pow"
-_ticks_srv = "/get_ticks"
-_ulso_srv = "/get_ultrasonic"
-_addulso_srv = "/add_ultrasonic"
-_measure_ultra_topic = "/measure_ultrasensor"
-_set_sampling_topic = "/set_sampling_interval"
-_clear_sensor_topic = "/clear_sensor"
+_minotaur_ros_ns = "/minotaur"
+_pow_topic = _minotaur_ros_ns + "/cmd_pow"
+_ticks_srv = _minotaur_ros_ns + "/get_ticks"
+_ulso_srv = _minotaur_ros_ns + "/get_ultrasonic"
+_addulso_srv = _minotaur_ros_ns + "/add_ultrasonic"
+_measure_ultra_topic = _minotaur_ros_ns + "/measure_ultrasensor"
+_set_sampling_topic = _minotaur_ros_ns + "/set_sampling_interval"
+_clear_sensor_topic = _minotaur_ros_ns + "/clear_sensor"
 
 # parameter for sensor threads
 _sampling_interval = 0.0
@@ -62,7 +63,7 @@ class UltraSensorThread (threading.Thread):
                 
                 time.sleep(sleep_time)
         except exceptions.Exception as e:
-            rospy.logerr("SensorID: %d. Thread crashed: %s ", self.__sensorID, e.what())
+            rospy.logerr("SensorID: %d. Thread crashed: %s ", self.__sensorID, e.message)
         rospy.loginfo("Thread \"%s\" terminated", __threadTopic)
 
 def joinSensorThreads():
@@ -140,7 +141,7 @@ def startControl():
     try:
         brick.connectToBrick()
     except nxt.locator.BrickNotFoundError as e:
-        rospy.logerr("No Brick found. Check USB or Bluetooth. %s", e.strerror)
+        rospy.logerr("No Brick found. Check USB or Bluetooth. %s", e.message)
         return
     
     initNodeCommunication()
