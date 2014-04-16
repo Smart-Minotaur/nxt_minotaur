@@ -16,35 +16,36 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 # Generate messages in the 'msg' folder
-add_message_files()
+#add_message_files()
 
 # Generate services in the 'srv' folder
-add_service_files()
+#add_service_files()
 
-generate_messages(   
-    DEPENDENCIES
-    std_msgs
-)
+#generate_messages(   
+#    DEPENDENCIES
+#    std_msgs
+#)
 
 catkin_package(
     INCLUDE_DIRS include
-    CATKIN_DEPENDS message_runtime
+    #CATKIN_DEPENDS message_runtime
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 # process confiurable headers
 file( GLOB CONFIGURE_HEADERS config_headers/*.hpp.in)
+get_filename_component(ABS_MINOTAUR_PC_HEADER_DIR include/minotaur_pc ABSOLUTE)
 
 foreach(configheader ${CONFIGURE_HEADERS})
     get_filename_component(configheadername ${configheader} NAME_WE)
     configure_file (
         "${configheader}"
-        "${ABS_NXT_BEAGLE_HEADER_DIR}/${configheadername}.hpp"
+        "${ABS_MINOTAUR_PC_HEADER_DIR}/${configheadername}.hpp"
         )
 endforeach(configheader ${CONFIGURE_HEADERS})
 
-#compile MotorControl lib
+#compile MinotaurPC lib
 file( GLOB MINOTAUR_PC_LIB_SOURCES src/*.cpp )
 add_library(MinotaurPC ${MINOTAUR_PC_LIB_SOURCES})
 add_dependencies(MinotaurPC nxt_beagle_generate_messages_cpp)
@@ -55,6 +56,6 @@ file( GLOB EXEC_SOURCES src/main/*.cpp)
 foreach( mainsourcefile ${EXEC_SOURCES} )
     get_filename_component(mainname ${mainsourcefile} NAME_WE)
     add_executable(${mainname} ${mainsourcefile})
-    target_link_libraries(${mainname} ${catkin_LIBRARIES} MotorControl)
+    target_link_libraries(${mainname} ${catkin_LIBRARIES} MinotaurPC)
     add_dependencies(${mainname} nxt_beagle_generate_messages_cpp)
 endforeach( mainsourcefile ${EXEC_SOURCES} )
