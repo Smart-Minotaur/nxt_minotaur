@@ -2,6 +2,6 @@
 
     <node pkg="nxt_beagle" type="nxtBrickControl.py" output="screen" name="nxtBrickControl" respawn="true"/>
     <node pkg="nxt_beagle" type="RobotControl" name="RobotControl" output="screen" />
-    <rosparam command="load" file="$(find nxt_beagle)/RobotControl/models/Heracles.yaml" />
+    <rosparam command="load" file="$(find nxt_beagle)/RobotControl/Models.yaml" />
     
 </launch>
