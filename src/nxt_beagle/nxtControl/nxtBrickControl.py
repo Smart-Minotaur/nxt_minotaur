@@ -140,15 +140,17 @@ def startControl():
     rospy.loginfo("Connecting to Brick...",)
     try:
         brick.connectToBrick()
+        initNodeCommunication()
+    
+        # spin() simply keeps python from exiting until this node is stopped
+        rospy.spin()
+        joinSensorThreads()
     except nxt.locator.BrickNotFoundError as e:
         rospy.logerr("No Brick found. Check USB or Bluetooth. %s", e.message)
         return
+    except exceptions.Exception as e:
+        rospy.logerr("BrickControl crashed: %s", e.message)
+        return
     
-    initNodeCommunication()
-    
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
-    joinSensorThreads()
-
 if __name__ == '__main__':
     startControl()
