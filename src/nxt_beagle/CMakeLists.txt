@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nxt_beagle)
 
+#add c++ standard
+SET(CMAKE_CXX_FLAGS "-std=c++0x")
+
 #set Version
 set(NXT_BEAGLE_MAJOR_VERSION 0)
 set(NXT_BEAGLE_MINOR_VERSION 1)
@@ -67,6 +70,11 @@ endforeach(configheader ${CONFIGURE_HEADERS})
 file( GLOB MOTOR_CONTROL_SOURCES MotorControl/*.cpp )
 add_library(MotorControl ${MOTOR_CONTROL_SOURCES})
 add_dependencies(MotorControl nxt_beagle_generate_messages_cpp)
+
+#compile NxtControl lib
+file( GLOB NXT_CONTROL_SOURCES NxtControl/*.cpp )
+add_library(NxtControl ${NXT_CONTROL_SOURCES})
+add_dependencies(NxtControl nxt_beagle_generate_messages_cpp)
 
 #compile all test executeables
 file( GLOB TEST_SOURCES */test/*.cpp)

@@ -1,0 +1,48 @@
+#ifndef NXT_CONTROL_NXT_OPCODES_HPP_
+#define NXT_CONTROL_NXT_OPCODES_HPP_
+
+#define LEGO_VENDOR_ID 0x0694
+#define NXT_PRODUCT_ID 0x0002
+
+#define PORT_A 0x00
+#define PORT_B 0x01
+#define PORT_C 0x02
+#define ALL_PORTS 0xFF
+
+#define PORT_1
+#define PORT_2
+#define PORT_3
+#define PORT_4
+
+#define DIRECT_CMD 0x00
+#define SYSTEM_CMD 0x01
+#define DIRECT_CMD_NO_REPLY 0x80
+#define SYSTEM_CMD_NO_REPLY 0x81
+
+/* Commands */
+#define CMD_SET_OUTPUT_STATE 0x04
+#define CMD_GET_OUTPUT_STATE 0x06
+#define CMD_GET_INPUT_VALUES 0x07
+#define CMD_RESET_MOTOR 0x0A
+
+/* Motor Modes */
+#define MOTOR_MODE_COAST 0x00
+#define MOTOR_MODE_ON 0x01
+#define MOTOR_MODE_BRAKE 0x02
+#define MOTOR_MODE_ON_BRAKE 0x03
+#define MOTOR_MODE_REGULATED 0x04
+#define MOTOR_MODE_REGULATED_ON 0x05
+#define MOTOR_MODE_REGULATED_BRAKE_ON 0x07
+
+/* Motor Regulation Modes */
+#define REGULATION_MODE_NONE 0x00
+#define REGULATION_MODE_SPEED 0x01
+#define REGULATION_MODE_SYNCH 0x02
+
+/* Motor Run States */
+#define RUN_STATE_IDLE 0x00
+#define RUN_STATE_RAMP_UP 0x10
+#define RUN_STATE_RUNNING 0x20
+#define RUN_STATE_RAMP_DOWN 0x40
+
+#endif
