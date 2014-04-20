@@ -1,6 +1,8 @@
+#include <stdexcept>
 #include "nxt_control/Brick.hpp"
+#include "nxt_control/NxtOpcodes.hpp"
 
-namespace minotaur
+namespace nxtcon
 {
     Brick::~Brick()
     {
@@ -8,7 +10,7 @@ namespace minotaur
             usbSocket.close();
     }
     
-    void Brick::find(const int p_interface = 0)
+    void Brick::find(const int p_interface)
     {
         if(connected)
             throw std::logic_error("Cannot find Brick. Brick is already connected.");
@@ -22,7 +24,7 @@ namespace minotaur
         return connected;
     }
     
-    usbSocket& Brick::getUSBSocket()
+    USBSocket& Brick::getUSBSocket()
     {
         return usbSocket;
     }

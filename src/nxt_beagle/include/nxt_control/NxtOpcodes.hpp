@@ -4,6 +4,9 @@
 #define LEGO_VENDOR_ID 0x0694
 #define NXT_PRODUCT_ID 0x0002
 
+#define USB_OUT_ENDPOINT 0x01
+#define USB_IN_ENDPOINT 0x82
+
 #define PORT_A 0x00
 #define PORT_B 0x01
 #define PORT_C 0x02
@@ -16,6 +19,7 @@
 
 #define DIRECT_CMD 0x00
 #define SYSTEM_CMD 0x01
+#define REPLY_TELEGRAM 0x02
 #define DIRECT_CMD_NO_REPLY 0x80
 #define SYSTEM_CMD_NO_REPLY 0x81
 

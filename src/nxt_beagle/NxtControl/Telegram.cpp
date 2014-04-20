@@ -1,6 +1,6 @@
 #include "nxt_control/Telegram.hpp"
 
-namespace minotaur
+namespace nxtcon
 {
     Telegram::Telegram()
     :data()

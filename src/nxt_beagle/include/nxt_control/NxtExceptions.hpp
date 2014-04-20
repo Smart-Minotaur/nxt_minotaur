@@ -4,8 +4,9 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <sstream>
 
-namespace minotaur
+namespace nxtcon
 {
     class USBDeviceNotFoundException : public std::logic_error
     {
@@ -60,7 +61,29 @@ namespace minotaur
         virtual ~USBError() noexcept { }
         
         const char* what() const noexcept
-        { return message.c_str(); }
+        {
+            std::stringstream ss;
+            ss << message << " Code: " << code;
+            return ss.str().c_str();
+        }
+    };
+    
+    class NXTCommunicationException : public std::exception
+    {
+    private:
+        std::string message;
+        int code;
+    public:
+        NXTCommunicationException(std::string msg, const int p_code) noexcept
+        {message = msg; code = p_code;}
+        virtual ~NXTCommunicationException() noexcept { }
+        
+        const char* what() const noexcept
+        { 
+            std::stringstream ss;
+            ss << message << " Code: " << code;
+            return ss.str().c_str();
+        }
     };
 }
 

@@ -3,7 +3,7 @@
 
 #include "nxt_control/USBSocket.hpp"
 
-namespace minotaur
+namespace nxtcon
 {
     class Brick
     {
@@ -15,9 +15,9 @@ namespace minotaur
         :usbSocket(), connected(false) { }
         virtual  ~Brick();
         
-        void find();
+        void find(const int p_interface = 0);
         bool isConnected() const;
-        usbSocket& getUSBSocket();
+        USBSocket& getUSBSocket();
     };
     
 }

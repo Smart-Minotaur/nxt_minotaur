@@ -3,8 +3,9 @@
 
 #include "nxt_control/Telegram.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "nxt_control/NxtContainer.hpp"
 
-namespace minotaur
+namespace nxtcon
 {
     void create_setMotor(Telegram *p_telegram, const uint8_t p_port, const uint8_t p_power);
     void create_brakeMotor(Telegram *p_telegram, const uint8_t p_port);
@@ -12,6 +13,8 @@ namespace minotaur
     void create_resetTacho(Telegram *p_telegram, const uint8_t p_port);
     void create_getInputValues(Telegram *p_telegram, const uint8_t p_port);
     
+    void decode_tachoOutputState(const Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port);
+    unsigned int decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port);
 }
 
 #endif

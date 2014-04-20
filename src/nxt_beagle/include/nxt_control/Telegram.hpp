@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-namespace minotaur
+namespace nxtcon
 {
     class Telegram
     {

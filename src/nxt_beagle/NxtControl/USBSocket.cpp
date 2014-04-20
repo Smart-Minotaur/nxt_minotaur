@@ -3,7 +3,7 @@
 
 #define DEF_BUF_SIZE 100
 
-namespace minotaur
+namespace nxtcon
 {
     USBSocket::USBSocket()
     {
@@ -72,7 +72,7 @@ namespace minotaur
         //if endpoint wrong, transfer can be a receive instead of send
         ret = libusb_bulk_transfer(deviceHandle, p_endpoint, data_array, p_telegram.getLength(), &transferredBytes, 0);
         if(ret)
-            throwTransferException(ret, "Could not send USB data.");
+            throw USBError("Could not send USB data.", ret);
     }
     
     Telegram USBSocket::receive(unsigned char p_endpoint)
@@ -85,7 +85,7 @@ namespace minotaur
         //if endpoint wrong, transfer can be a send instead of receive
         ret = libusb_bulk_transfer(deviceHandle, p_endpoint, data_array, DEF_BUF_SIZE, &transferredBytes, 0);
         if(ret)
-            throwTransferException(ret, "Could not receive USB data.");
+            throw USBError("Could not receive USB data.", ret);
         
         result.addArray(data_array, transferredBytes);
         return result;

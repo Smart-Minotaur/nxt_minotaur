@@ -5,7 +5,7 @@
 #include "libusb-1.0/libusb.h"
 #include "nxt_control/Telegram.hpp"
 
-namespace minotaur
+namespace nxtcon
 {
     class USBSocket
     {
