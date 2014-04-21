@@ -20,8 +20,8 @@ namespace minotaur
     class PIDController: public IPIDController
     {
     private:
-        ros::Publisher *motorPublisher;
-        ros::ServiceClient *motorClient;
+        nxtcon::Motor *leftMotor;
+        nxtcon::Motor *rightMotor;
         
         MotorVelocity targetVelocity;
         MotorVelocity measuredVelocity;
@@ -54,8 +54,8 @@ namespace minotaur
         PIDController();
         virtual ~PIDController();
         
-        void setMotorPublisher(ros::Publisher *p_motorPublisher );
-        void setMotorClient(ros::ServiceClient *p_motorClient);
+        void setLeftMotor(nxtcon::Motor *p_leftMotor);
+        void setRightMotor(nxtcon::Motor *p_rightMotor);
         
         void setVelocity(const MotorVelocity& p_velocity);
         void setWheelCircumference(const float p_meter);

@@ -13,14 +13,16 @@
 #include "nxt_beagle/RVelocity.h"
 #include "nxt_beagle/SamplingInterval.h"
 #include "nxt_beagle/PIDParam.h"
-#include "nxt_beagle/nxtPower.h"
-#include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/SetModel.h"
+#include "nxt_control/Brick.hpp"
+#include "nxt_control/NxtOpcodes.hpp"
 
 #define NODE_NAME "RobotControl"
 #define WHEEL_TRACK 0.12f
 #define WHEEL_CIRCUMFERENCE 0.16f
 #define DEF_SAMPLING_INTERVAL 100
+#define LEFT_PORT PORT_A
+#define RIGHT_PORT PORT_B
 
 volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
 minotaur::RobotController robotController;
@@ -28,18 +30,19 @@ bool publishTargetMVel = true;
 bool publishMeasuredMvel = true;
 bool publishTargetRVel = false;
 
+nxtcon::Brick brick;
+nxtcon::Motor leftMotor;
+nxtcon::Motor rightMotor;
+
 ros::Publisher targetMVelPub;
 ros::Publisher measuredMVelPub;
 ros::Publisher targetRVelPub;
 ros::Publisher measuredRVelPub;
-ros::Publisher powerPublisher;
 
 ros::Subscriber setRVelSub;
 ros::Subscriber setSampIntSub;
 ros::Subscriber setPIDParamSub;
 ros::Subscriber setModelSub;
-
-ros::ServiceClient tickClient;
 
 pthread_mutex_t robotMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_t thread;
@@ -65,6 +68,7 @@ int main(int argc, char** argv)
     int ret;
     
     setSignals();
+    
     
     if(!init(n))
         return -1;
@@ -104,6 +108,22 @@ bool init(ros::NodeHandle& p_handle)
         return false;
     }
     
+    try
+    {
+        ROS_INFO("Initialize USBConnection to Brick...");
+        brick.find();
+        leftMotor.setBrick(&brick);
+        leftMotor.setPort(LEFT_PORT);
+        
+        rightMotor.setBrick(&brick);
+        rightMotor.setPort(RIGHT_PORT);
+    }
+    catch (std::exception e)
+    {
+        ROS_ERROR("Exception on initializing Brick: %s.", e.what());
+        return false;
+    }
+    
     ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_MOTOR_VELOCITY_TOPIC);
     targetMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_TARGET_MOTOR_VELOCITY_TOPIC, 1000);
     ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_MOTOR_VELOCITY_TOPIC);
@@ -114,9 +134,6 @@ bool init(ros::NodeHandle& p_handle)
     ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_ROBOT_VELOCITY_TOPIC);
     measuredRVelPub = p_handle.advertise<nxt_beagle::RVelocity>(NXT_MEASURE_ROBOT_VELOCITY_TOPIC, 1000); 
     
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_POWER_TOPIC);
-    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
-    
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_ROBOT_VELOCITY_TOPIC);
     setRVelSub = p_handle.subscribe(NXT_SET_ROBOT_VELOCITY_TOPIC, 1000, processRobotVelocityMsg);
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
@@ -126,14 +143,11 @@ bool init(ros::NodeHandle& p_handle)
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_MODEL_TOPIC);
     setModelSub = p_handle.subscribe(NXT_SET_MODEL_TOPIC, 1000, processSetModelMsg);
     
-    ROS_INFO("Using Servics \"%s\"...", NXT_GET_TICKS_SRV);
-    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
-    
     ROS_INFO("Setting up RobotController...");
     robotController.setWheelTrack(WHEEL_TRACK);
     robotController.getPIDController().setWheelCircumference(WHEEL_CIRCUMFERENCE);
-    robotController.getPIDController().setMotorPublisher(&powerPublisher);
-    robotController.getPIDController().setMotorClient(&tickClient);
+    robotController.getPIDController().setLeftMotor(&leftMotor);
+    robotController.getPIDController().setRightMotor(&rightMotor);
     
     return true;
 }

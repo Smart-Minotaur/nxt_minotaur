@@ -8,9 +8,9 @@
 #include <signal.h>
 #include <exception>
 #include "nxt_beagle/PIDController.hpp"
-#include "nxt_beagle/nxtPower.h"
-#include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/Config.hpp"
+#include "nxt_control/Brick.hpp"
+#include "nxt_control/NxtOpcodes.hpp"
 
 #define SAMPLE_INTERVALL 100
 #define KEYCODE_R 0x43
@@ -19,16 +19,22 @@
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
 
+#define LEFT_PORT PORT_A
+#define RIGHT_PORT PORT_B
+
+nxtcon::Brick brick;
+nxtcon::Motor leftMotor;
+nxtcon::Motor rightMotor;
+
 minotaur::PIDController pidController;
 pthread_t thread;
 struct termios oldtio, currtio;
 pthread_mutex_t motorMutex = PTHREAD_MUTEX_INITIALIZER;
 bool run = true;
-ros::Publisher powerPublisher;
-ros::ServiceClient tickClient;
+
 
 void signalHandler(int sig);
-void initPIDController(ros::NodeHandle p_handle);
+bool initPIDController();
 int startThread();
 void initKeyHandling();
 void *pidThread(void *arg);
@@ -38,11 +44,11 @@ void setMotor(const float p_leftmps, const float p_rightmps);
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "pidTeleop");
-    ros::NodeHandle handle;
     
     signal(SIGINT, signalHandler);
     
-    initPIDController(handle);
+    if(!initPIDController())
+        return -1;
     startThread();
     
     initKeyHandling();
@@ -59,17 +65,31 @@ void signalHandler(int sig)
     run = false;
 }
 
-void initPIDController(ros::NodeHandle p_handle)
+bool initPIDController()
 {
+    try
+    {
+        ROS_INFO("Initialize USBConnection to Brick...");
+        brick.find();
+        leftMotor.setBrick(&brick);
+        leftMotor.setPort(LEFT_PORT);
+        
+        rightMotor.setBrick(&brick);
+        rightMotor.setPort(RIGHT_PORT);
+    }
+    catch (std::exception e)
+    {
+        ROS_ERROR("Exception on initializing Brick: %s.", e.what());
+        return false;
+    }
+    
     ROS_INFO("Initializing PIDController...");
-    
-    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
-    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
-    
-    // publisher and client of pid-controller have to be
+    // left and right motor of pid-controller have to be
     // set before using "step()"
-    pidController.setMotorPublisher(&powerPublisher);
-    pidController.setMotorClient(&tickClient);
+    pidController.setLeftMotor(&leftMotor);
+    pidController.setRightMotor(&rightMotor);
+    
+    return true;
 }
 
 int startThread()

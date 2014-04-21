@@ -5,9 +5,9 @@
 #ifndef IPID_CONTROLLER_HPP
 #define IPID_CONTROLLER_HPP
 
-#include <ros/ros.h>
 #include "nxt_beagle/MotorVelocity.hpp"
 #include "nxt_beagle/PIDParameter.hpp"
+#include "nxt_control/Motor.hpp"
 
 namespace minotaur
 {
@@ -20,8 +20,8 @@ namespace minotaur
             IPIDController() { }
             virtual ~IPIDController() { }
             
-            virtual void setMotorPublisher(ros::Publisher *p_motorPublisher ) = 0;
-            virtual void setMotorClient(ros::ServiceClient *p_motorClient) = 0;
+            virtual void setLeftMotor(nxtcon::Motor *p_leftMotor) = 0;
+            virtual void setRightMotor(nxtcon::Motor *p_rightMotor) = 0;
             
             virtual void setVelocity(const MotorVelocity& p_velocity) = 0;
             virtual void setWheelCircumference(const float p_meter) = 0;

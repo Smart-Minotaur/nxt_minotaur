@@ -53,7 +53,7 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS} "/usr/local/lib")
 
 #configure headers with cmake metainfo
 file( GLOB CONFIGURE_HEADERS config_headers/*.hpp.in)
@@ -76,17 +76,19 @@ file( GLOB NXT_CONTROL_SOURCES NxtControl/*.cpp )
 add_library(NxtControl ${NXT_CONTROL_SOURCES})
 add_dependencies(NxtControl nxt_beagle_generate_messages_cpp)
 
+set(MINOTAUR_CUSTOM_LIBS NxtControl MotorControl usb)
+
 #compile all test executeables
 file( GLOB TEST_SOURCES */test/*.cpp)
 
 foreach( testsourcefile ${TEST_SOURCES} )
     get_filename_component(testname ${testsourcefile} NAME_WE)
     add_executable(${testname} ${testsourcefile})
-    target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
+    target_link_libraries(${testname} ${catkin_LIBRARIES} ${MINOTAUR_CUSTOM_LIBS})
     add_dependencies(${testname} nxt_beagle_generate_messages_cpp)
 endforeach( testsourcefile ${TEST_SOURCES} )
 
 #compile RobotControl node
 add_executable(RobotControl RobotControl/RobotControl.cpp)
-target_link_libraries(RobotControl ${catkin_LIBRARIES} MotorControl)
+target_link_libraries(RobotControl ${catkin_LIBRARIES}  ${MINOTAUR_CUSTOM_LIBS})
 add_dependencies(RobotControl nxt_beagle_generate_messages_cpp)

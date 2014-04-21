@@ -2,9 +2,8 @@
  * Author: Fabian Meyer 
  */
 
+#include <ros/ros.h>
 #include "nxt_beagle/PIDController.hpp"
-#include "nxt_beagle/nxtTicks.h"
-#include "nxt_beagle/nxtPower.h"
 
 #define MS_PER_SECOND 1000
 #define DEGREE_PER_TICK 1.0f
@@ -23,22 +22,22 @@
 namespace minotaur
 {
     PIDController::PIDController()
-    :motorPublisher(NULL), motorClient(NULL), targetVelocity(),measuredVelocity(),
+    :leftMotor(NULL), rightMotor(NULL), targetVelocity(),measuredVelocity(),
     currentDiff(), lastDiff(), diffSum(), pidParameter(DEF_KP, DEF_KI, DEF_KD),
     circumference(DEF_WHEEL_CIRCUMFERENCE)
     { }
 
     PIDController::~PIDController()
     { }
-
-    void PIDController::setMotorPublisher(ros::Publisher *p_motorPublisher )
+    
+    void PIDController::setLeftMotor(nxtcon::Motor *p_leftMotor)
     {
-        motorPublisher = p_motorPublisher;
+        leftMotor = p_leftMotor;
     }
-
-    void PIDController::setMotorClient(ros::ServiceClient *p_motorClient)
+    
+    void PIDController::setRightMotor(nxtcon::Motor *p_rightMotor)
     {
-        motorClient = p_motorClient;
+        rightMotor = p_rightMotor;
     }
 
     void PIDController::setVelocity(const MotorVelocity& p_velocity)
@@ -103,18 +102,15 @@ namespace minotaur
     MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervallSecs)
     {
         MotorVelocity result;
-        ros::Time begin, end;
-        nxt_beagle::nxtTicks tickSrv;
         float ticksPSLeft, ticksPSRight;
-        
-        //measure ticks, tick_count is automatically reset to zero
-        motorClient->call(tickSrv);
         
         //calculate ticks per second
         //samplingIntervall is needed, provided by the caller of step()
         //if the time is really correct must ensured by the caller
-        ticksPSLeft = (float) (tickSrv.response.leftTicks) / p_samplingIntervallSecs;
-        ticksPSRight = (float) (tickSrv.response.rightTicks) / p_samplingIntervallSecs;
+        ticksPSLeft = (float) (leftMotor->getTachoData().blockTachoCount) / p_samplingIntervallSecs;
+        ticksPSRight = (float) (rightMotor->getTachoData().blockTachoCount) / p_samplingIntervallSecs;
+        leftMotor->resetTacho();
+        rightMotor->resetTacho();
         
         //convert ticks per second to meter per second
         result.set(ticksToMPS(ticksPSLeft), ticksToMPS(ticksPSRight));
@@ -158,8 +154,6 @@ namespace minotaur
 
     void PIDController::setMotorPower(const float p_samplingIntervallSecs)
     {
-        nxt_beagle::nxtPower msg;
-        
         //if motor should stay still, no PID-Controller is needed
         //just put power to 0
         if(targetVelocity.leftMPS != 0)
@@ -180,11 +174,8 @@ namespace minotaur
         else
             powerRight = 0;
         
-        msg.leftMotor = powerLeft;
-        msg.rightMotor = powerRight;
-        
-        motorPublisher->publish(msg);
-        ros::spinOnce();
+        leftMotor->setPower(powerLeft);
+        rightMotor->setPower(powerRight);
     }
 
     int PIDController::pidMotorPower(const float p_currentDiff,

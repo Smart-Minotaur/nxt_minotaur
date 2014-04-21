@@ -3,6 +3,16 @@
 
 namespace nxtcon
 {
+    void Motor::setBrick(Brick *p_brick)
+    {
+        brick = p_brick;
+    }
+    
+    void Motor::setPort(const uint8_t p_port)
+    {
+        port = p_port;
+    }
+    
     void Motor::setPower(const int8_t p_power)
     {
         Telegram telegram;
