@@ -14,7 +14,7 @@ namespace nxtcon
     void create_getInputValues(Telegram *p_telegram, const uint8_t p_port);
     
     void decode_tachoOutputState(const Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port);
-    unsigned int decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port);
+    void decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port);
 }
 
 #endif

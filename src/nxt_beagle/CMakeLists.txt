@@ -53,7 +53,7 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS} "/usr/local/lib")
+include_directories(include ${catkin_INCLUDE_DIRS} ${NXT_BEAGLE_INCLUDE_DIRS})
 
 #configure headers with cmake metainfo
 file( GLOB CONFIGURE_HEADERS config_headers/*.hpp.in)
@@ -76,7 +76,7 @@ file( GLOB NXT_CONTROL_SOURCES NxtControl/*.cpp )
 add_library(NxtControl ${NXT_CONTROL_SOURCES})
 add_dependencies(NxtControl nxt_beagle_generate_messages_cpp)
 
-set(MINOTAUR_CUSTOM_LIBS NxtControl MotorControl usb)
+set(MINOTAUR_CUSTOM_LIBS NxtControl MotorControl usb-1.0)
 
 #compile all test executeables
 file( GLOB TEST_SOURCES */test/*.cpp)

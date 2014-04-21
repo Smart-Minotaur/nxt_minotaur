@@ -89,7 +89,7 @@ namespace nxtcon
         p_telegram->add_uint8(p_port);
     }
     
-    void decode_tachoOutputState(Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port)
+    void decode_tachoOutputState(const Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port)
     {
         unsigned char data[p_telegram.getLength()];
         p_telegram.getData(data);
@@ -128,7 +128,7 @@ namespace nxtcon
         ptr[3] = data[21];
     }
     
-    void decode_unltaSonicSensorInputValues(Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port)
+    void decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port)
     {
         unsigned char data[p_telegram.getLength()];
         p_telegram.getData(data);
