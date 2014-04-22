@@ -12,10 +12,10 @@
 #define PORT_C 0x02
 #define ALL_PORTS 0xFF
 
-#define PORT_1
-#define PORT_2
-#define PORT_3
-#define PORT_4
+#define PORT_1 0x00
+#define PORT_2 0x01
+#define PORT_3 0x02
+#define PORT_4 0x03
 
 #define DIRECT_CMD 0x00
 #define SYSTEM_CMD 0x01
@@ -25,6 +25,7 @@
 
 /* Commands */
 #define CMD_SET_OUTPUT_STATE 0x04
+#define CMD_SET_INPUT_MODE 0x05
 #define CMD_GET_OUTPUT_STATE 0x06
 #define CMD_GET_INPUT_VALUES 0x07
 #define CMD_RESET_MOTOR 0x0A
@@ -48,5 +49,12 @@
 #define RUN_STATE_RAMP_UP 0x10
 #define RUN_STATE_RUNNING 0x20
 #define RUN_STATE_RAMP_DOWN 0x40
+
+/* Sensor Types */
+#define SENSOR_TYPE_NO_SENSOR 0x00
+#define SENSOR_TYPE_LOWSPEED_9V 0x0B
+
+/* Sensor Modes */
+#define SENSOR_MODE_RAW 0x00
 
 #endif

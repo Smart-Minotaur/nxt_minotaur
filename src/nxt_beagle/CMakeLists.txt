@@ -24,7 +24,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
     FILES
-    nxtPower.msg
     MVelocity.msg
     RVelocity.msg
     SamplingInterval.msg
@@ -38,7 +37,6 @@ add_message_files(
 add_service_files(
     FILES
     nxtUltrasonic.srv
-    nxtTicks.srv
     nxtAddUltrasonic.srv
 )
 

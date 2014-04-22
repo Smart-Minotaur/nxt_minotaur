@@ -14,8 +14,7 @@ namespace nxtcon
         SensorData sensor;
         
     public:
-        UltrasonicSensor(Brick *p_brick, const uint8_t p_port)
-        :brick(p_brick),port(p_port), sensor() { }
+        UltrasonicSensor(Brick *p_brick, const uint8_t p_port);
         
         virtual ~UltrasonicSensor() { }
    

@@ -2,52 +2,72 @@
 #define NXT_CONTROL_NXT_EXCEPTIONS_HPP_
 
 #include <exception>
-#include <stdexcept>
 #include <string>
 #include <sstream>
 
 namespace nxtcon
 {
-    class USBDeviceNotFoundException : public std::logic_error
+    class USBException : public std::exception
     {
+    private:
+        std::string message;
     public:
-        USBDeviceNotFoundException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBException(const char *msg) throw()
+        :message(msg)
+        { }
+        
+        USBException(const std::string &msg) throw()
+        :message(msg)
+        { }
+        
+        virtual ~USBException() throw() { }
+        
+        const char* what() const throw()
+        {
+            return message.c_str();
+        }
     };
     
-    class USBInterfaceNotFoundException : public std::logic_error
+    class USBDeviceNotFoundException : public USBException
     {
     public:
-        USBInterfaceNotFoundException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBDeviceNotFoundException(std::string const& msg) throw()
+        :USBException(msg) { }
     };
     
-    class USBBusyException : public std::logic_error
+    class USBInterfaceNotFoundException : public USBException
     {
     public:
-        USBBusyException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBInterfaceNotFoundException(std::string const& msg) throw()
+        :USBException(msg) { }
     };
     
-    class USBDeviceDisconnectException : public std::logic_error
+    class USBBusyException : public USBException
     {
     public:
-        USBDeviceDisconnectException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBBusyException(std::string const& msg) throw()
+        :USBException(msg) { }
     };
     
-    class USBPipeException : public std::logic_error
+    class USBDeviceDisconnectException : public USBException
     {
     public:
-        USBPipeException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBDeviceDisconnectException(std::string const& msg) throw()
+        :USBException(msg) { }
     };
     
-    class USBTimeoutException : public std::logic_error
+    class USBPipeException : public USBException
     {
     public:
-        USBTimeoutException(std::string const& msg)
-        :std::logic_error(msg) { }
+        USBPipeException(std::string const& msg) throw()
+        :USBException(msg) { }
+    };
+    
+    class USBTimeoutException : public USBException
+    {
+    public:
+        USBTimeoutException(std::string const& msg) throw()
+        :USBException(msg) { }
     };
     
     class USBError : public std::exception
@@ -56,15 +76,24 @@ namespace nxtcon
         std::string message;
         int code;
     public:
-        USBError(std::string msg, const int p_code) noexcept
-        {message = msg; code = p_code;}
-        virtual ~USBError() noexcept { }
-        
-        const char* what() const noexcept
+        USBError(std::string msg, const int p_code) throw()
         {
+            code = p_code;
             std::stringstream ss;
             ss << message << " Code: " << code;
-            return ss.str().c_str();
+            message = ss.str();
+        }
+        
+        virtual ~USBError() throw() { }
+        
+        const char* what() const throw()
+        {
+            return message.c_str();
+        }
+        
+        int getCode() const
+        {
+            return code;
         }
     };
     
@@ -74,15 +103,25 @@ namespace nxtcon
         std::string message;
         int code;
     public:
-        NXTCommunicationException(std::string msg, const int p_code) noexcept
-        {message = msg; code = p_code;}
-        virtual ~NXTCommunicationException() noexcept { }
         
-        const char* what() const noexcept
-        { 
+        NXTCommunicationException(const std::string& msg, const int p_code) throw()
+        {
+            code = p_code;
             std::stringstream ss;
             ss << message << " Code: " << code;
-            return ss.str().c_str();
+            message = ss.str();
+        }
+            
+        virtual ~NXTCommunicationException() throw() { }
+        
+        const char* what() const throw()
+        { 
+            return message.c_str();
+        }
+        
+        int getCode() const
+        {
+            return code;
         }
     };
 }

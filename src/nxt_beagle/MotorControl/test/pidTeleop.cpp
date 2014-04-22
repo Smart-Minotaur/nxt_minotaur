@@ -77,7 +77,7 @@ bool initPIDController()
         rightMotor.setBrick(&brick);
         rightMotor.setPort(RIGHT_PORT);
     }
-    catch (std::exception e)
+    catch (std::exception const &e)
     {
         ROS_ERROR("Exception on initializing Brick: %s.", e.what());
         return false;
@@ -121,7 +121,7 @@ void *pidThread(void *arg)
         {
             pidController.step(SAMPLE_INTERVALL);
         }
-        catch(std::exception& e)
+        catch(std::exception const &e)
         {
             ROS_ERROR("===Step encountered an exception==");
             ROS_ERROR("%s", e.what());

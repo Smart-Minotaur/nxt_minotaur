@@ -1,1 +1,2 @@
-uint8 distance
+uint8 id
+uint16 distance
