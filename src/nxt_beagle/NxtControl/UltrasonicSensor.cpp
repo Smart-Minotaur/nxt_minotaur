@@ -20,9 +20,9 @@ namespace nxtcon
         
         Telegram telegram;
         create_setInputMode(&telegram, port, SENSOR_TYPE_LOWSPEED_9V, SENSOR_MODE_RAW);
-        brick->getUSBSocket().send(telegram, USB_OUT_ENDPOINT);
+        brick->send(telegram);
         create_setUltraSonicPingMode(&telegram, port);
-        brick->getUSBSocket().send(telegram, USB_OUT_ENDPOINT);
+        brick->send(telegram);
     }
     uint8_t UltrasonicSensor::getDistance(const int p_timeoutMS)
     {
@@ -30,13 +30,13 @@ namespace nxtcon
         unsigned char data [MAX_LS_READ_RESPONSE];
         
         create_measureUltraSonic(&telegram, port);
-        brick->getUSBSocket().send(telegram, USB_OUT_ENDPOINT);
+        brick->send(telegram);
         if(!getStatus(p_timeoutMS))
             throw NXTTimeoutException("Ultrasonic measurement timed out.");
         
         create_lsRead(&telegram, port);
-        brick->getUSBSocket().send(telegram, USB_OUT_ENDPOINT);
-        telegram = brick->getUSBSocket().receive(USB_IN_ENDPOINT);
+        brick->send(telegram);
+        telegram = brick->receive();
         telegram.getData(data);
         
         return data[4];
@@ -55,8 +55,8 @@ namespace nxtcon
             if(p_timeoutMS > 0)
                 gettimeofday(&begin, NULL);
             
-            brick->getUSBSocket().send(send, USB_OUT_ENDPOINT);
-            receive = brick->getUSBSocket().receive(USB_IN_ENDPOINT);
+            brick->send(send);
+            receive = brick->receive();
             receive.getData(data);
             
             if(p_timeoutMS > 0)
