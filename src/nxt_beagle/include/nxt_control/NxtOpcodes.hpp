@@ -29,6 +29,10 @@
 #define CMD_GET_OUTPUT_STATE 0x06
 #define CMD_GET_INPUT_VALUES 0x07
 #define CMD_RESET_MOTOR 0x0A
+#define CMD_RESET_INPUT_SCALED_VALUE 0x08
+#define CMD_LSGETSTATUS 0x0E
+#define CMD_LSWRITE 0x0F
+#define CMD_LSREAD 0x10
 
 /* Motor Modes */
 #define MOTOR_MODE_COAST 0x00
@@ -56,5 +60,15 @@
 
 /* Sensor Modes */
 #define SENSOR_MODE_RAW 0x00
+
+/* LS Commands */
+#define LS_ULTRASONIC_ADDRESS 0x02
+#define LS_SET_ULTRASONIC_MODE 0x41
+#define READ_ULTRASONIC_BYTE0 0x42
+
+/* Ultrasonic modes */
+#define ULTRASONIC_MODE_OFF 0x00
+#define ULTRASONIC_MODE_SINGLESHOT 0x01
+#define ULTRASONIC_MODE_CONTINUOUS 0x02
 
 #endif

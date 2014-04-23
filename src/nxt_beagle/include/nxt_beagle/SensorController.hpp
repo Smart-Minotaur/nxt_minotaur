@@ -21,7 +21,7 @@ namespace minotaur
         
         void setBrick(nxtcon::Brick *p_brick);
         
-        const nxtcon::SensorData& getSensorData(const uint8_t p_id);
+        uint8_t getDistance(const uint8_t p_id);
         uint8_t addSensor(const uint8_t p_port);
         void clearSensors();
     };

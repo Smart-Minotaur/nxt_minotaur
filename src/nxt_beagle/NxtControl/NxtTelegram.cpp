@@ -107,6 +107,79 @@ namespace nxtcon
         p_telegram->add_uint8(p_mode);
     }
     
+    void create_resetInputScaledValue(Telegram *p_telegram, const uint8_t p_port)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD_NO_REPLY);
+        //set command
+        p_telegram->add(CMD_RESET_INPUT_SCALED_VALUE);
+        //set sensor port
+        p_telegram->add_uint8(p_port);
+    }
+    
+    void create_setUltraSonicPingMode(Telegram *p_telegram, const uint8_t p_port)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD_NO_REPLY);
+        //set command
+        p_telegram->add(CMD_LSWRITE);
+        //set sensor port
+        p_telegram->add_uint8(p_port);
+        //set length of data to send
+        p_telegram->add(0x03);
+        //set length of data to receive
+        p_telegram->add(0x00);
+        //ultrasonic address for ls
+        p_telegram->add(LS_ULTRASONIC_ADDRESS);
+        //command set mode
+        p_telegram->add(LS_SET_ULTRASONIC_MODE);
+        //set mode to ping mode
+        p_telegram->add(ULTRASONIC_MODE_SINGLESHOT);
+    }
+    
+    void create_measureUltraSonic(Telegram *p_telegram, const uint8_t p_port)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD_NO_REPLY);
+        //set command
+        p_telegram->add(CMD_LSWRITE);
+        //set sensor port
+        p_telegram->add_uint8(p_port);
+        //set length of data to send
+        p_telegram->add(0x02);
+        //set length of data to receive
+        p_telegram->add(0x01);
+        //ultrasonic address for ls
+        p_telegram->add(LS_ULTRASONIC_ADDRESS);
+        //command set mode
+        p_telegram->add(READ_ULTRASONIC_BYTE0);
+    }
+    
+    void create_lsGetStatus(Telegram *p_telegram, const uint8_t p_port)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD);
+        //set command
+        p_telegram->add(CMD_LSGETSTATUS);
+        //set sensor port
+        p_telegram->add_uint8(p_port);
+    }
+    
+    void create_lsRead(Telegram *p_telegram, const uint8_t p_port)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD);
+        //set command
+        p_telegram->add(CMD_LSREAD);
+        //set sensor port
+        p_telegram->add_uint8(p_port);
+    }
+    
     void decode_tachoOutputState(const Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port)
     {
         unsigned char data[p_telegram.getLength()];
@@ -169,7 +242,7 @@ namespace nxtcon
         }
     }
     
-    void decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port)
+    void decode_ultraSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port)
     {
         unsigned char data[p_telegram.getLength()];
         p_telegram.getData(data);

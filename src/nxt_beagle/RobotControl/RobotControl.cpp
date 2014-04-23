@@ -289,7 +289,7 @@ void processClearSensorMsg(const nxt_beagle::ClearSensor &p_msg)
 bool processGetUltrasonicRqt(nxt_beagle::nxtUltrasonic::Request  &req,
                              nxt_beagle::nxtUltrasonic::Response &res)
 {
-    res.distance = sensorController.getSensorData(req.sensorID).rawValue;
+    res.distance = sensorController.getDistance(req.sensorID);
     return true;
 }
 

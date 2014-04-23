@@ -13,9 +13,16 @@ namespace nxtcon
     void create_resetTacho(Telegram *p_telegram, const uint8_t p_port);
     void create_getInputValues(Telegram *p_telegram, const uint8_t p_port);
     void create_setInputMode(Telegram *p_telegram, const uint8_t p_port, const uint8_t p_type, const uint8_t p_mode);
+    void create_resetInputScaledValue(Telegram *p_telegram, const uint8_t p_port);
+    
+    void create_setUltraSonicPingMode(Telegram *p_telegram, const uint8_t p_port);
+    void create_measureUltraSonic(Telegram *p_telegram, const uint8_t p_port);
+    void create_lsGetStatus(Telegram *p_telegram, const uint8_t p_port);
+    void create_lsRead(Telegram *p_telegram, const uint8_t p_port);
     
     void decode_tachoOutputState(const Telegram &p_telegram, TachoData *p_tacho, const uint8_t p_port);
-    void decode_unltaSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port);
+    void decode_ultraSonicSensorInputValues(const Telegram &p_telegram, SensorData *p_sensor, const uint8_t p_port);
+    uint8_t decode_ultraSonicStatus(const Telegram &p_telegram, const uint8_t p_port);
     
     bool isLittleEndian();
 }
