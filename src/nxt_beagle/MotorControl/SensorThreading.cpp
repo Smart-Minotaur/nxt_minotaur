@@ -35,6 +35,8 @@ namespace minotaur
         pthread_mutex_lock(&unevenSensorMutex);
         pthread_mutex_lock(&evenSensorMutex);
         
+        publish = p_publish;
+        
         pthread_mutex_unlock(&evenSensorMutex);
         pthread_mutex_unlock(&unevenSensorMutex);
     }
@@ -44,7 +46,7 @@ namespace minotaur
         pthread_mutex_lock(&unevenSensorMutex);
         pthread_mutex_lock(&evenSensorMutex);
         
-        
+        samplingIntervall = p_samplingIntervall;
         
         pthread_mutex_unlock(&evenSensorMutex);
         pthread_mutex_unlock(&unevenSensorMutex);
@@ -94,28 +96,35 @@ namespace minotaur
         nxt_beagle::UltraSensor msg;
         sensor_thread_arg * sensor_arg = (sensor_thread_arg*) p_arg;
         
-        while(*(sensor_arg->run))
+        try
         {
-            sleepsec = 0.1;
-            
-            if(*(sensor_arg->publish))
+            while(*(sensor_arg->run))
             {
-                begin = ros::Time::now();
-                pthread_mutex_lock(sensor_arg->mutex);
-                for(int i = sensor_arg->start; i < sensor_arg->controller->sensorCount(); i += 2)
+                sleepsec = 0.1;
+                
+                if(*(sensor_arg->publish))
                 {
-                    msg.distance = sensor_arg->controller->getDistance(i);
-                    (*(sensor_arg->sensorDataPub))->publish(msg);
+                    begin = ros::Time::now();
+                    pthread_mutex_lock(sensor_arg->mutex);
+                    for(int i = sensor_arg->start; i < sensor_arg->controller->sensorCount(); i += 2)
+                    {
+                        msg.distance = sensor_arg->controller->getDistance(i);
+                        (*(sensor_arg->sensorDataPub))->publish(msg);
+                    }
+                    
+                    end = ros::Time::now();
+                    
+                    sleepsec = ((float) (*(sensor_arg->samplingIntervall))) - ((float) (end.toSec() - begin.toSec()));
+                    
+                    pthread_mutex_unlock(sensor_arg->mutex);
                 }
                 
-                end = ros::Time::now();
-                
-                sleepsec = ((float) (*(sensor_arg->samplingIntervall))) - ((float) (end.toSec() - begin.toSec()));
-                
-                pthread_mutex_unlock(sensor_arg->mutex);
+                ros::Duration(sleepsec).sleep();
             }
-            
-            ros::Duration(sleepsec).sleep();
+        }
+        catch(std::exception const &e)
+        {
+            ROS_ERROR("Sensor Thread crashed: %s.", e.what());
         }
     }
     

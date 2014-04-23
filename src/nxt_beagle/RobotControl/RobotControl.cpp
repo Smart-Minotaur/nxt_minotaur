@@ -103,6 +103,9 @@ int main(int argc, char** argv)
         return 2;
     }
     
+    ROS_INFO("Starting Sensor threads...");
+    //sensorThreading.start();
+    
     ROS_INFO("%s-System ready for input.", NODE_NAME);
     ros::spin();
     pthread_join(thread, NULL);
@@ -185,8 +188,6 @@ bool init(ros::NodeHandle& p_handle)
     sensorThreading.setBrick(&brick);
     sensorThreading.setSensorPublisher(&sensorDataPub);
     sensorThreading.setPublish(true);
-    
-    sensorThreading.start();
     
     return true;
 }
