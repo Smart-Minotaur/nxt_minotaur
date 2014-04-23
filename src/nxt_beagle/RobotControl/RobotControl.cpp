@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     }
     
     ROS_INFO("Starting Sensor threads...");
-    //sensorThreading.start();
+    sensorThreading.start();
     
     ROS_INFO("%s-System ready for input.", NODE_NAME);
     ros::spin();
