@@ -31,4 +31,9 @@ namespace minotaur
     {
         sensors.clear();
     }
+    
+    int SensorController::sensorCount() const
+    {
+        return sensors.size();
+    }
 }
