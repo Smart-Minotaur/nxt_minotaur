@@ -34,6 +34,7 @@ namespace minotaur
         int samplingIntervall;
         bool publish;
         bool run;
+        bool started;
         
         ros::Publisher *sensorDataPub;
     public:
@@ -51,6 +52,7 @@ namespace minotaur
         uint8_t getDistance(const uint8_t p_sensorID);
         void setBrick(nxtcon::Brick *p_brick);
         
+        void start();
         void shutdown();
     };
 }

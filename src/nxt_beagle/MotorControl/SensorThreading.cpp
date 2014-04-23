@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "nxt_beagle/SensorThreading.hpp"
 #include "nxt_beagle/UltraSensor.h"
 
@@ -15,23 +16,7 @@ namespace minotaur
         run = true;
         publish = false;
         samplingIntervall = DEF_SAMPLING_INTERVALL;
-        
-        evenThread.controller = &sensorController;
-        evenThread.start = 0;
-        evenThread.mutex = &evenSensorMutex;
-        evenThread.publish = &publish;
-        evenThread.run = &run;
-        evenThread.samplingIntervall = &samplingIntervall;
-        
-        unevenThread.controller = &sensorController;
-        unevenThread.start = 1;
-        unevenThread.mutex = &evenSensorMutex;
-        unevenThread.publish = &publish;
-        unevenThread.run = &run;
-        unevenThread.samplingIntervall = &samplingIntervall;
-        
-        pthread_create(&threads[0], NULL, sensorThread, &evenThread);
-        pthread_create(&threads[1], NULL, sensorThread, &unevenThread);
+        started = false;
     }
         
     void SensorThreading::setSensorPublisher(ros::Publisher *p_sensorPublisher)
@@ -143,6 +128,32 @@ namespace minotaur
         
         pthread_mutex_unlock(&evenSensorMutex);
         pthread_mutex_unlock(&unevenSensorMutex);
+    }
+    
+    void SensorThreading::start()
+    {
+        if(started)
+            throw std::logic_error("SensorThreading cannot be started twice.");
+        
+        run = true;
+        started = true;
+        
+        evenThread.controller = &sensorController;
+        evenThread.start = 0;
+        evenThread.mutex = &evenSensorMutex;
+        evenThread.publish = &publish;
+        evenThread.run = &run;
+        evenThread.samplingIntervall = &samplingIntervall;
+        
+        unevenThread.controller = &sensorController;
+        unevenThread.start = 1;
+        unevenThread.mutex = &evenSensorMutex;
+        unevenThread.publish = &publish;
+        unevenThread.run = &run;
+        unevenThread.samplingIntervall = &samplingIntervall;
+        
+        pthread_create(&threads[0], NULL, sensorThread, &evenThread);
+        pthread_create(&threads[1], NULL, sensorThread, &unevenThread);
     }
     
      void SensorThreading::shutdown()

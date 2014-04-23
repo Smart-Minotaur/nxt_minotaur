@@ -186,6 +186,8 @@ bool init(ros::NodeHandle& p_handle)
     sensorThreading.setSensorPublisher(&sensorDataPub);
     sensorThreading.setPublish(true);
     
+    sensorThreading.start();
+    
     return true;
 }
 
