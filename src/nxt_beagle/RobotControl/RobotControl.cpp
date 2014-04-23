@@ -381,7 +381,7 @@ void sendStatusInformation()
     if(publishMeasuredMvel)
     {
         msgM = motorVelocityToMsg(robotController.getPIDController().getMeasuredVelocity());
-        ROS_INFO("Sending Measured Velocity: left = &.2f; right = %.2f;", msgM.leftVelocity, msgM.rightVelocity);
+        ROS_INFO("Sending Measured Velocity: left = %.2f; right = %.2f;", msgM.leftVelocity, msgM.rightVelocity);
         measuredMVelPub.publish(msgM);
     }
     
