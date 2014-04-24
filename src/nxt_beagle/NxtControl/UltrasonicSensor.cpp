@@ -64,7 +64,7 @@ namespace nxtcon
                 ms += msdiff(&begin, &end);
             }
             
-        } while (data[2] == 0 && (p_timeoutMS < 0 || ms < p_timeoutMS));
+        } while (data[2] == 0 && (p_timeoutMS <= 0 || ms < p_timeoutMS));
         
         return data[2];
     }
