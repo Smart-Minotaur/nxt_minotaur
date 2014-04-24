@@ -27,7 +27,7 @@ namespace nxtcon
         bool isConnected() const;
         
         void send(const Telegram &p_telegram);
-        Telegram receive();
+        Telegram sendWithResponse(const Telegram &p_telegram);
     };
     
 }

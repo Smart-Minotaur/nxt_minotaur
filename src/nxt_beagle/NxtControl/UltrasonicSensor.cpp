@@ -16,7 +16,7 @@ namespace nxtcon
     :brick(p_brick),port(p_port)
     {
         if(!brick->isConnected())
-            throw std::logic_error("Cannot create UltrasonicSensor. Brick is not connected or has not been searched.");
+            throw NXTException("Cannot create UltrasonicSensor. Brick is not connected or has not been searched.");
         
         Telegram telegram;
         create_setInputMode(&telegram, port, SENSOR_TYPE_LOWSPEED_9V, SENSOR_MODE_RAW);
@@ -24,6 +24,7 @@ namespace nxtcon
         create_setUltraSonicPingMode(&telegram, port);
         brick->send(telegram);
     }
+    
     uint8_t UltrasonicSensor::getDistance(const int p_timeoutMS)
     {
         Telegram telegram;
@@ -35,8 +36,7 @@ namespace nxtcon
             throw NXTTimeoutException("Ultrasonic measurement timed out.");
         
         create_lsRead(&telegram, port);
-        brick->send(telegram);
-        telegram = brick->receive();
+        telegram = brick->sendWithResponse(telegram);
         telegram.getData(data);
         
         return data[4];
@@ -55,8 +55,7 @@ namespace nxtcon
             if(p_timeoutMS > 0)
                 gettimeofday(&begin, NULL);
             
-            brick->send(send);
-            receive = brick->receive();
+            receive = brick->sendWithResponse(send);
             receive.getData(data);
             
             if(p_timeoutMS > 0)

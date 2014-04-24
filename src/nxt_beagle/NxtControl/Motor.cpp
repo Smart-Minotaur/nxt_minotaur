@@ -39,8 +39,7 @@ namespace nxtcon
     {
         Telegram telegram;
         create_getOutputState(&telegram, port);
-        brick->send(telegram);
-        telegram = brick->receive();
+        telegram = brick->sendWithResponse(telegram);
         decode_tachoOutputState(telegram, &tacho, port);
         return tacho;
     }

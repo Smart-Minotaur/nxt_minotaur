@@ -70,11 +70,18 @@ namespace nxtcon
         :USBException(msg) { }
     };
     
-    class NXTTimeoutException : public USBException
+    class NXTException : public USBException
+    {
+    public:
+        NXTException(std::string const& msg) throw()
+        :USBException(msg) { }
+    };
+    
+    class NXTTimeoutException : public NXTException
     {
     public:
         NXTTimeoutException(std::string const& msg) throw()
-        :USBException(msg) { }
+        :NXTException(msg) { }
     };
     
     class USBError : public std::exception
