@@ -94,7 +94,7 @@ namespace nxtcon
         {
             code = p_code;
             std::stringstream ss;
-            ss << message << " Code: " << code;
+            ss << msg << ". Code: " << code;
             message = ss.str();
         }
         
@@ -122,7 +122,7 @@ namespace nxtcon
         {
             code = p_code;
             std::stringstream ss;
-            ss << message << " Code: " << code;
+            ss << msg << ". Code: " << code;
             message = ss.str();
         }
             

@@ -18,7 +18,7 @@ namespace nxtcon
         
         virtual ~UltrasonicSensor() { }
    
-        uint8_t getDistance(const int p_timeoutMS = 0);
+        uint8_t getDistance(const int p_timeoutMS = 20);
     };
 }
 

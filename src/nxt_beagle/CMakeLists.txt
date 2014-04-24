@@ -87,6 +87,7 @@ foreach( testsourcefile ${TEST_SOURCES} )
 endforeach( testsourcefile ${TEST_SOURCES} )
 
 #compile RobotControl node
-add_executable(RobotControl RobotControl/RobotControl.cpp)
+file( GLOB ROBOT_CONTROL_SOURCES RobotControl/*.cpp )
+add_executable(RobotControl ${ROBOT_CONTROL_SOURCES})
 target_link_libraries(RobotControl ${catkin_LIBRARIES}  ${MINOTAUR_CUSTOM_LIBS})
 add_dependencies(RobotControl nxt_beagle_generate_messages_cpp)

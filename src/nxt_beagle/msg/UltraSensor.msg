@@ -1,2 +1,2 @@
-uint8 id
+uint8 sensorID
 uint16 distance
