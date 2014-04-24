@@ -9,7 +9,7 @@
 #include <string>
 #include "nxt_beagle/Config.hpp"
 #include "nxt_beagle/RobotController.hpp"
-#include "nxt_beagle/SensorThreading.hpp"
+#include "nxt_beagle/SensorController.hpp"
 #include "nxt_beagle/MVelocity.h"
 #include "nxt_beagle/RVelocity.h"
 #include "nxt_beagle/SamplingInterval.h"
@@ -32,10 +32,9 @@
 
 volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
 minotaur::RobotController robotController;
-minotaur::SensorThreading sensorThreading;
+minotaur::SensorController sensorController;
 bool publishTargetMVel = true;
 bool publishMeasuredMvel = true;
-bool publishMeasureRVel = true;
 bool publishTargetRVel = false;
 
 nxtcon::Brick brick;
@@ -102,9 +101,6 @@ int main(int argc, char** argv)
         ros::shutdown();
         return 2;
     }
-    
-    ROS_INFO("Starting Sensor threads...");
-    sensorThreading.start();
     
     ROS_INFO("%s-System ready for input.", NODE_NAME);
     ros::spin();
@@ -185,9 +181,7 @@ bool init(ros::NodeHandle& p_handle)
     robotController.getPIDController().setRightMotor(&rightMotor);
     
     ROS_INFO("Setting up SensorController...");
-    sensorThreading.setBrick(&brick);
-    sensorThreading.setSensorPublisher(&sensorDataPub);
-    sensorThreading.setPublish(true);
+    sensorController.setBrick(&brick);
     
     return true;
 }
@@ -211,7 +205,6 @@ void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg)
     pthread_mutex_lock(&robotMutex);
     
     samplingMSec = p_msg.msec;
-    sensorThreading.setSamplingIntervall(p_msg.msec);
     
     pthread_mutex_unlock(&robotMutex);
 }
@@ -290,13 +283,13 @@ void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
 
 void processClearSensorMsg(const nxt_beagle::ClearSensor &p_msg)
 {
-    sensorThreading.clearSensors();
+    sensorController.clearSensors();
 }
 
 bool processGetUltrasonicRqt(nxt_beagle::nxtUltrasonic::Request  &req,
                              nxt_beagle::nxtUltrasonic::Response &res)
 {
-    res.distance = sensorThreading.getDistance(req.sensorID);
+    res.distance = sensorController.getDistance(req.sensorID);
     return true;
 }
 
@@ -325,7 +318,7 @@ bool processAddUltrasonicRqt(nxt_beagle::nxtAddUltrasonic::Request  &req,
     
     try
     {
-        res.sensorID = sensorThreading.addSensor(tmpPort);
+        res.sensorID = sensorController.addSensor(tmpPort);
     }
     catch(std::exception const &e)
     {
@@ -395,12 +388,6 @@ void sendStatusInformation()
     {
         msgR = robotVelocityToMsg(robotController.getRobotVelocity());
         targetRVelPub.publish(msgR);
-    }
-    
-    if(publishMeasureRVel)
-    {
-        msgR = robotVelocityToMsg(robotController.getMeasuredVelocity());
-        measuredRVelPub.publish(msgR);
     }
 }
 

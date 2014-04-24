@@ -24,8 +24,6 @@ namespace minotaur
         uint8_t getDistance(const uint8_t p_id);
         uint8_t addSensor(const uint8_t p_port);
         void clearSensors();
-        
-        int sensorCount() const;
     };
 }
 
