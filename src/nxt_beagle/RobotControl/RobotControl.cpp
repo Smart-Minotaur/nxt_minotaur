@@ -32,16 +32,22 @@ ros::Subscriber setSampIntSub;
 ros::Subscriber setModelSub;
 
 pthread_mutex_t intervalMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_t thread;
+pthread_t robot_thread;
+pthread_t sensor_thread;
+
+pthread_barrier_t startBarrier;
 volatile bool run = true;
 
 /* Function prototypes */
-bool init(ros::NodeHandle &p_handle);
 void setSignals();
 void signalHandler(int sig);
+bool init(ros::NodeHandle &p_handle);
+bool startThreads();
+void* robotThread(void *arg);
+void* sensorThread(void *arg);
+void joinThreads();
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval &p_msg) ;
 void processSetModelMsg(const nxt_beagle::SetModel &p_msg);
-void* robotThread(void *arg);
 
 int main(int argc, char** argv)
 {
@@ -58,18 +64,15 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    ROS_INFO("Starting RobotThread...");
-    ret = pthread_create(&thread, NULL, robotThread, NULL);
-    if(ret)
+    if(!startThreads())
     {
-        ROS_ERROR("Failed to create thread: %d", ret);
         ros::shutdown();
         return 2;
     }
-    
     ROS_INFO("%s-System ready for input.", NODE_NAME);
+    
     ros::spin();
-    pthread_join(thread, NULL);
+    joinThreads();
     
     return 0;
 }
@@ -88,6 +91,8 @@ void signalHandler(int sig)
 
 bool init(ros::NodeHandle& p_handle)
 {
+    int ret;
+    
     if(!ros::master::check())
     {
         ROS_ERROR("Roscore has to be started.");
@@ -102,6 +107,13 @@ bool init(ros::NodeHandle& p_handle)
     catch (std::exception const &e)
     {
         ROS_ERROR("InitializeBrick: %s.", e.what());
+        return false;
+    }
+    
+    ret = pthread_barrier_init(&startBarrier, NULL, 3);
+    if(ret)
+    {
+        ROS_ERROR("Could not init startBarrier: %d.", ret);
         return false;
     }
     
@@ -127,6 +139,125 @@ bool init(ros::NodeHandle& p_handle)
     setModelSub = p_handle.subscribe(NXT_SET_MODEL_TOPIC, 1000, processSetModelMsg);
     
     return true;
+}
+
+bool startThreads()
+{
+    int ret;
+    
+    ROS_INFO("Starting RobotThread...");
+    
+    ret = pthread_create(&robot_thread, NULL, robotThread, NULL);
+    if(ret)
+    {
+        ROS_ERROR("Failed to create thread: %d", ret);
+        return false;
+    }
+    
+    ROS_INFO("Starting SensorThread...");
+    
+    ret = pthread_create(&sensor_thread, NULL, sensorThread, NULL);
+    if(ret)
+    {
+        ROS_ERROR("Failed to create thread: %d", ret);
+        return false;
+    }
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    return true;
+}
+
+void* robotThread(void *arg)
+{
+    ros::Time begin, end;
+    float sleepSec;
+    int tmpSamplingMsec;
+    
+    ROS_INFO("RobotThread started.");
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    while(run)
+    {
+        sleepSec = 0;
+        begin = ros::Time::now();
+        
+        //lock 
+        pthread_mutex_lock(&intervalMutex);
+        tmpSamplingMsec = samplingMSec;
+        pthread_mutex_unlock(&intervalMutex);
+        
+        robotCommunicator.lock();
+        try
+        {
+            
+            robotCommunicator.getRobotController().step(tmpSamplingMsec);
+            //TODO is this the right place to send infos, maybe bad for performance
+            //better to do it asynch?
+            robotCommunicator.publish();
+            
+            end = ros::Time::now();
+            
+            sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
+        }
+        catch(std::exception const & e)
+        {
+            ROS_ERROR("RobotThread: %s.", e.what());
+        }
+        
+        robotCommunicator.unlock();
+        if(sleepSec > 0)
+            ros::Duration(sleepSec).sleep();
+    }
+    
+    ROS_INFO("RobotThread terminated.");
+    ros::shutdown();
+}
+
+void* sensorThread(void *arg)
+{
+    ros::Time begin, end;
+    float sleepSec;
+    int tmpSamplingMsec;
+    
+    ROS_INFO("SensorThread started.");
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    while(run)
+    {
+        
+        sleepSec = 0;
+        begin = ros::Time::now();
+        
+        pthread_mutex_lock(&intervalMutex);
+        tmpSamplingMsec = samplingMSec;
+        pthread_mutex_unlock(&intervalMutex);
+        
+        sensorCommunicator.lock();
+        
+        try
+        {
+            sensorCommunicator.publish();
+        }
+        catch(std::exception const &e)
+        {
+            ROS_ERROR("SensorThread: %s.", e.what());
+        }
+        sensorCommunicator.unlock();
+        
+        if(sleepSec > 0)
+            ros::Duration(sleepSec).sleep();
+    }
+    
+    ROS_INFO("SensorThread terminated.");
+}
+
+void joinThreads()
+{
+    pthread_join(robot_thread, NULL);
+    pthread_join(sensor_thread, NULL);
 }
 
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
@@ -205,48 +336,4 @@ void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
         robotCommunicator.unlock();
         pthread_mutex_unlock(&intervalMutex);
     }
-}
-
-void* robotThread(void *arg)
-{
-    ros::Time begin, end;
-    float sleepSec;
-    int tmpSamplingMsec;
-    
-    ROS_INFO("RobotThread started.");
-    
-    while(run)
-    {
-        sleepSec = 0;
-        begin = ros::Time::now();
-        
-        //lock 
-        pthread_mutex_lock(&intervalMutex);
-        tmpSamplingMsec = samplingMSec;
-        pthread_mutex_unlock(&intervalMutex);
-        
-        robotCommunicator.lock();
-        try
-        {
-            
-            robotCommunicator.getRobotController().step(tmpSamplingMsec);
-            //TODO is this the right place to send infos, maybe bad for performance
-            //better to do it asynch?
-            robotCommunicator.publish();
-            
-            end = ros::Time::now();
-            
-            sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
-        }
-        catch(std::exception const & e)
-        {
-            ROS_ERROR("RobotThread: %s.", e.what());
-        }
-        
-        robotCommunicator.unlock();
-        if(sleepSec > 0)
-            ros::Duration(sleepSec).sleep();
-    }
-    ROS_INFO("RobotThread terminated.");
-    ros::shutdown();
 }
