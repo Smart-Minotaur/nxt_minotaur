@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <sys/time.h>
 #include <ros/ros.h>
+#include <unistd.h>
 
 #define LS_STATUS_RESPONSE_LENGTH 4
 #define MAX_LS_READ_RESPONSE 20

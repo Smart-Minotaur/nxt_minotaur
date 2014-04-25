@@ -197,9 +197,7 @@ void* robotThread(void *arg)
             //better to do it asynch?
             robotCommunicator.publish();
             
-            end = ros::Time::now();
             
-            sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
         }
         catch(std::exception const & e)
         {
@@ -207,6 +205,10 @@ void* robotThread(void *arg)
         }
         
         robotCommunicator.unlock();
+        
+        end = ros::Time::now();
+        sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
+        
         if(sleepSec > 0)
             ros::Duration(sleepSec).sleep();
     }
@@ -246,6 +248,9 @@ void* sensorThread(void *arg)
             ROS_ERROR("SensorThread: %s.", e.what());
         }
         sensorCommunicator.unlock();
+        
+        end = ros::Time::now();
+        sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
         
         if(sleepSec > 0)
             ros::Duration(sleepSec).sleep();
