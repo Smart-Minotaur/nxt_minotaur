@@ -13,7 +13,7 @@ namespace nxtcon
     void Brick::find(const int p_interface)
     {
         if(connected)
-            throw std::logic_error("Cannot find Brick. Brick is already connected.");
+            throw std::logic_error("Cannot find Brick. Brick is already connected");
         
         usbSocket.open(LEGO_VENDOR_ID, NXT_PRODUCT_ID, p_interface);
         connected = true;

@@ -12,6 +12,7 @@
 #include "nxt_beagle/SetModel.h"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "nxt_control/NxtExceptions.hpp"
 #include "nxt_beagle/RobotCommunicator.hpp"
 #include "nxt_beagle/SensorCommunicator.hpp"
 
@@ -36,6 +37,7 @@ pthread_t robot_thread;
 pthread_t sensor_thread;
 
 pthread_barrier_t startBarrier;
+pthread_barrier_t stopBarrier;
 volatile bool run = true;
 
 /* Function prototypes */
@@ -117,6 +119,13 @@ bool init(ros::NodeHandle& p_handle)
         return false;
     }
     
+    ret = pthread_barrier_init(&stopBarrier, NULL, 2);
+    if(ret)
+    {
+        ROS_ERROR("Could not init stopBarrier: %d.", ret);
+        return false;
+    }
+    
     try
     {
         robotCommunicator.pubTargetMVel = true;
@@ -191,13 +200,10 @@ void* robotThread(void *arg)
         robotCommunicator.lock();
         try
         {
-            
             robotCommunicator.getRobotController().step(tmpSamplingMsec);
             //TODO is this the right place to send infos, maybe bad for performance
             //better to do it asynch?
             robotCommunicator.publish();
-            
-            
         }
         catch(std::exception const & e)
         {
@@ -214,6 +220,7 @@ void* robotThread(void *arg)
     }
     
     ROS_INFO("RobotThread terminated.");
+    pthread_barrier_wait(&stopBarrier);
     ros::shutdown();
 }
 
@@ -243,6 +250,10 @@ void* sensorThread(void *arg)
         {
             sensorCommunicator.publish();
         }
+        catch(nxtcon::NXTTimeoutException const &te)
+        {
+            ROS_WARN("SensorThread: %s.", te.what());
+        }
         catch(std::exception const &e)
         {
             ROS_ERROR("SensorThread: %s.", e.what());
@@ -257,6 +268,7 @@ void* sensorThread(void *arg)
     }
     
     ROS_INFO("SensorThread terminated.");
+    pthread_barrier_wait(&stopBarrier);
 }
 
 void joinThreads()

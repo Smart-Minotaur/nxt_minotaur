@@ -2,6 +2,7 @@
 #include "nxt_beagle/Config.hpp"
 #include "nxt_beagle/UltraSensor.h"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "nxt_control/NxtExceptions.hpp"
 
 namespace minotaur
 {
@@ -64,6 +65,10 @@ namespace minotaur
         try
         {
             res.distance = sensorController.getDistance(req.sensorID);
+        }
+        catch(nxtcon::NXTTimeoutException const &te)
+        {
+            ROS_WARN("GetUltrasonicData: %s.", te.what());
         }
         catch(std::exception const &e)
         {

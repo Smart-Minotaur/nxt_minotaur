@@ -70,20 +70,6 @@ namespace nxtcon
         :USBException(msg) { }
     };
     
-    class NXTException : public USBException
-    {
-    public:
-        NXTException(std::string const& msg) throw()
-        :USBException(msg) { }
-    };
-    
-    class NXTTimeoutException : public NXTException
-    {
-    public:
-        NXTTimeoutException(std::string const& msg) throw()
-        :NXTException(msg) { }
-    };
-    
     class USBError : public std::exception
     {
     private:
@@ -110,6 +96,26 @@ namespace nxtcon
             return code;
         }
     };
+    
+    /*#######################
+     *#   NXT exceptions    #
+     *#######################*/
+    
+    class NXTException : public USBException
+    {
+    public:
+        NXTException(std::string const& msg) throw()
+        :USBException(msg) { }
+    };
+    
+    class NXTTimeoutException : public NXTException
+    {
+    public:
+        NXTTimeoutException(std::string const& msg) throw()
+        :NXTException(msg) { }
+    };
+    
+    
     
     class NXTCommunicationException : public std::exception
     {
