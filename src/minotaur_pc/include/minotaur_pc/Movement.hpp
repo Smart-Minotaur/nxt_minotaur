@@ -8,7 +8,7 @@ namespace minotaur
     public:
         float v;
         float w;
-        float [2][2] sigma;
+        float  sigma[2][2];
         
         Movement() { }
         Movement(const float p_v, const float p_w)
@@ -21,7 +21,7 @@ namespace minotaur
         void setSigma(float **p_sigma)
         {
             for(int i = 0; i < 2; ++i)
-                for(int j = 0;  j < 2, ++j)
+                for(int j = 0;  j < 2; ++j)
                     sigma[i][j] = p_sigma[i][j];
         }
         

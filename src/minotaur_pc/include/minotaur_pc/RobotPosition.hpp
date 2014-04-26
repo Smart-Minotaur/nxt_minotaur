@@ -18,7 +18,7 @@ namespace minotaur
         void setSigma(float **p_sigma)
         {
             for(int i = 0; i < 3; ++i)
-                for(int j = 0;  j < 3, ++j)
+                for(int j = 0;  j < 3; ++j)
                     sigma[i][j] = p_sigma[i][j];
         }
     };
