@@ -6,8 +6,13 @@
 #include <termios.h>
 #include <poll.h>
 #include "ros/ros.h"
-#include "nxt_beagle/nxtPower.h"
 #include "nxt_beagle/Config.hpp"
+#include "nxt_control/Motor.hpp"
+#include "nxt_control/Brick.hpp"
+#include "nxt_control/NxtOpcodes.hpp"
+
+#define LEFT_PORT PORT_A
+#define RIGHT_PORT PORT_B
 
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
@@ -15,26 +20,29 @@
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
 
-ros::Publisher powerPub;
+nxtcon::Brick brick;
+nxtcon::Motor leftMotor;
+nxtcon::Motor rightMotor;
+
 struct termios oldtio, currtio;
 struct sigaction sa;
 bool run = true;
 
 void setSignalAction();
 void sighandler(int sig);
-void sendMsg(nxt_beagle::nxtPower msg);
+bool initBrick();
 void initKeyHandling();
 void eventLoop();
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "nxtTeleop");
+    ros::Time::init();
     
     setSignalAction();
     
-    ros::NodeHandle n;
-    
-    powerPub = n.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
+   if(!initBrick())
+    return -1;
     
     initKeyHandling();
     eventLoop();
@@ -57,6 +65,27 @@ void sighandler(int sig)
     run = false;
 }
 
+bool initBrick()
+{
+     try
+    {
+        ROS_INFO("Initialize USBConnection to Brick...");
+        brick.find();
+        leftMotor.setBrick(&brick);
+        leftMotor.setPort(LEFT_PORT);
+        
+        rightMotor.setBrick(&brick);
+        rightMotor.setPort(RIGHT_PORT);
+        
+        return true;
+    }
+    catch (std::exception const &e)
+    {
+        ROS_ERROR("Exception on initializing Brick: %s.", e.what());
+        return false;
+    }
+}
+
 void initKeyHandling()
 {
     //save for restore
@@ -77,9 +106,6 @@ void eventLoop()
 {
     char keycode;
     ros::Rate loop_rate(60);
-    nxt_beagle::nxtPower msg;
-    msg.leftMotor = 0;
-    msg.rightMotor = 0;
     
     while(run)
     {
@@ -93,33 +119,28 @@ void eventLoop()
         {
             case KEYCODE_L:
                 ROS_DEBUG("LEFT");
-                msg.leftMotor = -100;
-                msg.rightMotor = 100;
-                sendMsg(msg);
+                leftMotor.setPower(-100);
+                rightMotor.setPower(100);
                 break;
             case KEYCODE_R:
                 ROS_DEBUG("RIGHT");
-                msg.leftMotor = 100;
-                msg.rightMotor = -100;
-                sendMsg(msg);
+                leftMotor.setPower(100);
+                rightMotor.setPower(-100);
                 break;
             case KEYCODE_U:
                 ROS_DEBUG("UP");
-                msg.leftMotor = 100;
-                msg.rightMotor = 100;
-                sendMsg(msg);
+                leftMotor.setPower(100);
+                rightMotor.setPower(100);
                 break;
             case KEYCODE_D:
                 ROS_DEBUG("DOWN");
-                msg.leftMotor = -100;
-                msg.rightMotor = -100;
-                sendMsg(msg);
+                leftMotor.setPower(-100);
+                rightMotor.setPower(-100);
                 break;
             case KEYCODE_Q:
                 ROS_DEBUG("STOP");
-                msg.leftMotor = 0;
-                msg.rightMotor = 0;
-                sendMsg(msg);
+                leftMotor.brake();
+                rightMotor.brake();
                 break;
         }
             
@@ -128,11 +149,5 @@ void eventLoop()
     
     tcsetattr(0, TCSANOW, &oldtio);
     ROS_INFO("Eventloop terminated.");
-}
-
-void sendMsg(nxt_beagle::nxtPower msg)
-{
-    powerPub.publish(msg);
-    ros::spinOnce();
 }
 

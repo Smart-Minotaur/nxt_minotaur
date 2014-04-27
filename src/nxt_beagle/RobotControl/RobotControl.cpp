@@ -8,55 +8,48 @@
 #include <exception>
 #include <string>
 #include "nxt_beagle/Config.hpp"
-#include "nxt_beagle/RobotController.hpp"
-#include "nxt_beagle/MVelocity.h"
-#include "nxt_beagle/RVelocity.h"
 #include "nxt_beagle/SamplingInterval.h"
-#include "nxt_beagle/PIDParam.h"
-#include "nxt_beagle/nxtPower.h"
-#include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/SetModel.h"
+#include "nxt_control/Brick.hpp"
+#include "nxt_control/NxtOpcodes.hpp"
+#include "nxt_control/NxtExceptions.hpp"
+#include "nxt_beagle/RobotCommunicator.hpp"
+#include "nxt_beagle/SensorCommunicator.hpp"
 
 #define NODE_NAME "RobotControl"
 #define WHEEL_TRACK 0.12f
 #define WHEEL_CIRCUMFERENCE 0.16f
 #define DEF_SAMPLING_INTERVAL 100
+#define LEFT_PORT PORT_A
+#define RIGHT_PORT PORT_B
 
 volatile int samplingMSec = DEF_SAMPLING_INTERVAL;
-minotaur::RobotController robotController;
-bool publishTargetMVel = true;
-bool publishMeasuredMvel = true;
-bool publishTargetRVel = false;
 
-ros::Publisher targetMVelPub;
-ros::Publisher measuredMVelPub;
-ros::Publisher targetRVelPub;
-ros::Publisher measuredRVelPub;
-ros::Publisher powerPublisher;
+nxtcon::Brick brick;
+minotaur::RobotCommunicator robotCommunicator;
+minotaur::SensorCommunicator sensorCommunicator;
 
-ros::Subscriber setRVelSub;
 ros::Subscriber setSampIntSub;
-ros::Subscriber setPIDParamSub;
 ros::Subscriber setModelSub;
 
-ros::ServiceClient tickClient;
+pthread_mutex_t intervalMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_t robot_thread;
+pthread_t sensor_thread;
 
-pthread_mutex_t robotMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_t thread;
+pthread_barrier_t startBarrier;
+pthread_barrier_t stopBarrier;
 volatile bool run = true;
 
 /* Function prototypes */
-bool init(ros::NodeHandle& p_handle);
 void setSignals();
 void signalHandler(int sig);
-void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg);
-void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) ;
-void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg);
-void processSetModelMsg(const nxt_beagle::SetModel& p_msg);
+bool init(ros::NodeHandle &p_handle);
+bool startThreads();
 void* robotThread(void *arg);
-void sendStatusInformation();
-nxt_beagle::MVelocity motorVelocityToMsg(const minotaur::MotorVelocity& p_velocity);
-nxt_beagle::RVelocity robotVelocityToMsg(const minotaur::RobotVelocity& p_velocity);
+void* sensorThread(void *arg);
+void joinThreads();
+void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval &p_msg) ;
+void processSetModelMsg(const nxt_beagle::SetModel &p_msg);
 
 int main(int argc, char** argv)
 {
@@ -66,20 +59,22 @@ int main(int argc, char** argv)
     
     setSignals();
     
-    if(!init(n))
-        return -1;
     
-    ROS_INFO("Starting RobotThread...");
-    ret = pthread_create(&thread, NULL, robotThread, NULL);
-    if(ret)
+    if(!init(n))
     {
-        ROS_ERROR("Failed to create thread: %d", ret);
-        return -2;
+        ros::shutdown();
+        return 1;
     }
     
+    if(!startThreads())
+    {
+        ros::shutdown();
+        return 2;
+    }
     ROS_INFO("%s-System ready for input.", NODE_NAME);
+    
     ros::spin();
-    pthread_join(thread, NULL);
+    joinThreads();
     
     return 0;
 }
@@ -98,79 +93,198 @@ void signalHandler(int sig)
 
 bool init(ros::NodeHandle& p_handle)
 {
+    int ret;
+    
     if(!ros::master::check())
     {
         ROS_ERROR("Roscore has to be started.");
         return false;
     }
     
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_MOTOR_VELOCITY_TOPIC);
-    targetMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_TARGET_MOTOR_VELOCITY_TOPIC, 1000);
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_MOTOR_VELOCITY_TOPIC);
-    measuredMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_MEASURE_MOTOR_VELOCITY_TOPIC, 1000);
+    try
+    {
+        ROS_INFO("Initialize USBConnection to Brick...");
+        brick.find();
+    }
+    catch (std::exception const &e)
+    {
+        ROS_ERROR("InitializeBrick: %s.", e.what());
+        return false;
+    }
     
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_ROBOT_VELOCITY_TOPIC);
-    targetRVelPub = p_handle.advertise<nxt_beagle::RVelocity>(NXT_TARGET_ROBOT_VELOCITY_TOPIC, 1000);
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_ROBOT_VELOCITY_TOPIC);
-    measuredRVelPub = p_handle.advertise<nxt_beagle::RVelocity>(NXT_MEASURE_ROBOT_VELOCITY_TOPIC, 1000); 
+    ret = pthread_barrier_init(&startBarrier, NULL, 3);
+    if(ret)
+    {
+        ROS_ERROR("Could not init startBarrier: %d.", ret);
+        return false;
+    }
     
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_POWER_TOPIC);
-    powerPublisher = p_handle.advertise<nxt_beagle::nxtPower>(NXT_POWER_TOPIC, 1000);
+    ret = pthread_barrier_init(&stopBarrier, NULL, 2);
+    if(ret)
+    {
+        ROS_ERROR("Could not init stopBarrier: %d.", ret);
+        return false;
+    }
     
-    ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_ROBOT_VELOCITY_TOPIC);
-    setRVelSub = p_handle.subscribe(NXT_SET_ROBOT_VELOCITY_TOPIC, 1000, processRobotVelocityMsg);
+    try
+    {
+        robotCommunicator.pubTargetMVel = true;
+        robotCommunicator.pubMeasuredMVel = true;
+        robotCommunicator.pubTargetRVel = false;
+        robotCommunicator.pubMeasuredRVel = false;
+        
+        robotCommunicator.init(p_handle, &brick);
+        sensorCommunicator.init(p_handle, &brick);
+    }
+    catch(std::exception const &e)
+    {
+        ROS_ERROR("Initialize Communicator: %s.", e.what());
+        return false;
+    }
+    
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
     setSampIntSub = p_handle.subscribe(NXT_SET_SAMPLING_INTERVAL_TOPIC, 1000, processSamplingIntervallMsg);
-    ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_PID_PARAMETER);
-    setPIDParamSub = p_handle.subscribe(NXT_SET_PID_PARAMETER, 1000, processPIDParamMsg);
     ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_MODEL_TOPIC);
     setModelSub = p_handle.subscribe(NXT_SET_MODEL_TOPIC, 1000, processSetModelMsg);
-    
-    ROS_INFO("Using Servics \"%s\"...", NXT_GET_TICKS_SRV);
-    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
-    
-    ROS_INFO("Setting up RobotController...");
-    robotController.setWheelTrack(WHEEL_TRACK);
-    robotController.getPIDController().setWheelCircumference(WHEEL_CIRCUMFERENCE);
-    robotController.getPIDController().setMotorPublisher(&powerPublisher);
-    robotController.getPIDController().setMotorClient(&tickClient);
     
     return true;
 }
 
-void processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg)
+bool startThreads()
 {
-    minotaur::RobotVelocity vel;
-    vel.linearVelocity = p_msg.linearVelocity;
-    vel.angularVelocity = p_msg.angularVelocity;
+    int ret;
     
-    pthread_mutex_lock(&robotMutex);
+    ROS_INFO("Starting RobotThread...");
     
-    robotController.setRobotVelocity(vel);
+    ret = pthread_create(&robot_thread, NULL, robotThread, NULL);
+    if(ret)
+    {
+        ROS_ERROR("Failed to create thread: %d", ret);
+        return false;
+    }
     
-    pthread_mutex_unlock(&robotMutex);
+    ROS_INFO("Starting SensorThread...");
+    
+    ret = pthread_create(&sensor_thread, NULL, sensorThread, NULL);
+    if(ret)
+    {
+        ROS_ERROR("Failed to create thread: %d", ret);
+        return false;
+    }
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    return true;
+}
+
+void* robotThread(void *arg)
+{
+    ros::Time begin, end;
+    float sleepSec;
+    int tmpSamplingMsec;
+    
+    ROS_INFO("RobotThread started.");
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    while(run)
+    {
+        sleepSec = 0;
+        begin = ros::Time::now();
+        
+        //lock 
+        pthread_mutex_lock(&intervalMutex);
+        tmpSamplingMsec = samplingMSec;
+        pthread_mutex_unlock(&intervalMutex);
+        
+        robotCommunicator.lock();
+        try
+        {
+            robotCommunicator.getRobotController().step(tmpSamplingMsec);
+            //TODO is this the right place to send infos, maybe bad for performance
+            //better to do it asynch?
+            robotCommunicator.publish();
+        }
+        catch(std::exception const & e)
+        {
+            ROS_ERROR("RobotThread: %s.", e.what());
+        }
+        
+        robotCommunicator.unlock();
+        
+        end = ros::Time::now();
+        sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
+        
+        if(sleepSec > 0)
+            ros::Duration(sleepSec).sleep();
+    }
+    
+    ROS_INFO("RobotThread terminated.");
+    pthread_barrier_wait(&stopBarrier);
+    ros::shutdown();
+}
+
+void* sensorThread(void *arg)
+{
+    ros::Time begin, end;
+    float sleepSec;
+    int tmpSamplingMsec;
+    
+    ROS_INFO("SensorThread started.");
+    
+    pthread_barrier_wait(&startBarrier);
+    
+    while(run)
+    {
+        
+        sleepSec = 0;
+        begin = ros::Time::now();
+        
+        pthread_mutex_lock(&intervalMutex);
+        tmpSamplingMsec = samplingMSec;
+        pthread_mutex_unlock(&intervalMutex);
+        
+        sensorCommunicator.lock();
+        
+        try
+        {
+            sensorCommunicator.publish();
+        }
+        catch(nxtcon::NXTTimeoutException const &te)
+        {
+            ROS_WARN("SensorThread: %s.", te.what());
+        }
+        catch(std::exception const &e)
+        {
+            ROS_ERROR("SensorThread: %s.", e.what());
+        }
+        sensorCommunicator.unlock();
+        
+        end = ros::Time::now();
+        sleepSec = MS_TO_SEC(tmpSamplingMsec) - (end - begin).toSec();
+        
+        if(sleepSec > 0)
+            ros::Duration(sleepSec).sleep();
+    }
+    
+    ROS_INFO("SensorThread terminated.");
+    pthread_barrier_wait(&stopBarrier);
+}
+
+void joinThreads()
+{
+    pthread_join(robot_thread, NULL);
+    pthread_join(sensor_thread, NULL);
 }
 
 void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
 {
     ROS_INFO("Sampling Interval changed to %d msec.", p_msg.msec);
-    pthread_mutex_lock(&robotMutex);
+    pthread_mutex_lock(&intervalMutex);
     
     samplingMSec = p_msg.msec;
     
-    pthread_mutex_unlock(&robotMutex);
-}
-
-void processPIDParamMsg(const nxt_beagle::PIDParam& p_msg)
-{
-    minotaur::PIDParameter params(p_msg.Kp, p_msg.Ki, p_msg.Kd);
-    ROS_INFO("PIDParameter changed to: Kp = %.4f; Ki = %.4f; Kd = %.4f.",params.Kp, params.Ki, params.Kd);
-             
-    pthread_mutex_lock(&robotMutex);
-    
-    robotController.getPIDController().setPIDParameter(params);
-    
-    pthread_mutex_unlock(&robotMutex);
+    pthread_mutex_unlock(&intervalMutex);
 }
 
 void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
@@ -222,92 +336,21 @@ void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
         ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
         ROS_INFO("Kp = %.2f; Ki = %.2f; Kd = %.2f", pidParams.Kp, pidParams.Ki, pidParams.Kd);
         
-        pthread_mutex_lock(&robotMutex);
-        
-        robotController.getPIDController().setPIDParameter(pidParams);
-        robotController.getPIDController().setWheelCircumference(wheelCircumference);
-        robotController.setWheelTrack(wheelTrack);
-        samplingMSec = samplingTmp;
-        
-        pthread_mutex_unlock(&robotMutex);
-    }
-}
-
-void* robotThread(void *arg)
-{
-    ros::Time begin, end;
-    float sleepSec;
-    
-    ROS_INFO("RobotThread started.");
-    
-    while(run)
-    {
-        begin = ros::Time::now();
-        
-        //lock robotMutex
-        pthread_mutex_lock(&robotMutex);
-        
+        pthread_mutex_lock(&intervalMutex);
+        robotCommunicator.lock();
+        //always try catch between mutex lock / unlock to prevent deadlock
         try
         {
-            robotController.step(samplingMSec);
-            //TODO is this the right place to send infos, maybe bad for performance
-            //better to do it asynch?
-            sendStatusInformation();
-            
-            end = ros::Time::now();
-            
-            sleepSec = MS_TO_SEC(samplingMSec) - (end - begin).toSec();
+        robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
+        robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
+        robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
+        samplingMSec = samplingTmp;
         }
-        catch(std::exception e)
+        catch(std::exception const &e)
         {
-            ROS_ERROR("RobotThread: Exception occured : %s.", e.what());
+            ROS_ERROR("SetModel: %s.", e.what());
         }
-        //unlock robotMutex
-        pthread_mutex_unlock(&robotMutex);
-        
-        if(sleepSec > 0)
-            ros::Duration(sleepSec).sleep();
+        robotCommunicator.unlock();
+        pthread_mutex_unlock(&intervalMutex);
     }
-    ROS_INFO("RobotThread terminated.");
-    ros::shutdown();
-}
-
-void sendStatusInformation()
-{
-    nxt_beagle::MVelocity msgM;
-    nxt_beagle::RVelocity msgR;
-    
-    if(publishTargetMVel)
-    {
-        msgM = motorVelocityToMsg(robotController.getPIDController().getVelocity());
-        targetMVelPub.publish(msgM);
-    }
-    
-    if(publishMeasuredMvel)
-    {
-        msgM = motorVelocityToMsg(robotController.getPIDController().getMeasuredVelocity());
-        measuredMVelPub.publish(msgM);
-    }
-    
-    if(publishTargetRVel)
-    {
-        msgR = robotVelocityToMsg(robotController.getRobotVelocity());
-        targetRVelPub.publish(msgR);
-    }
-}
-
-nxt_beagle::MVelocity motorVelocityToMsg(const minotaur::MotorVelocity& p_velocity)
-{
-    nxt_beagle::MVelocity result;
-    result.leftVelocity = p_velocity.leftMPS;
-    result.rightVelocity = p_velocity.rightMPS;
-    return result;
-}
-
-nxt_beagle::RVelocity robotVelocityToMsg(const minotaur::RobotVelocity& p_velocity)
-{
-    nxt_beagle::RVelocity result;
-    result.linearVelocity = p_velocity.linearVelocity;
-    result.angularVelocity = p_velocity.angularVelocity;
-    return result;
 }

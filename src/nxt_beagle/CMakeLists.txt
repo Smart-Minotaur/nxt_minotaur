@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nxt_beagle)
 
+#add c++ standard
+SET(CMAKE_CXX_FLAGS "-std=c++0x")
+
 #set Version
 set(NXT_BEAGLE_MAJOR_VERSION 0)
 set(NXT_BEAGLE_MINOR_VERSION 1)
@@ -21,7 +24,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
     FILES
-    nxtPower.msg
     MVelocity.msg
     RVelocity.msg
     SamplingInterval.msg
@@ -35,7 +37,6 @@ add_message_files(
 add_service_files(
     FILES
     nxtUltrasonic.srv
-    nxtTicks.srv
     nxtAddUltrasonic.srv
 )
 
@@ -68,17 +69,25 @@ file( GLOB MOTOR_CONTROL_SOURCES MotorControl/*.cpp )
 add_library(MotorControl ${MOTOR_CONTROL_SOURCES})
 add_dependencies(MotorControl nxt_beagle_generate_messages_cpp)
 
+#compile NxtControl lib
+file( GLOB NXT_CONTROL_SOURCES NxtControl/*.cpp )
+add_library(NxtControl ${NXT_CONTROL_SOURCES})
+add_dependencies(NxtControl nxt_beagle_generate_messages_cpp)
+
+set(MINOTAUR_CUSTOM_LIBS NxtControl MotorControl usb-1.0)
+
 #compile all test executeables
 file( GLOB TEST_SOURCES */test/*.cpp)
 
 foreach( testsourcefile ${TEST_SOURCES} )
     get_filename_component(testname ${testsourcefile} NAME_WE)
     add_executable(${testname} ${testsourcefile})
-    target_link_libraries(${testname} ${catkin_LIBRARIES} MotorControl)
+    target_link_libraries(${testname} ${catkin_LIBRARIES} ${MINOTAUR_CUSTOM_LIBS})
     add_dependencies(${testname} nxt_beagle_generate_messages_cpp)
 endforeach( testsourcefile ${TEST_SOURCES} )
 
 #compile RobotControl node
-add_executable(RobotControl RobotControl/RobotControl.cpp)
-target_link_libraries(RobotControl ${catkin_LIBRARIES} MotorControl)
+file( GLOB ROBOT_CONTROL_SOURCES RobotControl/*.cpp )
+add_executable(RobotControl ${ROBOT_CONTROL_SOURCES})
+target_link_libraries(RobotControl ${catkin_LIBRARIES}  ${MINOTAUR_CUSTOM_LIBS})
 add_dependencies(RobotControl nxt_beagle_generate_messages_cpp)

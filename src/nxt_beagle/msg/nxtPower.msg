@@ -1,2 +1,0 @@
-int8 leftMotor
-int8 rightMotor

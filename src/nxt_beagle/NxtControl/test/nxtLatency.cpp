@@ -3,7 +3,6 @@
  */
 
 #include <ros/ros.h>
-#include "nxt_beagle/nxtTicks.h"
 #include "nxt_beagle/nxtUltrasonic.h"
 #include "nxt_beagle/nxtAddUltrasonic.h"
 #include "nxt_beagle/Config.hpp"
@@ -11,14 +10,12 @@
 #define TEST_COUNT 100
 
 int ultrasonicID = -1;
-ros::ServiceClient tickClient, ultrasonicClient, addUltrasonicClient;
-double tickLatency = -1.0;
+ros::ServiceClient ultrasonicClient, addUltrasonicClient;
 double ultrasonicLatency = -1.0;
 
 void initClients(ros::NodeHandle &p_handle);
 void addUltrasonic();
 void testUltrasonicLatency();
-void testTicksLatency();
 void printResults();
 
 int main(int argc, char **argv)
@@ -33,7 +30,6 @@ int main(int argc, char **argv)
     ROS_INFO("=====================");
     
     testUltrasonicLatency();
-    testTicksLatency();
     printResults();
     
     ROS_INFO("=====================");
@@ -48,7 +44,6 @@ void initClients(ros::NodeHandle &p_handle)
     
     // to connect to certain services its name is needed
     // the templyte types are the message types used to communicate
-    tickClient = p_handle.serviceClient<nxt_beagle::nxtTicks>(NXT_GET_TICKS_SRV);
     ultrasonicClient = p_handle.serviceClient<nxt_beagle::nxtUltrasonic>(NXT_GET_ULTRASONIC_SRV);
     addUltrasonicClient = p_handle.serviceClient<nxt_beagle::nxtAddUltrasonic>(NXT_ADD_ULTRASONIC_SRV);
 }
@@ -96,32 +91,8 @@ void testUltrasonicLatency()
     ultrasonicLatency = ((end - begin).toSec() / TEST_COUNT) * 1000;
 }
 
-void testTicksLatency()
-{
-    nxt_beagle::nxtTicks srv;
-    ros::Time begin, end;
-    
-    ROS_INFO("Testing Ticks Latency...");
-    
-    begin = ros::Time::now();
-    
-    for(int i = 0; i < TEST_COUNT; i++)
-    {
-        if(!tickClient.call(srv))
-        {
-            ROS_ERROR("Failed to get Ticks. Try %d.", i);
-            return;
-        }
-    }
-    
-    end = ros::Time::now();
-    tickLatency = ((end - begin).toSec() / TEST_COUNT) * 1000;
-}
-
 void printResults()
 {
     if(ultrasonicLatency >= 0)
         ROS_INFO("Ultrasonic latency is: %f ms", ultrasonicLatency);
-    if(tickLatency >= 0)
-        ROS_INFO("Ticks latency is: %f ms", tickLatency);
 }
