@@ -38,6 +38,13 @@
 #define NXT_GET_ULTRASONIC_SRV MINOTAUR_ROS_NS "/get_ultrasonic"
 #define NXT_ADD_ULTRASONIC_SRV MINOTAUR_ROS_NS "/add_ultrasonic"
 
+#define ROS_VEL_TOPIC "/cmd_vel"
+#define ROS_ODOM_TOPIC "/odom"
+
+/* Frame names */
+#define MINOTAUR_ODOM_FRAME "odom"
+#define MINOTAUR_BASE_FRAME "base_link"
+
 inline std::string PARAM_NAME(const std::string& p_name)
 { return (MINOTAUR_ROS_NS "/") + p_name; }
 

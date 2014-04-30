@@ -43,7 +43,7 @@ volatile bool run = true;
 /* Function prototypes */
 void setSignals();
 void signalHandler(int sig);
-bool init(ros::NodeHandle &p_handle);
+bool init(ros::NodeHandle &p_handle, tf::TransformBroadcaster *p_broadcaster);
 bool startThreads();
 void* robotThread(void *arg);
 void* sensorThread(void *arg);
@@ -55,12 +55,13 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, NODE_NAME);
     ros::NodeHandle n;
+    tf::TransformBroadcaster broadcaster;
     int ret;
     
     setSignals();
     
     
-    if(!init(n))
+    if(!init(n, &broadcaster))
     {
         ros::shutdown();
         return 1;
@@ -91,7 +92,7 @@ void signalHandler(int sig)
     run = false;
 }
 
-bool init(ros::NodeHandle& p_handle)
+bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
 {
     int ret;
     
@@ -128,11 +129,12 @@ bool init(ros::NodeHandle& p_handle)
     
     try
     {
-        robotCommunicator.pubTargetMVel = true;
+        /*robotCommunicator.pubTargetMVel = true;
         robotCommunicator.pubMeasuredMVel = true;
         robotCommunicator.pubTargetRVel = false;
-        robotCommunicator.pubMeasuredRVel = false;
+        robotCommunicator.pubMeasuredRVel = false;*/
         
+        robotCommunicator.setTransformBroadcaster(p_broadcaster);
         robotCommunicator.init(p_handle, &brick);
         sensorCommunicator.init(p_handle, &brick);
     }

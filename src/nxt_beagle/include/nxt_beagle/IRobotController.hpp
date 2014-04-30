@@ -6,7 +6,9 @@
 #define IROBOT_CONTROLLER_HPP_
 
 #include "nxt_beagle/IPIDController.hpp"
-#include "nxt_beagle/RobotVelocity.hpp"
+#include "nav_msgs/Odometry.h"
+#include "geometry_msgs/Twist.h"
+#include "geometry_msgs/PoseWithCovariance.h"
 
 namespace minotaur
 {
@@ -19,13 +21,14 @@ namespace minotaur
         IRobotController() { }
         virtual ~IRobotController() { }
         
-        virtual const RobotVelocity& getRobotVelocity() const = 0;
+        virtual const nav_msgs::Odometry& getOdometry() = 0;
         virtual IPIDController& getPIDController() = 0;
         virtual float getWheelTrack() const = 0;
-        virtual RobotVelocity getMeasuredVelocity() const = 0;
         
-        virtual void setRobotVelocity(const RobotVelocity& p_velocity) = 0;
+        virtual void setVelocity(const geometry_msgs::Twist& p_velocity) = 0;
         virtual void setWheelTrack(const float p_wheelTrack) = 0;
+        
+        virtual void setPose(const geometry_msgs::PoseWithCovariance& p_pose) = 0;
         
         virtual void step(const int p_samplingIntervallMSec) = 0;
     };
