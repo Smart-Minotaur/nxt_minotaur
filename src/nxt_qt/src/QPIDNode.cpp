@@ -2,33 +2,28 @@
 #include "nxt_qt/QPIDNode.hpp"
 #include "nxt_beagle/Config.hpp"
 #include "nxt_beagle/SamplingInterval.h"
-#include "nxt_beagle/RVelocity.h"
 #include "nxt_beagle/PIDParam.h"
 #include "nxt_beagle/SetModel.h"
+#include <tf/transform_broadcaster.h>
 
 namespace minotaur
 {
     QPIDNode::QPIDNode()
     {
-        ROS_INFO("Subscribing to topic \"%s\"...", NXT_TARGET_MOTOR_VELOCITY_TOPIC);
-        targetMVelSubscriber = nodeHandle.subscribe(NXT_TARGET_MOTOR_VELOCITY_TOPIC,
-                                                    1000,
-                                                    &QPIDNode::processTargetMotorVelocity,
-                                                    this);
-        ROS_INFO("Subscribing to topic \"%s\"...", NXT_MEASURE_MOTOR_VELOCITY_TOPIC);
-        measuredMVelSubscriber = nodeHandle.subscribe(NXT_MEASURE_MOTOR_VELOCITY_TOPIC,
-                                                      1000,
-                                                      &QPIDNode::processMeasuredMotorVelocity,
+        ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
+        odometrySub = nodeHandle.subscribe(ROS_ODOM_TOPIC,
+                                                      50,
+                                                      &QPIDNode::processOdometryMsg,
                                                       this);
         
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
-        samplingIntervalPublisher = nodeHandle.advertise<nxt_beagle::SamplingInterval>(NXT_SET_SAMPLING_INTERVAL_TOPIC, 1000);
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_ROBOT_VELOCITY_TOPIC);
-        robotVelocityPublisher = nodeHandle.advertise<nxt_beagle::RVelocity>(NXT_SET_ROBOT_VELOCITY_TOPIC, 1000);
+        samplingIntervalPublisher = nodeHandle.advertise<nxt_beagle::SamplingInterval>(NXT_SET_SAMPLING_INTERVAL_TOPIC, 50);
+        ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
+        robotVelocityPublisher = nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
-        pidPramPublisher = nodeHandle.advertise<nxt_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 1000);
+        pidPramPublisher = nodeHandle.advertise<nxt_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 50);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_MODEL_TOPIC);
-        setModelPublisher = nodeHandle.advertise<nxt_beagle::SetModel>(NXT_SET_MODEL_TOPIC, 1000);
+        setModelPublisher = nodeHandle.advertise<nxt_beagle::SetModel>(NXT_SET_MODEL_TOPIC, 50);
     }
     
     void QPIDNode::setSamplingInterval(const int p_msec)
@@ -41,9 +36,19 @@ namespace minotaur
     
     void QPIDNode::setRobotVelocity(const float p_linVel, const float p_angVel)
     {
-        nxt_beagle::RVelocity msg;
-        msg.linearVelocity = p_linVel;
-        msg.angularVelocity = p_angVel;
+        geometry_msgs::Twist msg;
+        
+        mutex.lock();
+        double theta = tf::getYaw(lastOdometry.pose.pose.orientation);
+        mutex.unlock();
+        
+        msg.linear.x = cos(theta) * p_linVel;
+        msg.linear.y = sin(theta) * p_angVel;
+        msg.linear.z = 0;
+        msg.angular.x = 0;
+        msg.angular.y = 0;
+        msg.angular.z = p_angVel;
+        
         robotVelocityPublisher.publish(msg);
     }
     
@@ -69,15 +74,16 @@ namespace minotaur
         Q_EMIT rosShutdown();
     }
     
-    void QPIDNode::processTargetMotorVelocity(const nxt_beagle::MVelocity& p_msg)
+    void QPIDNode::processOdometryMsg(const nav_msgs::Odometry& p_msg)
     {
-       QMotorVelocity vel(p_msg.leftVelocity, p_msg.rightVelocity);
-       Q_EMIT targetMotorVelocityUpdated(vel);
-    }
-    
-    void QPIDNode::processMeasuredMotorVelocity(const nxt_beagle::MVelocity& p_msg)
-    {
-        QMotorVelocity vel(p_msg.leftVelocity, p_msg.rightVelocity);
-        Q_EMIT measuredMotorVelocityUpdated(vel);
+        mutex.lock();
+        lastOdometry = p_msg;
+        mutex.unlock();
+        
+        QRobotVelocity vel;
+        vel.linearVelocity = sqrt(p_msg.twist.twist.linear.x * p_msg.twist.twist.linear.x + p_msg.twist.twist.linear.y * p_msg.twist.twist.linear.y);
+        vel.angularVelocity = p_msg.twist.twist.angular.z;
+        
+        Q_EMIT measuredVelocityUpdated(vel);
     }
 }

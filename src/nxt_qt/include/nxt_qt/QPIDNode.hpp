@@ -5,21 +5,24 @@
 #include <ros/ros.h>
 #include <QThread>
 #include <QMetaType>
-#include "nxt_beagle/MVelocity.h"
+#include <QMutex>
 #include "nxt_beagle/MotorVelocity.hpp"
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
 
 namespace minotaur
 {
-    class QMotorVelocity : public MotorVelocity
+    class QRobotVelocity
     {
     public:
-        QMotorVelocity()
-        :MotorVelocity() { }
-        QMotorVelocity(const float p_left, const float p_right)
-        :MotorVelocity(p_left, p_right) { }
-        QMotorVelocity(const QMotorVelocity& p_velocity)
-        :MotorVelocity(p_velocity) { }
-        virtual ~QMotorVelocity() { }
+        float linearVelocity;
+        float angularVelocity;
+        
+        QRobotVelocity()
+        :linearVelocity(0), angularVelocity(0) { }
+        QRobotVelocity(const float p_linVel, const float p_angVel)
+        :linearVelocity(p_linVel), angularVelocity(p_angVel) { }
+        virtual ~QRobotVelocity() { }
     };
     
     class QPIDNode : public QThread
@@ -27,18 +30,20 @@ namespace minotaur
         Q_OBJECT
         
     private:
+        QMutex mutex;
+        
         ros::NodeHandle nodeHandle;
         
-        ros::Subscriber targetMVelSubscriber;
-        ros::Subscriber measuredMVelSubscriber;
+        ros::Subscriber odometrySub;
         
         ros::Publisher samplingIntervalPublisher;
         ros::Publisher robotVelocityPublisher;
         ros::Publisher pidPramPublisher;
         ros::Publisher setModelPublisher;
         
-        void processTargetMotorVelocity(const nxt_beagle::MVelocity& p_msg);
-        void processMeasuredMotorVelocity(const nxt_beagle::MVelocity& p_msg);
+        nav_msgs::Odometry lastOdometry;
+        
+        void processOdometryMsg(const nav_msgs::Odometry& p_msg);
         
     public:
         QPIDNode();
@@ -53,11 +58,10 @@ namespace minotaur
         
     Q_SIGNALS:
         void rosShutdown();
-        void targetMotorVelocityUpdated(const QMotorVelocity p_msg);
-        void measuredMotorVelocityUpdated(const QMotorVelocity p_msg);
+        void measuredVelocityUpdated(const QRobotVelocity p_msg);
     };
 }
 
-Q_DECLARE_METATYPE(minotaur::QMotorVelocity);
+Q_DECLARE_METATYPE(minotaur::QRobotVelocity);
 
 #endif

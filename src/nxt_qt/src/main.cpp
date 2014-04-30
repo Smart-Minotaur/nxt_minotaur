@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         return -1;
     }
     
-    qRegisterMetaType<minotaur::QMotorVelocity>("QMotorVelocity");
+    qRegisterMetaType<minotaur::QRobotVelocity>("QRobotVelocity");
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
     
