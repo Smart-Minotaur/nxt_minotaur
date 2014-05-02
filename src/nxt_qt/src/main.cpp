@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, NODE_NAME);
     if(!ros::master::check())
     {
-        ROS_ERROR("Roscore hast to be started.");
+        ROS_ERROR("Roscore has to be started.");
         return -1;
     }
     
