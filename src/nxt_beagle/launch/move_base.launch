@@ -1,6 +1,4 @@
 <launch>
-
-    <master auto="start"/>
     
     <!--node name="map_server" pkg="map_server" type="map_server" args="$(find nxt_beagle)/map/empty_map.png 10"/>
     
