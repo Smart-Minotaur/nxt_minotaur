@@ -60,7 +60,8 @@ namespace minotaur
         mutex.unlock();
         
         QRobotVelocity vel;
-        vel.linearVelocity = sqrt(p_msg.twist.twist.linear.x * p_msg.twist.twist.linear.x + p_msg.twist.twist.linear.y * p_msg.twist.twist.linear.y);
+        double theta = tf::getYaw(p_msg.pose.pose.orientation);
+        vel.linearVelocity = p_msg.twist.twist.linear.x / cos(theta);
         vel.angularVelocity = p_msg.twist.twist.angular.z;
         
         Q_EMIT measuredVelocityUpdated(vel);
