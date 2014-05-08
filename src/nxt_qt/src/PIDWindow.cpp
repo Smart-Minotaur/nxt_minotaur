@@ -221,9 +221,4 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
     }
     
-    void PIDWindow::setInitModel()
-    {
-        pidNode.setModel(HERACLES_NAME);
-    }
-    
 }

@@ -1,9 +1,7 @@
 #include "nxt_beagle/Config.hpp"
 #include "nxt_qt/QPIDNode.hpp"
 #include "nxt_beagle/Config.hpp"
-#include "nxt_beagle/SamplingInterval.h"
 #include "nxt_beagle/PIDParam.h"
-#include "nxt_beagle/SetModel.h"
 #include <tf/transform_broadcaster.h>
 
 namespace minotaur
@@ -16,22 +14,10 @@ namespace minotaur
                                                       &QPIDNode::processOdometryMsg,
                                                       this);
         
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
-        samplingIntervalPublisher = nodeHandle.advertise<nxt_beagle::SamplingInterval>(NXT_SET_SAMPLING_INTERVAL_TOPIC, 50);
         ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
         robotVelocityPublisher = nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
         pidPramPublisher = nodeHandle.advertise<nxt_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 50);
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_MODEL_TOPIC);
-        setModelPublisher = nodeHandle.advertise<nxt_beagle::SetModel>(NXT_SET_MODEL_TOPIC, 50);
-    }
-    
-    void QPIDNode::setSamplingInterval(const int p_msec)
-    {
-        ROS_INFO("Sending Interval: %d msec.", p_msec);
-        nxt_beagle::SamplingInterval msg;
-        msg.msec = p_msec;
-        samplingIntervalPublisher.publish(msg);
     }
     
     void QPIDNode::setRobotVelocity(const float p_linVel, const float p_angVel)
@@ -59,13 +45,6 @@ namespace minotaur
         msg.Ki = p_Ki;
         msg.Kd = p_Kd;
         pidPramPublisher.publish(msg);
-    }
-    
-    void QPIDNode::setModel(const std::string& p_name)
-    {
-        nxt_beagle::SetModel msg;
-        msg.name = p_name;
-        setModelPublisher.publish(msg);
     }
     
     void QPIDNode::run()

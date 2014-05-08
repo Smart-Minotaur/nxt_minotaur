@@ -36,10 +36,8 @@ namespace minotaur
         
         ros::Subscriber odometrySub;
         
-        ros::Publisher samplingIntervalPublisher;
         ros::Publisher robotVelocityPublisher;
         ros::Publisher pidPramPublisher;
-        ros::Publisher setModelPublisher;
         
         nav_msgs::Odometry lastOdometry;
         
@@ -49,10 +47,8 @@ namespace minotaur
         QPIDNode();
         virtual ~QPIDNode() { }
         
-        void setSamplingInterval(const int p_msec);
         void setRobotVelocity(const float p_linVel, const float p_angVel);
         void setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd);
-        void setModel(const std::string& p_name);
         
         void run();
         

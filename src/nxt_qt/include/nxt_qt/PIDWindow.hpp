@@ -44,7 +44,6 @@ namespace minotaur {
         void setVelocity();
         void updateVelocityValues();
         void processMeasuredVelocity(const QRobotVelocity p_velocity);
-        void setInitModel();
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();

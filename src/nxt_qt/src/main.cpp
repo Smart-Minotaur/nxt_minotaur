@@ -18,8 +18,6 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
     
-    QTimer::singleShot(1000, &w, SLOT(setInitModel()));
-    
     w.show();
     w.getPIDNode().start();
     

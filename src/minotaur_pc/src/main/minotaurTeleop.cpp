@@ -4,15 +4,12 @@
 #include <signal.h>
 #include <termios.h>
 #include "nxt_beagle/Config.hpp"
-#include "nxt_beagle/SamplingInterval.h"
 #include "geometry_msgs/Twist.h"
-#include "nxt_beagle/SetModel.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose.h"
 
 #define MAX_LINEAR_VEL 0.2
 #define MAX_ANGULAR_VEL 1.5
-#define USED_MODEL HERACLES_NAME
 
 #define KEYCODE_R 0x43
 #define KEYCODE_L 0x44
@@ -24,8 +21,6 @@ bool run;
 
 ros::Subscriber odometrySub;
 ros::Publisher robotVelocityPublisher;
-ros::Publisher setModelPublisher;
-ros::Publisher samplingIntervalPublisher;
 
 pthread_mutex_t positionMutex;
 pthread_t eventThread;
@@ -39,7 +34,6 @@ void setSignalAction();
 void sighandler(int sig);
 bool initCommunication(ros::NodeHandle &p_handle);
 void processOdomMsg(const nav_msgs::Odometry p_msg);
-bool selectModel();
 void initKeyHandling();
 void startThreads();
 void joinThreads();
@@ -53,8 +47,6 @@ int main(int argc, char** argv)
     setSignalAction();
     if(!initCommunication(handle))
         return -1;
-    if(!selectModel())
-        return -2;
     initKeyHandling();
     
     startThreads();
@@ -89,12 +81,14 @@ bool initCommunication(ros::NodeHandle &p_handle)
     ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
     odometrySub = p_handle.subscribe(ROS_ODOM_TOPIC, 50, processOdomMsg);
     
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
-    samplingIntervalPublisher = p_handle.advertise<nxt_beagle::SamplingInterval>(NXT_SET_SAMPLING_INTERVAL_TOPIC, 50);
     ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
     robotVelocityPublisher = p_handle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
-    ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_MODEL_TOPIC);
-    setModelPublisher = p_handle.advertise<nxt_beagle::SetModel>(NXT_SET_MODEL_TOPIC, 50);
+    
+    currentPosition.position.x = 0;
+    currentPosition.position.y = 0;
+    currentPosition.position.z = 0;
+    
+    currentPosition.orientation = tf::createQuaternionMsgFromYaw(0);
     
     return true;
 }
@@ -104,29 +98,6 @@ void processOdomMsg(const nav_msgs::Odometry p_msg)
     pthread_mutex_lock(&positionMutex);
     currentPosition = p_msg.pose.pose;
     pthread_mutex_unlock(&positionMutex);
-}
-
-bool selectModel()
-{
-    currentPosition.position.x = 0;
-    currentPosition.position.y = 0;
-    currentPosition.position.z = 0;
-    
-    currentPosition.orientation = tf::createQuaternionMsgFromYaw(0);
-    
-    std::string model;
-    if(!ros::param::get(PARAM_CURRENT_MODEL(),model))
-    {
-        ROS_ERROR("Could not get CurrentModel from param-server.");
-        return false;
-    }
-    
-    ROS_INFO("Selecting \"%s\" as model...", model.c_str());
-    nxt_beagle::SetModel msg;
-    msg.name = model;
-    setModelPublisher.publish(msg);
-    
-    return true;
 }
 
 void initKeyHandling()
