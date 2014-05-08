@@ -1,0 +1,6 @@
+<launch>
+    
+    <node pkg="minotaur_pc" type="minotaurTeleop" name="minotaurTeleop" output="screen" />
+    <rosparam command="load" file="$(find nxt_beagle)/RobotControl/Models.yaml"/>
+
+</launch>

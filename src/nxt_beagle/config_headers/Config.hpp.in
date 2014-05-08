@@ -21,6 +21,7 @@
 
 #define HERACLES_NAME "Heracles"
 #define THESEUS_NAME "Theseus"
+#define CURRENT_MODEL_NAME "CurrentModel"
 
 #define NXT_POWER_TOPIC MINOTAUR_ROS_NS "/cmd_pow"
 #define NXT_ULTRA_SENSOR_TOPIC MINOTAUR_ROS_NS "/measure_ultrasensor"
@@ -65,6 +66,9 @@ inline std::string PARAM_KD(const std::string& p_name)
 
 inline std::string PARAM_SAMPLING_INTERVAL(const std::string& p_name)
 { return PARAM_NAME(p_name) + "/sampling_interval"; }
+
+inline std::string PARAM_CURRENT_MODEL()
+{ return PARAM_NAME(CURRENT_MODEL_NAME);}
 
 #endif
 
