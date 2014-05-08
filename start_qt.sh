@@ -5,4 +5,4 @@ PC_IP=192.168.1.100
 
 export ROS_IP=$PC_IP
 export ROS_MASTER_URI=http://$PC_IP:11311
-roslaunch nxt_qt QPIDControl
+roslaunch nxt_qt pidcontrol.launch
