@@ -61,8 +61,8 @@ namespace minotaur
     void MinotaurState::setVelocity(const float p_linearVel, const float p_angularVel)
     {
         pthread_mutex_lock(&movementMutex);
-        lastMeasuredVel.linearVelocity = p_linearVel;
-        lastMeasuredVel.angularVelocity = p_angularVel;
+        lastMeasuredVel.v = p_linearVel;
+        lastMeasuredVel.w = p_angularVel;
         pthread_mutex_unlock(&movementMutex);
     }
     

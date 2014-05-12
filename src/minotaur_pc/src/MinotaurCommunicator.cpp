@@ -25,9 +25,9 @@ namespace minotaur
         msg.header.stamp = ros::Time::now();
         msg.header.frame_id = MINOTAUR_BASE_FRAME;
         
-        msg.pose.point.x = p_position.point.x;
-        msg.pose.point.y = p_position.point.y;
-        msg.pose.point.z = 0;
+        msg.pose.position.x = p_position.point.x;
+        msg.pose.position.y = p_position.point.y;
+        msg.pose.position.z = 0;
         
         msg.pose.orientation = tf::createQuaternionMsgFromYaw(p_position.theta);
         
