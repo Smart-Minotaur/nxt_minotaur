@@ -18,19 +18,16 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     roscpp
     rospy
+    tf
     message_generation
 )
 
 ## Generate messages in the 'msg' folder
 add_message_files(
     FILES
-    MVelocity.msg
-    RVelocity.msg
-    SamplingInterval.msg
     UltraSensor.msg
     PIDParam.msg
     ClearSensor.msg
-    SetModel.msg
 )
 
 ## Generate services in the 'srv' folder

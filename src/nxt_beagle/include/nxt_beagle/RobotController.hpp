@@ -7,6 +7,7 @@
 
 #include "nxt_beagle/IRobotController.hpp"
 #include "nxt_beagle/PIDController.hpp"
+#include <tf/transform_broadcaster.h>
 
 namespace minotaur
 {
@@ -20,25 +21,27 @@ namespace minotaur
     class RobotController: public IRobotController
     {
     private:
-        RobotVelocity velocity;
+        nav_msgs::Odometry odometry;
+        geometry_msgs::Twist velocity;
         float wheelTrack;
         PIDController pidController;
         
         void calculateMotorVelocity();
-        
+        geometry_msgs::Twist getMeasuredVelocity(const double p_theta);
+        void deadReckoning(const int p_samplingIntervallMsec);
     public:
-        RobotController()
-        : velocity(), wheelTrack(0.0f), pidController() { }
+        RobotController();
         
         virtual ~RobotController() { }
         
-        const RobotVelocity& getRobotVelocity() const;
+        const nav_msgs::Odometry& getOdometry();
         IPIDController& getPIDController();
         float getWheelTrack() const;
-        RobotVelocity getMeasuredVelocity() const;
         
-        void setRobotVelocity(const RobotVelocity& p_velocity);
+        void setVelocity(const geometry_msgs::Twist& p_velocity);
         void setWheelTrack(const float p_wheelTrack);
+        
+        void setPose(const geometry_msgs::PoseWithCovariance& p_pose);
         
         void step(const int p_samplingIntervallMSec);
     };

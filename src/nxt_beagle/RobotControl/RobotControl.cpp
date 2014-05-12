@@ -8,8 +8,6 @@
 #include <exception>
 #include <string>
 #include "nxt_beagle/Config.hpp"
-#include "nxt_beagle/SamplingInterval.h"
-#include "nxt_beagle/SetModel.h"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
 #include "nxt_control/NxtExceptions.hpp"
@@ -29,9 +27,6 @@ nxtcon::Brick brick;
 minotaur::RobotCommunicator robotCommunicator;
 minotaur::SensorCommunicator sensorCommunicator;
 
-ros::Subscriber setSampIntSub;
-ros::Subscriber setModelSub;
-
 pthread_mutex_t intervalMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_t robot_thread;
 pthread_t sensor_thread;
@@ -43,24 +38,25 @@ volatile bool run = true;
 /* Function prototypes */
 void setSignals();
 void signalHandler(int sig);
-bool init(ros::NodeHandle &p_handle);
+bool init(ros::NodeHandle &p_handle, tf::TransformBroadcaster *p_broadcaster);
+bool selectModel();
+bool setModel(const std::string& p_name);
 bool startThreads();
 void* robotThread(void *arg);
 void* sensorThread(void *arg);
 void joinThreads();
-void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval &p_msg) ;
-void processSetModelMsg(const nxt_beagle::SetModel &p_msg);
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, NODE_NAME);
     ros::NodeHandle n;
+    tf::TransformBroadcaster broadcaster;
     int ret;
     
     setSignals();
     
     
-    if(!init(n))
+    if(!init(n, &broadcaster))
     {
         ros::shutdown();
         return 1;
@@ -91,7 +87,7 @@ void signalHandler(int sig)
     run = false;
 }
 
-bool init(ros::NodeHandle& p_handle)
+bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
 {
     int ret;
     
@@ -128,11 +124,12 @@ bool init(ros::NodeHandle& p_handle)
     
     try
     {
-        robotCommunicator.pubTargetMVel = true;
+        /*robotCommunicator.pubTargetMVel = true;
         robotCommunicator.pubMeasuredMVel = true;
         robotCommunicator.pubTargetRVel = false;
-        robotCommunicator.pubMeasuredRVel = false;
+        robotCommunicator.pubMeasuredRVel = false;*/
         
+        robotCommunicator.setTransformBroadcaster(p_broadcaster);
         robotCommunicator.init(p_handle, &brick);
         sensorCommunicator.init(p_handle, &brick);
     }
@@ -142,12 +139,96 @@ bool init(ros::NodeHandle& p_handle)
         return false;
     }
     
-    ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_SAMPLING_INTERVAL_TOPIC);
-    setSampIntSub = p_handle.subscribe(NXT_SET_SAMPLING_INTERVAL_TOPIC, 1000, processSamplingIntervallMsg);
-    ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_MODEL_TOPIC);
-    setModelSub = p_handle.subscribe(NXT_SET_MODEL_TOPIC, 1000, processSetModelMsg);
+    if(!selectModel())
+        return false;
     
     return true;
+}
+
+bool selectModel()
+{   
+    std::string model;
+    if(!ros::param::get(PARAM_CURRENT_MODEL(),model))
+    {
+        ROS_ERROR("Could not get CurrentModel from param-server.");
+        return false;
+    }
+    
+    ROS_INFO("Selecting \"%s\" as model...", model.c_str());
+    setModel(model);
+    
+    return true;
+}
+
+bool setModel(const std::string& p_name)
+{
+    ROS_INFO("Set robot model \"%s\"...", p_name.c_str());
+    int samplingTmp;
+    bool hadError = false;
+    float wheelTrack, wheelCircumference;
+    minotaur::PIDParameter pidParams;
+    
+    //read parameter from ros parameter server
+    if(!ros::param::get(PARAM_WHEEL_TRACK(p_name), wheelTrack))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_TRACK(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!ros::param::get(PARAM_WHEEL_CIRCUMFERENCE(p_name), wheelCircumference))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_CIRCUMFERENCE(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!ros::param::get(PARAM_KP(p_name), pidParams.Kp))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KP(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!ros::param::get(PARAM_KI(p_name), pidParams.Ki))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KI(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!ros::param::get(PARAM_KD(p_name), pidParams.Kd))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KD(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!ros::param::get(PARAM_SAMPLING_INTERVAL(p_name), samplingTmp))
+    {
+        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_SAMPLING_INTERVAL(p_name).c_str());
+        hadError = true;
+    }
+    
+    if(!hadError)
+    {
+        ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
+        ROS_INFO("Kp = %.2f; Ki = %.2f; Kd = %.2f", pidParams.Kp, pidParams.Ki, pidParams.Kd);
+        
+        pthread_mutex_lock(&intervalMutex);
+        robotCommunicator.lock();
+        //always try catch between mutex lock / unlock to prevent deadlock
+        try
+        {
+        robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
+        robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
+        robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
+        samplingMSec = samplingTmp;
+        }
+        catch(std::exception const &e)
+        {
+            ROS_ERROR("SetModel: %s.", e.what());
+        }
+        robotCommunicator.unlock();
+        pthread_mutex_unlock(&intervalMutex);
+    }
+    
+    return hadError;
 }
 
 bool startThreads()
@@ -275,82 +356,4 @@ void joinThreads()
 {
     pthread_join(robot_thread, NULL);
     pthread_join(sensor_thread, NULL);
-}
-
-void processSamplingIntervallMsg(const nxt_beagle::SamplingInterval& p_msg) 
-{
-    ROS_INFO("Sampling Interval changed to %d msec.", p_msg.msec);
-    pthread_mutex_lock(&intervalMutex);
-    
-    samplingMSec = p_msg.msec;
-    
-    pthread_mutex_unlock(&intervalMutex);
-}
-
-void processSetModelMsg(const nxt_beagle::SetModel& p_msg)
-{
-    ROS_INFO("Set robot model \"%s\"...", p_msg.name.c_str());
-    int samplingTmp, hadError = 0;
-    float wheelTrack, wheelCircumference;
-    minotaur::PIDParameter pidParams;
-    
-    //read parameter from ros parameter server
-    if(!ros::param::get(PARAM_WHEEL_TRACK(p_msg.name), wheelTrack))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_TRACK(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!ros::param::get(PARAM_WHEEL_CIRCUMFERENCE(p_msg.name), wheelCircumference))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_WHEEL_CIRCUMFERENCE(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!ros::param::get(PARAM_KP(p_msg.name), pidParams.Kp))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KP(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!ros::param::get(PARAM_KI(p_msg.name), pidParams.Ki))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KI(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!ros::param::get(PARAM_KD(p_msg.name), pidParams.Kd))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_KD(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!ros::param::get(PARAM_SAMPLING_INTERVAL(p_msg.name), samplingTmp))
-    {
-        ROS_ERROR("SetModel: Could not read param \"%s\".", PARAM_SAMPLING_INTERVAL(p_msg.name).c_str());
-        hadError = 1;
-    }
-    
-    if(!hadError)
-    {
-        ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
-        ROS_INFO("Kp = %.2f; Ki = %.2f; Kd = %.2f", pidParams.Kp, pidParams.Ki, pidParams.Kd);
-        
-        pthread_mutex_lock(&intervalMutex);
-        robotCommunicator.lock();
-        //always try catch between mutex lock / unlock to prevent deadlock
-        try
-        {
-        robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
-        robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
-        robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
-        samplingMSec = samplingTmp;
-        }
-        catch(std::exception const &e)
-        {
-            ROS_ERROR("SetModel: %s.", e.what());
-        }
-        robotCommunicator.unlock();
-        pthread_mutex_unlock(&intervalMutex);
-    }
 }

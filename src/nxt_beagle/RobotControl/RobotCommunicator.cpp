@@ -28,64 +28,43 @@ namespace minotaur
         robotController.getPIDController().setRightMotor(&rightMotor);
         
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_PID_PARAMETER);
-        setPIDParamSub = p_handle.subscribe(NXT_SET_PID_PARAMETER, 1000, &RobotCommunicator::processPIDParamMsg, this);
-        ROS_INFO("Subscribing to topic \"%s\"...", NXT_SET_ROBOT_VELOCITY_TOPIC);
-        setRVelSub = p_handle.subscribe(NXT_SET_ROBOT_VELOCITY_TOPIC, 1000, &RobotCommunicator::processRobotVelocityMsg, this);
+        setPIDParamSub = p_handle.subscribe(NXT_SET_PID_PARAMETER, 100, &RobotCommunicator::processPIDParamMsg, this);
+        ROS_INFO("Subscribing to topic \"%s\"...", ROS_VEL_TOPIC);
+        cmdVelSub = p_handle.subscribe(ROS_VEL_TOPIC, 100, &RobotCommunicator::processSetVelocityMsg, this);
         
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_MOTOR_VELOCITY_TOPIC);
-        targetMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_TARGET_MOTOR_VELOCITY_TOPIC, 1000);
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_MOTOR_VELOCITY_TOPIC);
-        measuredMVelPub = p_handle.advertise<nxt_beagle::MVelocity>(NXT_MEASURE_MOTOR_VELOCITY_TOPIC, 1000);
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_TARGET_ROBOT_VELOCITY_TOPIC);
-        targetRVelPub = p_handle.advertise<nxt_beagle::RVelocity>(NXT_TARGET_ROBOT_VELOCITY_TOPIC, 1000);
-        ROS_INFO("Publishing on topic \"%s\"...", NXT_MEASURE_ROBOT_VELOCITY_TOPIC);
-        measuredRVelPub = p_handle.advertise<nxt_beagle::RVelocity>(NXT_MEASURE_ROBOT_VELOCITY_TOPIC, 1000); 
+        ROS_INFO("Publishing on topic \"%s\"...", ROS_ODOM_TOPIC);
+        odometryPub = p_handle.advertise<nav_msgs::Odometry>(ROS_ODOM_TOPIC, 100);
+    }
+    
+    void RobotCommunicator::setTransformBroadcaster(tf::TransformBroadcaster *p_odomBroadcaster)
+    {
+        odomBroadcaster = p_odomBroadcaster;
     }
         
     void RobotCommunicator::publish()
     {
-        nxt_beagle::MVelocity msgM;
-        nxt_beagle::RVelocity msgR;
+        nav_msgs::Odometry odom = robotController.getOdometry();
+        ros::Time currentTime = ros::Time::now();
         
-        if(pubTargetMVel)
-        {
-            msgM = motorVelocityToMsg(robotController.getPIDController().getVelocity());
-            targetMVelPub.publish(msgM);
-        }
-        
-        if(pubMeasuredMVel)
-        {
-            msgM = motorVelocityToMsg(robotController.getPIDController().getMeasuredVelocity());
-            measuredMVelPub.publish(msgM);
-        }
-        
-        if(pubTargetRVel)
-        {
-            msgR = robotVelocityToMsg(robotController.getRobotVelocity());
-            targetRVelPub.publish(msgR);
-        }
-        
-        if(pubMeasuredRVel)
-        {
-            msgR = robotVelocityToMsg(robotController.getMeasuredVelocity());
-            measuredRVelPub.publish(msgR);
-        }
-    }
-    
-    nxt_beagle::MVelocity RobotCommunicator::motorVelocityToMsg(const minotaur::MotorVelocity& p_velocity)
-    {
-        nxt_beagle::MVelocity result;
-        result.leftVelocity = p_velocity.leftMPS;
-        result.rightVelocity = p_velocity.rightMPS;
-        return result;
-    }
+        // create Transformation and send it
+        geometry_msgs::TransformStamped odom_trans;
+        odom_trans.header.stamp = currentTime;
+        odom_trans.header.frame_id = MINOTAUR_ODOM_FRAME;
+        odom_trans.child_frame_id = MINOTAUR_BASE_FRAME;
 
-    nxt_beagle::RVelocity RobotCommunicator::robotVelocityToMsg(const minotaur::RobotVelocity& p_velocity)
-    {
-        nxt_beagle::RVelocity result;
-        result.linearVelocity = p_velocity.linearVelocity;
-        result.angularVelocity = p_velocity.angularVelocity;
-        return result;
+        odom_trans.transform.translation.x = odom.pose.pose.position.x;
+        odom_trans.transform.translation.y = odom.pose.pose.position.y;
+        odom_trans.transform.translation.z = odom.pose.pose.position.z;
+        odom_trans.transform.rotation = odom.pose.pose.orientation;
+
+        odomBroadcaster->sendTransform(odom_trans);
+        
+        // prepare odometry message and send it
+        odom.header.stamp = currentTime;
+        odom.header.frame_id = MINOTAUR_ODOM_FRAME;
+        odom.child_frame_id = MINOTAUR_BASE_FRAME;
+        
+        odometryPub.publish(odom);
     }
     
     RobotController& RobotCommunicator::getRobotController()
@@ -94,24 +73,18 @@ namespace minotaur
     }
     
     /* callbacks */
-    void RobotCommunicator::processRobotVelocityMsg(const nxt_beagle::RVelocity& p_msg)
+    void RobotCommunicator::processSetVelocityMsg(const geometry_msgs::Twist& p_msg)
     {
-        minotaur::RobotVelocity vel;
-        vel.linearVelocity = p_msg.linearVelocity;
-        vel.angularVelocity = p_msg.angularVelocity;
-        
         lock();
-        
         //always try catch between mutex lock / unlock to prevent deadlock
         try
         {
-            robotController.setRobotVelocity(vel);
+            robotController.setVelocity(p_msg);
         }
         catch(std::exception const &e)
         {
             ROS_ERROR("SetRobotVelocity: %s.", e.what());
         }
-        
         unlock();
     }
     

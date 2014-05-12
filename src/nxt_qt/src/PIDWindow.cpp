@@ -8,7 +8,8 @@
 
 #define MAX_LIN_VEL 0.5f
 #define MAX_ANG_VEL 2.0f
-#define MAX_PLOT_VEL 0.3
+#define MAX_PLOT_LIN_VEL 0.3
+#define MAX_PLOT_ANG_VEL 2.0
 
 #define MAX_KP 2.0f
 #define MAX_KI 2.0f
@@ -26,8 +27,7 @@ namespace minotaur
     {
         setupUi(this);
         
-        connect(&pidNode, SIGNAL(targetMotorVelocityUpdated(const QMotorVelocity)), this, SLOT(processTargetMotorVelocity(const QMotorVelocity)));
-        connect(&pidNode, SIGNAL(measuredMotorVelocityUpdated(const QMotorVelocity)), this, SLOT(processMeasuredMotorVelocity(const QMotorVelocity)));
+        connect(&pidNode, SIGNAL(measuredVelocityUpdated(const QRobotVelocity)), this, SLOT(processMeasuredVelocity(const QRobotVelocity)));
         
         connect(BrakeButton, SIGNAL(clicked()), this, SLOT(brake()));
         
@@ -65,44 +65,44 @@ namespace minotaur
         KDSlider->setRange(0, 100);
         KDSlider->setValue((DEF_KD / MAX_KD) * 100);
         
-        LeftTargetProgressBar->setProperty("defaultStyleSheet", LeftTargetProgressBar->styleSheet());
-        RightTargetProgressBar->setProperty("defaultStyleSheet", RightTargetProgressBar->styleSheet());
-        LeftMeasuredProgressBar->setProperty("defaultStyleSheet", LeftMeasuredProgressBar->styleSheet());
-        RightMeasuredProgressBar->setProperty("defaultStyleSheet", RightMeasuredProgressBar->styleSheet());
+        LinTargetProgressBar->setProperty("defaultStyleSheet", LinTargetProgressBar->styleSheet());
+        AngTargetProgressBar->setProperty("defaultStyleSheet", AngTargetProgressBar->styleSheet());
+        LinMeasuredProgressBar->setProperty("defaultStyleSheet", LinMeasuredProgressBar->styleSheet());
+        AngMeasuredProgressBar->setProperty("defaultStyleSheet", AngMeasuredProgressBar->styleSheet());
         
         initPlotComponents();
     }
 
     void PIDWindow::initPlotComponents()
     {
-        memset(leftSamples, 0, SAMPLE_RANGE * sizeof (double));
-        memset(rightSamples, 0, SAMPLE_RANGE * sizeof (double)); 
+        memset(linSamples, 0, SAMPLE_RANGE * sizeof (double));
+        memset(angSamples, 0, SAMPLE_RANGE * sizeof (double)); 
         for(int i = 0; i < SAMPLE_RANGE; i++)
             xSamples[i] = i;
         
         sampleCount = 0;
         
-        leftCurve.setPen(QColor(Qt::red));
-        leftCurve.setSamples(xSamples, leftSamples, SAMPLE_RANGE);
-        rightCurve.setPen(QColor(Qt::green));
-        rightCurve.setSamples(xSamples, rightSamples, SAMPLE_RANGE);
+        linCurve.setPen(QColor(Qt::red));
+        linCurve.setSamples(xSamples, linSamples, SAMPLE_RANGE);
+        angCurve.setPen(QColor(Qt::green));
+        angCurve.setSamples(xSamples, angSamples, SAMPLE_RANGE);
         
-        leftCurve.attach(MeasureLeftPlot);
-        rightCurve.attach(MeasureRightPlot);
+        linCurve.attach(MeasureLinPlot);
+        angCurve.attach(MeasureAngPlot);
         
-        MeasureLeftPlot->setTitle("Left Motor");
-        MeasureLeftPlot->setCanvasBackground(QColor(Qt::white));
-        MeasureLeftPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        MeasureLeftPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_VEL, MAX_PLOT_VEL, 0.05);
-        MeasureLeftPlot->setAxisTitle(QwtPlot::xBottom, "step");
-        MeasureLeftPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
+        MeasureLinPlot->setTitle("Linear Velocity");
+        MeasureLinPlot->setCanvasBackground(QColor(Qt::white));
+        MeasureLinPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
+        MeasureLinPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_LIN_VEL, MAX_PLOT_LIN_VEL, 0.05);
+        MeasureLinPlot->setAxisTitle(QwtPlot::xBottom, "step");
+        MeasureLinPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
         
-        MeasureRightPlot->setTitle("Right Motor");
-        MeasureRightPlot->setCanvasBackground(QColor(Qt::white));
-        MeasureRightPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        MeasureRightPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_VEL, MAX_PLOT_VEL, 0.05);
-        MeasureRightPlot->setAxisTitle(QwtPlot::xBottom, "step");
-        MeasureRightPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
+        MeasureAngPlot->setTitle("Angular Velocity");
+        MeasureAngPlot->setCanvasBackground(QColor(Qt::white));
+        MeasureAngPlot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
+        MeasureAngPlot->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_ANG_VEL, MAX_PLOT_ANG_VEL, 0.5);
+        MeasureAngPlot->setAxisTitle(QwtPlot::xBottom, "step");
+        MeasureAngPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
     }
     
     QPIDNode& PIDWindow::getPIDNode()
@@ -127,6 +127,16 @@ namespace minotaur
     {
         VelValueLabel->setText(QString::number(getLinearVel(), 'f', 2));
         AngValueLabel->setText(QString::number(getAngVel(), 'f', 2));
+        
+        int value = abs((getLinearVel() / MAX_LIN_VEL) * 100);
+        LinTargetProgressBar->setValue(value);
+        updateProgressBarColor(LinTargetProgressBar);
+        LinTargetValueLabel->setText(QString::number(getLinearVel(), 'f', 2));
+        
+        value = abs((getAngVel() / MAX_ANG_VEL) * 100);
+        AngTargetProgressBar->setValue(value);
+        updateProgressBarColor(AngTargetProgressBar);
+        AngTargetValueLabel->setText(QString::number(getAngVel(), 'f', 2));
     }
     
     float PIDWindow::getLinearVel()
@@ -167,48 +177,35 @@ namespace minotaur
         return ((float) (KDSlider->value()) / 100.0f) * MAX_KD;
     }
     
-    void PIDWindow::processTargetMotorVelocity(const QMotorVelocity p_velocity)
-    {
-        int value = abs((p_velocity.leftMPS / MAX_LIN_VEL) * 100);
-        LeftTargetProgressBar->setValue(value);
-        updateProgressBarColor(LeftTargetProgressBar);
-        LeftTargetValueLabel->setText(QString::number(p_velocity.leftMPS, 'f', 2));
-        
-        value = abs((p_velocity.rightMPS / MAX_LIN_VEL) * 100);
-        RightTargetProgressBar->setValue(value);
-        updateProgressBarColor(RightTargetProgressBar);
-        RightTargetValueLabel->setText(QString::number(p_velocity.rightMPS, 'f', 2));
-    }
-    
-    void PIDWindow::processMeasuredMotorVelocity(const QMotorVelocity p_velocity)
+    void PIDWindow::processMeasuredVelocity(const QRobotVelocity p_velocity)
     {
         updateMeasuredProgressBars(p_velocity);
         updateMeasuredPlot(p_velocity);
     }
     
-    void PIDWindow::updateMeasuredProgressBars(const QMotorVelocity& p_velocity)
+    void PIDWindow::updateMeasuredProgressBars(const QRobotVelocity& p_velocity)
     {
-        int value = abs((p_velocity.leftMPS / MAX_LIN_VEL) * 100);
-        LeftMeasuredProgressBar->setValue(value);
-        updateProgressBarColor(LeftMeasuredProgressBar);
-        LeftMeasuredValueLabel->setText(QString::number(p_velocity.leftMPS, 'f', 2));
+        int value = abs((p_velocity.linearVelocity / MAX_LIN_VEL) * 100);
+        LinMeasuredProgressBar->setValue(value);
+        updateProgressBarColor(LinMeasuredProgressBar);
+        LinMeasuredValueLabel->setText(QString::number(p_velocity.linearVelocity, 'f', 2));
         
-        value = abs((p_velocity.rightMPS / MAX_LIN_VEL) * 100);
-        RightMeasuredProgressBar->setValue(value);
-        updateProgressBarColor(RightMeasuredProgressBar);
-        RightMeasuredValueLabel->setText(QString::number(p_velocity.rightMPS, 'f', 2));
+        value = abs((p_velocity.angularVelocity / MAX_ANG_VEL) * 100);
+        AngMeasuredProgressBar->setValue(value);
+        updateProgressBarColor(AngMeasuredProgressBar);
+        AngMeasuredValueLabel->setText(QString::number(p_velocity.angularVelocity, 'f', 2));
     }
     
-    void PIDWindow::updateMeasuredPlot(const QMotorVelocity& p_velocity)
+    void PIDWindow::updateMeasuredPlot(const QRobotVelocity& p_velocity)
     {
-        leftSamples[sampleCount] = p_velocity.leftMPS;
-        rightSamples[sampleCount] = p_velocity.rightMPS;
+        linSamples[sampleCount] = p_velocity.linearVelocity;
+        angSamples[sampleCount] = p_velocity.angularVelocity;
         
-        leftCurve.setSamples(xSamples, leftSamples, SAMPLE_RANGE);
-        rightCurve.setSamples(xSamples, rightSamples, SAMPLE_RANGE);
+        linCurve.setSamples(xSamples, linSamples, SAMPLE_RANGE);
+        angCurve.setSamples(xSamples, angSamples, SAMPLE_RANGE);
         
-        MeasureLeftPlot->replot();
-        MeasureRightPlot->replot();
+        MeasureLinPlot->replot();
+        MeasureAngPlot->replot();
         
         ++sampleCount;
         sampleCount %= SAMPLE_RANGE;
@@ -222,11 +219,6 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: yellow; }");
         else
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
-    }
-    
-    void PIDWindow::setInitModel()
-    {
-        pidNode.setModel(HERACLES_NAME);
     }
     
 }

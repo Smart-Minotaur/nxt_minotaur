@@ -58,14 +58,14 @@ QGroupBox::title {
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_11">
            <item>
-            <widget class="QLabel" name="LeftTargetLabel">
+            <widget class="QLabel" name="LinTargetLabel">
              <property name="text">
-              <string>left   </string>
+              <string>v</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QProgressBar" name="LeftTargetProgressBar">
+            <widget class="QProgressBar" name="LinTargetProgressBar">
              <property name="value">
               <number>0</number>
              </property>
@@ -75,7 +75,7 @@ QGroupBox::title {
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="LeftTargetValueLabel">
+            <widget class="QLabel" name="LinTargetValueLabel">
              <property name="text">
               <string>0.00</string>
              </property>
@@ -86,14 +86,14 @@ QGroupBox::title {
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
-            <widget class="QLabel" name="RightTargetLabel">
+            <widget class="QLabel" name="AngTargetLabel">
              <property name="text">
-              <string>right</string>
+              <string>w</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QProgressBar" name="RightTargetProgressBar">
+            <widget class="QProgressBar" name="AngTargetProgressBar">
              <property name="value">
               <number>0</number>
              </property>
@@ -103,7 +103,7 @@ QGroupBox::title {
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="RightTargetValueLabel">
+            <widget class="QLabel" name="AngTargetValueLabel">
              <property name="text">
               <string>0.00</string>
              </property>
@@ -131,14 +131,14 @@ QGroupBox::title {
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
-            <widget class="QLabel" name="LeftMeasuredLabel">
+            <widget class="QLabel" name="LinMeasuredLabel">
              <property name="text">
-              <string>left   </string>
+              <string>v</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QProgressBar" name="LeftMeasuredProgressBar">
+            <widget class="QProgressBar" name="LinMeasuredProgressBar">
              <property name="value">
               <number>0</number>
              </property>
@@ -148,7 +148,7 @@ QGroupBox::title {
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="LeftMeasuredValueLabel">
+            <widget class="QLabel" name="LinMeasuredValueLabel">
              <property name="text">
               <string>0.00</string>
              </property>
@@ -159,14 +159,14 @@ QGroupBox::title {
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="QLabel" name="RightMeassuredLabel">
+            <widget class="QLabel" name="AngMeassuredLabel">
              <property name="text">
-              <string>right</string>
+              <string>w</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QProgressBar" name="RightMeasuredProgressBar">
+            <widget class="QProgressBar" name="AngMeasuredProgressBar">
              <property name="value">
               <number>0</number>
              </property>
@@ -176,7 +176,7 @@ QGroupBox::title {
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="RightMeasuredValueLabel">
+            <widget class="QLabel" name="AngMeasuredValueLabel">
              <property name="text">
               <string>0.00</string>
              </property>
@@ -347,10 +347,10 @@ QGroupBox::title {
       <item row="2" column="1">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QwtPlot" name="MeasureLeftPlot"/>
+         <widget class="QwtPlot" name="MeasureLinPlot"/>
         </item>
         <item>
-         <widget class="QwtPlot" name="MeasureRightPlot"/>
+         <widget class="QwtPlot" name="MeasureAngPlot"/>
         </item>
        </layout>
       </item>

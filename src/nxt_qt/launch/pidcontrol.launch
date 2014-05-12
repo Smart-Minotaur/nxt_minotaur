@@ -1,6 +1,6 @@
 <launch>
     
-    <node pkg="nxt_beagle" type="RobotControl" name="RobotControl" output="screen" />
+    <node pkg="nxt_qt" type="QPIDControl" name="QPIDControl" output="screen" />
     <rosparam command="load" file="$(find nxt_beagle)/RobotControl/Models.yaml"/>
 
 </launch>

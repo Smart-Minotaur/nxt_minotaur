@@ -18,10 +18,10 @@ namespace minotaur {
         QPIDNode pidNode;
         
         int sampleCount;
-        QwtPlotCurve leftCurve, rightCurve;
+        QwtPlotCurve linCurve, angCurve;
         double xSamples[SAMPLE_RANGE];
-        double leftSamples[SAMPLE_RANGE];
-        double rightSamples[SAMPLE_RANGE];
+        double linSamples[SAMPLE_RANGE];
+        double angSamples[SAMPLE_RANGE];
         
         void initComponents();
         void initPlotComponents();
@@ -33,8 +33,8 @@ namespace minotaur {
         float getKI();
         float getKD();
         
-        void updateMeasuredProgressBars(const QMotorVelocity& p_velocity);
-        void updateMeasuredPlot(const QMotorVelocity& p_velocity);
+        void updateMeasuredProgressBars(const QRobotVelocity& p_velocity);
+        void updateMeasuredPlot(const QRobotVelocity& p_velocity);
         void updateProgressBarColor(QProgressBar *p_progressbar);
         
     private Q_SLOTS:
@@ -43,9 +43,7 @@ namespace minotaur {
         void updatePIDValues();
         void setVelocity();
         void updateVelocityValues();
-        void processTargetMotorVelocity(const QMotorVelocity p_velocity);
-        void processMeasuredMotorVelocity(const QMotorVelocity p_velocity);
-        void setInitModel();
+        void processMeasuredVelocity(const QRobotVelocity p_velocity);
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();
