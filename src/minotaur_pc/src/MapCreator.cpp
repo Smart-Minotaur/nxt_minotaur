@@ -26,6 +26,7 @@ struct position {
 
 int grid[500][500];
 
+
 namespace minotaur {
   
     // Default Constructor
