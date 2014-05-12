@@ -1,6 +1,8 @@
 #ifndef MINOTAUR_PC_MAP_HPP_
 #define MINOTAUR_PC_MAP_HPP_
 
+#include <stdlib.h>
+
 namespace minotaur
 {
     class Map
@@ -14,7 +16,9 @@ namespace minotaur
         
         Map()
         :width(10), height(10)
-        { field = new int[width][height]; }
+        {
+            setDimension(width, height);
+        }
         
         virtual ~Map() { delete[] field; }
         
@@ -22,8 +26,20 @@ namespace minotaur
         {
             width = p_width;
             height = p_height;
-            delete[] field;
-            field = new int[width][height];
+            if(field != NULL)
+            {
+                for(int i = 0; i < height; ++i)
+                {
+                    delete[] field[i];
+                }
+                delete[] field;
+            }
+            
+            field = new int*[height];
+            for(int i = 0; i < height; ++i)
+            {
+                field[i] = new int[width];
+            }
         }
         
         int getWidth() const
@@ -32,9 +48,9 @@ namespace minotaur
         int getHeight() const
         { return height; }
         
-        int const**getField() const
+        int **getField() const
         { return field; }
-    }
+    };
 }
 
 #endif
