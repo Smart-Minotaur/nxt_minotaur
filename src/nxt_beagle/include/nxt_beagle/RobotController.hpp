@@ -17,7 +17,7 @@ namespace minotaur
      * A pid-controller is used to keep the correct velocity on each motor.
      * The pid-controller has to be initialized before using the "step()"
      * method (see "PIDController.hpp").
-     * The wheel-track must be ste before using the "step()" method. */
+     * The wheel-track must be set before using the "step()" method. */
     class RobotController: public IRobotController
     {
     private:

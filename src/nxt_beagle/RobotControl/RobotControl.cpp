@@ -41,6 +41,7 @@ void signalHandler(int sig);
 bool init(ros::NodeHandle &p_handle, tf::TransformBroadcaster *p_broadcaster);
 bool selectModel();
 bool setModel(const std::string& p_name);
+bool setModelSensors(const int p_sensorCount);
 bool startThreads();
 void* robotThread(void *arg);
 void* sensorThread(void *arg);
@@ -123,12 +124,7 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
     }
     
     try
-    {
-        /*robotCommunicator.pubTargetMVel = true;
-        robotCommunicator.pubMeasuredMVel = true;
-        robotCommunicator.pubTargetRVel = false;
-        robotCommunicator.pubMeasuredRVel = false;*/
-        
+    {       
         robotCommunicator.setTransformBroadcaster(p_broadcaster);
         robotCommunicator.init(p_handle, &brick);
         sensorCommunicator.init(p_handle, &brick);
@@ -205,6 +201,15 @@ bool setModel(const std::string& p_name)
         hadError = true;
     }
     
+    int sensorCount = 0;
+    while(true)
+    {
+        if(!ros::param::has(PARAM_SENSOR(p_name, sensorCount)))
+            break;
+        
+        ++sensorCount;
+    }
+    
     if(!hadError)
     {
         ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
@@ -215,10 +220,10 @@ bool setModel(const std::string& p_name)
         //always try catch between mutex lock / unlock to prevent deadlock
         try
         {
-        robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
-        robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
-        robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
-        samplingMSec = samplingTmp;
+            robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
+            robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
+            robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
+            samplingMSec = samplingTmp;
         }
         catch(std::exception const &e)
         {
@@ -226,9 +231,32 @@ bool setModel(const std::string& p_name)
         }
         robotCommunicator.unlock();
         pthread_mutex_unlock(&intervalMutex);
+        
+        hadError = setModelSensors(sensorCount);
     }
     
     return hadError;
+}
+
+bool setModelSensors(const int p_sensorCount)
+{
+    bool result = true;
+    sensorCommunicator.lock();
+    try
+    {
+        sensorCommunicator.getSensorController().clearSensors();
+        for(int i = 0; i < p_sensorCount; ++i)
+            sensorCommunicator.getSensorController().addSensor(i + 1);
+        
+    }
+    catch(std::exception const &e)
+    {
+        ROS_ERROR("Failed to add sensors to SensorController : %s.", e.what());
+        result = false;
+    }
+    sensorCommunicator.unlock();
+    
+    return result;
 }
 
 bool startThreads()
