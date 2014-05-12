@@ -17,6 +17,8 @@ namespace minotaur
             if(obstacle)
             {
                 theta += THETA_ADJUSTMENT;
+                if(theta == 360)
+                    theta = 0;
             }
         }
         
