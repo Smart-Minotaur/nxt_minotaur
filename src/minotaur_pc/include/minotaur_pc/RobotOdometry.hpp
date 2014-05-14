@@ -1,5 +1,5 @@
-#ifndef MINOTAUR_PC_MINOTAUR_STATE_HPP_
-#define MINOTAUR_PC_MINOTAUR_STATE_HPP_
+#ifndef MINOTAUR_PC_ROBOT_ODOMETRY_HPP_
+#define MINOTAUR_PC_ROBOT_ODOMETRY_HPP_
 
 #include <pthread.h>
 #include <vector>
@@ -11,25 +11,17 @@
 
 namespace minotaur
 {
-    class MinotaurState
+    class RobotOdometry
     {
     private:
         RobotPosition position;
         Movement lastMeasuredVel;
-        std::vector<SensorMeasurement> sensorMeasurements;
         
         pthread_mutex_t positionMutex;
         pthread_mutex_t movementMutex;
-        pthread_mutex_t measureMutex;
     public:
-        MinotaurState();
-        virtual ~MinotaurState();
-        
-        SensorMeasurement getMeasurement(const int p_sensorId);
-        void setDistance(const int p_sensorId, const uint8_t p_distance);
-        void setMeasurement(const int p_sensorId, const SensorMeasurement &p_measurement);
-        int addMeasurement(const SensorMeasurement &p_measurement);
-        void clearMeasurements();
+        RobotOdometry();
+        virtual ~RobotOdometry();
         
         void setVelocity(const float p_linearVel, const float p_angularVel);
         void setMovement(const Movement &p_movement);
@@ -40,8 +32,6 @@ namespace minotaur
         RobotPosition getPosition();
         
         void setOdometry(const RobotPosition &p_position, const Movement &p_movement);
-        
-        void setModel(const std::string &p_model);
     };
 }
 

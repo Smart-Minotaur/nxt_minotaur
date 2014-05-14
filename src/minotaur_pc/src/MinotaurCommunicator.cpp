@@ -5,9 +5,10 @@
 namespace minotaur
 {
     
-    void MinotaurCommunicator::init(ros::NodeHandle& p_handle, MinotaurState *p_state)
+    void MinotaurCommunicator::init(ros::NodeHandle& p_handle, RobotOdometry *p_robotOdom, BlockingQueue<SensorMeasurement> *p_queue)
     {
-        state = p_state;
+        odometry = p_robotOdom;
+        queue = p_queue;
         
         ROS_INFO("Subscribing on topic \"%s\"...", ROS_ODOM_TOPIC);
         odomSub = p_handle.subscribe(ROS_ODOM_TOPIC, 100, &MinotaurCommunicator::processOdometryMsg, this); 
@@ -36,7 +37,7 @@ namespace minotaur
     
     void MinotaurCommunicator::processMeasureSensorMsg(const nxt_beagle::UltraSensor& p_msg)
     {
-        state->setDistance(p_msg.sensorID, p_msg.distance);
+        queue->enqueue(SensorMeasurement(p_msg.sensorID, p_msg.distance));
     }
     
     void MinotaurCommunicator::processOdometryMsg(const nav_msgs::Odometry& p_msg)
@@ -46,6 +47,6 @@ namespace minotaur
         
         position.convert(p_msg.pose);
         movement.convert(p_msg.twist);
-        state->setOdometry(position, movement);
+        odometry->setOdometry(position, movement);
     }
 }

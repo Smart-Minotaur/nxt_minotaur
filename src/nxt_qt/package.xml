@@ -7,7 +7,7 @@
         nxt_qt
         
     </description>
-    <maintainer email="fabian@gmail.com">fabian</maintainer>
+    <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
     <author>fabian</author>
     <license>BSD</license>
     <!-- <url type="bugtracker">https://github.com/stonier/qt_ros/issues</url> -->

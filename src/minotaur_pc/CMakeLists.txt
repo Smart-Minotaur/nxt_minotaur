@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     roscpp
     rospy
+    tf
     message_generation
     nxt_beagle
 )
@@ -49,6 +50,7 @@ endforeach(configheader ${CONFIGURE_HEADERS})
 file( GLOB MINOTAUR_PC_LIB_SOURCES src/*.cpp )
 add_library(MinotaurPC ${MINOTAUR_PC_LIB_SOURCES})
 add_dependencies(MinotaurPC nxt_beagle_generate_messages_cpp)
+target_link_libraries(MinotaurPC ${catkin_LIBRARIES})
 
 #compile all executeables
 file( GLOB EXEC_SOURCES src/main/*.cpp)

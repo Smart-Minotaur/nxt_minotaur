@@ -9,11 +9,11 @@ namespace minotaur
     class SensorMeasurement
     {
     public:
-        Vec2 offset;
-        float direction;
+        int sensorID;
         uint8_t distance;
         
         SensorMeasurement() { }
+        SensorMeasurement(const int p_sensorID, const uint8_t distance) { }
         virtual ~SensorMeasurement() { }
     };
 }

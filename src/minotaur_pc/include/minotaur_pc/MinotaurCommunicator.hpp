@@ -3,7 +3,9 @@
 
 #include <ros/ros.h>
 #include "minotaur_pc/RobotPosition.hpp"
-#include "minotaur_pc/MinotaurState.hpp"
+#include "minotaur_pc/RobotOdometry.hpp"
+#include "minotaur_pc/SensorMeasurement.hpp"
+#include "minotaur_pc/BlockingQueue.hpp"
 #include "nav_msgs/Odometry.h"
 #include "nxt_beagle/UltraSensor.h"
 
@@ -12,7 +14,8 @@ namespace minotaur
     class MinotaurCommunicator
     {
     private:
-        MinotaurState *state;
+        RobotOdometry *odometry;
+        BlockingQueue<SensorMeasurement> *queue;
         
         ros::Subscriber odomSub;
         ros::Subscriber measureSensorSub;
@@ -24,7 +27,7 @@ namespace minotaur
         MinotaurCommunicator() { }
         virtual ~MinotaurCommunicator() { }
         
-        void init(ros::NodeHandle& p_handle, MinotaurState *p_state);
+        void init(ros::NodeHandle& p_handle, RobotOdometry *p_robotOdom, BlockingQueue<SensorMeasurement> *p_queue);
         void setTargetPosition(const RobotPosition& p_position);
     };
 }
