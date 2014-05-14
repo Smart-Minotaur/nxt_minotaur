@@ -247,7 +247,26 @@ bool setModelSensors(const int p_sensorCount)
         sensorCommunicator.getSensorController().clearSensors();
         for(int i = 0; i < p_sensorCount; ++i) {
             ROS_INFO("Adding sensor %d...", i);
-            sensorCommunicator.getSensorController().addSensor(i + 1);
+            uint8_t tmpPort;
+            switch(i)
+            {
+                case NXT_PORT1:
+                    tmpPort = PORT_1;
+                    break;
+                case NXT_PORT2:
+                    tmpPort = PORT_2;
+                    break;
+                case NXT_PORT3:
+                    tmpPort = PORT_3;
+                    break;
+                case NXT_PORT4:
+                    tmpPort = PORT_4;
+                    break;
+                default:
+                    ROS_ERROR("SetModelSensors: Invalid sensor port: %d.", i);
+                    return false;
+            }
+            sensorCommunicator.getSensorController().addSensor(tmpPort);
         }
         
     }

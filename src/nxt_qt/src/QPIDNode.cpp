@@ -90,13 +90,11 @@ namespace minotaur
     
     void QPIDNode::processSensorMsg(const nxt_beagle::UltraSensor p_msg)
     {
-        if(p_msg.distance <= 30) {
-            QUltraSensor msg;
-            msg.id = p_msg.sensorID;
-            msg.direction = directions[p_msg.sensorID];
-            msg.distance = p_msg.distance;
-            
-            Q_EMIT measuredSensor(msg);
-        }
+        QUltraSensor msg;
+        msg.id = p_msg.sensorID;
+        msg.direction = directions[p_msg.sensorID];
+        msg.distance = p_msg.distance;
+        
+        Q_EMIT measuredSensor(msg);
     }
 }

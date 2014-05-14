@@ -2,7 +2,8 @@
 #include <QPainter>
 #include <cmath>
 
-#define SIZE_FACTOR 10.0f
+#define SIZE_FACTOR 8.0f
+#define MAX_RANGE 30
 
 namespace minotaur
 {
@@ -43,7 +44,7 @@ namespace minotaur
         int i;
         QPoint center(width() / 2, height() / 2);
         std::vector<QLine> lines;
-        int radius = (width() / 30) + 1;
+        int radius = (height() / 30) + 1;
         
         QPainter painter(this);
         
@@ -56,7 +57,10 @@ namespace minotaur
         
         painter.setBrush(QBrush(Qt::red));
         for(i = 0; i < sensorMeasurements.size(); ++i)
-            painter.drawEllipse(QPoint(center.x() + SIZE_FACTOR * sensorMeasurements[i].x(), center.y() + SIZE_FACTOR * sensorMeasurements[i].y()), radius, radius);
+        {
+            if( (sensorMeasurements[i].x() * sensorMeasurements[i].x() + sensorMeasurements[i].y() * sensorMeasurements[i].y()) < MAX_RANGE * MAX_RANGE)
+                painter.drawEllipse(QPoint(center.x() + SIZE_FACTOR * sensorMeasurements[i].x(), center.y() + SIZE_FACTOR * sensorMeasurements[i].y()), radius, radius);
+        }
         
     }
 }
