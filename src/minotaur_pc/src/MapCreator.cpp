@@ -126,9 +126,10 @@ namespace minotaur {
       float angle;
       float dif_angle;
       float realDistance;
+      float tmp_dist;
       int position_x, position_y;
       int ** gri = map.getField();
-      int * height;
+      int * height = NULL;
 
       if (measuredDistance >= 100) {
 	//ROS_INFO("----No valid Value----");
@@ -140,7 +141,8 @@ namespace minotaur {
 	angle = pos.theta;
 	
       } else if (sensor == 2) {
-	realDistance = ( measuredDistance + sen2.x ) + sen2.y;
+	tmp_dist = measuredDistance + sen2.x;
+	realDistance = sqrt((tmp_dist * tmp_dist) + (sen2.y * sen2.y));
 	dif_angle = asin( sen2.y / realDistance);
 	angle = (pos.theta + 90.0) - dif_angle;
 	if (angle > 360.0) {
@@ -150,7 +152,8 @@ namespace minotaur {
 	}
 	
       } else {
-	realDistance = ( measuredDistance + sen3.x ) + sen2.y;
+	tmp_dist = measuredDistance + sen3.x;
+	realDistance = sqrt((tmp_dist * tmp_dist) + (sen3.y * sen3.y));
 	dif_angle = asin ( sen3.y / realDistance );
 	angle = (pos.theta - 90.0) - dif_angle;
 	if (angle > 360.0) {
@@ -160,8 +163,8 @@ namespace minotaur {
 	}
       }
       
-      distance_X = sin(angle * DEGREE_TO_RAD) * measuredDistance;
-      distance_Y = cos(angle * DEGREE_TO_RAD) * measuredDistance;
+      distance_X = sin(angle * DEGREE_TO_RAD) * realDistance;
+      distance_Y = cos(angle * DEGREE_TO_RAD) * realDistance;
 
       position_x = (int) (pos.x + distance_X);
       position_y = (int) (pos.y + distance_Y);
@@ -170,10 +173,12 @@ namespace minotaur {
 	//ROS_INFO("----Value out of Area----");
 	return;
       }
+      
       height = gri[position_x];
       height[position_y]++;
       
       grid[position_y][position_x]++;
+      printf("Inc cell [%d] [%d] to %d -- dist: %2.6f\n", position_y, position_x, grid[position_y][position_x], realDistance);
       
     }
     
@@ -182,6 +187,7 @@ namespace minotaur {
       return map;
     }
 
+    // TODO: take map instead of grid / remove grid
     void MapCreator::createTextFile()
     {
       int x, y;
