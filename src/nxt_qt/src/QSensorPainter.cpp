@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <cmath>
 
+#define SIZE_FACTOR 10.0f
+
 namespace minotaur
 {
     QSensorPainter::QSensorPainter(QWidget *parent)
@@ -41,12 +43,12 @@ namespace minotaur
         int i;
         QPoint center(width() / 2, height() / 2);
         std::vector<QLine> lines;
-        int radius = (width() / 10) + 1;
+        int radius = (width() / 30) + 1;
         
         for(i = 0; i < sensorMeasurements.size(); ++i)
         {
             QPoint tmpPoint(center.x() + sensorMeasurements[i].x(), center.y() + sensorMeasurements[i].y());
-            float length = sqrt(sensorMeasurements[i].x() * sensorMeasurements[i].x() + sensorMeasurements[i].y() * sensorMeasurements[i].y());
+            float length = SIZE_FACTOR * sqrt(sensorMeasurements[i].x() * sensorMeasurements[i].x() + sensorMeasurements[i].y() * sensorMeasurements[i].y());
             float dx = -sensorMeasurements[i].x() / length;
             float dy = sensorMeasurements[i].x() / length;
             QLine tmpLine(tmpPoint.x() + dx * radius, tmpPoint.y() + dy * radius, tmpPoint.x() - dx * radius, tmpPoint.y() - dy * radius);

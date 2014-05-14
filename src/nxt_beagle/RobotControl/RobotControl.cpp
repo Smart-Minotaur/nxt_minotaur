@@ -245,8 +245,10 @@ bool setModelSensors(const int p_sensorCount)
     try
     {
         sensorCommunicator.getSensorController().clearSensors();
-        for(int i = 0; i < p_sensorCount; ++i)
+        for(int i = 0; i < p_sensorCount; ++i) {
+            ROS_INFO("Adding sensor %d...", i);
             sensorCommunicator.getSensorController().addSensor(i + 1);
+        }
         
     }
     catch(std::exception const &e)

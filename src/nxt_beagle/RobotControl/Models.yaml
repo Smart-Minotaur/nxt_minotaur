@@ -13,5 +13,17 @@ minotaur:
         ki: 0.2
         kd: 0.1
         sampling_interval: 25
+        sensor_0:
+            direction: -90
+            dx: 0.0
+            dy: 0.0
+        sensor_1:
+            direction: 90
+            dx: 0.0
+            dy: 0.0
+        sensor_2:
+            direction: 0
+            dx: 0.0
+            dy: 0.0
     CurrentModel: "Theseus"
         

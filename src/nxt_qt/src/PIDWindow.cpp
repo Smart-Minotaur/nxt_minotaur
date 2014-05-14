@@ -25,9 +25,11 @@ namespace minotaur
     PIDWindow::PIDWindow(QWidget *parent)
     :QMainWindow(parent)
     {
-        sensorPainter = new QSensorPainter(centralwidget);
-        
         setupUi(this);
+        
+        sensorPainter = new QSensorPainter(centralwidget);
+        centralwidget->layout()->addWidget(sensorPainter);
+        sensorPainter->setMinimumSize(200, 400);
         
         connect(&pidNode, SIGNAL(measuredVelocityUpdated(const QRobotVelocity)), this, SLOT(processMeasuredVelocity(const QRobotVelocity)));
         connect(&pidNode, SIGNAL(measuredSensor(const QUltraSensor)), this, SLOT(processMeasuredSensor(const QUltraSensor)));
