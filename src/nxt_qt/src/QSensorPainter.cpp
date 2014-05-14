@@ -45,16 +45,6 @@ namespace minotaur
         std::vector<QLine> lines;
         int radius = (width() / 30) + 1;
         
-        for(i = 0; i < sensorMeasurements.size(); ++i)
-        {
-            QPoint tmpPoint(center.x() + sensorMeasurements[i].x(), center.y() + sensorMeasurements[i].y());
-            float length = SIZE_FACTOR * sqrt(sensorMeasurements[i].x() * sensorMeasurements[i].x() + sensorMeasurements[i].y() * sensorMeasurements[i].y());
-            float dx = -sensorMeasurements[i].x() / length;
-            float dy = sensorMeasurements[i].x() / length;
-            QLine tmpLine(tmpPoint.x() + dx * radius, tmpPoint.y() + dy * radius, tmpPoint.x() - dx * radius, tmpPoint.y() - dy * radius);
-            lines.push_back(tmpLine);
-        }
-        
         QPainter painter(this);
         
         painter.setBrush(QBrush(Qt::white));
@@ -64,8 +54,9 @@ namespace minotaur
         
         painter.drawEllipse(center, radius, radius);
         
-        for(i = 0; i < lines.size(); ++i)
-            painter.drawLine(lines[i]);
+        painter.setBrush(QBrush(Qt::red));
+        for(i = 0; i < sensorMeasurements.size(); ++i)
+            painter.drawEllipse(QPoint(center.x() + SIZE_FACTOR * sensorMeasurements[i].x(), center.y() + SIZE_FACTOR * sensorMeasurements[i].y()), radius, radius);
         
     }
 }

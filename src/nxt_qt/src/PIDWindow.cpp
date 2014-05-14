@@ -229,7 +229,7 @@ namespace minotaur
     void PIDWindow::processMeasuredSensor(const QUltraSensor p_sensor)
     {
         int x = cos(p_sensor.direction) * p_sensor.distance;
-        int y = sin(p_sensor.direction) * p_sensor.distance;
+        int y = -sin(p_sensor.direction) * p_sensor.distance;
         
         while(p_sensor.id >= sensorPainter->getCount())
             sensorPainter->addMeasurement(QPoint());

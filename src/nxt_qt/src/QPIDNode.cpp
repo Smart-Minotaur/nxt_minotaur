@@ -5,7 +5,7 @@
 #include <tf/transform_broadcaster.h>
 #include <cmath>
 
-#define DEG_TO_RAD(deg) ((deg / 360.0) * 2 * M_PI)
+#define DEG_TO_RAD(deg) ((deg / 180.0f) * M_PI)
 
 namespace minotaur
 {
@@ -90,11 +90,13 @@ namespace minotaur
     
     void QPIDNode::processSensorMsg(const nxt_beagle::UltraSensor p_msg)
     {
-        QUltraSensor msg;
-        msg.id = p_msg.sensorID;
-        msg.direction = directions[p_msg.sensorID];
-        msg.distance = p_msg.distance;
-        
-        Q_EMIT measuredSensor(msg);
+        if(p_msg.distance <= 30) {
+            QUltraSensor msg;
+            msg.id = p_msg.sensorID;
+            msg.direction = directions[p_msg.sensorID];
+            msg.distance = p_msg.distance;
+            
+            Q_EMIT measuredSensor(msg);
+        }
     }
 }
