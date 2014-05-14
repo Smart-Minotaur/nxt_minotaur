@@ -1,6 +1,8 @@
 #include <stdexcept>
+#include <exception>
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "nxt_control/Lock.hpp"
 
 namespace nxtcon
 {
@@ -26,9 +28,8 @@ namespace nxtcon
     
     void Brick::send(const Telegram &p_telegram)
     {
-        pthread_mutex_lock(&usbOutMutex);
+        Lock lock(&usbOutMutex);
         usbSocket.send(p_telegram, USB_OUT_ENDPOINT);
-        pthread_mutex_unlock(&usbOutMutex);
     }
     
     Telegram Brick::sendWithResponse(const Telegram &p_telegram)
@@ -37,14 +38,22 @@ namespace nxtcon
         pthread_mutex_lock(&usbInMutex);
         pthread_mutex_lock(&usbOutMutex);
         
-        usbSocket.send(p_telegram, USB_OUT_ENDPOINT);
-        
+        try {
+            usbSocket.send(p_telegram, USB_OUT_ENDPOINT);
+        } catch (std::exception const &e) {
+            pthread_mutex_unlock(&usbOutMutex);
+            throw e;
+        }
         pthread_mutex_unlock(&usbOutMutex);
         
-        result = usbSocket.receive(USB_IN_ENDPOINT);
-        
+        try {
+            result = usbSocket.receive(USB_IN_ENDPOINT);
+        } catch (std::exception const &e) {
+            pthread_mutex_unlock(&usbInMutex);
+            throw e;
+        }
         pthread_mutex_unlock(&usbInMutex);
-        return result;
         
+        return result;
     }
 }

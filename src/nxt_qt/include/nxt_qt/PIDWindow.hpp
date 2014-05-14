@@ -2,10 +2,12 @@
 #define PID_WINDOW_HPP_
 
 #include <QtGui/QMainWindow>
-#include "ui_pid_window.h"
-#include "nxt_qt/QPIDNode.hpp"
+#include <QPoint>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
+#include "nxt_qt/QSensorPainter.hpp"
+#include "ui_pid_window.h"
+#include "nxt_qt/QPIDNode.hpp"
 
 #define SAMPLE_RANGE 400
 
@@ -16,6 +18,7 @@ namespace minotaur {
         Q_OBJECT
     private:
         QPIDNode pidNode;
+        QSensorPainter *sensorPainter;
         
         int sampleCount;
         QwtPlotCurve linCurve, angCurve;
@@ -44,6 +47,7 @@ namespace minotaur {
         void setVelocity();
         void updateVelocityValues();
         void processMeasuredVelocity(const QRobotVelocity p_velocity);
+        void processMeasuredSensor(const QUltraSensor p_sensor);
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();
