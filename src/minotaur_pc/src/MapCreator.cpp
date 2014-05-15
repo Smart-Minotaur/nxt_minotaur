@@ -10,9 +10,9 @@
 
 #define RAD_TO_DEGREE 57.295779513082
 #define DEGREE_TO_RAD 0.017453292519943
-#define SENSOR_1 1
-#define SENSOR_2 2
-#define SENSOR_3 3
+#define SENSOR_FRONT 1
+#define SENSOR_RIGHT 2
+#define SENSOR_LEFT 3
 
 using namespace std;
 
@@ -103,23 +103,23 @@ namespace minotaur {
 	  sen3.y = y;	
 	  break;
 	default:
-	  //ROS_INFO("invalid sensor-number");
+	  //ROS_INFO("invalid sensor-number: Use 1, 2 or 3");
 	  break;
       }
     }
 
     void MapCreator::setPosition(RobotPosition p_position)
     {
-      pos.x = p_position.point.x * 100; // offset damit start bei Pos 0-0
-      pos.y = p_position.point.y * 100;
+      pos.x = p_position.point.x * 100 + (map.getWidth() /2); // offset um 0-0 als Mittelpunkt zu nehmen
+      pos.y = p_position.point.y * 100 + (map.getHeight() /2);
       pos.theta = p_position.theta * RAD_TO_DEGREE;
     }
 
     void MapCreator::step(int sensorValue1, int sensorValue2, int sensorValue3)
     {
-      calculateObstaclePosition(sensorValue1, SENSOR_1);
-      calculateObstaclePosition(sensorValue2, SENSOR_2);
-      calculateObstaclePosition(sensorValue3, SENSOR_3);
+      calculateObstaclePosition(sensorValue1, SENSOR_FRONT);
+      calculateObstaclePosition(sensorValue2, SENSOR_RIGHT);
+      calculateObstaclePosition(sensorValue3, SENSOR_LEFT);
     }
 
     void MapCreator::calculateObstaclePosition(int measuredDistance, const int sensor)
@@ -139,13 +139,14 @@ namespace minotaur {
 	return;
       }
 	
-      if (sensor == SENSOR_1) {
+      if (sensor == SENSOR_FRONT) {
 	realDistance = measuredDistance + sen1.y;
 	angle = pos.theta;
 	
-      } else if (sensor == SENSOR_2) {
+      } else if (sensor == SENSOR_RIGHT) {
 	tmp_dist = measuredDistance + sen2.x;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen2.y * sen2.y));
+	// TODO: fix calculation
 	dif_angle = asin( sen2.y / realDistance);
 	angle = (pos.theta + 90.0) - dif_angle;
 	if (angle > 360.0) {
@@ -154,7 +155,7 @@ namespace minotaur {
 	  angle = angle + 360.0;
 	}
 	
-      } else if (sensor == SENSOR_3) {
+      } else if (sensor == SENSOR_LEFT) {
 	tmp_dist = measuredDistance + sen3.x;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen3.y * sen3.y));
 	dif_angle = asin ( sen3.y / realDistance );
@@ -191,28 +192,7 @@ namespace minotaur {
     {
       return map;
     }
-/* --- BYEBYE YOU ARE NO LONGER USED MY OLD FRIEND ---
-    void MapCreator::createTextFile_old()
-    {
-      int x, y;
-      const char *path="grid.txt";
-      ofstream file;
-      file.open (path);
-      for ( y = 499; y >= 0; y-- ) {
-	for ( x = 0; x <= 499; x++ ) {
-	  if ( grid_old[y][x] == 0 ) {
-	    file << "-";
-	  } else if ( grid_old[y][x] > 9) {
-	    file << "9";
-	  } else {
-	    file << grid_old[y][x];
-	  }
-	}
-	file << "\n";
-      }
-      file.close();
-    }
-  */  
+
     void MapCreator::createTextFile()
     {
       int x, y;
