@@ -26,11 +26,17 @@ namespace minotaur
     void SensorCommunicator::publish()
     {
         nxt_beagle::UltraSensor msg;
+        ros::Rate sendRate(90);
         for(int i = 0; i < sensorController.count(); ++i)
         {
-            msg.sensorID = i;
-            msg.distance = sensorController.getDistance(i);
-            sensorDataPub.publish(msg);
+            try {
+                msg.sensorID = i;
+                msg.distance = sensorController.getDistance(i);
+                sensorDataPub.publish(msg);
+            } catch (nxtcon::NXTTimeoutException const &e) {
+                ROS_WARN("SensorCommunicator: %s.", e.what());
+            }
+            sendRate.sleep();
         }
     }
     

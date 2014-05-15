@@ -38,9 +38,11 @@ volatile bool run = true;
 /* Function prototypes */
 void setSignals();
 void signalHandler(int sig);
+void shutdown();
 bool init(ros::NodeHandle &p_handle, tf::TransformBroadcaster *p_broadcaster);
 bool selectModel();
 bool setModel(const std::string& p_name);
+bool setModelSensors(const int p_sensorCount);
 bool startThreads();
 void* robotThread(void *arg);
 void* sensorThread(void *arg);
@@ -84,6 +86,11 @@ void setSignals()
 
 void signalHandler(int sig)
 {
+    shutdown();
+}
+
+void shutdown()
+{
     run = false;
 }
 
@@ -123,12 +130,7 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
     }
     
     try
-    {
-        /*robotCommunicator.pubTargetMVel = true;
-        robotCommunicator.pubMeasuredMVel = true;
-        robotCommunicator.pubTargetRVel = false;
-        robotCommunicator.pubMeasuredRVel = false;*/
-        
+    {       
         robotCommunicator.setTransformBroadcaster(p_broadcaster);
         robotCommunicator.init(p_handle, &brick);
         sensorCommunicator.init(p_handle, &brick);
@@ -205,6 +207,15 @@ bool setModel(const std::string& p_name)
         hadError = true;
     }
     
+    int sensorCount = 0;
+    while(true)
+    {
+        if(!ros::param::has(PARAM_SENSOR(p_name, sensorCount)))
+            break;
+        
+        ++sensorCount;
+    }
+    
     if(!hadError)
     {
         ROS_INFO("Track = %.2f m; Circumference = %.2f m; Interval = %d ms", wheelTrack, wheelCircumference, samplingTmp);
@@ -215,10 +226,10 @@ bool setModel(const std::string& p_name)
         //always try catch between mutex lock / unlock to prevent deadlock
         try
         {
-        robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
-        robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
-        robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
-        samplingMSec = samplingTmp;
+            robotCommunicator.getRobotController().getPIDController().setPIDParameter(pidParams);
+            robotCommunicator.getRobotController().getPIDController().setWheelCircumference(wheelCircumference);
+            robotCommunicator.getRobotController().setWheelTrack(wheelTrack);
+            samplingMSec = samplingTmp;
         }
         catch(std::exception const &e)
         {
@@ -226,9 +237,53 @@ bool setModel(const std::string& p_name)
         }
         robotCommunicator.unlock();
         pthread_mutex_unlock(&intervalMutex);
+        
+        hadError = setModelSensors(sensorCount);
     }
     
     return hadError;
+}
+
+bool setModelSensors(const int p_sensorCount)
+{
+    bool result = true;
+    sensorCommunicator.lock();
+    try
+    {
+        sensorCommunicator.getSensorController().clearSensors();
+        for(int i = 0; i < p_sensorCount; ++i) {
+            ROS_INFO("Adding sensor %d...", i);
+            uint8_t tmpPort;
+            switch(i)
+            {
+                case NXT_PORT1:
+                    tmpPort = PORT_1;
+                    break;
+                case NXT_PORT2:
+                    tmpPort = PORT_2;
+                    break;
+                case NXT_PORT3:
+                    tmpPort = PORT_3;
+                    break;
+                case NXT_PORT4:
+                    tmpPort = PORT_4;
+                    break;
+                default:
+                    ROS_ERROR("SetModelSensors: Invalid sensor port: %d.", i);
+                    return false;
+            }
+            sensorCommunicator.getSensorController().addSensor(tmpPort);
+        }
+        
+    }
+    catch(std::exception const &e)
+    {
+        ROS_ERROR("Failed to add sensors to SensorController : %s.", e.what());
+        result = false;
+    }
+    sensorCommunicator.unlock();
+    
+    return result;
 }
 
 bool startThreads()
@@ -286,9 +341,14 @@ void* robotThread(void *arg)
             //better to do it asynch?
             robotCommunicator.publish();
         }
+        catch(nxtcon::USBException const &ue)
+        {
+            ROS_ERROR("RobotThread: %s.", ue.what());
+            shutdown();
+        }
         catch(std::exception const & e)
         {
-            ROS_ERROR("RobotThread: %s.", e.what());
+            ROS_WARN("RobotThread: %s.", e.what());
         }
         
         robotCommunicator.unlock();
@@ -331,13 +391,14 @@ void* sensorThread(void *arg)
         {
             sensorCommunicator.publish();
         }
-        catch(nxtcon::NXTTimeoutException const &te)
+        catch(nxtcon::USBException const &ue)
         {
-            ROS_WARN("SensorThread: %s.", te.what());
+            ROS_ERROR("SensorThread: %s.", ue.what());
+            shutdown();
         }
         catch(std::exception const &e)
         {
-            ROS_ERROR("SensorThread: %s.", e.what());
+            ROS_WARN("SensorThread: %s.", e.what());
         }
         sensorCommunicator.unlock();
         

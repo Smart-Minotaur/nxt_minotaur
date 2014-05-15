@@ -6,7 +6,9 @@
 #include <QThread>
 #include <QMetaType>
 #include <QMutex>
+#include <vector>
 #include "nxt_beagle/MotorVelocity.hpp"
+#include "nxt_beagle/UltraSensor.h"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 
@@ -25,6 +27,17 @@ namespace minotaur
         virtual ~QRobotVelocity() { }
     };
     
+    class QUltraSensor
+    {
+    public:
+        int id;
+        int distance;
+        float direction;
+        
+        QUltraSensor() { }
+        virtual ~QUltraSensor() { }
+    };
+    
     class QPIDNode : public QThread
     {
         Q_OBJECT
@@ -32,9 +45,12 @@ namespace minotaur
     private:
         QMutex mutex;
         
+        std::vector<float> directions;
+        
         ros::NodeHandle nodeHandle;
         
         ros::Subscriber odometrySub;
+        ros::Subscriber ultrasensorSub;
         
         ros::Publisher robotVelocityPublisher;
         ros::Publisher pidPramPublisher;
@@ -42,7 +58,7 @@ namespace minotaur
         nav_msgs::Odometry lastOdometry;
         
         void processOdometryMsg(const nav_msgs::Odometry& p_msg);
-        
+        void processSensorMsg(const nxt_beagle::UltraSensor p_msg);
     public:
         QPIDNode();
         virtual ~QPIDNode() { }
@@ -55,9 +71,11 @@ namespace minotaur
     Q_SIGNALS:
         void rosShutdown();
         void measuredVelocityUpdated(const QRobotVelocity p_msg);
+        void measuredSensor(const QUltraSensor p_msg);
     };
 }
 
 Q_DECLARE_METATYPE(minotaur::QRobotVelocity);
+Q_DECLARE_METATYPE(minotaur::QUltraSensor);
 
 #endif

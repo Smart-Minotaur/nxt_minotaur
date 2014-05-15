@@ -27,7 +27,12 @@ namespace minotaur
     {
         setupUi(this);
         
+        sensorPainter = new QSensorPainter(centralwidget);
+        centralwidget->layout()->addWidget(sensorPainter);
+        sensorPainter->setMinimumSize(200, 400);
+        
         connect(&pidNode, SIGNAL(measuredVelocityUpdated(const QRobotVelocity)), this, SLOT(processMeasuredVelocity(const QRobotVelocity)));
+        connect(&pidNode, SIGNAL(measuredSensor(const QUltraSensor)), this, SLOT(processMeasuredSensor(const QUltraSensor)));
         
         connect(BrakeButton, SIGNAL(clicked()), this, SLOT(brake()));
         
@@ -219,6 +224,18 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: yellow; }");
         else
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
+    }
+    
+    void PIDWindow::processMeasuredSensor(const QUltraSensor p_sensor)
+    {
+        int x = cos(-p_sensor.direction - M_PI / 2) * p_sensor.distance;
+        int y = sin(-p_sensor.direction - M_PI / 2) * p_sensor.distance;
+        
+        while(p_sensor.id >= sensorPainter->getCount())
+            sensorPainter->addMeasurement(QPoint());
+        
+        sensorPainter->setMeasurement(p_sensor.id ,QPoint(x,y));
+        sensorPainter->update();
     }
     
 }

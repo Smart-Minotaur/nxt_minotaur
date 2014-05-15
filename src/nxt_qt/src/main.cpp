@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     }
     
     qRegisterMetaType<minotaur::QRobotVelocity>("QRobotVelocity");
+    qRegisterMetaType<minotaur::QUltraSensor>("QUltraSensor");
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
     

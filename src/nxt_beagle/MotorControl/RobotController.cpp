@@ -62,7 +62,7 @@ namespace minotaur
         MotorVelocity targetVelocity;
         
         //to get the formula see kinematic of two wheeled robots
-        double theta = atan2(velocity.linear.y, velocity.linear.x);
+        double theta = tf::getYaw(odometry.pose.pose.orientation);
         float linearVelocity = velocity.linear.x / cos(theta);
         targetVelocity.leftMPS = linearVelocity - (velocity.angular.z * wheelTrack) / 2;
         targetVelocity.rightMPS = linearVelocity + (velocity.angular.z * wheelTrack) / 2;
