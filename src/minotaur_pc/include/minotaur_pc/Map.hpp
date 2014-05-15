@@ -24,8 +24,7 @@ namespace minotaur
         
         void setDimension(const int p_width, const int p_height)
         {
-            width = p_width;
-            height = p_height;
+	  
             if(field != NULL)
             {
                 for(int i = 0; i < height; ++i)
@@ -34,6 +33,9 @@ namespace minotaur
                 }
                 delete[] field;
             }
+            
+            width = p_width;
+            height = p_height;
             
             field = new int*[height];
             for(int i = 0; i < height; ++i)
