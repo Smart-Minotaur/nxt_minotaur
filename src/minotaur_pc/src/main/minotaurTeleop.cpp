@@ -11,6 +11,7 @@
 #include "minotaur_pc/MapCreator.hpp"
 #include "nxt_beagle/UltraSensor.h"
 #include "minotaur_pc/BlockingQueue.hpp"
+#include "minotaur_pc/RobotPosition.hpp"
 
 #define MAX_LINEAR_VEL 0.2
 #define MAX_ANGULAR_VEL 1.5
@@ -21,7 +22,7 @@
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
 
-bool run;
+volatile bool run;
 
 ros::Subscriber odometrySub;
 ros::Subscriber ultraSensorSub;
@@ -35,7 +36,7 @@ pthread_mutex_t positionMutex;
 pthread_t eventThread;
 pthread_t mapThread;
 
-geometry_msgs::Pose currentPosition;
+minotaur::RobotPosition currentPosition;
 
 struct termios oldtio, currtio;
 struct sigaction sa;
@@ -45,7 +46,7 @@ void sighandler(int sig);
 bool initCommunication(ros::NodeHandle &p_handle);
 bool initMapCreator();
 void processOdomMsg(const nav_msgs::Odometry p_msg);
-void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg)
+void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg);
 void initKeyHandling();
 void startThreads();
 void joinThreads();
@@ -67,6 +68,9 @@ int main(int argc, char** argv)
     startThreads();
     ros::spin();
     joinThreads();
+    
+    ROS_INFO("Saving Map...");
+    mapCreator.createTextFile();
     
     return 0;
 }
@@ -102,11 +106,9 @@ bool initCommunication(ros::NodeHandle &p_handle)
     ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
     robotVelocityPublisher = p_handle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
     
-    currentPosition.position.x = 0;
-    currentPosition.position.y = 0;
-    currentPosition.position.z = 0;
-    
-    currentPosition.orientation = tf::createQuaternionMsgFromYaw(0);
+    currentPosition.point.x = 0;
+    currentPosition.point.y = 0;
+    currentPosition.theta = 0;
     
     return true;
 }
@@ -127,7 +129,7 @@ bool initMapCreator()
     sensor.clear();
     while(true)
     {
-        if(!ros::param::has(PARAM_SENSOR(model, i))
+        if(!ros::param::has(PARAM_SENSOR(model, i)))
             break;
         ROS_INFO("Adding Sensor %d...", i);
         
@@ -166,7 +168,7 @@ bool initMapCreator()
 void processOdomMsg(const nav_msgs::Odometry p_msg)
 {
     pthread_mutex_lock(&positionMutex);
-    currentPosition = p_msg.pose.pose;
+    currentPosition.convert(p_msg.pose);
     pthread_mutex_unlock(&positionMutex);
 }
 
@@ -195,12 +197,14 @@ void startThreads()
     run = true;
     pthread_mutex_init(&positionMutex, NULL);
     pthread_create(&eventThread, NULL, eventLoop, NULL);
+    pthread_create(&mapThread, NULL, mapLoop, NULL);
 }
 
 void joinThreads()
 {
     void *ret;
     pthread_join(eventThread, &ret);
+    pthread_join(mapThread, &ret);
 }
 
 void *eventLoop(void * p_arg)
@@ -208,7 +212,7 @@ void *eventLoop(void * p_arg)
     char keycode;
     ros::Rate loop_rate(60);
     geometry_msgs::Twist msg;
-    geometry_msgs::Pose currentPositionCopy;
+    minotaur::RobotPosition currentPositionCopy;
     
     msg.linear.x = 0;
     msg.linear.y = 0;
@@ -217,8 +221,6 @@ void *eventLoop(void * p_arg)
     msg.angular.x = 0;
     msg.angular.y = 0;
     msg.angular.z = 0;
-    
-    double theta;
     
     while(run)
     {
@@ -247,16 +249,14 @@ void *eventLoop(void * p_arg)
                 robotVelocityPublisher.publish(msg);
                 break;
             case KEYCODE_U:
-                theta = tf::getYaw(currentPositionCopy.orientation);
-                msg.linear.x = cos(theta) * MAX_LINEAR_VEL;
-                msg.linear.y = sin(theta) * MAX_LINEAR_VEL;
+                msg.linear.x = cos(currentPositionCopy.theta) * MAX_LINEAR_VEL;
+                msg.linear.y = sin(currentPositionCopy.theta) * MAX_LINEAR_VEL;
                 msg.angular.z = 0;
                 robotVelocityPublisher.publish(msg);
                 break;
             case KEYCODE_D:
-                theta = tf::getYaw(currentPositionCopy.orientation);
-                msg.linear.x = cos(theta) * -MAX_LINEAR_VEL;
-                msg.linear.y = sin(theta) * -MAX_LINEAR_VEL;
+                msg.linear.x = cos(currentPositionCopy.theta) * -MAX_LINEAR_VEL;
+                msg.linear.y = sin(currentPositionCopy.theta) * -MAX_LINEAR_VEL;
                 msg.angular.z = 0;
                 robotVelocityPublisher.publish(msg);
                 break;
@@ -280,8 +280,20 @@ void *eventLoop(void * p_arg)
 
 void *mapLoop(void * arg)
 {
+    nxt_beagle::UltraSensor sensorMsg;
+    
     while(run)
     {
+        sensorMsg = queue.dequeue();
         
+        pthread_mutex_lock(&positionMutex);
+        mapCreator.setPosition(currentPosition);
+        pthread_mutex_unlock(&positionMutex);
+        
+        mapCreator.step(sensor[sensorMsg.sensorID], sensorMsg.distance);
     }
+    
+    ROS_INFO("MapLoop terminated.");
+    
+    return NULL;
 }
