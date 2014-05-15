@@ -5,7 +5,9 @@
 //#include "nxt_beagle/MVelocity.h"
 #include "nxt_qt/DebugMouseData.h"
 #include "/home/benni/teamprojekt/trunk/src/IPLNTrackingDevice.h"
-#include "/home/benni/teamprojekt/trunk/src/PLN2033.h"
+//#include "/home/benni/teamprojekt/trunk/src/PLN2033.h"
+#include "/home/benni/teamprojekt/trunk/src/PLN2033.h" ../../../trunk/build/*.a
+
 
 #include <sstream>
 

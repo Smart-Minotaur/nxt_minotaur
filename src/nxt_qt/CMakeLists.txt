@@ -58,6 +58,9 @@ install(TARGETS QPIDControl RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION
 file(GLOB MOUSE_DEBUG_SRC ${CMAKE_CURRENT_SOURCE_DIR} MouseGUI/*.cpp)
 file(GLOB MOUSE_DEBUG_MAIN MouseGUI/mains/*.cpp)
 file(GLOB MINOTAUR_LIB ../../../trunk/build/*.a)
+file(GLOB MINOTAUR ../../../trunk/src)
+include_directories(${MINOTAUR})
+link_directories(${MINOTAUR_LIB})
 
 foreach(main_file ${MOUSE_DEBUG_MAIN})
 	get_filename_component(main_name ${main_file} NAME_WE)
