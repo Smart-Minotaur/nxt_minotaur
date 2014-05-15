@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     */
     
 //read sensor registers
-  settings1 = sensor1->readPLNSettings();
+  /*settings1 = sensor1->readPLNSettings();
   settings2 = sensor2->readPLNSettings();
   
   ROS_INFO("SENSOR1: reading registers");
@@ -87,36 +87,45 @@ int main(int argc, char **argv)
   mouse.mouse2_system_control_register = settings2.system_control_register;
   mouse.mouse2_miscellaneous_register = settings2.miscellaneous_register;
   mouse.mouse2_interrupt_output_register = settings2.interrupt_output_register;
+  */
     
     
 //read sonsor movement values
     if (sensor1->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
       mouse.mouse1_x_disp, mouse.mouse1_y_disp))
     {
+      mouse.mouse1_x_speed = mouse.mouse1_x_speed;
+      mouse.mouse1_y_speed = mouse.mouse1_y_speed;
+      mouse.mouse1_x_disp = mouse.mouse1_x_disp;
+      mouse.mouse1_y_disp = mouse.mouse1_y_disp;
       //ROS_INFO("SENSOR1: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
 	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
     }
     else
     {
-      mouse.mouse1_x_speed = 100.0;
+      /*mouse.mouse1_x_speed = 100.0;
       mouse.mouse1_y_speed = 200.0;
       mouse.mouse1_x_disp = -100.12 + count;
-      mouse.mouse1_y_disp = 100.34;
+      mouse.mouse1_y_disp = 100.34;*/
     }
     
     
     if (sensor2->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
       mouse.mouse1_x_disp, mouse.mouse1_y_disp))
     {
+      mouse.mouse2_x_speed = mouse.mouse2_x_speed;
+      mouse.mouse2_y_speed = mouse.mouse2_y_speed;
+      mouse.mouse2_x_disp = mouse.mouse2_x_disp;
+      mouse.mouse2_y_disp = mouse.mouse2_y_disp;
       //ROS_INFO("SENSOR2: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
 	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
     }
     else
     {
-      mouse.mouse2_x_speed = 300.0;
+      /*mouse.mouse2_x_speed = 300.0;
       mouse.mouse2_y_speed = 400.0;
       mouse.mouse2_x_disp = 100.12 - count;
-      mouse.mouse2_y_disp = -100.34;
+      mouse.mouse2_y_disp = -100.34;*/
     }
     
     

@@ -96,6 +96,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter->drawLine (QPointF(x_mitte, y_mitte), 
 		       QPointF(x_mitte + globalx1*amp, y_mitte - globaly2*amp));
     
+    painter->setPen(QPen(Qt::red, 3));
     painter->drawLine (QPointF(x_mitte+offset_second_grid, y_mitte), 
 		       QPointF(x_mitte + offset_second_grid + globalx1*amp, y_mitte - globaly2*amp));
     painter->end();
