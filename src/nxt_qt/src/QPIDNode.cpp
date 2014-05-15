@@ -50,7 +50,7 @@ namespace minotaur
         mutex.unlock();
         
         msg.linear.x = cos(theta) * p_linVel;
-        msg.linear.y = sin(theta) * p_angVel;
+        msg.linear.y = sin(theta) * p_linVel;
         msg.linear.z = 0;
         msg.angular.x = 0;
         msg.angular.y = 0;

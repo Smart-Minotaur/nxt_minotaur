@@ -70,13 +70,14 @@ namespace nxtcon
         :USBException(msg) { }
     };
     
-    class USBError : public std::exception
+    class USBError : public USBException
     {
     private:
         std::string message;
         int code;
     public:
-        USBError(std::string msg, const int p_code) throw()
+        USBError(std::string const& msg, const int p_code) throw()
+        : USBException(msg)
         {
             code = p_code;
             std::stringstream ss;
@@ -117,32 +118,14 @@ namespace nxtcon
     
     
     
-    class NXTCommunicationException : public std::exception
+    class NXTCommunicationException : public USBError
     {
-    private:
-        std::string message;
-        int code;
     public:
         
-        NXTCommunicationException(const std::string& msg, const int p_code) throw()
-        {
-            code = p_code;
-            std::stringstream ss;
-            ss << msg << ". Code: " << code;
-            message = ss.str();
-        }
+        NXTCommunicationException(std::string const& msg, const int p_code) throw()
+        :USBError(msg, p_code) {  }
             
         virtual ~NXTCommunicationException() throw() { }
-        
-        const char* what() const throw()
-        { 
-            return message.c_str();
-        }
-        
-        int getCode() const
-        {
-            return code;
-        }
     };
 }
 

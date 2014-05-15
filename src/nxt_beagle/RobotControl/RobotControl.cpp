@@ -38,6 +38,7 @@ volatile bool run = true;
 /* Function prototypes */
 void setSignals();
 void signalHandler(int sig);
+void shutdown();
 bool init(ros::NodeHandle &p_handle, tf::TransformBroadcaster *p_broadcaster);
 bool selectModel();
 bool setModel(const std::string& p_name);
@@ -84,6 +85,11 @@ void setSignals()
 }
 
 void signalHandler(int sig)
+{
+    shutdown();
+}
+
+void shutdown()
 {
     run = false;
 }
@@ -335,9 +341,14 @@ void* robotThread(void *arg)
             //better to do it asynch?
             robotCommunicator.publish();
         }
+        catch(nxtcon::USBException const &ue)
+        {
+            ROS_ERROR("RobotThread: %s.", ue.what());
+            shutdown();
+        }
         catch(std::exception const & e)
         {
-            ROS_ERROR("RobotThread: %s.", e.what());
+            ROS_WARN("RobotThread: %s.", e.what());
         }
         
         robotCommunicator.unlock();
@@ -380,13 +391,14 @@ void* sensorThread(void *arg)
         {
             sensorCommunicator.publish();
         }
-        catch(nxtcon::NXTTimeoutException const &te)
+        catch(nxtcon::USBException const &ue)
         {
-            ROS_WARN("SensorThread: %s.", te.what());
+            ROS_ERROR("SensorThread: %s.", ue.what());
+            shutdown();
         }
         catch(std::exception const &e)
         {
-            ROS_ERROR("SensorThread: %s.", e.what());
+            ROS_WARN("SensorThread: %s.", e.what());
         }
         sensorCommunicator.unlock();
         

@@ -13,10 +13,10 @@
 #define NXT_BEAGLE_PATCH_VERSION 0
 #define NXT_BEAGLE_VERSION 0.1.0
 
-#define NXT_PORT1 1
-#define NXT_PORT2 2
-#define NXT_PORT3 3
-#define NXT_PORT4 4
+#define NXT_PORT1 0
+#define NXT_PORT2 1
+#define NXT_PORT3 2
+#define NXT_PORT4 3
 
 #define MINOTAUR_ROS_NS "/minotaur"
 

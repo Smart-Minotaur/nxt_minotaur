@@ -35,24 +35,9 @@ namespace nxtcon
     Telegram Brick::sendWithResponse(const Telegram &p_telegram)
     {
         Telegram result;
-        pthread_mutex_lock(&usbInMutex);
-        pthread_mutex_lock(&usbOutMutex);
-        
-        try {
-            usbSocket.send(p_telegram, USB_OUT_ENDPOINT);
-        } catch (std::exception const &e) {
-            pthread_mutex_unlock(&usbOutMutex);
-            throw e;
-        }
-        pthread_mutex_unlock(&usbOutMutex);
-        
-        try {
-            result = usbSocket.receive(USB_IN_ENDPOINT);
-        } catch (std::exception const &e) {
-            pthread_mutex_unlock(&usbInMutex);
-            throw e;
-        }
-        pthread_mutex_unlock(&usbInMutex);
+        Lock lock(&usbInMutex);
+        send(p_telegram);
+        result = usbSocket.receive(USB_IN_ENDPOINT);
         
         return result;
     }
