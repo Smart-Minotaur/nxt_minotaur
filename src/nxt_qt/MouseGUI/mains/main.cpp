@@ -4,10 +4,10 @@
 #include <QMetaType>
 #include "ros/ros.h"
 #include <QtGui/QMainWindow>
-#include "ui_mainwindow_debug.h"
+//#include "ui_mainwindow_debug.h"
 #include "QWidget"
 #include <QLine>
-#include "nxt_qt/QMouseNode.h"
+//#include "nxt_qt/QMouseNode.h"
 
 #define NODE_NAME "MOUSEGUI"
 #define INTERVAL 25

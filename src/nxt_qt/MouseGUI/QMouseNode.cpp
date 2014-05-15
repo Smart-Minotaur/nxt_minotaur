@@ -1,14 +1,13 @@
 #include "nxt_qt/QMouseNode.h"
-#include "nxt_qt/DebugMouse.h"
+#include "nxt_qt/DebugMouseData.h"
 //#include "nxt_qt/mainwindow.h"
 
 //namespace minotaur {
 
 QMouseNode::QMouseNode()
 {
-	ROS_INFO("QMouseNode.cpp: testest");
-	ROS_INFO("Subscribing to topic 'chatter'");
-	sub = nodeHandle.subscribe("chatter", 1000, &QMouseNode::chatterCallback, this);
+	ROS_INFO("Subscribing to topic 'mouseDebug'");
+	sub = nodeHandle.subscribe("mouseDebug", 1000, &QMouseNode::mouseDebugCallback, this);
 }
 
 
@@ -19,10 +18,10 @@ void QMouseNode::run()
 }
 
 
-void QMouseNode::chatterCallback(const nxt_qt::DebugMouse& mouse)
+void QMouseNode::mouseDebugCallback(const nxt_qt::DebugMouseData& mouse)
 {
-	ROS_INFO("MouseNode heard: [X: %d, Y: %d]", mouse.MouseXValue, mouse.MouseYValue);
-	Q_EMIT sendMouseMovement(mouse.MouseXValue, mouse.MouseYValue);
+	//ROS_INFO("MouseNode heard: [X: %d, Y: %d]", mouse.MouseXValue, mouse.MouseYValue);
+	Q_EMIT sendMouseMovement(mouse.mouse1_x_disp, mouse.mouse1_y_disp);
 }
 
 //}

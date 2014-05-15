@@ -4,7 +4,7 @@
 //#include "ui_mainwindow_debug.h"
 #include <QMainWindow>
 #include "QWidget"
-#include "nxt_qt/DebugMouse.h"
+#include "nxt_qt/DebugMouseData.h"
 #include "ros/ros.h"
 #include <QObject>
 #include "nxt_qt/QMouseNode.h"
@@ -35,11 +35,11 @@ public:
     QMouseNode& getMouseNode();
     void paintEvent(QPaintEvent *event);
     //void chatterCallbackGUI(const nxt_qt::DebugMouse& mouse);
-    std::string convertInt(int number);
+    std::string convertInt(double number);
 	
 
 public Q_SLOTS:
-    void updateMouseMovement(int x, int y);
+    void updateMouseMovement(double x, double y);
     //void setInitInterval();
 
 };

@@ -2,12 +2,9 @@
 #define QMOUSENODE_H
 
 #include "ros/ros.h"
-//#include "std_msgs/String.h"
-//#include "nxt_beagle/Config.hpp"
-#include "nxt_qt/DebugMouse.h"
+#include "nxt_qt/DebugMouseData.h"
 #include <QThread>
 #include <QMetaType>
-//#include "nxt_qt/mainwindow.h"
 
 
 //namespace minotaur {
@@ -20,7 +17,7 @@ private:
 	ros::NodeHandle nodeHandle;
 	ros::Subscriber sub;
 	
-	void chatterCallback(const nxt_qt::DebugMouse& mouse);
+	void mouseDebugCallback(const nxt_qt::DebugMouseData& mouse);
 
 public:
 	QMouseNode();
@@ -29,7 +26,7 @@ public:
 	void run();
 
 Q_SIGNALS:
-    void sendMouseMovement(int x, int y);
+    void sendMouseMovement(double x, double y);
 };
 
 
