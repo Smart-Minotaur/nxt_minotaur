@@ -3,10 +3,14 @@
 #include <tf/transform_broadcaster.h>
 #include <signal.h>
 #include <termios.h>
+#include <vector>
 #include "nxt_beagle/Config.hpp"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose.h"
+#include "minotaur_pc/MapCreator.hpp"
+#include "nxt_beagle/UltraSensor.h"
+#include "minotaur_pc/BlockingQueue.hpp"
 
 #define MAX_LINEAR_VEL 0.2
 #define MAX_ANGULAR_VEL 1.5
@@ -20,10 +24,16 @@
 bool run;
 
 ros::Subscriber odometrySub;
+ros::Subscriber ultraSensorSub;
 ros::Publisher robotVelocityPublisher;
+
+minotaur::MapCreator mapCreator;
+minotaur::BlockingQueue<nxt_beagle::UltraSensor> queue;
+std::vector<int> sensor;
 
 pthread_mutex_t positionMutex;
 pthread_t eventThread;
+pthread_t mapThread;
 
 geometry_msgs::Pose currentPosition;
 
@@ -33,11 +43,14 @@ struct sigaction sa;
 void setSignalAction();
 void sighandler(int sig);
 bool initCommunication(ros::NodeHandle &p_handle);
+bool initMapCreator();
 void processOdomMsg(const nav_msgs::Odometry p_msg);
+void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg)
 void initKeyHandling();
 void startThreads();
 void joinThreads();
 void *eventLoop(void * p_arg);
+void *mapLoop(void * arg);
 
 int main(int argc, char** argv)
 {   
@@ -47,6 +60,8 @@ int main(int argc, char** argv)
     setSignalAction();
     if(!initCommunication(handle))
         return -1;
+    if(!initMapCreator())
+        return -2;
     initKeyHandling();
     
     startThreads();
@@ -81,6 +96,9 @@ bool initCommunication(ros::NodeHandle &p_handle)
     ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
     odometrySub = p_handle.subscribe(ROS_ODOM_TOPIC, 50, processOdomMsg);
     
+    ROS_INFO("Subscribing to topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
+    ultraSensorSub = p_handle.subscribe(NXT_ULTRA_SENSOR_TOPIC, 50, processUltraSensorMsg);
+    
     ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
     robotVelocityPublisher = p_handle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
     
@@ -93,11 +111,68 @@ bool initCommunication(ros::NodeHandle &p_handle)
     return true;
 }
 
+bool initMapCreator()
+{
+    std::string model;
+    if(!ros::param::get(PARAM_CURRENT_MODEL(), model))
+    {
+        ROS_ERROR("Unable to get current Model.");
+        return false;
+    }
+    
+    ROS_INFO("Extracted \"%s\" as current Model.", model.c_str());
+    
+    int i = 0;
+    float direction, dx, dy;
+    sensor.clear();
+    while(true)
+    {
+        if(!ros::param::has(PARAM_SENSOR(model, i))
+            break;
+        ROS_INFO("Adding Sensor %d...", i);
+        
+        if(!ros::param::get(PARAM_SENSOR_DIRECTION(model, i), direction))
+        {
+            ROS_ERROR("Sensor %d does not have direction parameter.", i);
+            return false;
+        }
+        
+        if(!ros::param::get(PARAM_SENSOR_DX(model, i), dx))
+        {
+            ROS_ERROR("Sensor %d does not have dx parameter.", i);
+            return false;
+        }
+        
+        if(!ros::param::get(PARAM_SENSOR_DY(model, i), dy))
+        {
+            ROS_ERROR("Sensor %d does not have dy parameter.", i);
+            return false;
+        }
+        
+        if(direction > 0)
+            sensor.push_back(MAP_CREATOR_LEFT_SENSOR);
+        else if(direction < 0)
+            sensor.push_back(MAP_CREATOR_RIGHT_SENSOR);
+        else
+            sensor.push_back(MAP_CREATOR_FRONT_SENSOR);
+        
+        mapCreator.setSensorDistances(sensor[i], dx, dy);
+        ++i;
+    }
+    
+    return true;
+}
+
 void processOdomMsg(const nav_msgs::Odometry p_msg)
 {
     pthread_mutex_lock(&positionMutex);
     currentPosition = p_msg.pose.pose;
     pthread_mutex_unlock(&positionMutex);
+}
+
+void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg)
+{
+    queue.enqueue(p_msg);
 }
 
 void initKeyHandling()
@@ -201,4 +276,12 @@ void *eventLoop(void * p_arg)
     ros::shutdown();
     
     return NULL;
+}
+
+void *mapLoop(void * arg)
+{
+    while(run)
+    {
+        
+    }
 }

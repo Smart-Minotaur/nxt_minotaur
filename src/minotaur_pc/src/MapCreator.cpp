@@ -118,6 +118,11 @@ namespace minotaur {
       calculateObstaclePosition(sensorValue2, 2);
       calculateObstaclePosition(sensorValue3, 3);
     }
+    
+    void MapCreator::step(const int p_sensor, const int p_distance)
+    {
+        calculateObstaclePosition(p_distance, p_sensor);
+    }
 
     void MapCreator::calculateObstaclePosition(int measuredDistance, const int sensor)
     {
