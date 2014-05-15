@@ -39,7 +39,10 @@ public:
 	
 
 public Q_SLOTS:
-    void updateMouseMovement(double x, double y);
+    void updateMouseMovement(double x_speed1, double y_speed1, 
+			     double x_disp1, double y_disp1,
+			     double x_speed2, double y_speed2, 
+			     double x_disp2, double y_disp2);
     //void setInitInterval();
 
 };

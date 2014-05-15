@@ -22,8 +22,10 @@
 //namespace minotaur {
 
 //class MainWindow;
-double globalx;
-double globaly;
+double globalx1;
+double globaly1;
+double globalx2;
+double globaly2;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,8 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	connect(&mouseNode, SIGNAL(sendMouseMovement(double, double)), this, 
-		SLOT(updateMouseMovement(double, double)));
+	connect(&mouseNode, SIGNAL(sendMouseMovement(double, double, double, double
+	  double, double, double, double)), this, 
+	 SLOT(updateMouseMovement(double, double, double, double, 
+				  double, double, double, double)));
 	
 	//connect(ui->lineEdit_mouse_x, SIGNAL(valueChanged(double)), this,
 	//	SLOT(updateMouseMovement(double, double)));
@@ -65,6 +69,8 @@ int offset_second_grid = 600;
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
+    int amp = 100;
+    
     QPainter *painter = new QPainter (this);
     painter->begin(this);
     
@@ -87,27 +93,44 @@ void MainWindow::paintEvent(QPaintEvent *event)
       painter->drawLine(x_start + offset_second_grid,y,x_max + offset_second_grid,y);
     
     painter->setPen(QPen(Qt::red, 3));
-    painter->drawLine (QPointF(x_mitte, y_mitte), QPointF(x_mitte + globalx, y_mitte - globaly));
+    painter->drawLine (QPointF(x_mitte, y_mitte), 
+		       QPointF(x_mitte + globalx1*amp, y_mitte - globaly2*amp));
+    
+    painter->drawLine (QPointF(x_mitte+offset_second_grid, y_mitte), 
+		       QPointF(x_mitte + offset_second_grid + globalx1*amp, y_mitte - globaly2*amp));
     painter->end();
 }
 
-void MainWindow::updateMouseMovement(double x, double y)
+void MainWindow::updateMouseMovement(double x_speed1, double y_speed1, 
+			     double x_disp1, double y_disp1,
+			     double x_speed2, double y_speed2, 
+			     double x_disp2, double y_disp2)
 {
-  double speed = sqrt((x*x) + (y*y));
   
-  std::string result_x = convertInt(x);
-  std::string result_y = convertInt(y);
+  std::string result_x = convertInt(x_disp1);
+  std::string result_y = convertInt(y_disp1);
   QString qstr_x = QString::fromStdString(result_x);
   QString qstr_y = QString::fromStdString(result_y);
-  std::string result_speed = convertInt(speed);
-  QString qstr_speed = QString::fromStdString(result_speed);
+  std::string result_speed1 = convertInt(x_speed1);
+  QString qstr_speed1 = QString::fromStdString(result_speed1);
+  std::string result_speed2 = convertInt(x_speed2);
+  QString qstr_speed2 = QString::fromStdString(result_speed2);
   
-  ui->lineEdit_mouse_x->setText(qstr_x);
+  //ui->lineEdit_mouse_x->setText(qstr_x);
+  ui->lineEdit_mouse_x->setText(QString("%1").arg(x_speed1,0,'f',2));
   ui->lineEdit_mouse_y->setText(qstr_y);
-  ui->lineEdit_speed_x->setText(qstr_speed);
-  ui->lineEdit_speed_y->setText(qstr_speed);
-  globalx = x;
-  globaly = y;
+  ui->lineEdit_speed_x->setText(qstr_speed1);
+  ui->lineEdit_speed_y->setText(qstr_speed2);
+  globalx1 = x_disp1;
+  globaly1 = y_disp1;
+  
+  ui->lineEdit_mouse_x_2->setText(QString("%1").arg(x_disp2,0,'f',2));
+  ui->lineEdit_mouse_y_2->setText(QString("%1").arg(y_disp2,0,'f',2));
+  ui->lineEdit_speed_x_2->setText(QString("%1").arg(x_speed2,0,'f',2));
+  ui->lineEdit_speed_y_2->setText(QString("%1").arg(y_speed2,0,'f',2));
+  globalx2 = x_disp2;
+  globaly2 = y_disp2;
+  
   //repaint();
   update();
 }
