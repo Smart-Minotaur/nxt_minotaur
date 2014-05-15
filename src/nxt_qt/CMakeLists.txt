@@ -2,23 +2,21 @@ cmake_minimum_required(VERSION 2.8.0)
 project(nxt_qt)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-    FILES
-    DebugMouseData.msg
-)
+#add_message_files(
+#    FILES
+#)
 
 find_package(catkin REQUIRED COMPONENTS
     qt_build
     roscpp
     nxt_beagle
-	message_generation
 )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(   
-    DEPENDENCIES
-    std_msgs
-)
+#generate_messages(   
+#    DEPENDENCIES
+#    std_msgs
+#)
 
 file( GLOB NXT_QT_INCLUDE_DIRS "include" "/usr/local/qwt-6.0.1/include")
 include_directories(${catkin_INCLUDE_DIRS} ${NXT_QT_INCLUDE_DIRS} ${QT_USE_FILE})

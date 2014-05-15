@@ -4,7 +4,7 @@
 //#include "ui_mainwindow_debug.h"
 #include <QMainWindow>
 #include "QWidget"
-#include "nxt_qt/DebugMouseData.h"
+#include "nxt_beagle/DebugMouseData.h"
 #include "ros/ros.h"
 #include <QObject>
 #include "nxt_qt/QMouseNode.h"

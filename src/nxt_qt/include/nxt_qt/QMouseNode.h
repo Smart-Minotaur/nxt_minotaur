@@ -2,7 +2,7 @@
 #define QMOUSENODE_H
 
 #include "ros/ros.h"
-#include "nxt_qt/DebugMouseData.h"
+#include "nxt_beagle/DebugMouseData.h"
 #include <QThread>
 #include <QMetaType>
 
@@ -17,7 +17,7 @@ private:
 	ros::NodeHandle nodeHandle;
 	ros::Subscriber sub;
 	
-	void mouseDebugCallback(const nxt_qt::DebugMouseData& mouse);
+	void mouseDebugCallback(const nxt_beagle::DebugMouseData& mouse);
 
 public:
 	QMouseNode();

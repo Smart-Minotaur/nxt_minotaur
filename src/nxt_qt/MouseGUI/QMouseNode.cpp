@@ -1,5 +1,5 @@
 #include "nxt_qt/QMouseNode.h"
-#include "nxt_qt/DebugMouseData.h"
+#include "nxt_beagle/DebugMouseData.h"
 //#include "nxt_qt/mainwindow.h"
 
 //namespace minotaur {
@@ -18,7 +18,7 @@ void QMouseNode::run()
 }
 
 
-void QMouseNode::mouseDebugCallback(const nxt_qt::DebugMouseData& mouse)
+void QMouseNode::mouseDebugCallback(const nxt_beagle::DebugMouseData& mouse)
 {
 	//ROS_INFO("MouseNode heard: [X: %d, Y: %d]", mouse.MouseXValue, mouse.MouseYValue);
 	Q_EMIT sendMouseMovement(mouse.mouse1_x_disp, mouse.mouse1_y_disp);

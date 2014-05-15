@@ -28,6 +28,7 @@ add_message_files(
     UltraSensor.msg
     PIDParam.msg
     ClearSensor.msg
+    DebugMouseData.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -88,3 +89,14 @@ file( GLOB ROBOT_CONTROL_SOURCES RobotControl/*.cpp )
 add_executable(RobotControl ${ROBOT_CONTROL_SOURCES})
 target_link_libraries(RobotControl ${catkin_LIBRARIES}  ${MINOTAUR_CUSTOM_LIBS})
 add_dependencies(RobotControl nxt_beagle_generate_messages_cpp)
+
+#compile MouseSensor node
+file(GLOB MINOTAUR_LIB ../../../trunk/build)
+file(GLOB MINOTAUR ../../../trunk/src)
+include_directories(${MINOTAUR})
+link_directories(${MINOTAUR_LIB})
+
+file( GLOB MOUSE_SENSOR_SOURCES MouseSensor/*.cpp )
+add_executable(MouseNode ${MOUSE_SENSOR_SOURCES})
+target_link_libraries(MouseNode ${catkin_LIBRARIES} ${MINOTAUR_CUSTOM_LIBS} pln_minotaur)
+add_dependencies(MouseNode nxt_beagle_generate_messages_cpp)
