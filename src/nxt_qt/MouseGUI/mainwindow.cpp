@@ -33,10 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	connect(&mouseNode, SIGNAL(sendMouseMovement(double, double, double, double
-	  double, double, double, double)), this, 
-	 SLOT(updateMouseMovement(double, double, double, double, 
-				  double, double, double, double)));
+	connect(&mouseNode,
+		SIGNAL(sendMouseMovement(double, double, double, double,
+					 double, double, double, double)),
+		this, 
+	 	SLOT(updateMouseMovement(double, double, double, double, 
+				  	 double, double, double, double)));
 	
 	//connect(ui->lineEdit_mouse_x, SIGNAL(valueChanged(double)), this,
 	//	SLOT(updateMouseMovement(double, double)));
