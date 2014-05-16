@@ -28,6 +28,9 @@ namespace minotaur
     void setPosition(RobotPosition p_position);
     Map getMap();
     void createTextFile();
+    
+    int getXOffset();
+    int getYOffset();
   };
 }
 

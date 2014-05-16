@@ -10,6 +10,8 @@
 
 #define RAD_TO_DEGREE 57.295779513082
 #define DEGREE_TO_RAD 0.017453292519943
+#define METER_TO_CENTIMETER(m) (m * 100)
+
 
 using namespace std;
 
@@ -23,9 +25,6 @@ struct position {
   float y;
   float theta;
 } pos;
-
-int grid[500][500];
-
 
 namespace minotaur {
   
@@ -85,19 +84,21 @@ namespace minotaur {
     */
     void MapCreator::setSensorDistances(int sensor, int x, int y)
     {
+      int tmpX = METER_TO_CENTIMETER(x);
+      int tmpY = METER_TO_CENTIMETER(y);
       switch(sensor)
       {
 	case 1: 
-	  sen1.x = x;
-	  sen1.y = y;
+	  sen1.x = tmpX;
+	  sen1.y = tmpY;
 	  break;
 	case 2:
-	  sen2.x = x;
-	  sen2.y = y;
+	  sen2.x = tmpX;
+	  sen2.y = tmpY;
 	  break;
 	case 3:
-	  sen3.x = x;
-	  sen3.y = y;	
+	  sen3.x = tmpX;
+	  sen3.y = tmpY;	
 	  break;
 	default:
 	  //ROS_INFO("invalid sensor-number");
@@ -107,8 +108,8 @@ namespace minotaur {
 
     void MapCreator::setPosition(RobotPosition p_position)
     {
-      pos.x = p_position.point.x;
-      pos.y = p_position.point.y;
+      pos.x = METER_TO_CENTIMETER(p_position.point.x) + getXOffset();
+      pos.y = METER_TO_CENTIMETER(p_position.point.y) + getYOffset();
       pos.theta = p_position.theta * RAD_TO_DEGREE;
     }
 
@@ -182,8 +183,7 @@ namespace minotaur {
       height = gri[position_x];
       height[position_y]++;
       
-      grid[position_y][position_x]++;
-      printf("Inc cell [%d] [%d] to %d -- dist: %2.6f\n", position_y, position_x, grid[position_y][position_x], realDistance);
+      printf("Inc cell [%d] [%d] to %d -- dist: %2.6f\n", position_y, position_x, map.getField()[position_y][position_x], realDistance);
       
     }
     
@@ -201,16 +201,26 @@ namespace minotaur {
       file.open (path);
       for ( y = 499; y >= 0; y-- ) {
 	for ( x = 0; x <= 499; x++ ) {
-	  if ( grid[y][x] == 0 ) {
+	  if ( map.getField()[y][x] == 0 ) {
 	    file << "-";
-	  } else if ( grid[y][x] > 9) {
+	  } else if ( map.getField()[y][x] > 9) {
 	    file << "9";
 	  } else {
-	    file << grid[y][x];
+	    file << map.getField()[y][x];
 	  }
 	}
 	file << "\n";
       }
       file.close();
+    }
+    
+    int MapCreator::getXOffset()
+    {
+        return map.getWidth() / 2;
+    }
+    
+    int MapCreator::getYOffset()
+    {
+        return map.getHeight() / 2;
     }
 }
