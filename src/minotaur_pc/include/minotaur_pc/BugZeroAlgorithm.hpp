@@ -1,6 +1,8 @@
 #ifndef MINOTAUR_PC_BUG_ZERO_ALGORITHM_HEADER_HPP_
 #define MINOTAUR_PC_BUG_ZERO_ALGORITHM_HEADER_HPP_
 
+
+
 #include "minotaur_pc/MovementAlgorithm.hpp"
 
 namespace minotaur

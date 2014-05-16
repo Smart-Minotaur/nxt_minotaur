@@ -24,6 +24,11 @@ namespace minotaur
         
         virtual RobotPosition getNextPosition(const RobotPosition pos) = 0;
         bool checkObstacle(int x, int y, float theta);
+        bool checkLeftSideObstacle(int x, int y, float theta);
+        bool checkRightSideObstacle(int x, int y, float theta);
+
+        RobotPosition calculateNewPosition(int x, int y, int theta);
+      
     };
     
 }
