@@ -91,13 +91,10 @@ int main(int argc, char **argv)
     
     
 //read sonsor movement values
-    if (sensor1->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
-      mouse.mouse1_x_disp, mouse.mouse1_y_disp))
+    if (sensor1->readStatusAndDisplacementAndSpeed(
+    		mouse.mouse1_x_speed, mouse.mouse1_y_speed,
+      		mouse.mouse1_x_disp, mouse.mouse1_y_disp))
     {
-      mouse.mouse1_x_speed = mouse.mouse1_x_speed;
-      mouse.mouse1_y_speed = mouse.mouse1_y_speed;
-      mouse.mouse1_x_disp = mouse.mouse1_x_disp;
-      mouse.mouse1_y_disp = mouse.mouse1_y_disp;
       //ROS_INFO("SENSOR1: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
 	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
     }
@@ -110,13 +107,10 @@ int main(int argc, char **argv)
     }
     
     
-    if (sensor2->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
-      mouse.mouse1_x_disp, mouse.mouse1_y_disp))
+    if (sensor2->readStatusAndDisplacementAndSpeed(
+    		mouse.mouse2_x_speed, mouse.mouse2_y_speed,
+      		mouse.mouse2_x_disp, mouse.mouse2_y_disp))
     {
-      mouse.mouse2_x_speed = mouse.mouse2_x_speed;
-      mouse.mouse2_y_speed = mouse.mouse2_y_speed;
-      mouse.mouse2_x_disp = mouse.mouse2_x_disp;
-      mouse.mouse2_y_disp = mouse.mouse2_y_disp;
       //ROS_INFO("SENSOR2: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
 	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
     }
