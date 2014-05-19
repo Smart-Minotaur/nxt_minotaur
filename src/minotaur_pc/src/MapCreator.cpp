@@ -101,7 +101,7 @@ namespace minotaur {
 	  sen3.y = tmpY;	
 	  break;
 	default:
-	  //ROS_INFO("invalid sensor-number");
+	  ROS_WARN("MapCreator: invalid sensor number: %d.", sensor);
 	  break;
       }
     }
@@ -138,7 +138,7 @@ namespace minotaur {
       int * height = NULL;
 
       if (measuredDistance >= 100) {
-	//ROS_INFO("----No valid Value----");
+	ROS_WARN("MapCreator: Measured Distance too high: %dcm.",measuredDistance);
 	return;
       }
 	
@@ -176,7 +176,7 @@ namespace minotaur {
       position_y = (int) (pos.y + distance_Y);
       
       if ( position_x > 500 || position_x < 0 || position_y < 0 || position_y > 500) {
-	//ROS_INFO("----Value out of Area----");
+	ROS_WARN("MapCreator: Value out of Area: (%d/%d).",position_x, position_y );
 	return;
       }
       
@@ -193,14 +193,13 @@ namespace minotaur {
     }
 
     // TODO: take map instead of grid / remove grid
-    void MapCreator::createTextFile()
+    void MapCreator::createTextFile(const char *path)
     {
       int x, y;
-      const char *path="grid.txt";
       ofstream file;
       file.open (path);
-      for ( y = 499; y >= 0; y-- ) {
-	for ( x = 0; x <= 499; x++ ) {
+      for ( y = map.getHeight() - 1; y >= 0; y-- ) {
+	for ( x = 0; x < map.getWidth(); x++ ) {
 	  if ( map.getField()[y][x] == 0 ) {
 	    file << "-";
 	  } else if ( map.getField()[y][x] > 9) {
@@ -209,7 +208,7 @@ namespace minotaur {
 	    file << map.getField()[y][x];
 	  }
 	}
-	file << "\n";
+	file << endl;
       }
       file.close();
     }

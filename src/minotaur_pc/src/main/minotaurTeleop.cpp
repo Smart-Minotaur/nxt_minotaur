@@ -66,11 +66,14 @@ int main(int argc, char** argv)
     initKeyHandling();
     
     startThreads();
-    ros::spin();
+    while(run)
+        ros::spinOnce();
     joinThreads();
     
     ROS_INFO("Saving Map...");
-    mapCreator.createTextFile();
+    mapCreator.createTextFile("/home/fabian/teleop_grid");
+    
+    ros::shutdown();
     
     return 0;
 }
@@ -273,7 +276,6 @@ void *eventLoop(void * p_arg)
     
     tcsetattr(0, TCSANOW, &oldtio);
     ROS_INFO("Eventloop terminated.");
-    ros::shutdown();
     
     return NULL;
 }

@@ -27,7 +27,7 @@ namespace minotaur
     void calculateObstaclePosition(int measuredDistance, const int sensor);
     void setPosition(RobotPosition p_position);
     Map getMap();
-    void createTextFile();
+    void createTextFile(const char *path);
     
     int getXOffset();
     int getYOffset();
