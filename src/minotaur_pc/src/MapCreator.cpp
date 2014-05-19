@@ -35,9 +35,7 @@ namespace minotaur {
       
       // set Default-values for sensors:
       setSensorDistances(1, 0, 0);
-      // sensor2
       setSensorDistances(2, 0, 0);
-      // sensor3
       setSensorDistances(3, 0, 0);
     }
   
@@ -47,9 +45,7 @@ namespace minotaur {
       
       // set Default-values for sensors:
       setSensorDistances(1, 0, 0);
-      // sensor2
       setSensorDistances(2, 0, 0);
-      // sensor3
       setSensorDistances(3, 0, 0);
       
     }
@@ -60,9 +56,7 @@ namespace minotaur {
       
       // set Default-values for sensors:
       setSensorDistances(1, 0, 0);
-      // sensor2
       setSensorDistances(2, 0, 0);
-      // sensor3
       setSensorDistances(3, 0, 0);
       
     }
@@ -112,33 +106,28 @@ namespace minotaur {
       pos.y = METER_TO_CENTIMETER(p_position.point.y) + getYOffset();
       pos.theta = p_position.theta * RAD_TO_DEGREE;
     }
-
-    void MapCreator::step(int sensorValue1, int sensorValue2, int sensorValue3)
-    {
-      calculateObstaclePosition(sensorValue1, 1);
-      calculateObstaclePosition(sensorValue2, 2);
-      calculateObstaclePosition(sensorValue3, 3);
-    }
     
     void MapCreator::step(const int p_sensor, const int p_distance)
     {
-        calculateObstaclePosition(p_distance, p_sensor);
+        calculateObstaclePosition(p_sensor, p_distance);
     }
 
-    void MapCreator::calculateObstaclePosition(int measuredDistance, const int sensor)
+    void MapCreator::calculateObstaclePosition(const int sensor, int measuredDistance)
     {
-      float distance_X;
-      float distance_Y;
-      float angle;
+      float distance_x;
+      float distance_y;
+      float angle = 0.0;
       float dif_angle;
       float realDistance;
       float tmp_dist;
       int position_x, position_y;
-      int ** gri = map.getField();
-      int * height = NULL;
 
       if (measuredDistance >= 100) {
-	ROS_WARN("MapCreator: Measured Distance too high: %dcm.",measuredDistance);
+	//ROS_WARN("MapCreator: The mesaured distance for sensor%d is too damn high: %dcm. Value ignored", sensor, measuredDistance);
+	return;
+      }
+      if (measuredDistance <= 0) {
+	ROS_WARN("MapCreator: Invalid measured distance for sensor%d: %dcm. Value ignored", sensor, measuredDistance);
 	return;
       }
 	
@@ -150,40 +139,45 @@ namespace minotaur {
 	tmp_dist = measuredDistance + sen2.x;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen2.y * sen2.y));
 	dif_angle = asin( sen2.y / realDistance);
-	angle = (pos.theta + 90.0) - dif_angle;
+	angle = (pos.theta + 90.0) + (dif_angle * RAD_TO_DEGREE);
 	if (angle > 360.0) {
 	  angle = angle - 360.0;
 	} else if (angle < 0.0) {
 	  angle = angle + 360.0;
 	}
 	
-      } else {
+      } else if (sensor == 3) {
 	tmp_dist = measuredDistance + sen3.x;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen3.y * sen3.y));
 	dif_angle = asin ( sen3.y / realDistance );
-	angle = (pos.theta - 90.0) - dif_angle;
+	ROS_INFO("dif angle sensor%d: %2f", sensor, dif_angle);
+	angle = (pos.theta - 90.0) - (dif_angle * RAD_TO_DEGREE);
 	if (angle > 360.0) {
 	  angle = angle - 360.0;
 	} else if (angle < 0.0) {
 	  angle = angle + 360.0;
 	}
+      } else {
+	ROS_WARN("MapCreator: Got an invalid sensor");
+	return;
       }
+      ROS_INFO("sensor%d: %2f", sensor, angle);
       
-      distance_X = sin(angle * DEGREE_TO_RAD) * realDistance;
-      distance_Y = cos(angle * DEGREE_TO_RAD) * realDistance;
+      distance_x = sin(angle * DEGREE_TO_RAD) * realDistance;
+      distance_y = cos(angle * DEGREE_TO_RAD) * realDistance;
 
-      position_x = (int) (pos.x + distance_X);
-      position_y = (int) (pos.y + distance_Y);
+      position_x = (int) (pos.x + distance_x);
+      position_y = (int) (pos.y + distance_y);
       
-      if ( position_x > 500 || position_x < 0 || position_y < 0 || position_y > 500) {
-	ROS_WARN("MapCreator: Value out of Area: (%d/%d).",position_x, position_y );
+      if ( position_x > map.getWidth() || position_x < 0 || position_y < 0 || position_y > map.getHeight()) {
+	//ROS_WARN("MapCreator: Value out of Area: (%d/%d).",position_x, position_y);
 	return;
       }
       
-      height = gri[position_x];
-      height[position_y]++;
-      
-      printf("Inc cell [%d] [%d] to %d -- dist: %2.6f\n", position_y, position_x, map.getField()[position_y][position_x], realDistance);
+      if(map.getField()[position_y][position_x] != INT_MAX){
+	map.getField()[position_y][position_x]++;
+	//ROS_INFO("MapCreator: Inc cell [%d] [%d] to %d\n", position_y, position_x, map.getField()[position_y][position_x]);
+      }
       
     }
     
@@ -192,7 +186,6 @@ namespace minotaur {
       return map;
     }
 
-    // TODO: take map instead of grid / remove grid
     void MapCreator::createTextFile(const char *path)
     {
       int x, y;
