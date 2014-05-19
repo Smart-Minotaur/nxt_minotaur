@@ -10,7 +10,7 @@
 
 #define RAD_TO_DEGREE 57.295779513082
 #define DEGREE_TO_RAD 0.017453292519943
-#define METER_TO_CENTIMETER(m) (m * 100)
+#define METER_TO_CENTIMETER(m) (m * 100.0f)
 
 
 using namespace std;
@@ -76,10 +76,10 @@ namespace minotaur {
     * x = Distance in x direction
     * y = Distance in y direction
     */
-    void MapCreator::setSensorDistances(int sensor, int x, int y)
+    void MapCreator::setSensorDistances(int sensor, float x, float y)
     {
-      int tmpX = METER_TO_CENTIMETER(x);
-      int tmpY = METER_TO_CENTIMETER(y);
+      int tmpX = (int) METER_TO_CENTIMETER(x);
+      int tmpY = (int) METER_TO_CENTIMETER(y);
       switch(sensor)
       {
 	case 1: 

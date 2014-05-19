@@ -19,7 +19,7 @@ namespace minotaur
     MapCreator(int width, int height);
     MapCreator(Map p_map);
     ~MapCreator();
-    void setSensorDistances(int sensor, int x, int y);
+    void setSensorDistances(int sensor, float x, float y);
     void step(const int p_sensor, const int p_distance);
     void calculateObstaclePosition(const int sensor, int measuredDistance);
     void setPosition(RobotPosition p_position);
