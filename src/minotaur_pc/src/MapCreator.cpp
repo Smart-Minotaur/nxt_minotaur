@@ -150,7 +150,7 @@ namespace minotaur {
 	tmp_dist = measuredDistance + sen3.x;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen3.y * sen3.y));
 	dif_angle = asin ( sen3.y / realDistance );
-	ROS_INFO("dif angle sensor%d: %2f", sensor, dif_angle);
+	//ROS_INFO("dif angle sensor%d: %2f", sensor, dif_angle);
 	angle = (pos.theta - 90.0) - (dif_angle * RAD_TO_DEGREE);
 	if (angle > 360.0) {
 	  angle = angle - 360.0;
@@ -161,7 +161,7 @@ namespace minotaur {
 	ROS_WARN("MapCreator: Got an invalid sensor");
 	return;
       }
-      ROS_INFO("sensor%d: %2f", sensor, angle);
+      //ROS_INFO("sensor%d: %2f", sensor, angle);
       
       distance_x = sin(angle * DEGREE_TO_RAD) * realDistance;
       distance_y = cos(angle * DEGREE_TO_RAD) * realDistance;
