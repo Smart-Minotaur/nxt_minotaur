@@ -27,8 +27,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
-    QTimer::singleShot(1000, &w, SLOT(setInitIntervall()));
-
     w.show();
     w.getMouseNode().start();
 

@@ -1,0 +1,5 @@
+<launch>
+    
+    <node pkg="nxt_qt" type="debug_main" name="debug_main" output="screen" />
+
+</launch>
