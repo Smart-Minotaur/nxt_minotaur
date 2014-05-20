@@ -9,10 +9,10 @@ namespace minotaur
     void SensorCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
     {
         ROS_INFO("Publishing on topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
-        sensorDataPub = p_handle.advertise<nxt_beagle::UltraSensor>(NXT_ULTRA_SENSOR_TOPIC, 1000); 
+        sensorDataPub = p_handle.advertise<nxt_beagle::UltraSensor>(NXT_ULTRA_SENSOR_TOPIC, 50); 
         
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_CLEAR_SENSOR_TOPIC);
-        clearSensorSub = p_handle.subscribe(NXT_CLEAR_SENSOR_TOPIC, 1000, &SensorCommunicator::processClearSensorMsg, this);
+        clearSensorSub = p_handle.subscribe(NXT_CLEAR_SENSOR_TOPIC, 50, &SensorCommunicator::processClearSensorMsg, this);
         
         ROS_INFO("Offering service \"%s\"...", NXT_GET_ULTRASONIC_SRV);
         getUltraSonicSrv = p_handle.advertiseService(NXT_GET_ULTRASONIC_SRV, &SensorCommunicator::processGetUltrasonicRqt, this);
@@ -26,7 +26,7 @@ namespace minotaur
     void SensorCommunicator::publish()
     {
         nxt_beagle::UltraSensor msg;
-        ros::Rate sendRate(90);
+        ros::Rate sendRate(50);
         for(int i = 0; i < sensorController.count(); ++i)
         {
             try {

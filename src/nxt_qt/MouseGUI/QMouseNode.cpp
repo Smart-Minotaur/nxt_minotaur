@@ -21,7 +21,11 @@ void QMouseNode::run()
 void QMouseNode::mouseDebugCallback(const nxt_beagle::DebugMouseData& mouse)
 {
 	//ROS_INFO("MouseNode heard: [X: %d, Y: %d]", mouse.MouseXValue, mouse.MouseYValue);
-	Q_EMIT sendMouseMovement(mouse.mouse1_x_disp, mouse.mouse1_y_disp);
+	Q_EMIT sendMouseMovement(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
+				  mouse.mouse1_x_disp, mouse.mouse1_y_disp,
+				  mouse.mouse2_x_speed, mouse.mouse2_y_speed,
+				  mouse.mouse2_x_disp, mouse.mouse2_y_disp
+				);
 }
 
 //}

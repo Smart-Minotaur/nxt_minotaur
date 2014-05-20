@@ -9,7 +9,6 @@
 #include "PLN2033.h"
 #include "IPLNTrackingDevice.h"
 
-
 #include <sstream>
 
 /*nxt_beagle::MVelocity motorVelocityToMsg(const minotaur::MotorVelocity& p_velocity)
@@ -23,7 +22,6 @@
 pln_minotaur::IPLNTrackingDevice *sensor1;
 pln_minotaur::IPLNTrackingDevice *sensor2;
 
-
 int main(int argc, char **argv)
 {
 
@@ -33,21 +31,15 @@ int main(int argc, char **argv)
   ros::Publisher mouseData_pub = n.advertise<nxt_beagle::DebugMouseData>("mouseDebug", 1000);
   ros::Rate loop_rate(100);
   
-  
   pln_minotaur::PLN2033_Settings settings1;
   pln_minotaur::PLN2033_Settings settings2;
   
   sensor1 = new pln_minotaur::PLN2033("/dev/spidev1.0");
   sensor2 = new pln_minotaur::PLN2033("/dev/spidev1.1");
-
   
-  
-  double count = 0.0;
   while (ros::ok())
   {
     nxt_beagle::DebugMouseData mouse;
-    
-    
     
     /*pln_minotaur::readStatusAndSpeed( mouse.mouse1_x_speed, mouse.mouse1_y_speed );
     ROS_INFO("X: %f, Y: %f, Speed X: %f, Speed Y: %f", 
@@ -55,7 +47,7 @@ int main(int argc, char **argv)
     */
     
 //read sensor registers
-  settings1 = sensor1->readPLNSettings();
+  /*settings1 = sensor1->readPLNSettings();
   settings2 = sensor2->readPLNSettings();
   
   ROS_INFO("SENSOR1: reading registers");
@@ -87,58 +79,41 @@ int main(int argc, char **argv)
   mouse.mouse2_system_control_register = settings2.system_control_register;
   mouse.mouse2_miscellaneous_register = settings2.miscellaneous_register;
   mouse.mouse2_interrupt_output_register = settings2.interrupt_output_register;
+  */
     
-    
-//read sonsor movement values
-    if (sensor1->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
-      mouse.mouse1_x_disp, mouse.mouse1_y_disp))
+    //read sonsor movement values
+    if (!sensor1->readStatusAndDisplacementAndSpeed(
+    		mouse.mouse1_x_speed, mouse.mouse1_y_speed,
+      		mouse.mouse1_x_disp, mouse.mouse1_y_disp))
     {
-      //ROS_INFO("SENSOR1: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
-	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
-    }
-    else
-    {
-      mouse.mouse1_x_speed = 100.0;
-      mouse.mouse1_y_speed = 200.0;
-      mouse.mouse1_x_disp = -100.12 + count;
-      mouse.mouse1_y_disp = 100.34;
+      // Send default values if there is no movement.
+      mouse.mouse1_x_speed = 0.0;
+      mouse.mouse1_y_speed = 0.0;
+      mouse.mouse1_x_disp = 0.0;
+      mouse.mouse1_y_disp = 0.0;
     }
     
-    
-    if (sensor2->readStatusAndDisplacementAndSpeed(mouse.mouse1_x_speed, mouse.mouse1_y_speed,
-      mouse.mouse1_x_disp, mouse.mouse1_y_disp))
-    {
-      //ROS_INFO("SENSOR2: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
-	//       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
+    if (!sensor2->readStatusAndDisplacementAndSpeed(
+    		mouse.mouse2_x_speed, mouse.mouse2_y_speed,
+      		mouse.mouse2_x_disp, mouse.mouse2_y_disp))
+      // Send default values if there is no movement.
+      mouse.mouse2_x_speed = 0.0;
+      mouse.mouse2_y_speed = 0.0;
+      mouse.mouse2_x_disp = 0.0;
+      mouse.mouse2_y_disp = 0.0;
     }
-    else
-    {
-      mouse.mouse2_x_speed = 300.0;
-      mouse.mouse2_y_speed = 400.0;
-      mouse.mouse2_x_disp = 100.12 - count;
-      mouse.mouse2_y_disp = -100.34;
-    }
-    
     
     ROS_INFO("SENSOR1: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse1_x_speed, mouse.mouse1_y_speed, 
 	       mouse.mouse1_x_disp, mouse.mouse1_y_disp);
     ROS_INFO("SENSOR2: Speed X: %f, Speed Y: %f, [X: %f, Y: %f]", mouse.mouse2_x_speed, mouse.mouse2_y_speed, 
 	       mouse.mouse2_x_disp, mouse.mouse2_y_disp);
-    
 
     mouseData_pub.publish(mouse);
 
     ros::spinOnce();
 
     loop_rate.sleep();
-    if(count == 200.0) 
-    {
-      count = 0.0;
-      
-    }
-    ++count;
   }
-
 
   return 0;
 }
