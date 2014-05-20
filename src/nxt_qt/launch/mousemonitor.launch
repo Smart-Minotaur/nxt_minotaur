@@ -1,5 +1,5 @@
 <launch>
     
-    <node pkg="nxt_qt" type="debug_main" name="debug_main" output="screen" />
+    <node pkg="nxt_qt" type="QMouseMonitor" name="QMouseMonitor" output="screen" />
 
 </launch>
