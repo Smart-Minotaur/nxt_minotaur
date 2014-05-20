@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_mousemonitor_window.h"
+#include "nxt_qt/MouseMonitorNode.hpp"
 
 namespace minotaur
 {
@@ -11,14 +12,17 @@ namespace minotaur
 	{
 		Q_OBJECT
 
-	//	private:
-	//	private Q_SLOTS:
+		private:
+			MouseMonitorNode monitorNode;
+
+		private Q_SLOTS:
+			void processMouseData(const MouseData data);
 
 		public:
 			MouseMonitorWindow(QWidget *parent = 0);
-			~MouseMonitorWindow();
-
-		// QMouseNode getMouseNode();
+			virtual ~MouseMonitorWindow();
+		
+		MouseMonitorNode& getMonitorNode();
 	};
 
 }

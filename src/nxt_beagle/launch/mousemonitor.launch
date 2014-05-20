@@ -1,5 +1,5 @@
 <launch>
     
-    <node pkg="nxt_beagle" type="MouseNode" name="MouseNode" output="screen" />
+    <node pkg="nxt_beagle" type="MouseMonitor" name="MouseMonitor" output="screen" />
 
 </launch>

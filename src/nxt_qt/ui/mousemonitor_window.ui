@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>981</width>
-    <height>814</height>
+    <height>876</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,9 +26,9 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="SensorDataTab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>Sensor Data</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -37,6 +37,9 @@
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
              <string>Sensor1</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
@@ -49,16 +52,16 @@
                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                 </property>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit"/>
+                 <widget class="QLineEdit" name="x_disp1"/>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_2"/>
+                 <widget class="QLineEdit" name="y_disp1"/>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_3"/>
+                 <widget class="QLineEdit" name="x_speed1"/>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="lineEdit_4"/>
+                 <widget class="QLineEdit" name="y_speed1"/>
                 </item>
                 <item row="5" column="0">
                  <layout class="QFormLayout" name="formLayout"/>
@@ -126,16 +129,16 @@
                  <layout class="QFormLayout" name="formLayout_3"/>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_6"/>
+                 <widget class="QLineEdit" name="y_disp2"/>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_7"/>
+                 <widget class="QLineEdit" name="x_speed2"/>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_8"/>
+                 <widget class="QLineEdit" name="y_speed2"/>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEdit_5"/>
+                 <widget class="QLineEdit" name="x_disp2"/>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_5">
@@ -184,15 +187,42 @@
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="tableWidget"/>
+         <widget class="QTableWidget" name="SensorSettingsTable"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="TrackPathTab">
        <attribute name="title">
-        <string>Tab 2</string>
+        <string>Track Path</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="VisualizeDataTab">
+       <attribute name="title">
+        <string>Visualize Data</string>
+       </attribute>
       </widget>
      </widget>
     </item>
@@ -212,7 +242,20 @@
      <string>File</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionRobotik"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -226,6 +269,11 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <action name="actionRobotik">
+   <property name="text">
+    <string>Set Sensor Resolution</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

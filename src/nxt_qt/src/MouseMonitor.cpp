@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     minotaur::MouseMonitorWindow window;
     
     window.show();
-    //window.getPIDNode().start();
+    window.getMonitorNode().run();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();
