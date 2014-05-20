@@ -24,7 +24,6 @@ namespace minotaur
         
         void setDimension(const int p_width, const int p_height)
         {
-           
             if(field != NULL)
             {
                 for(int i = 0; i < width; ++i)

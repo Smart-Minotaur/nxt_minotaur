@@ -8,6 +8,7 @@
 #define MAP_CREATOR_RIGHT_SENSOR 2
 #define MAP_CREATOR_FRONT_SENSOR 1
 
+
 namespace minotaur
 {
   class MapCreator
@@ -19,7 +20,7 @@ namespace minotaur
     MapCreator(int width, int height);
     MapCreator(Map p_map);
     ~MapCreator();
-    void setSensorDistances(int sensor, int x, int y);
+    void setSensorDistances(int sensor, float x, float y);
     void step(const int p_sensor, const int p_distance);
     void calculateObstaclePosition(const int sensor, int measuredDistance);
     void incrementCells(int position_y, int position_x, int quality);

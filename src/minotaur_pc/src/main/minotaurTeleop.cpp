@@ -89,7 +89,10 @@ void setSignalAction()
 
 void sighandler(int sig)
 {
+    nxt_beagle::UltraSensor poisonPill;
+    poisonPill.sensorID = 4;
     run = false;
+    queue.enqueue(poisonPill);
 }
 
 bool initCommunication(ros::NodeHandle &p_handle)
@@ -288,11 +291,14 @@ void *mapLoop(void * arg)
     {
         sensorMsg = queue.dequeue();
         
-        pthread_mutex_lock(&positionMutex);
-        mapCreator.setPosition(currentPosition);
-        pthread_mutex_unlock(&positionMutex);
-        
-        mapCreator.step(sensor[sensorMsg.sensorID], sensorMsg.distance);
+        if(sensorMsg.sensorID < 4)
+        {
+            pthread_mutex_lock(&positionMutex);
+            mapCreator.setPosition(currentPosition);
+            pthread_mutex_unlock(&positionMutex);
+            
+            mapCreator.step(sensor[sensorMsg.sensorID], sensorMsg.distance);
+        }
     }
     
     ROS_INFO("MapLoop terminated.");

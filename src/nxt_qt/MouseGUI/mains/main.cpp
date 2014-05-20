@@ -1,45 +1,35 @@
 #include "nxt_qt/mainwindow.h"
+#include "ros/ros.h"
+
 #include <QApplication>
 #include <QtGui>
 #include <QMetaType>
-#include "ros/ros.h"
 #include <QtGui/QMainWindow>
-//#include "ui_mainwindow_debug.h"
-#include "QWidget"
+#include <QWidget>
 #include <QLine>
-//#include "nxt_qt/QMouseNode.h"
 
 #define NODE_NAME "MOUSEGUI"
-#define INTERVAL 25
-
-
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, NODE_NAME);
-	if(!ros::master::check())
-    {
-        ROS_ERROR("Roscore has to be started.");
-        return -1;
-    }
+	ros::init(argc, argv, NODE_NAME);
+
+	if (!ros::master::check()) {
+		ROS_ERROR("Roscore has to be started.");
+		return -1;
+	}
 
     //qRegisterMetaType<MainWindow::MainWindow>("QDebugMouse");
-    QApplication a(argc, argv);
-    MainWindow w;
+   	QApplication app(argc, argv);
+ 	minotaur::MainWindow window;
 
-    QTimer::singleShot(1000, &w, SLOT(setInitIntervall()));
+	window.show();
+	window.getMouseNode().start();
 
-    w.show();
-    w.getMouseNode().start();
-
-    a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
+	app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 	
-    int result = a.exec();
-    ros::shutdown();
+	int result = app.exec();
+	ros::shutdown();
 	
-    return result;
+   	return result;
 }
-
-
-
-
