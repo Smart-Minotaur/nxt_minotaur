@@ -3,9 +3,6 @@
 #include <QWidget>
 #include "ros/ros.h"
 
-#define SENSOR1 "/dev/spidev1.0"
-#define SENSOR2 "/dev/spidev1.1"
-
 //grid params
 #define AMPLIFY 1000
 #define GRID_X_START 0
@@ -48,30 +45,23 @@ namespace minotaur
     void MouseMonitorWindow::processMouseData(const MouseData data)
     {
         if (data.id == SENSOR1) {
+            name1->setText(QString::fromStdString(data.id));
+            x_disp1->setText(QString("%1").arg(data.x_disp, 0, 'f', 2));
+            y_disp1->setText(QString("%1").arg(data.y_disp, 0, 'f', 2));
+            x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
+            y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
+
             widget1->updateWidget(data);
-        } else {
+        } else if (data.id == SENSOR2) {
+            name2->setText(QString::fromStdString(data.id));
+            x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 2));
+            y_disp2->setText(QString("%1").arg(data.y_disp, 0, 'f', 2));
+            x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
+            y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
+
             widget2->updateWidget(data);
         }
     }
-
-
-    void MouseMonitorWindow::paintEvent(QPaintEvent *event)
-    {
-        /*ROS_INFO("inside mouseMonitorWindow::paintevent");
-        QPainter *painter = new QPainter(this);
-        painter->begin(this);
-
-        // Add the vertical lines first, paint them
-        painter->setPen(QPen(Qt::black, 1));
-        for (int x = GRID_X_START; x <= GRID_X_MAX; x += SCALE)
-          painter->drawLine(x, GRID_Y_START, x, GRID_Y_MAX);
-
-        // Now add the horizontal lines, paint them
-        for (int y = GRID_Y_START; y <= GRID_Y_MAX; y += SCALE)
-          painter->drawLine(GRID_X_START, y, GRID_X_MAX, y);
-        */
-    }
-
 
     void DirectionWidget::paintEvent(QPaintEvent *event)
     {
@@ -94,9 +84,11 @@ namespace minotaur
         update();
     }
 
-    /*void MouseMonitorWindow::processMouseSettings(const )
+    void MouseMonitorWindow::processMouseSettings(
+        const std::string id,
+        const pln_minotaur::PLN2033_Settings settings)
     {
-
-    }*/
+        // TODO: Insert settings values into the table
+    }
 
 }

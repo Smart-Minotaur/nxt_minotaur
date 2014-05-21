@@ -51,48 +51,58 @@
                 <property name="fieldGrowthPolicy">
                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                 </property>
-                <item row="1" column="1">
+                <item row="2" column="1">
                  <widget class="QLineEdit" name="x_disp1"/>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QLineEdit" name="x_speed1"/>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <widget class="QLineEdit" name="y_speed1"/>
                 </item>
-                <item row="5" column="0">
+                <item row="6" column="0">
                  <layout class="QFormLayout" name="formLayout"/>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label">
                   <property name="text">
                    <string>X Displacement</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_2">
                   <property name="text">
                    <string>Y Displacement</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_3">
                   <property name="text">
                    <string>X Speed</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_4">
                   <property name="text">
                    <string>Y Speed</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLineEdit" name="y_disp1"/>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="name1"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>SPI Device</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -130,46 +140,56 @@
                 <string>SensorData</string>
                </property>
                <layout class="QFormLayout" name="formLayout_4">
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <layout class="QFormLayout" name="formLayout_3"/>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="1">
                  <widget class="QLineEdit" name="y_disp2"/>
                 </item>
-                <item row="2" column="1">
+                <item row="3" column="1">
                  <widget class="QLineEdit" name="x_speed2"/>
                 </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QLineEdit" name="y_speed2"/>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QLineEdit" name="x_disp2"/>
                 </item>
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_5">
                   <property name="text">
                    <string>X Displacement</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLabel" name="label_6">
                   <property name="text">
                    <string>Y Displacement</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
+                <item row="3" column="0">
                  <widget class="QLabel" name="label_7">
                   <property name="text">
                    <string>X Speed</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_8">
                   <property name="text">
                    <string>Y Speed</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="name2"/>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_10">
+                  <property name="text">
+                   <string>SPI Device</string>
                   </property>
                  </widget>
                 </item>
