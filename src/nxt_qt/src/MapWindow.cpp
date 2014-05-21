@@ -28,12 +28,11 @@ namespace minotaur
     
     void MapWindow::processOdometry(const QOdometry p_odom)
     {
-        RobotPosition tmp;
-        tmp.point.x = p_odom.x;
-        tmp.point.y = p_odom.x;
-        tmp.theta = p_odom.theta;
+        robotPosition.point.x = p_odom.x;
+        robotPosition.point.y = p_odom.x;
+        robotPosition.theta = p_odom.theta;
         
-        mapWidget->setPosition(tmp);
+        mapWidget->setPosition(robotPosition);
     }
     
     void MapWindow::processMeasuredSensor(const QUltraSensor p_sensor)
@@ -47,6 +46,11 @@ namespace minotaur
             id = MAP_CREATOR_RIGHT_SENSOR;
         
         mapWidget->step(id, p_sensor.distance);
+        
+        std::stringstream ss;
+        ss << "(" << std::setprecision(2) << robotPosition.point.x << "/" << std::setprecision(2) << robotPosition.point.y << ")";
+        
+        RobotPositionLabel->setText(ss.str().c_str());
         mapWidget->update();
     }
     

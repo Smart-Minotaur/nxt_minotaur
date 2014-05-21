@@ -24,8 +24,8 @@ namespace minotaur
         
     protected:
         void paintEvent(QPaintEvent *event);
-        void paintMap(QPainter& p_painter, QPoint& p_delta);
-        void paintRobot(QPainter& p_painter, QPoint& p_delta);
+        void paintMap(QPainter& p_painter);
+        void paintRobot(QPainter& p_painter);
         
     public:
         QMapWidget(QWidget *parent);

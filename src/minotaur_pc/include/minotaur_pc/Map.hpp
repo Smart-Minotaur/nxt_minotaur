@@ -15,7 +15,7 @@ namespace minotaur
     public:
         
         Map()
-        :width(10), height(10)
+        :width(10), height(10), field(NULL)
         {
             setDimension(width, height);
         }

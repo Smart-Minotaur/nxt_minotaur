@@ -1,4 +1,8 @@
 #include <QSize>
+#include <QMessageBox>
+#include <QString>
+#include <stdexcept>
+#include <sstream>
 #include "nxt_qt/QMapWidget.hpp"
 #include "nxt_qt/Lock.hpp"
 
@@ -18,52 +22,58 @@ namespace minotaur
     void QMapWidget::paintEvent(QPaintEvent *event)
     {
         QPainter painter(this);
-        QPoint delta;
-        
-        delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
-        delta.setY((height() - mapCreator.getMap()->getHeight()) / 2);
         
         painter.setBrush(QBrush(Qt::white));
         painter.drawRect(0, 0, width() - 1, height() - 1);
         
-        paintMap(painter, delta);
-        paintRobot(painter, delta);
+        paintMap(painter);
+        paintRobot(painter);
     }
     
-    void QMapWidget::paintMap(QPainter& p_painter, QPoint& p_delta)
+    void QMapWidget::paintMap(QPainter& p_painter)
     {
         Lock lock(mapMutex);
         
+        QPoint delta;
+        delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
+        delta.setY((height() - mapCreator.getMap()->getHeight()) / 2);
+        
+        p_painter.setPen(Qt::red);
         p_painter.setBrush(QBrush(Qt::red));
         for(int x = 0; x < mapCreator.getMap()->getWidth(); ++x)
         {
             for(int y = 0; y < mapCreator.getMap()->getHeight(); ++y)
             {
-                float val = mapCreator.getMap()->getField()[y][x];
+                float val = mapCreator.getMap()->getField()[x][y];
                 if(val > MAX_FIELD_VALUE)
                     val = MAX_FIELD_VALUE;
                 val = val / MAX_FIELD_VALUE;
                 if(val > 0)
                 {
                     p_painter.setOpacity(val);
-                    p_painter.drawRect(p_delta.x() + x, p_delta.y() + (mapCreator.getMap()->getHeight() - y), 1, 1);
+                    p_painter.drawRect(delta.x() + x, delta.y() + (mapCreator.getMap()->getHeight() - y), 1, 1);
                 }
             }
         }
     }
     
-    void QMapWidget::paintRobot(QPainter& p_painter, QPoint& p_delta)
+    void QMapWidget::paintRobot(QPainter& p_painter)
     {
-        p_painter.setBrush(QBrush(Qt::blue));
-        p_painter.setOpacity(1.0);
+        p_painter.setPen(Qt::blue);
+        p_painter.setBrush(QBrush(Qt::green));
+         p_painter.setOpacity(1.0);
         
         Lock lock1(positionMutex);
         Lock lock2(mapMutex);
         
-        int x = p_delta.x() + robotPos.point.x * 100 + mapCreator.getXOffset();
+        QPoint delta;
+        delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
+        delta.setY((height() - mapCreator.getMap()->getHeight()) / 2);
+        
+        int x = delta.x() + robotPos.point.x * 100 + mapCreator.getXOffset();
         int y = robotPos.point.y * 100 + mapCreator.getYOffset();
         
-        y = p_delta.y() + mapCreator.getMap()->getHeight() - y;
+        y = delta.y() + mapCreator.getMap()->getHeight() - y;
         
         p_painter.drawRect(x - 1, y - 1, 3, 3);
     }

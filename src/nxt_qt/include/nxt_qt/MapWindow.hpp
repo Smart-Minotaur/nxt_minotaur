@@ -16,7 +16,8 @@ namespace minotaur {
         QMinotaurNavigateNode navNode;
         QMapWidget *mapWidget;
 
-        
+        RobotPosition robotPosition;
+
         float linVel;
         float angVel;
         
