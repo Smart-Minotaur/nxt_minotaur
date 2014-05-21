@@ -29,7 +29,7 @@ namespace minotaur
     void MapWindow::processOdometry(const QOdometry p_odom)
     {
         robotPosition.point.x = p_odom.x;
-        robotPosition.point.y = p_odom.x;
+        robotPosition.point.y = p_odom.y;
         robotPosition.theta = p_odom.theta;
         
         mapWidget->setPosition(robotPosition);
