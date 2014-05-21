@@ -5,4 +5,4 @@ PC_IP=141.37.31.113
 
 export ROS_IP=$PC_IP
 export ROS_MASTER_URI=http://$PC_IP:11311
-roslaunch nxt_qt pidcontrol.launch
+roslaunch nxt_qt mapteleop.launch
