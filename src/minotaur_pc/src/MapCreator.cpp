@@ -129,7 +129,6 @@ namespace minotaur {
       int positions_y[CONE_VALUES];
       int *pos_x = positions_x;
       int *pos_y = positions_y;
-      int position_x, position_y;
       int i;
 
       if (measuredDistance >= MAX_DISTANCE) {
@@ -163,11 +162,8 @@ namespace minotaur {
       
       angle = checkAngle(angle);
       getCone(angle, realDistance, pos_x, pos_y);
-
-      if ( position_x > (map.getWidth() -1 ) || position_x < 0 || position_y < 0 || position_y > (map.getHeight() -1 )) {
-	ROS_WARN("----Value out of Area----");
-	return;
-      }
+  
+      checkValue(pos_x, pos_y);
       
       for(i = 0; i < CONE_VALUES; i++){
 	if(map.getField()[pos_x[i]][pos_y[i]] != INT_MAX){
@@ -187,6 +183,18 @@ namespace minotaur {
 	  p_angle = p_angle + 360.0;
       }
       return p_angle;
+    }
+    
+    void MapCreator::checkValue(int *p_pos_x, int *p_pos_y)
+    {
+      int i;
+      for(i = 0; i < CONE_VALUES; i++){
+	if (p_pos_x[i] > (map.getWidth() - 1) || p_pos_x[i] < 0 || p_pos_y[i] < 0 || p_pos_y[i] > (map.getHeight() - 1)) {
+	  ROS_INFO("----Value out of Area----");
+	  return;
+	}
+      }
+	
     }
     
     void MapCreator::getCone(float p_angle, float p_realDistance, int *p_pos_x, int *p_pos_y)
