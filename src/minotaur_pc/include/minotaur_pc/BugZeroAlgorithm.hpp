@@ -10,10 +10,9 @@ namespace minotaur
     class BugZeroAlgorithm : public MovementAlgorithm
     {
     private:
-        
     public:
         BugZeroAlgorithm(Map* pMap)
-        : MovementAlgorithm(pMap) {};
+        : MovementAlgorithm(pMap) { };
         virtual ~BugZeroAlgorithm(){}
         
         virtual RobotPosition getNextPosition(const RobotPosition pos);

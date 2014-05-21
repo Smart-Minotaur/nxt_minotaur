@@ -1,4 +1,6 @@
 
+#include <cmath>
+
 #include "minotaur_pc/PledgeAlgorithm.hpp"
 
 namespace minotaur
@@ -12,8 +14,8 @@ namespace minotaur
     
     RobotPosition PledgeAlgorithm::getNextPosition(const RobotPosition p_pos)
     {
-        int x = p_pos.point.x;
-        int y = p_pos.point.y;
+        int x = (int) METER_TO_CENTIMETER(p_pos.point.x);
+        int y = (int) METER_TO_CENTIMETER(p_pos.point.y);
         float theta = p_pos.theta;
         bool obstacle = false;
         bool leftSideObstacle = false;
@@ -32,18 +34,13 @@ namespace minotaur
                 obstacleFound = true;
                 while(obstacle) // evtl sackgasse
                 {
-                    theta -= 90; //drehung nach rechts?
-                    if(theta == -360)
-                    {
-                        theta = 0;
-                    }
+                    theta -= M_PI/2;
                     turn--;
                     
                     obstacle = checkObstacle(x, y, theta);
                 }
                 newPosition = calculateNewPosition(x, y, theta);
                 return newPosition;
-                
             }
         }
         
@@ -58,16 +55,11 @@ namespace minotaur
             }
             else
             {
-                theta += 90; //drehung nach links?
-                if(theta == 360)
-                {
-                    theta = 0;
-                }
+                theta += M_PI/2; //drehung nach links?
                 turn++;
                 newPosition = calculateNewPosition(x, y, theta);
                 return newPosition;
             }
-            
         }
     }
  

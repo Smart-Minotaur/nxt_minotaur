@@ -7,9 +7,11 @@
 #include "minotaur_pc/RobotPosition.hpp"
 
 
-#define MIN_DISTANCE_TO_OBSTACLE 8
+#define MIN_DISTANCE_TO_OBSTACLE 10
 #define OBSTACLE_THRESHOLD 2
-#define THETA_ADJUSTMENT 10
+
+#define METER_TO_CENTIMETER(m) m*100
+#define CENTIMETER_TO_METER(cm) cm/100
 
 namespace minotaur
 {
@@ -26,7 +28,12 @@ namespace minotaur
         bool checkObstacle(int x, int y, float theta);
         bool checkLeftSideObstacle(int x, int y, float theta);
         bool checkRightSideObstacle(int x, int y, float theta);
-
+        
+        int getDistanceToObstacle(int x, int y, float theta);
+        int getDistanceToLeftObstacle(int x, int y, float theta);
+        int getDistanceToRightObstacle(int x, int y, float theta);
+        
+        
         RobotPosition calculateNewPosition(int x, int y, int theta);
       
     };

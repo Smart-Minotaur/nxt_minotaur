@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 
 #include "minotaur_pc/BugZeroAlgorithm.hpp"
 
@@ -7,31 +7,32 @@ namespace minotaur
  
     RobotPosition BugZeroAlgorithm::getNextPosition(const RobotPosition p_pos)
     {
-        float x = p_pos.point.x;
-        float y = p_pos.point.y;
+        int x = (int) METER_TO_CENTIMETER(p_pos.point.x);
+        int y = (int) METER_TO_CENTIMETER(p_pos.point.y);
         float theta = p_pos.theta;
         bool obstacle = true;
+        int noWayCounter = 0;
         
         while(obstacle)
         {
             obstacle = checkObstacle(x, y, theta);
             if(obstacle)
             {
-                theta += 90;
-                if(theta == 360)
-                    theta = 0;
+                theta += (float)(M_PI/2);
+                noWayCounter++;
             }
         }
-        
-        int delta_x = (int) (sin(theta) * MIN_DISTANCE_TO_OBSTACLE);
-        int delta_y = (int) (cos(theta) * MIN_DISTANCE_TO_OBSTACLE);
-        
-        RobotPosition newPosition;
-        newPosition.point.x = x + delta_x;
-        newPosition.point.y = y + delta_y;
-        newPosition.theta = theta;
-        //newPosition.sigma = p_pos.sigma;
 
+        if(noWayCounter == 4)
+        {
+            
+            return p_pos;
+        }
+
+        RobotPosition newPosition;
+        
+        //newPosition.sigma = p_pos.sigma;
+        newPosition = calculateNewPosition(x, y, theta);
         return newPosition;
     }
     
