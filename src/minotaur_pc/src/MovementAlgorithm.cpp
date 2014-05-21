@@ -96,7 +96,7 @@ namespace minotaur
             if(field[x + delta_x][y + delta_y] > OBSTACLE_THRESHOLD) // found obstacle
             {
                 
-                return i; //abs(delta_x); //sqr/(delta y²) + (delta x²))
+                return i;
             }
         }
         return 0;

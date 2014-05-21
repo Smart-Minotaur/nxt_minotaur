@@ -20,14 +20,14 @@ namespace minotaur
             {
                 theta += (float)(M_PI/2);
                 noWayCounter++;
+                if(noWayCounter == 4)
+                {
+                    return p_pos;
+                }
             }
         }
 
-        if(noWayCounter == 4)
-        {
-            
-            return p_pos;
-        }
+        
 
         RobotPosition newPosition;
         
