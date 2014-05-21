@@ -3,6 +3,7 @@
 
 #define ROS_MOUSE_DATA_TOPIC "/mouseData"
 
+
 namespace minotaur
 {
 

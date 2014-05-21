@@ -54,9 +54,6 @@
                 <item row="1" column="1">
                  <widget class="QLineEdit" name="x_disp1"/>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="y_disp1"/>
-                </item>
                 <item row="3" column="1">
                  <widget class="QLineEdit" name="x_speed1"/>
                 </item>
@@ -94,6 +91,9 @@
                   </property>
                  </widget>
                 </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="y_disp1"/>
+                </item>
                </layout>
               </widget>
              </item>
@@ -108,6 +108,11 @@
                <property name="autoFillBackground">
                 <bool>false</bool>
                </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_6"/>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
@@ -179,6 +184,11 @@
                  <height>300</height>
                 </size>
                </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_8"/>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
