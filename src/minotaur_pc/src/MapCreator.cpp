@@ -11,13 +11,8 @@
 #define RAD_TO_DEGREE 57.295779513082
 #define DEGREE_TO_RAD 0.017453292519943
 #define METER_TO_CENTIMETER(m) (m * 100)
-#define CONE_VALUES 7
-#define CONE_VAL_15 1
-#define CONE_VAL_10 2
-#define CONE_VAL_5 3
-#define CONE_VAL_0 4
 
-#define MAX_DISTANCE 30
+#define CONE_VALUES 7
 
 using namespace std;
 
@@ -31,6 +26,8 @@ struct position {
     float y;
     float theta;
 } pos;
+
+const float coneAngles[] = {15, 10, 5, 0, -5, -10, -15};
 
 namespace minotaur {
     
@@ -88,15 +85,15 @@ namespace minotaur {
         int tmpY = (int) METER_TO_CENTIMETER(y);
         switch(sensor)
         {
-            case 1: 
+            case MAP_CREATOR_FRONT_SENSOR: 
                 sen1.x = tmpX;
                 sen1.y = tmpY;
                 break;
-            case 2:
+            case MAP_CREATOR_RIGHT_SENSOR:
                 sen2.x = tmpX;
                 sen2.y = tmpY;
                 break;
-            case 3:
+            case MAP_CREATOR_LEFT_SENSOR:
                 sen3.x = tmpX;
                 sen3.y = tmpY;	
                 break;
@@ -121,8 +118,8 @@ namespace minotaur {
     void MapCreator::calculateObstaclePosition(const int sensor, int measuredDistance)
     {
       
-      float angle = 0.0;
-      float dif_angle;
+      float angle;
+      float tmp_angle;
       float realDistance;
       float tmp_dist;
       int positions_x[CONE_VALUES];
@@ -140,36 +137,45 @@ namespace minotaur {
 	return;
       }
 	
-      if (sensor == 1) {
+	// sensor1 
+      if (sensor == MAP_CREATOR_FRONT_SENSOR) {
 	realDistance = measuredDistance + sen1.x;
 	angle = pos.theta;
-	
-      } else if (sensor == 2) {
+      
+	// sensor 2
+      } else if (sensor == MAP_CREATOR_RIGHT_SENSOR) {
 	tmp_dist = measuredDistance + sen2.y;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen2.x * sen2.x));
-	dif_angle = asin( sen2.x / realDistance);
-	angle = (pos.theta + 270.0) - (dif_angle * RAD_TO_DEGREE);
+	tmp_angle = asin( sen2.x / realDistance);
+	angle = (pos.theta + 270.0) - (tmp_angle * RAD_TO_DEGREE);
 	
-      } else if (sensor == 3) {
+	// sensor 3
+      } else if (sensor == MAP_CREATOR_LEFT_SENSOR) {
 	tmp_dist = measuredDistance + sen3.y;
 	realDistance = sqrt((tmp_dist * tmp_dist) + (sen3.x * sen3.x));
-	dif_angle = asin ( sen3.x / realDistance );
-	angle = (pos.theta + 90.0) + (dif_angle * RAD_TO_DEGREE);
+	tmp_angle = asin ( sen3.x / realDistance );
+	angle = (pos.theta + 90.0) + (tmp_angle * RAD_TO_DEGREE);
+      
       } else {
 	ROS_WARN("MapCreator: Got an invalid sensor");
 	return;
       }
       
       angle = checkAngle(angle);
-      getCone(angle, realDistance, pos_x, pos_y);
-  
-      checkValue(pos_x, pos_y);
+      generateCone(angle, realDistance, pos_x, pos_y);
+      if (checkForInvalidValues(pos_x, pos_y)) {
+	ROS_INFO("----Value out of Area----");
+	return;
+      }
       
       for(i = 0; i < CONE_VALUES; i++){
 	if(map.getField()[pos_x[i]][pos_y[i]] != INT_MAX){
 	  incrementCells(pos_x[i], pos_y[i], i);
-	  if (i == 3)
- 	    ROS_INFO("MapCreator: Sensor%d: Inc cell [%d] [%d] to %d\n", sensor, pos_x[i], pos_y[i], map.getField()[pos_x[i]][pos_y[i]]);
+	  if (i == 3) {
+ 	    // Debug-output
+	    ROS_INFO("MapCreator: Sensor%d: Inc cell [%d] [%d] to %d\n", sensor, pos_x[i], pos_y[i], map.getField()[pos_x[i]][pos_y[i]]);
+	  }
+	    
 	}
       }
     }
@@ -185,27 +191,26 @@ namespace minotaur {
       return p_angle;
     }
     
-    void MapCreator::checkValue(int *p_pos_x, int *p_pos_y)
+    bool MapCreator::checkForInvalidValues(int *p_pos_x, int *p_pos_y)
     {
       int i;
       for(i = 0; i < CONE_VALUES; i++){
 	if (p_pos_x[i] > (map.getWidth() - 1) || p_pos_x[i] < 0 || p_pos_y[i] < 0 || p_pos_y[i] > (map.getHeight() - 1)) {
-	  ROS_INFO("----Value out of Area----");
-	  return;
+	  return true;
 	}
       }
+      return false;
 	
     }
     
-    void MapCreator::getCone(float p_angle, float p_realDistance, int *p_pos_x, int *p_pos_y)
+    void MapCreator::generateCone(float p_angle, float p_realDistance, int *p_pos_x, int *p_pos_y)
     {
       float distances_x[CONE_VALUES];
       float distances_y[CONE_VALUES];
       float *dist_x = distances_x;
       float *dist_y = distances_y;
       float tmp_angle;
-      const float coneAngles[] = {15, 10, 5, 0, -5, -10, -15};
-      int i, angleCase;
+      int i;
       for(i = 0; i < CONE_VALUES; i++) {
 	tmp_angle = p_angle + coneAngles[i];
 	tmp_angle = checkAngle(tmp_angle);
