@@ -26,7 +26,7 @@ namespace minotaur
         {
             if(field != NULL)
             {
-                for(int i = 0; i < height; ++i)
+                for(int i = 0; i < width; ++i)
                 {
                     delete[] field[i];
                 }
@@ -35,10 +35,10 @@ namespace minotaur
             
             width = p_width;
             height = p_height;
-            field = new int*[height];
-            for(int i = 0; i < height; ++i)
+            field = new int*[width];
+            for(int i = 0; i < width; ++i)
             {
-                field[i] = new int[width];
+                field[i] = new int[height];
             }
         }
         
