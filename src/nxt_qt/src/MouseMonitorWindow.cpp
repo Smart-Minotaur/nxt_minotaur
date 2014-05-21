@@ -8,8 +8,8 @@ namespace minotaur
 	{
 		setupUi(this);
 
-		connect(&monitorNode, SIGNAL(measuredMouseData(const MouseData data)),
-			this, SLOT(processMouseData(const MouseData data)));
+		connect(&monitorNode, SIGNAL(measuredMouseData(const MouseData)),
+			this, SLOT(processMouseData(const MouseData)));
 	}
 
 	MouseMonitorWindow::~MouseMonitorWindow() {}
