@@ -9,7 +9,7 @@ minotaur:
     Theseus:
         wheel_track: 0.12
         wheel_circumference: 0.16
-        kp: 1,02
+        kp: 1.02
         ki: 16.32
         kd: 0.21675
         sampling_interval: 25
