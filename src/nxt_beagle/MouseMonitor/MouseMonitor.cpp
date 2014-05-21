@@ -1,4 +1,4 @@
-#include "MouseMonitorNodeBeagle.hpp"
+#include "nxt_beagle/MouseMonitorNodeBeagle.hpp"
 
 int main(int argc, char **argv)
 {
@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	MouseMonitorNodeBeagle node;
+	minotaur::MouseMonitorNodeBeagle node;
 
 	node.run();
 	ros::shutdown();

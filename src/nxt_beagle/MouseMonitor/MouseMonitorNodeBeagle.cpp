@@ -1,4 +1,4 @@
-#include "MouseMonitorNodeBeagle.hpp"
+#include "nxt_beagle/MouseMonitorNodeBeagle.hpp"
 
 #define SENSOR1 "/dev/spidev1.0"
 #define SENSOR2 "/dev/spidev1.1"
