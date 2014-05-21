@@ -17,6 +17,8 @@
 #define CONE_VAL_5 3
 #define CONE_VAL_0 4
 
+#define MAX_DISTANCE 30
+
 using namespace std;
 
 struct sensorDistanceFromZero {
@@ -130,7 +132,7 @@ namespace minotaur {
       int position_x, position_y;
       int i;
 
-      if (measuredDistance >= 100) {
+      if (measuredDistance >= MAX_DISTANCE) {
 	ROS_INFO("MapCreator: The mesaured distance for sensor%d is too damn high: %dcm. Value ignored", sensor, measuredDistance);
 	return;
       }
@@ -162,6 +164,11 @@ namespace minotaur {
       angle = checkAngle(angle);
       getCone(angle, realDistance, pos_x, pos_y);
 
+      if ( position_x > (map.getWidth() -1 ) || position_x < 0 || position_y < 0 || position_y > (map.getHeight() -1 )) {
+	ROS_WARN("----Value out of Area----");
+	return;
+      }
+      
       for(i = 0; i < CONE_VALUES; i++){
 	if(map.getField()[pos_x[i]][pos_y[i]] != INT_MAX){
 	  incrementCells(pos_x[i], pos_y[i], i);
