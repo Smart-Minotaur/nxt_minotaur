@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QPainter>
 #include <QPoint>
+#include <QVector>
 #include "minotaur_pc/MapCreator.hpp"
 #include "minotaur_pc/RobotPosition.hpp"
 
@@ -18,6 +19,8 @@ namespace minotaur
         RobotPosition robotPos;
         QMutex mapMutex;
         QMutex positionMutex;
+        QVector<QPoint> lastPositions;
+        int positionCounter;
         
         void setRobotPosition(const RobotPosition& p_robotPos);
         void setMapCreatorPosition(const RobotPosition& p_robotPos);

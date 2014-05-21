@@ -203,14 +203,14 @@ void startThreads()
     run = true;
     pthread_mutex_init(&positionMutex, NULL);
     pthread_create(&eventThread, NULL, eventLoop, NULL);
-    pthread_create(&mapThread, NULL, mapLoop, NULL);
+    //pthread_create(&mapThread, NULL, mapLoop, NULL);
 }
 
 void joinThreads()
 {
     void *ret;
     pthread_join(eventThread, &ret);
-    pthread_join(mapThread, &ret);
+    //pthread_join(mapThread, &ret);
 }
 
 void *eventLoop(void * p_arg)

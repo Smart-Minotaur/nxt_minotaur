@@ -7,12 +7,14 @@
 #include "nxt_qt/Lock.hpp"
 
 #define MAX_FIELD_VALUE 50
+#define MIN_FIELD_VALUE 0
 
 namespace minotaur
 {
     QMapWidget::QMapWidget(QWidget *parent)
     : QWidget(parent)
     {
+        positionCounter = 0;
         setBackgroundRole(QPalette::Base);
         setAutoFillBackground(true);
         
@@ -47,7 +49,7 @@ namespace minotaur
                 float val = mapCreator.getMap()->getField()[x][y];
                 if(val > MAX_FIELD_VALUE)
                     val = MAX_FIELD_VALUE;
-                val = val / MAX_FIELD_VALUE;
+                val = (val - MIN_FIELD_VALUE) / (MAX_FIELD_VALUE - MIN_FIELD_VALUE);
                 if(val > 0)
                 {
                     p_painter.setOpacity(val);
@@ -59,19 +61,39 @@ namespace minotaur
     
     void QMapWidget::paintRobot(QPainter& p_painter)
     {
-        p_painter.setPen(Qt::blue);
-        p_painter.setBrush(QBrush(Qt::green));
-         p_painter.setOpacity(1.0);
+        
+        p_painter.setOpacity(1.0);
         
         Lock lock1(positionMutex);
+        
+        if(positionCounter == 0)
+            lastPositions.append(QPoint(robotPos.point.x * 100, robotPos.point.y * 100));
+        positionCounter++;
+        positionCounter %= 30;
+        
         Lock lock2(mapMutex);
         
         QPoint delta;
         delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
         delta.setY((height() - mapCreator.getMap()->getHeight()) / 2);
         
-        int x = delta.x() + robotPos.point.x * 100 + mapCreator.getXOffset();
-        int y = robotPos.point.y * 100 + mapCreator.getYOffset();
+        int x, y, i;
+
+        p_painter.setPen(Qt::black);
+        p_painter.setBrush(QBrush(Qt::white));
+        
+        for(i = 0; i < lastPositions.size(); ++i)
+        {
+            x = delta.x() + lastPositions[i].x() + mapCreator.getXOffset();
+            y = delta.y() + mapCreator.getMap()->getHeight() - (lastPositions[i].y() + mapCreator.getYOffset());
+            p_painter.drawRect(x - 1, y - 1, 3, 3);
+        }
+        
+        p_painter.setPen(Qt::blue);
+        p_painter.setBrush(QBrush(Qt::green));
+        
+        x = delta.x() + robotPos.point.x * 100 + mapCreator.getXOffset();
+        y = robotPos.point.y * 100 + mapCreator.getYOffset();
         
         y = delta.y() + mapCreator.getMap()->getHeight() - y;
         

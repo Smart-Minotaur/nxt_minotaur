@@ -11,7 +11,7 @@
 #define MAX_PLOT_LIN_VEL 0.3
 #define MAX_PLOT_ANG_VEL 2.0
 
-#define MAX_KP 2.0f
+#define MAX_KP 10.0f
 #define MAX_KI 2.0f
 #define MAX_KD 2.0f
 #define DEF_KP 0.5f
