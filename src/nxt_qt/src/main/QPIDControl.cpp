@@ -14,13 +14,13 @@ int main(int argc, char **argv)
         return -1;
     }
     
-    qRegisterMetaType<minotaur::QRobotVelocity>("QRobotVelocity");
+    qRegisterMetaType<minotaur::QOdometry>("QOdometry");
     qRegisterMetaType<minotaur::QUltraSensor>("QUltraSensor");
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
     
     w.show();
-    w.getPIDNode().start();
+    w.getNavigationNode().start();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();

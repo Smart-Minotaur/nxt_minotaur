@@ -7,7 +7,7 @@
 #include <qwt_plot_layout.h>
 #include "nxt_qt/QSensorPainter.hpp"
 #include "ui_pid_window.h"
-#include "nxt_qt/QPIDNode.hpp"
+#include "nxt_qt/QMinotaurNavigateNode.hpp"
 
 #define SAMPLE_RANGE 400
 
@@ -17,7 +17,7 @@ namespace minotaur {
     {
         Q_OBJECT
     private:
-        QPIDNode pidNode;
+        QMinotaurNavigateNode navNode;
         QSensorPainter *sensorPainter;
         
         int sampleCount;
@@ -36,8 +36,8 @@ namespace minotaur {
         float getKI();
         float getKD();
         
-        void updateMeasuredProgressBars(const QRobotVelocity& p_velocity);
-        void updateMeasuredPlot(const QRobotVelocity& p_velocity);
+        void updateMeasuredProgressBars(const float p_linVel, const float p_angVel);
+        void updateMeasuredPlot(const float p_linVel, const float p_angVel);
         void updateProgressBarColor(QProgressBar *p_progressbar);
         
     private Q_SLOTS:
@@ -46,13 +46,13 @@ namespace minotaur {
         void updatePIDValues();
         void setVelocity();
         void updateVelocityValues();
-        void processMeasuredVelocity(const QRobotVelocity p_velocity);
+        void processMeasuredVelocity(const QOdometry p_velocity);
         void processMeasuredSensor(const QUltraSensor p_sensor);
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();
         
-        QPIDNode& getPIDNode();
+        QMinotaurNavigateNode& getNavigationNode();
     };
     
 }

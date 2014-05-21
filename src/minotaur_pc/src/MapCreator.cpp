@@ -180,9 +180,9 @@ namespace minotaur {
         
     }
     
-    Map MapCreator::getMap()
+    Map* MapCreator::getMap()
     {
-        return map;
+        return &map;
     }
     
     void MapCreator::createTextFile(const char *path)
