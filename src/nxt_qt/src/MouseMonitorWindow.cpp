@@ -3,8 +3,8 @@
 namespace minotaur
 {
 
-	MouseMonitorWindow::MouseMonitorWindow(QWidget *parent)
-	: QMainWindow(parent)
+	MouseMonitorWindow::MouseMonitorWindow(QWidget *parent) :
+		QMainWindow(parent)
 	{
 		setupUi(this);
 
