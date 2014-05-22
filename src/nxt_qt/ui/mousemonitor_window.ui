@@ -52,13 +52,25 @@
                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                 </property>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="x_disp1"/>
+                 <widget class="QLineEdit" name="x_disp1">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="x_speed1"/>
+                 <widget class="QLineEdit" name="x_speed1">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="5" column="1">
-                 <widget class="QLineEdit" name="y_speed1"/>
+                 <widget class="QLineEdit" name="y_speed1">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="6" column="0">
                  <layout class="QFormLayout" name="formLayout"/>
@@ -92,10 +104,18 @@
                  </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLineEdit" name="y_disp1"/>
+                 <widget class="QLineEdit" name="y_disp1">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="name1"/>
+                 <widget class="QLineEdit" name="name1">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_9">
@@ -108,7 +128,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget1" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -144,16 +164,32 @@
                  <layout class="QFormLayout" name="formLayout_3"/>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="y_disp2"/>
+                 <widget class="QLineEdit" name="y_disp2">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="3" column="1">
-                 <widget class="QLineEdit" name="x_speed2"/>
+                 <widget class="QLineEdit" name="x_speed2">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="y_speed2"/>
+                 <widget class="QLineEdit" name="y_speed2">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="x_disp2"/>
+                 <widget class="QLineEdit" name="x_disp2">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_5">
@@ -184,7 +220,11 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="name2"/>
+                 <widget class="QLineEdit" name="name2">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_10">
@@ -197,7 +237,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QWidget" name="widget_2" native="true">
+              <widget class="QWidget" name="widget2" native="true">
                <property name="minimumSize">
                 <size>
                  <width>0</width>

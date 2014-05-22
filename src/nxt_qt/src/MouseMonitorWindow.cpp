@@ -1,6 +1,7 @@
 #include "nxt_qt/MouseMonitorWindow.hpp"
 #include <QPainter>
 #include <QWidget>
+#include <string>
 #include "ros/ros.h"
 
 //grid params
@@ -21,20 +22,25 @@ namespace minotaur
     {
         setupUi(this);
 
-        widget1 = new DirectionWidget(widget); // widget = name of widget in ui
-        widget1->layout()->addWidget(widget1);
+        /*        widget1 = new DirectionWidget(widget1); // widget = name of widget in ui
+                widget1->layout()->addWidget(widget1);
 
-        widget2 = new DirectionWidget(widget_2); //widget2 = name of widget in ui
-        widget2->layout()->addWidget(widget2);
+                widget2 = new DirectionWidget(widget2); //widget2 = name of widget in ui
+                widget2->layout()->addWidget(widget2);*/
 
         connect(&monitorNode, SIGNAL(measuredMouseData(const MouseData)),
                 this, SLOT(processMouseData(const MouseData)));
+
+        connect(&monitorNode, SIGNAL(measuredMouseSettings(const std::string,
+                                     const pln_minotaur::PLN2033_Settings)),
+                this, SLOT(processMouseSettings(const std::string,
+                                                const pln_minotaur::PLN2033_Settings)));
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
     {
-        delete widget1;
-        delete widget2;
+        //delete widget1;
+        //delete widget2;
     }
 
     MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
@@ -51,7 +57,7 @@ namespace minotaur
             x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
             y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
 
-            widget1->updateWidget(data);
+            //widget1->updateWidget(data);
         } else if (data.id == SENSOR2) {
             name2->setText(QString::fromStdString(data.id));
             x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 2));
@@ -59,24 +65,24 @@ namespace minotaur
             x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
             y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
 
-            widget2->updateWidget(data);
+            //widget2->updateWidget(data);
         }
     }
 
-    void DirectionWidget::paintEvent(QPaintEvent *event)
-    {
-        QPainter *painter = new QPainter(this);
-        painter->begin(this);
+    /*    void DirectionWidget::paintEvent(QPaintEvent *event)
+        {
+            QPainter *painter = new QPainter(this);
+            painter->begin(this);
 
-        // Add the vertical lines first, paint them
-        painter->setPen(QPen(Qt::black, 1));
-        for (int x = GRID_X_START; x <= GRID_X_MAX; x += SCALE)
-            painter->drawLine(x, GRID_Y_START, x, GRID_Y_MAX);
+            // Add the vertical lines first, paint them
+            painter->setPen(QPen(Qt::black, 1));
+            for (int x = GRID_X_START; x <= GRID_X_MAX; x += SCALE)
+                painter->drawLine(x, GRID_Y_START, x, GRID_Y_MAX);
 
-        // Now add the horizontal lines, paint them
-        for (int y = GRID_Y_START; y <= GRID_Y_MAX; y += SCALE)
-            painter->drawLine(GRID_X_START, y, GRID_X_MAX, y);
-    }
+            // Now add the horizontal lines, paint them
+            for (int y = GRID_Y_START; y <= GRID_Y_MAX; y += SCALE)
+                painter->drawLine(GRID_X_START, y, GRID_X_MAX, y);
+        }*/
 
     void DirectionWidget::updateWidget(MouseData data)
     {

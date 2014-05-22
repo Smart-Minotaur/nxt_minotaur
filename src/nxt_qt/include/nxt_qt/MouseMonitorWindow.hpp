@@ -2,10 +2,10 @@
 #define MOUSE_MONITOR_WINDOW_H
 
 #include <QtGui/QMainWindow>
+#include <QWidget>
 #include "nxt_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
 #include "nxt_qt/MouseMonitorNode.hpp"
-#include <QWidget>
 
 namespace minotaur
 {
@@ -15,7 +15,7 @@ namespace minotaur
         private:
             MouseData data;
 
-            void paintEvent(QPaintEvent *event);
+            //void paintEvent(QPaintEvent *event);
 
         public:
             DirectionWidget(QWidget *parent = 0) : QWidget(parent) {}
@@ -30,8 +30,8 @@ namespace minotaur
 
         private:
             MouseMonitorNode monitorNode;
-            DirectionWidget *widget1;
-            DirectionWidget *widget2;
+            //DirectionWidget *widget1;
+            //DirectionWidget *widget2;
 
         private Q_SLOTS:
             void processMouseData(const MouseData data);
