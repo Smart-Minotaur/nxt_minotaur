@@ -4,15 +4,18 @@
 #include <string>
 #include "ros/ros.h"
 
-// grid params
-#define AMPLIFY 1000
-#define SCALE 20
+// Direction grid params
+#define DIRECTION_GRID_AMPLIFY 1000
+#define DIRECTION_GRID_SCALE 20
 
 // Plots
-#define MAX_PLOT_DISP 2
-#define PLOT_DISP_STEP MAX_PLOT_DISP / 10
-#define MAX_PLOT_SPEED 50
-#define PLOT_SPEED_STEP MAX_PLOT_SPEED / 10
+#define MAX_Y_RANGE_DISP 2
+#define Y_STEP_DISP MAX_Y_RANGE_DISP / 10
+#define X_STEP_DISP SAMPLE_RANGE / 10
+
+#define MAX_Y_RANGE_SPEED 50
+#define Y_STEP_SPEED MAX_Y_RANGE_SPEED / 5
+#define X_STEP_SPEED SAMPLE_RANGE / 10
 
 namespace minotaur
 {
@@ -72,6 +75,11 @@ namespace minotaur
         memset(xDisp2, 0, SAMPLE_RANGE * sizeof(double));
         memset(yDisp2, 0, SAMPLE_RANGE * sizeof(double));
 
+        memset(xSpeed1, 0, SAMPLE_RANGE * sizeof(double));
+        memset(ySpeed1, 0, SAMPLE_RANGE * sizeof(double));
+        memset(xSpeed2, 0, SAMPLE_RANGE * sizeof(double));
+        memset(ySpeed2, 0, SAMPLE_RANGE * sizeof(double));
+
         for(int i = 0; i < SAMPLE_RANGE; ++i) {
             xSamplesSensor1[i] = i;
             xSamplesSensor2[i] = i;
@@ -80,49 +88,73 @@ namespace minotaur
         sampleCountSensor1 = 0;
         sampleCountSensor2 = 0;
 
+        // Displacement
         xDisp1Curve.setPen(QColor(Qt::blue));
         xDisp1Curve.setSamples(xSamplesSensor1, xDisp1, SAMPLE_RANGE);
         xDisp1Curve.attach(x_disp1_viz);
-
-        x_disp1_viz->setTitle("X Displacement");
-        x_disp1_viz->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        x_disp1_viz->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_DISP, MAX_PLOT_DISP, PLOT_DISP_STEP);
-        x_disp1_viz->setAxisTitle(QwtPlot::xBottom, "step");
-        x_disp1_viz->setAxisTitle(QwtPlot::yLeft, "cm");
+        initPlot(x_disp1_viz, "X Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
 
         yDisp1Curve.setPen(QColor(Qt::blue));
         yDisp1Curve.setSamples(xSamplesSensor1, yDisp1, SAMPLE_RANGE);
         yDisp1Curve.attach(y_disp1_viz);
-
-        y_disp1_viz->setTitle("Y Displacement");
-        y_disp1_viz->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        y_disp1_viz->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_DISP, MAX_PLOT_DISP, PLOT_DISP_STEP);
-        y_disp1_viz->setAxisTitle(QwtPlot::xBottom, "step");
-        y_disp1_viz->setAxisTitle(QwtPlot::yLeft, "cm");
+        initPlot(y_disp1_viz, "Y Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
 
         xDisp2Curve.setPen(QColor(Qt::red));
         xDisp2Curve.setSamples(xSamplesSensor2, xDisp2, SAMPLE_RANGE);
         xDisp2Curve.attach(x_disp2_viz);
-
-        x_disp2_viz->setTitle("X Displacement");
-        x_disp2_viz->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        x_disp2_viz->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_DISP, MAX_PLOT_DISP, PLOT_DISP_STEP);
-        x_disp2_viz->setAxisTitle(QwtPlot::xBottom, "step");
-        x_disp2_viz->setAxisTitle(QwtPlot::yLeft, "cm");
+        initPlot(x_disp2_viz, "X Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
 
         yDisp2Curve.setPen(QColor(Qt::red));
         yDisp2Curve.setSamples(xSamplesSensor2, yDisp2, SAMPLE_RANGE);
         yDisp2Curve.attach(y_disp2_viz);
+        initPlot(y_disp2_viz, "Y Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
 
-        y_disp2_viz->setTitle("Y Displacement");
+        // Speed
+        xSpeed1Curve.setPen(QColor(Qt::blue));
+        xSpeed1Curve.setSamples(xSamplesSensor1, xSpeed1, SAMPLE_RANGE);
+        xSpeed1Curve.attach(x_speed1_viz);
+        initPlot(x_speed1_viz, "X Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
+
+        ySpeed1Curve.setPen(QColor(Qt::blue));
+        ySpeed1Curve.setSamples(xSamplesSensor1, ySpeed1, SAMPLE_RANGE);
+        ySpeed1Curve.attach(y_speed1_viz);
+        initPlot(y_speed1_viz, "Y Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
+
+        xSpeed2Curve.setPen(QColor(Qt::red));
+        xSpeed2Curve.setSamples(xSamplesSensor2, xSpeed2, SAMPLE_RANGE);
+        xSpeed2Curve.attach(x_speed2_viz);
+        initPlot(x_speed2_viz, "X Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
+
+        ySpeed2Curve.setPen(QColor(Qt::red));
+        ySpeed2Curve.setSamples(xSamplesSensor2, ySpeed2, SAMPLE_RANGE);
+        ySpeed2Curve.attach(y_speed2_viz);
+        initPlot(y_speed2_viz, "Y Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
+
+        /*y_disp2_viz->setTitle("Y Displacement");
         y_disp2_viz->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
         y_disp2_viz->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_DISP, MAX_PLOT_DISP, PLOT_DISP_STEP);
         y_disp2_viz->setAxisTitle(QwtPlot::xBottom, "step");
-        y_disp2_viz->setAxisTitle(QwtPlot::yLeft, "cm");
+        y_disp2_viz->setAxisTitle(QwtPlot::yLeft, "cm");*/
+    }
+
+    void MouseMonitorWindow::initPlot(QwtPlot *plot,
+                                      QString title,
+                                      double maxYRange,
+                                      double xStep,
+                                      double yStep,
+                                      QString xAxisTile,
+                                      QString yAxisTitle)
+    {
+        plot->setTitle(title);
+        plot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, xStep);
+        plot->setAxisScale(QwtPlot::yLeft, -maxYRange, maxYRange, yStep);
+        plot->setAxisTitle(QwtPlot::xBottom, xAxisTile);
+        plot->setAxisTitle(QwtPlot::yLeft, yAxisTitle);
     }
 
     void MouseMonitorWindow::updatePlotSensor1(MouseData data)
     {
+        // Displacement plot
         xDisp1[sampleCountSensor1] = data.x_disp;
         yDisp1[sampleCountSensor1] = data.y_disp;
 
@@ -132,12 +164,23 @@ namespace minotaur
         x_disp1_viz->replot();
         y_disp1_viz->replot();
 
+        // Speed plot
+        xSpeed1[sampleCountSensor1] = data.x_speed;
+        ySpeed1[sampleCountSensor1] = data.y_speed;
+
+        xSpeed1Curve.setSamples(xSamplesSensor1, xSpeed1, SAMPLE_RANGE);
+        ySpeed1Curve.setSamples(xSamplesSensor1, ySpeed1, SAMPLE_RANGE);
+
+        x_speed1_viz->replot();
+        y_speed1_viz->replot();
+
         ++sampleCountSensor1;
         sampleCountSensor1 %= SAMPLE_RANGE;
     }
 
     void MouseMonitorWindow::updatePlotSensor2(MouseData data)
     {
+        // Displacement plot
         xDisp2[sampleCountSensor2] = data.x_disp;
         yDisp2[sampleCountSensor2] = data.y_disp;
 
@@ -146,6 +189,16 @@ namespace minotaur
 
         x_disp2_viz->replot();
         y_disp2_viz->replot();
+
+        // Speed plot
+        xSpeed2[sampleCountSensor2] = data.x_speed;
+        ySpeed2[sampleCountSensor2] = data.y_speed;
+
+        xSpeed2Curve.setSamples(xSamplesSensor2, xSpeed2, SAMPLE_RANGE);
+        ySpeed2Curve.setSamples(xSamplesSensor2, ySpeed2, SAMPLE_RANGE);
+
+        x_speed2_viz->replot();
+        y_speed2_viz->replot();
 
         ++sampleCountSensor2;
         sampleCountSensor2 %= SAMPLE_RANGE;
@@ -194,14 +247,23 @@ namespace minotaur
     {
         QPainter painter(this);
 
-        // Add the vertical lines first, paint them
-        painter.setPen(QPen(Qt::black, 1));
-        for (int x = 0; x <= this->width(); x += SCALE)
-            painter.drawLine(x, 0, x, this->height());
+        double gridWidth = this->width();
+        double gridHeight = this->height();
 
-        // Now add the horizontal lines, paint them
-        for (int y = 0; y <= this->height(); y += SCALE)
-            painter.drawLine(0, y, this->width(), y);
+        int xSteps = (int) (gridWidth / DIRECTION_GRID_SCALE);
+        int ySteps = (int) (gridHeight / DIRECTION_GRID_SCALE);
+
+        painter.setPen(QPen(Qt::gray, 1));
+
+        for (int i = 0; i <= xSteps; ++i) {
+            painter.drawLine(i * DIRECTION_GRID_SCALE, 0,
+                             i * DIRECTION_GRID_SCALE, ySteps * DIRECTION_GRID_SCALE);
+        }
+
+        for (int i = 0; i <= ySteps; ++i) {
+            painter.drawLine(0, i * DIRECTION_GRID_SCALE,
+                             xSteps * DIRECTION_GRID_SCALE, i * DIRECTION_GRID_SCALE);
+        }
     }
 
     void DirectionWidget::updateWidget(MouseData data)
@@ -213,12 +275,38 @@ namespace minotaur
     void TrackPathWidget::paintEvent(QPaintEvent *event)
     {
         QPainter painter(this);
+
+        // Draw Grid
+        double gridWidth = this->width();
+        double gridHeight = this->height();
+
+        int xSteps = (int) (gridWidth / DIRECTION_GRID_SCALE);
+        int ySteps = (int) (gridHeight / DIRECTION_GRID_SCALE);
+
+        painter.setPen(QPen(Qt::gray, 1));
+
+        for (int i = 0; i <= xSteps; ++i) {
+            painter.drawLine(i * DIRECTION_GRID_SCALE, 0,
+                             i * DIRECTION_GRID_SCALE, ySteps * DIRECTION_GRID_SCALE);
+        }
+
+        for (int i = 0; i <= ySteps; ++i) {
+            painter.drawLine(0, i * DIRECTION_GRID_SCALE,
+                             xSteps * DIRECTION_GRID_SCALE, i * DIRECTION_GRID_SCALE);
+        }
+
         painter.setRenderHint(QPainter::Antialiasing);
 
-        if (data.id == "/dev/spidev1.0")
+        // Draw path
+        if (data.id == "/dev/spidev1.0") {
+            /*if (((MouseMonitorWindow *) this->parentWidget())->trackSensor1->isChecked())
+                return;*/
             painter.setPen(Qt::blue);
-        else if (data.id == "/dev/spidev1.1")
+        } else if (data.id == "/dev/spidev1.1") {
+            /*if (((MouseMonitorWindow *) this->parentWidget())->trackSensor2->isChecked())
+                return;*/
             painter.setPen(Qt::red);
+        }
 
         path.lineTo(path.currentPosition() + QPointF(data.x_disp, data.y_disp));
         painter.drawPath(path);

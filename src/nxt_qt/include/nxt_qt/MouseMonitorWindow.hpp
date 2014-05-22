@@ -34,6 +34,7 @@ namespace minotaur
             }
 
             void init() {
+                // TODO
                 startx = 300;//this->width() / 2;
                 starty = 300;//this->height() / 2;
 
@@ -77,22 +78,39 @@ namespace minotaur
             double xSamplesSensor1[SAMPLE_RANGE];
             double xSamplesSensor2[SAMPLE_RANGE];
 
+            int sampleCountSensor1;
+            int sampleCountSensor2;
+
             double xDisp1[SAMPLE_RANGE];
             double yDisp1[SAMPLE_RANGE];
             double xDisp2[SAMPLE_RANGE];
             double yDisp2[SAMPLE_RANGE];
+
+            double xSpeed1[SAMPLE_RANGE];
+            double ySpeed1[SAMPLE_RANGE];
+            double xSpeed2[SAMPLE_RANGE];
+            double ySpeed2[SAMPLE_RANGE];
 
             QwtPlotCurve xDisp1Curve;
             QwtPlotCurve yDisp1Curve;
             QwtPlotCurve xDisp2Curve;
             QwtPlotCurve yDisp2Curve;
 
-            int sampleCountSensor1;
-            int sampleCountSensor2;
+            QwtPlotCurve xSpeed1Curve;
+            QwtPlotCurve ySpeed1Curve;
+            QwtPlotCurve xSpeed2Curve;
+            QwtPlotCurve ySpeed2Curve;
 
             void initWidgets();
             void initTable();
             void initPlots();
+            void initPlot(QwtPlot *plot,
+                          QString title,
+                          double maxYRange,
+                          double xStep,
+                          double yStep,
+                          QString xAxisTile,
+                          QString yAxisTitle);
 
             void updatePlotSensor1(MouseData data);
             void updatePlotSensor2(MouseData data);

@@ -13,6 +13,13 @@
   <property name="windowTitle">
    <string>MouseMonitor</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../pln_minotaur/trunk/res/logo.png</normaloff>../../../../pln_minotaur/trunk/res/logo.png</iconset>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -363,20 +370,84 @@ QGroupBox::title {
             <property name="title">
              <string>Track Path Settings</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_9">
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
              <item>
-              <widget class="QCheckBox" name="trackSensor1">
-               <property name="text">
-                <string>Sensor1</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QCheckBox" name="trackSensor1">
+                 <property name="text">
+                  <string>Sensor1</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="trackSensor2">
+                 <property name="text">
+                  <string>Sensor2</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QCheckBox" name="trackSensor2">
-               <property name="text">
-                <string>Sensor2</string>
-               </property>
-              </widget>
+              <layout class="QGridLayout" name="gridLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>Abs. X Displacement [cm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_12">
+                 <property name="text">
+                  <string>Abs. X Displacement [cm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="x_disp2_abs">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="x_disp1_abs">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QLineEdit" name="y_disp_abs">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="label_13">
+                 <property name="text">
+                  <string>Abs. Y Displacement [cm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QLabel" name="label_14">
+                 <property name="text">
+                  <string>Abs. Y Displacement [cm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="3">
+                <widget class="QLineEdit" name="y_disp2_abs">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -415,6 +486,19 @@ QGroupBox::title {
        <layout class="QVBoxLayout" name="verticalLayout_13">
         <item>
          <widget class="QGroupBox" name="groupBox_2">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+     border: 2px solid gray;
+     border-radius: 5px;
+     margin-top: 1ex;
+}
+
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left;
+     padding: 0 3px;
+ }</string>
+          </property>
           <property name="title">
            <string>Sensor1</string>
           </property>
@@ -430,6 +514,19 @@ QGroupBox::title {
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_3">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+     border: 2px solid gray;
+     border-radius: 5px;
+     margin-top: 1ex;
+}
+
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left;
+     padding: 0 3px;
+ }</string>
+          </property>
           <property name="title">
            <string>Sensor2</string>
           </property>
@@ -452,6 +549,19 @@ QGroupBox::title {
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>
          <widget class="QGroupBox" name="groupBox_4">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+     border: 2px solid gray;
+     border-radius: 5px;
+     margin-top: 1ex;
+}
+
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left;
+     padding: 0 3px;
+ }</string>
+          </property>
           <property name="title">
            <string>Sensor1</string>
           </property>
@@ -467,6 +577,19 @@ QGroupBox::title {
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_5">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox {
+     border: 2px solid gray;
+     border-radius: 5px;
+     margin-top: 1ex;
+}
+
+QGroupBox::title {
+     subcontrol-origin: margin;
+     subcontrol-position: top left;
+     padding: 0 3px;
+ }</string>
+          </property>
           <property name="title">
            <string>Sensor2</string>
           </property>
@@ -478,6 +601,27 @@ QGroupBox::title {
             <widget class="QwtPlot" name="y_speed2_viz"/>
            </item>
           </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="DetailTab">
+       <attribute name="title">
+        <string>Detail Debugging</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="title">
+           <string>Sensor1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_6">
+          <property name="title">
+           <string>Sensor2</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -504,12 +648,13 @@ QGroupBox::title {
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionRobotik"/>
+    <addaction name="actionSetResolution"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -527,9 +672,14 @@ QGroupBox::title {
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionRobotik">
+  <action name="actionSetResolution">
    <property name="text">
     <string>Set Sensor Resolution</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>
