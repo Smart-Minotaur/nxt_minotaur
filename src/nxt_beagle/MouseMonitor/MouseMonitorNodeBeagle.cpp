@@ -24,7 +24,7 @@ namespace minotaur
         ros::Rate loop_rate(100);
 
         while (ros::ok()) {
-            publishData(sensor1):
+            publishData(sensor1);
             publishData(sensor2);
             publishSettings(sensor1);
             publishSettings(sensor2);
@@ -34,7 +34,7 @@ namespace minotaur
         }
     }
 
-    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice * sensor)
+    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
     {
         nxt_beagle::MouseMonitorSensorData data;
         pln_minotaur::IPLNTrackingDevice *tmp;
@@ -50,12 +50,12 @@ namespace minotaur
         }
     }
 
-    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice * sensor)
+    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice *sensor)
     {
         nxt_beagle::MouseMonitorSensorSettings settingsMsg;
         pln_minotaur::PLN2033_Settings settings;
 
-        sensor->readPLNSettings();
+        settingsMsg = sensor->readPLNSettings();
 
         settingsMsg.id = settings.spiDevice;
         settingsMsg.status_register = settings.status_register;

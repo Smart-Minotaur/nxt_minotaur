@@ -22,8 +22,8 @@ namespace minotaur
             pln_minotaur::IPLNTrackingDevice *sensor1;
             pln_minotaur::IPLNTrackingDevice *sensor2;
 
-            void publishData(pln_minotaur::IPLNTrackingDevice * sensor)
-            void publishSettings(pln_minotaur::IPLNTrackingDevice * sensor);
+            void publishData(pln_minotaur::IPLNTrackingDevice *sensor)
+            void publishSettings(pln_minotaur::IPLNTrackingDevice *sensor);
 
         public:
             MouseMonitorNodeBeagle();

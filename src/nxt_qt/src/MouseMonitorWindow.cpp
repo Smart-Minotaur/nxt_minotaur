@@ -5,6 +5,7 @@
 #include <QToolTip>
 #include <QMessageBox>
 #include <string>
+#include <iostream>
 #include "ros/ros.h"
 
 // Direction grid params
@@ -86,6 +87,7 @@ namespace minotaur
                      << "Misc" << "Interrupt Output";
 
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
+        sensorSettingsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     }
 
     void MouseMonitorWindow::initPlots()
@@ -254,7 +256,7 @@ namespace minotaur
     {
         // TODO: Insert settings values into the table
         if (id == SENSOR1) {
-            sensorSettingsTable->setItem(0,0, new QTableWidgetItem(settings.status_register));
+            sensorSettingsTable->setItem(0, 0, new QTableWidgetItem(settings.status_register));
             sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
             sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
             sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(settings.command_high_register));
@@ -267,9 +269,8 @@ namespace minotaur
             sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
             sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
             sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
-            sensorSettingsTable->setItem(0, 13, new QTableWidgetItem(settings.status_register));
         } else {
-            sensorSettingsTable->setItem(1,0, new QTableWidgetItem(settings.status_register));
+            sensorSettingsTable->setItem(1, 0, new QTableWidgetItem(settings.status_register));
             sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(settings.delta_x_disp_register));
             sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(settings.delta_y_disp_register));
             sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(settings.command_high_register));
@@ -282,8 +283,8 @@ namespace minotaur
             sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
             sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
             sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
-            sensorSettingsTable->setItem(1, 13, new QTableWidgetItem(settings.status_register));
         }
+        std::cout << "settujng";
     }
 
     void MouseMonitorWindow::openResolutionSettings()
