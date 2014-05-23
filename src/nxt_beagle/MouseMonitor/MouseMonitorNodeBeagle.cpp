@@ -26,6 +26,8 @@ namespace minotaur
         while (ros::ok()) {
             publishData(sensor1):
             publishData(sensor2);
+            publishSettings(sensor1);
+            publishSettings(sensor2);
 
             ros::spinOnce();
             loop_rate.sleep();
