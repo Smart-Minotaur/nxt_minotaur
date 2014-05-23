@@ -75,9 +75,13 @@ namespace minotaur
         sensorSettingsTable->setRowCount(2);
 
         QStringList headerLabels;
-        headerLabels << "Status Register";
+        headerLabels << "Status Register" << "Delta X Disp" << "Delta Y Disp"
+	<< "Command High" << "Command Low" << "Memory pointer" << "Memory Data"
+	<< "Mode Control" << "Power Control" << "Mode Status" << "System Control"
+	<< "Misc" << "Interrupt Output" << "Zu Viel";
 
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
+	
     }
 
     void MouseMonitorWindow::initPlots()
@@ -245,6 +249,42 @@ namespace minotaur
         const pln_minotaur::PLN2033_Settings settings)
     {
         // TODO: Insert settings values into the table
+        if (id == SENSOR1)
+	{
+	  sensorSettingsTable->setItem(0,0, new QTableWidgetItem(settings.status_register));
+	  sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
+	  sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
+	  sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(settings.command_high_register));
+	  sensorSettingsTable->setItem(0, 4, new QTableWidgetItem(settings.command_low_register));
+	  sensorSettingsTable->setItem(0, 5, new QTableWidgetItem(settings.memory_pointer_register));
+	  sensorSettingsTable->setItem(0, 6, new QTableWidgetItem(settings.memory_data_register));
+	  sensorSettingsTable->setItem(0, 7, new QTableWidgetItem(settings.mode_control_register));
+	  sensorSettingsTable->setItem(0, 8, new QTableWidgetItem(settings.power_control_register));
+	  sensorSettingsTable->setItem(0, 9, new QTableWidgetItem(settings.mode_status_register));
+	  sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
+	  sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
+	  sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
+	  sensorSettingsTable->setItem(0, 13, new QTableWidgetItem(settings.status_register));
+	  }
+	  else
+	  {
+	    sensorSettingsTable->setItem(1,0, new QTableWidgetItem(settings.status_register));
+	    sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(settings.delta_x_disp_register));
+	    sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(settings.delta_y_disp_register));
+	    sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(settings.command_high_register));
+	    sensorSettingsTable->setItem(1, 4, new QTableWidgetItem(settings.command_low_register));
+	    sensorSettingsTable->setItem(1, 5, new QTableWidgetItem(settings.memory_pointer_register));
+	    sensorSettingsTable->setItem(1, 6, new QTableWidgetItem(settings.memory_data_register));
+	    sensorSettingsTable->setItem(1, 7, new QTableWidgetItem(settings.mode_control_register));
+	    sensorSettingsTable->setItem(1, 8, new QTableWidgetItem(settings.power_control_register));
+	    sensorSettingsTable->setItem(1, 9, new QTableWidgetItem(settings.mode_status_register));
+	    sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
+	    sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
+	    sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
+	    sensorSettingsTable->setItem(1, 13, new QTableWidgetItem(settings.status_register));
+	  }
+	
+    
     }
 
     // Widgets ========================================================
