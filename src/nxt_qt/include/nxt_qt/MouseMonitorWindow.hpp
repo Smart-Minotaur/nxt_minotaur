@@ -122,6 +122,10 @@ namespace minotaur
             void processMouseSettings(const std::string id,
                                       const pln_minotaur::PLN2033_Settings settings);
 
+            void openResolutionSettings();
+            void openSamplingRateSettings();
+            void openAboutWindow();
+
         public:
             MouseMonitorWindow(QWidget *parent = 0);
             virtual ~MouseMonitorWindow();

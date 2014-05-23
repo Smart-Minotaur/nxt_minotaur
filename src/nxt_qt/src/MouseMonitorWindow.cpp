@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QToolTip>
+#include <QMessageBox>
 #include <string>
 #include "ros/ros.h"
 
@@ -46,6 +47,10 @@ namespace minotaur
 
         connect(trackSensor2, SIGNAL(stateChanged(int)),
                 pathWidget, SLOT(sensor2Enable(const int)));
+
+        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openResolutionSettings()));
+        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openSamplingRateSettings()));
+        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
@@ -71,17 +76,16 @@ namespace minotaur
     void MouseMonitorWindow::initTable()
     {
         // TODO: Add table initialization
-        sensorSettingsTable->setColumnCount(14);
+        sensorSettingsTable->setColumnCount(13);
         sensorSettingsTable->setRowCount(2);
 
         QStringList headerLabels;
         headerLabels << "Status Register" << "Delta X Disp" << "Delta Y Disp"
-	<< "Command High" << "Command Low" << "Memory pointer" << "Memory Data"
-	<< "Mode Control" << "Power Control" << "Mode Status" << "System Control"
-	<< "Misc" << "Interrupt Output" << "Zu Viel";
+                     << "Command High" << "Command Low" << "Memory pointer" << "Memory Data"
+                     << "Mode Control" << "Power Control" << "Mode Status" << "System Control"
+                     << "Misc" << "Interrupt Output";
 
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
-	
     }
 
     void MouseMonitorWindow::initPlots()
@@ -249,42 +253,53 @@ namespace minotaur
         const pln_minotaur::PLN2033_Settings settings)
     {
         // TODO: Insert settings values into the table
-        if (id == SENSOR1)
-	{
-	  sensorSettingsTable->setItem(0,0, new QTableWidgetItem(settings.status_register));
-	  sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
-	  sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
-	  sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(settings.command_high_register));
-	  sensorSettingsTable->setItem(0, 4, new QTableWidgetItem(settings.command_low_register));
-	  sensorSettingsTable->setItem(0, 5, new QTableWidgetItem(settings.memory_pointer_register));
-	  sensorSettingsTable->setItem(0, 6, new QTableWidgetItem(settings.memory_data_register));
-	  sensorSettingsTable->setItem(0, 7, new QTableWidgetItem(settings.mode_control_register));
-	  sensorSettingsTable->setItem(0, 8, new QTableWidgetItem(settings.power_control_register));
-	  sensorSettingsTable->setItem(0, 9, new QTableWidgetItem(settings.mode_status_register));
-	  sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
-	  sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
-	  sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
-	  sensorSettingsTable->setItem(0, 13, new QTableWidgetItem(settings.status_register));
-	  }
-	  else
-	  {
-	    sensorSettingsTable->setItem(1,0, new QTableWidgetItem(settings.status_register));
-	    sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(settings.delta_x_disp_register));
-	    sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(settings.delta_y_disp_register));
-	    sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(settings.command_high_register));
-	    sensorSettingsTable->setItem(1, 4, new QTableWidgetItem(settings.command_low_register));
-	    sensorSettingsTable->setItem(1, 5, new QTableWidgetItem(settings.memory_pointer_register));
-	    sensorSettingsTable->setItem(1, 6, new QTableWidgetItem(settings.memory_data_register));
-	    sensorSettingsTable->setItem(1, 7, new QTableWidgetItem(settings.mode_control_register));
-	    sensorSettingsTable->setItem(1, 8, new QTableWidgetItem(settings.power_control_register));
-	    sensorSettingsTable->setItem(1, 9, new QTableWidgetItem(settings.mode_status_register));
-	    sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
-	    sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
-	    sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
-	    sensorSettingsTable->setItem(1, 13, new QTableWidgetItem(settings.status_register));
-	  }
-	
-    
+        if (id == SENSOR1) {
+            sensorSettingsTable->setItem(0,0, new QTableWidgetItem(settings.status_register));
+            sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
+            sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
+            sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(settings.command_high_register));
+            sensorSettingsTable->setItem(0, 4, new QTableWidgetItem(settings.command_low_register));
+            sensorSettingsTable->setItem(0, 5, new QTableWidgetItem(settings.memory_pointer_register));
+            sensorSettingsTable->setItem(0, 6, new QTableWidgetItem(settings.memory_data_register));
+            sensorSettingsTable->setItem(0, 7, new QTableWidgetItem(settings.mode_control_register));
+            sensorSettingsTable->setItem(0, 8, new QTableWidgetItem(settings.power_control_register));
+            sensorSettingsTable->setItem(0, 9, new QTableWidgetItem(settings.mode_status_register));
+            sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
+            sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
+            sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
+            sensorSettingsTable->setItem(0, 13, new QTableWidgetItem(settings.status_register));
+        } else {
+            sensorSettingsTable->setItem(1,0, new QTableWidgetItem(settings.status_register));
+            sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(settings.delta_x_disp_register));
+            sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(settings.delta_y_disp_register));
+            sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(settings.command_high_register));
+            sensorSettingsTable->setItem(1, 4, new QTableWidgetItem(settings.command_low_register));
+            sensorSettingsTable->setItem(1, 5, new QTableWidgetItem(settings.memory_pointer_register));
+            sensorSettingsTable->setItem(1, 6, new QTableWidgetItem(settings.memory_data_register));
+            sensorSettingsTable->setItem(1, 7, new QTableWidgetItem(settings.mode_control_register));
+            sensorSettingsTable->setItem(1, 8, new QTableWidgetItem(settings.power_control_register));
+            sensorSettingsTable->setItem(1, 9, new QTableWidgetItem(settings.mode_status_register));
+            sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
+            sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
+            sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
+            sensorSettingsTable->setItem(1, 13, new QTableWidgetItem(settings.status_register));
+        }
+    }
+
+    void MouseMonitorWindow::openResolutionSettings()
+    {
+
+    }
+
+    void MouseMonitorWindow::openSamplingRateSettings()
+    {
+
+    }
+
+    void MouseMonitorWindow::openAboutWindow()
+    {
+        QMessageBox::about(this, tr("About MouseMonitor"),
+                           tr("This application allows to monitor two Philips PLN2033 Sensors."));
     }
 
     // Widgets ========================================================
@@ -333,7 +348,7 @@ namespace minotaur
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);
 
-        setMouseTracking(true);
+        //setMouseTracking(true);
 
         zoom = 1;
         sensor1_enable = true;
@@ -417,17 +432,17 @@ namespace minotaur
 
     void TrackPathWidget::mouseMoveEvent(QMouseEvent *event)
     {
-        translatex = event->x() - lastMousePos.x();
-        translatey = event->y() - lastMousePos.y();
-
         lastMousePos = event->posF();
 
-        QString str = "Last Mouse Pos";
-        QToolTip::showText(this->mapToGlobal(lastMousePos.toPoint()), str, this);
+        QString str = "Move mouse to translate map";
+        QToolTip::showText(this->mapToGlobal(event->pos()), str, this);
     }
 
     void TrackPathWidget::mouseReleaseEvent(QMouseEvent *event)
     {
+        translatex = event->x() - lastMousePos.x();
+        translatey = event->y() - lastMousePos.y();
+
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);
     }
