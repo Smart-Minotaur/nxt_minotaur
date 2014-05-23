@@ -63,16 +63,20 @@ namespace minotaur
     void MouseMonitorWindow::initTable()
     {
         // TODO: Add table initialization
-        sensorSettingsTable->setColumnCount(14);
+        sensorSettingsTable->setColumnCount(13);
         sensorSettingsTable->setRowCount(2);
 
+	
+	
         QStringList headerLabels;
         headerLabels << "Status Register" << "Delta X Disp" << "Delta Y Disp"
 	<< "Command High" << "Command Low" << "Memory pointer" << "Memory Data"
 	<< "Mode Control" << "Power Control" << "Mode Status" << "System Control"
-	<< "Misc" << "Interrupt Output" << "Zu Viel";
+	<< "Misc" << "Interrupt Output";
 
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
+	
+	sensorSettingsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 	
     }
 
@@ -256,7 +260,6 @@ namespace minotaur
 	  sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
 	  sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
 	  sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
-	  sensorSettingsTable->setItem(0, 13, new QTableWidgetItem(settings.status_register));
 	  }
 	  else
 	  {
@@ -273,7 +276,6 @@ namespace minotaur
 	    sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
 	    sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
 	    sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
-	    sensorSettingsTable->setItem(1, 13, new QTableWidgetItem(settings.status_register));
 	  }
 	
     
