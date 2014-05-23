@@ -24,49 +24,40 @@ namespace minotaur
         ros::Rate loop_rate(100);
 
         while (ros::ok()) {
-            nxt_beagle::MouseMonitorSensorData data_s1;
-            nxt_beagle::MouseMonitorSensorData data_s2;
-
-            if (sensor1->readStatusAndDisplacementAndSpeed(
-                        data_s1.x_speed,
-                        data_s1.y_speed,
-                        data_s1.x_disp,
-                        data_s1.y_disp)) {
-
-                data_s1.id = SENSOR1;
-
-                pubMouseData.publish(data_s1);
-            }
-
-            if (sensor2->readStatusAndDisplacementAndSpeed(
-                        data_s2.x_speed,
-                        data_s2.y_speed,
-                        data_s2.x_disp,
-                        data_s2.y_disp)) {
-
-                data_s2.id = SENSOR2;
-
-                pubMouseData.publish(data_s2);
-            }
+            publishData(sensor1):
+            publishData(sensor2);
+            publishSettings(sensor1);
+            publishSettings(sensor2);
 
             ros::spinOnce();
             loop_rate.sleep();
         }
     }
 
-    void MouseMonitorNodeBeagle::publishSettings(std::string sensor)
+    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice * sensor)
     {
+        nxt_beagle::MouseMonitorSensorData data;
+        pln_minotaur::IPLNTrackingDevice *tmp;
+
+        data.id = sensor->readPLNSettings().spiDevice;
+
+        if (sensor->readStatusAndDisplacementAndSpeed(
+                    data.x_speed,
+                    data.y_speed,
+                    data.x_disp,
+                    data.y_disp)) {
+            pubMouseData.publish(data);
+        }
+    }
+
+    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice * sensor)
+    {
+        nxt_beagle::MouseMonitorSensorSettings settingsMsg;
         pln_minotaur::PLN2033_Settings settings;
 
-        if (sensor == SENSOR1) {
-            settings = sensor1->readPLNSettings();
-        } else if (sensor == SENSOR2) {
-            settings = sensor1->readPLNSettings();
-        }
+        sensor->readPLNSettings();
 
-        nxt_beagle::MouseMonitorSensorSettings settingsMsg;
-
-        settingsMsg.id = sensor;
+        settingsMsg.id = settings.spiDevice;
         settingsMsg.status_register = settings.status_register;
         settingsMsg.delta_x_disp_register = 0; // TODO
         settingsMsg.delta_y_disp_register = 0; // TODO

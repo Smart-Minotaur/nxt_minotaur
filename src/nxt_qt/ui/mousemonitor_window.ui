@@ -55,7 +55,7 @@
              <item>
               <widget class="QGroupBox" name="dataBox1">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -192,7 +192,7 @@ QGroupBox::title {
              <item>
               <widget class="QGroupBox" name="dataBox2">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -347,16 +347,9 @@ QGroupBox::title {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="getSensorSettingsBtn">
             <property name="text">
              <string>Get Sensor Settings</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
             </property>
            </widget>
           </item>
@@ -390,12 +383,18 @@ QGroupBox::title {
                  <property name="text">
                   <string>Sensor1</string>
                  </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
                <item>
                 <widget class="QCheckBox" name="trackSensor2">
                  <property name="text">
                   <string>Sensor2</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -493,8 +492,14 @@ QGroupBox::title {
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
               <property name="maximum">
-               <number>10</number>
+               <number>30</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -710,7 +715,7 @@ QGroupBox::title {
      <string>Settings</string>
     </property>
     <addaction name="actionSetResolution"/>
-    <addaction name="actionSet_Intervall"/>
+    <addaction name="actionSetIntervall"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -744,7 +749,7 @@ QGroupBox::title {
     <string>About</string>
    </property>
   </action>
-  <action name="actionSet_Intervall">
+  <action name="actionSetIntervall">
    <property name="text">
     <string>Set Sampling Intervall</string>
    </property>

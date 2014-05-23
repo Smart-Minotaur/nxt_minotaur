@@ -21,11 +21,13 @@ namespace minotaur
             Q_OBJECT
 
         private:
-            MouseData data;
-
             double startx;
             double starty;
-            QPainterPath path;
+            QPointF lastMousePos;
+            double translatex;
+            double translatey;
+            QPainterPath sensor1_path;
+            QPainterPath sensor2_path;
 
             int zoom;
             bool sensor1_enable;
@@ -40,19 +42,18 @@ namespace minotaur
 
         public Q_SLOTS:
             void zoomValueChanged(const int value);
-            void sensor1Enalbe(const bool status);
-            void sensor2Enable(const bool status);
+            void sensor1Enable(const int status);
+            void sensor2Enable(const int status);
 
         protected:
             void paintEvent(QPaintEvent *event);
+            void mouseMoveEvent(QMouseEvent *event);
+            void mouseReleaseEvent(QMouseEvent *event);
     };
 
     class DirectionWidget : public QWidget
     {
             Q_OBJECT
-
-        private:
-            MouseData data;
 
         public:
             DirectionWidget(QWidget *parent = 0) : QWidget(parent) {}
