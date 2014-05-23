@@ -12,8 +12,8 @@ namespace minotaur
         pubSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
                                ROS_MOUSE_SETTINGS_TOPIC, 100);
 
-        serviceData = nodeHandle.advertiseService("getSensorData", sendData);
-        serviceSettings = nodeHandle.advertiseService("getSensorSettings", sendSettings);
+        serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
+        serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
