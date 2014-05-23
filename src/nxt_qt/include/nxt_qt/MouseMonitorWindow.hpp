@@ -22,26 +22,26 @@ namespace minotaur
 
         private:
             MouseData data;
+
             double startx;
             double starty;
             QPainterPath path;
 
+            int zoom;
+            bool sensor1_enable;
+            bool sensor2_enable;
+
         public:
-            TrackPathWidget(QWidget *parent = 0) : QWidget(parent) {
-            }
+            TrackPathWidget(QWidget *parent = 0) : QWidget(parent) {}
+            virtual ~TrackPathWidget() {}
 
-            virtual ~TrackPathWidget() {
-            }
-
-            void init() {
-                // TODO
-                startx = 300;//this->width() / 2;
-                starty = 300;//this->height() / 2;
-
-                path.moveTo(QPointF(startx, starty));
-            }
-
+            void init();
             void updateWidget(MouseData data);
+
+        public Q_SLOTS:
+            void zoomValueChanged(const int value);
+            void sensor1Enalbe(const bool status);
+            void sensor2Enable(const bool status);
 
         protected:
             void paintEvent(QPaintEvent *event);
@@ -70,11 +70,12 @@ namespace minotaur
 
         private:
             MouseMonitorNode monitorNode;
+
             DirectionWidget *directionWidget1;
             DirectionWidget *directionWidget2;
             TrackPathWidget *pathWidget;
 
-            // Plot data
+            // Plot stuff
             double xSamplesSensor1[SAMPLE_RANGE];
             double xSamplesSensor2[SAMPLE_RANGE];
 
@@ -109,7 +110,7 @@ namespace minotaur
                           double maxYRange,
                           double xStep,
                           double yStep,
-                          QString xAxisTile,
+                          QString xAxisTitle,
                           QString yAxisTitle);
 
             void updatePlotSensor1(MouseData data);

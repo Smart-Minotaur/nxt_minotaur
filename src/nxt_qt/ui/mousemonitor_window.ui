@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>981</width>
-    <height>798</height>
+    <height>820</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,12 @@
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <widget class="QGroupBox" name="dataBox1">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
      border: 2px solid gray;
@@ -185,6 +191,12 @@ QGroupBox::title {
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
               <widget class="QGroupBox" name="dataBox2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
      border: 2px solid gray;
@@ -362,7 +374,7 @@ QGroupBox::title {
           <item>
            <widget class="QGroupBox" name="groupBox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -453,7 +465,58 @@ QGroupBox::title {
            </widget>
           </item>
           <item>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMinimumSize</enum>
+            </property>
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
+            <property name="rowWrapPolicy">
+             <enum>QFormLayout::DontWrapRows</enum>
+            </property>
+            <property name="verticalSpacing">
+             <number>6</number>
+            </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Zoom</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSlider" name="zoomSlider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="invertedAppearance">
+               <bool>false</bool>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksAbove</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QFrame" name="trackPathFrame">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -471,8 +534,6 @@ QGroupBox::title {
               <layout class="QVBoxLayout" name="verticalLayout_7"/>
              </item>
             </layout>
-            <zorder>groupBox</zorder>
-            <zorder>verticalLayoutWidget_4</zorder>
            </widget>
           </item>
          </layout>
@@ -649,6 +710,7 @@ QGroupBox::title {
      <string>Settings</string>
     </property>
     <addaction name="actionSetResolution"/>
+    <addaction name="actionSet_Intervall"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -680,6 +742,11 @@ QGroupBox::title {
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionSet_Intervall">
+   <property name="text">
+    <string>Set Sampling Intervall</string>
    </property>
   </action>
  </widget>

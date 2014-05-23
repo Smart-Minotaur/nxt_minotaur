@@ -5,8 +5,7 @@
 #include "ros/ros.h"
 
 // Direction grid params
-#define DIRECTION_GRID_AMPLIFY 1000
-#define DIRECTION_GRID_SCALE 20
+#define GRID_SCALE 20
 
 // Plots
 #define MAX_Y_RANGE_DISP 2
@@ -36,6 +35,9 @@ namespace minotaur
                                      const pln_minotaur::PLN2033_Settings)),
                 this, SLOT(processMouseSettings(const std::string,
                                                 const pln_minotaur::PLN2033_Settings)));
+
+        /*connect(zoomSlider, SIGNAL(valueChanged(int)),
+            &pathWidget, SLOT(zoomValueChanged(const int)));*/
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
@@ -63,8 +65,10 @@ namespace minotaur
         // TODO: Add table initialization
         sensorSettingsTable->setColumnCount(14);
         sensorSettingsTable->setRowCount(2);
+
         QStringList headerLabels;
         headerLabels << "Status Register";
+
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
     }
 
@@ -129,12 +133,6 @@ namespace minotaur
         ySpeed2Curve.setSamples(xSamplesSensor2, ySpeed2, SAMPLE_RANGE);
         ySpeed2Curve.attach(y_speed2_viz);
         initPlot(y_speed2_viz, "Y Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
-
-        /*y_disp2_viz->setTitle("Y Displacement");
-        y_disp2_viz->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, 50);
-        y_disp2_viz->setAxisScale(QwtPlot::yLeft, -MAX_PLOT_DISP, MAX_PLOT_DISP, PLOT_DISP_STEP);
-        y_disp2_viz->setAxisTitle(QwtPlot::xBottom, "step");
-        y_disp2_viz->setAxisTitle(QwtPlot::yLeft, "cm");*/
     }
 
     void MouseMonitorWindow::initPlot(QwtPlot *plot,
@@ -142,13 +140,13 @@ namespace minotaur
                                       double maxYRange,
                                       double xStep,
                                       double yStep,
-                                      QString xAxisTile,
+                                      QString xAxisTitle,
                                       QString yAxisTitle)
     {
         plot->setTitle(title);
         plot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, xStep);
         plot->setAxisScale(QwtPlot::yLeft, -maxYRange, maxYRange, yStep);
-        plot->setAxisTitle(QwtPlot::xBottom, xAxisTile);
+        plot->setAxisTitle(QwtPlot::xBottom, xAxisTitle);
         plot->setAxisTitle(QwtPlot::yLeft, yAxisTitle);
     }
 
@@ -250,19 +248,19 @@ namespace minotaur
         double gridWidth = this->width();
         double gridHeight = this->height();
 
-        int xSteps = (int) (gridWidth / DIRECTION_GRID_SCALE);
-        int ySteps = (int) (gridHeight / DIRECTION_GRID_SCALE);
+        int xSteps = (int) (gridWidth / GRID_SCALE);
+        int ySteps = (int) (gridHeight / GRID_SCALE);
 
         painter.setPen(QPen(Qt::gray, 1));
 
         for (int i = 0; i <= xSteps; ++i) {
-            painter.drawLine(i * DIRECTION_GRID_SCALE, 0,
-                             i * DIRECTION_GRID_SCALE, ySteps * DIRECTION_GRID_SCALE);
+            painter.drawLine(i * GRID_SCALE, 0,
+                             i * GRID_SCALE, ySteps * GRID_SCALE);
         }
 
         for (int i = 0; i <= ySteps; ++i) {
-            painter.drawLine(0, i * DIRECTION_GRID_SCALE,
-                             xSteps * DIRECTION_GRID_SCALE, i * DIRECTION_GRID_SCALE);
+            painter.drawLine(0, i * GRID_SCALE,
+                             xSteps * GRID_SCALE, i * GRID_SCALE);
         }
     }
 
@@ -272,39 +270,53 @@ namespace minotaur
         update();
     }
 
+    void TrackPathWidget::init()
+    {
+        // TODO
+        startx = this->width() / 2;
+        starty = this->height() / 2;
+
+        path.moveTo(QPointF(startx, starty));
+
+        zoom = 0;
+        sensor1_enable = true;
+        sensor2_enable = true;
+    }
+
     void TrackPathWidget::paintEvent(QPaintEvent *event)
     {
         QPainter painter(this);
 
-        // Draw Grid
+        // Draw grid
         double gridWidth = this->width();
         double gridHeight = this->height();
 
-        int xSteps = (int) (gridWidth / DIRECTION_GRID_SCALE);
-        int ySteps = (int) (gridHeight / DIRECTION_GRID_SCALE);
+        int xSteps = (int) (gridWidth / GRID_SCALE);
+        int ySteps = (int) (gridHeight / GRID_SCALE);
 
         painter.setPen(QPen(Qt::gray, 1));
 
         for (int i = 0; i <= xSteps; ++i) {
-            painter.drawLine(i * DIRECTION_GRID_SCALE, 0,
-                             i * DIRECTION_GRID_SCALE, ySteps * DIRECTION_GRID_SCALE);
+            painter.drawLine(i * GRID_SCALE, 0,
+                             i * GRID_SCALE, ySteps * GRID_SCALE);
         }
 
         for (int i = 0; i <= ySteps; ++i) {
-            painter.drawLine(0, i * DIRECTION_GRID_SCALE,
-                             xSteps * DIRECTION_GRID_SCALE, i * DIRECTION_GRID_SCALE);
+            painter.drawLine(0, i * GRID_SCALE,
+                             xSteps * GRID_SCALE, i * GRID_SCALE);
         }
 
         painter.setRenderHint(QPainter::Antialiasing);
+        painter.scale((qreal) zoom, (qreal) zoom);
 
         // Draw path
         if (data.id == "/dev/spidev1.0") {
-            /*if (((MouseMonitorWindow *) this->parentWidget())->trackSensor1->isChecked())
-                return;*/
+            if (!sensor1_enable)
+                return;
             painter.setPen(Qt::blue);
         } else if (data.id == "/dev/spidev1.1") {
-            /*if (((MouseMonitorWindow *) this->parentWidget())->trackSensor2->isChecked())
-                return;*/
+            if (!sensor2_enable)
+                return;
             painter.setPen(Qt::red);
         }
 
@@ -316,6 +328,21 @@ namespace minotaur
     {
         this->data = data;
         update();
+    }
+
+    void TrackPathWidget::zoomValueChanged(const int value)
+    {
+        zoom = value;
+    }
+
+    void TrackPathWidget::sensor1Enalbe(const bool status)
+    {
+        this->sensor1_enable = status;
+    }
+
+    void TrackPathWidget::sensor2Enable(const bool status)
+    {
+        this->sensor2_enable = status;
     }
 
 }
