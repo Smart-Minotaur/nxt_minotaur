@@ -26,8 +26,12 @@ namespace minotaur
         private:
             ros::NodeHandle nodeHandle;
 
-            ros::Subscriber sensorData;
-            ros::Subscriber sensorSettings;
+            ros::Subscriber subData;
+            ros::Subscriber subSettings;
+
+            // Service
+            ros::ServiceClient serviceData;
+            ros::ServiceClient serviceSettings;
 
             void processMouseDataMessage(
                 const nxt_beagle::MouseMonitorSensorData& msg);

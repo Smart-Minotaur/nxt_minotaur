@@ -50,8 +50,8 @@ namespace minotaur
                 pathWidget, SLOT(sensor2Enable(const int)));
 
         connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openResolutionSettings()));
-        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openSamplingRateSettings()));
-        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
+        connect(actionSetIntervall, SIGNAL(triggered()), this, SLOT(openSamplingRateSettings()));
+        connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
@@ -441,8 +441,8 @@ namespace minotaur
 
     void TrackPathWidget::mouseReleaseEvent(QMouseEvent *event)
     {
-        translatex = event->x() - lastMousePos.x();
-        translatey = event->y() - lastMousePos.y();
+        translatex = event->x();// - lastMousePos.x();
+        translatey = event->y();// - lastMousePos.y();
 
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);

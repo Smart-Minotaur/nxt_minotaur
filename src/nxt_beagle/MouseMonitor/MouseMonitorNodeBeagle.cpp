@@ -7,10 +7,13 @@ namespace minotaur
         sensor1(new pln_minotaur::PLN2033(SENSOR1)),
         sensor2(new pln_minotaur::PLN2033(SENSOR2))
     {
-        pubMouseData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
+        pubData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
                            ROS_MOUSE_DATA_TOPIC, 100);
-        pubMouseSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
+        pubSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
                                ROS_MOUSE_SETTINGS_TOPIC, 100);
+
+        serviceData = nodeHandle.advertiseService("getSensorData", sendData);
+        serviceSettings = nodeHandle.advertiseService("getSensorSettings", sendSettings);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
@@ -23,6 +26,8 @@ namespace minotaur
     {
         ros::Rate loop_rate(100);
 
+        //ros::spin();
+
         while (ros::ok()) {
             publishData(sensor1);
             publishData(sensor2);
@@ -32,6 +37,18 @@ namespace minotaur
             ros::spinOnce();
             loop_rate.sleep();
         }
+    }
+
+    bool sendData(nxt_beagle::MouseMonitorSensorGetData::Request  &req,
+              nxt_beagle::MouseMonitorSensorGetData::Response &res)
+    {
+
+    }
+
+    bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request  &req,
+              nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
+    {
+
     }
 
     void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
@@ -46,7 +63,7 @@ namespace minotaur
                     data.y_speed,
                     data.x_disp,
                     data.y_disp)) {
-            pubMouseData.publish(data);
+            pubData.publish(data);
         }
     }
 
@@ -55,7 +72,7 @@ namespace minotaur
         nxt_beagle::MouseMonitorSensorSettings settingsMsg;
         pln_minotaur::PLN2033_Settings settings;
 
-        settingsMsg = sensor->readPLNSettings();
+        settings = sensor->readPLNSettings();
 
         settingsMsg.id = settings.spiDevice;
         settingsMsg.status_register = settings.status_register;
@@ -72,7 +89,7 @@ namespace minotaur
         settingsMsg.miscellaneous_register = settings.miscellaneous_register;
         settingsMsg.interrupt_output_register = settings.interrupt_output_register;
 
-        pubMouseSettings.publish(settingsMsg);
+        pubSettings.publish(settingsMsg);
     }
 
 }
