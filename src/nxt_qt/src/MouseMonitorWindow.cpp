@@ -1,6 +1,8 @@
 #include "nxt_qt/MouseMonitorWindow.hpp"
 #include <QPainter>
 #include <QWidget>
+#include <QMouseEvent>
+#include <QToolTip>
 #include <string>
 #include "ros/ros.h"
 
@@ -12,7 +14,7 @@
 #define Y_STEP_DISP MAX_Y_RANGE_DISP / 10
 #define X_STEP_DISP SAMPLE_RANGE / 10
 
-#define MAX_Y_RANGE_SPEED 50
+#define MAX_Y_RANGE_SPEED 100
 #define Y_STEP_SPEED MAX_Y_RANGE_SPEED / 5
 #define X_STEP_SPEED SAMPLE_RANGE / 10
 
@@ -36,8 +38,14 @@ namespace minotaur
                 this, SLOT(processMouseSettings(const std::string,
                                                 const pln_minotaur::PLN2033_Settings)));
 
-        /*connect(zoomSlider, SIGNAL(valueChanged(int)),
-            &pathWidget, SLOT(zoomValueChanged(const int)));*/
+        connect(zoomSlider, SIGNAL(valueChanged(int)),
+                pathWidget, SLOT(zoomValueChanged(const int)));
+
+        connect(trackSensor1, SIGNAL(stateChanged(int)),
+                pathWidget, SLOT(sensor1Enable(const int)));
+
+        connect(trackSensor2, SIGNAL(stateChanged(int)),
+                pathWidget, SLOT(sensor2Enable(const int)));
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
@@ -266,19 +274,28 @@ namespace minotaur
 
     void DirectionWidget::updateWidget(MouseData data)
     {
-        this->data = data;
+        // TODO: Update the data
+
         update();
     }
 
     void TrackPathWidget::init()
     {
         // TODO
-        startx = this->width() / 2;
-        starty = this->height() / 2;
+        startx = geometry().width() / 2.0;
+        starty = 20;
 
-        path.moveTo(QPointF(startx, starty));
+        sensor1_path.moveTo(QPointF(startx, starty));
+        sensor2_path.moveTo(QPointF(startx, starty));
 
-        zoom = 0;
+        translatex = 0.0;
+        translatey = 0.0;
+        lastMousePos.setX(0.0);
+        lastMousePos.setY(0.0);
+
+        setMouseTracking(true);
+
+        zoom = 1;
         sensor1_enable = true;
         sensor2_enable = true;
     }
@@ -308,41 +325,71 @@ namespace minotaur
 
         painter.setRenderHint(QPainter::Antialiasing);
         painter.scale((qreal) zoom, (qreal) zoom);
+        painter.translate(QPointF(translatex, translatey));
 
         // Draw path
-        if (data.id == "/dev/spidev1.0") {
-            if (!sensor1_enable)
-                return;
+        if (sensor1_enable) {
             painter.setPen(Qt::blue);
-        } else if (data.id == "/dev/spidev1.1") {
-            if (!sensor2_enable)
-                return;
-            painter.setPen(Qt::red);
+            painter.drawPath(sensor1_path);
         }
 
-        path.lineTo(path.currentPosition() + QPointF(data.x_disp, data.y_disp));
-        painter.drawPath(path);
+        if (sensor2_enable) {
+            painter.setPen(Qt::red);
+            painter.drawPath(sensor2_path);
+        }
     }
 
     void TrackPathWidget::updateWidget(MouseData data)
     {
-        this->data = data;
+        if (data.id == "/dev/spidev1.0")
+            sensor1_path.lineTo(sensor1_path.currentPosition() + QPointF(data.x_disp, data.y_disp));
+        else if (data.id == "/dev/spidev1.1")
+            sensor2_path.lineTo(sensor2_path.currentPosition() + QPointF(data.x_disp, data.y_disp));
+
         update();
     }
 
     void TrackPathWidget::zoomValueChanged(const int value)
     {
         zoom = value;
+        update();
     }
 
-    void TrackPathWidget::sensor1Enalbe(const bool status)
+    void TrackPathWidget::sensor1Enable(const int status)
     {
-        this->sensor1_enable = status;
+        if (status == 2)
+            this->sensor1_enable = true;
+        else
+            this->sensor1_enable = false;
+
+        update();
     }
 
-    void TrackPathWidget::sensor2Enable(const bool status)
+    void TrackPathWidget::sensor2Enable(const int status)
     {
-        this->sensor2_enable = status;
+        if (status == 2)
+            this->sensor2_enable = true;
+        else
+            this->sensor2_enable = false;
+
+        update();
+    }
+
+    void TrackPathWidget::mouseMoveEvent(QMouseEvent *event)
+    {
+        translatex = event->x() - lastMousePos.x();
+        translatey = event->y() - lastMousePos.y();
+
+        lastMousePos = event->posF();
+
+        QString str = "Last Mouse Pos";
+        QToolTip::showText(this->mapToGlobal(lastMousePos.toPoint()), str, this);
+    }
+
+    void TrackPathWidget::mouseReleaseEvent(QMouseEvent *event)
+    {
+        lastMousePos.setX(0.0);
+        lastMousePos.setY(0.0);
     }
 
 }
