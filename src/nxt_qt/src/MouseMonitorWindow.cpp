@@ -433,17 +433,24 @@ namespace minotaur
 
     void TrackPathWidget::mouseMoveEvent(QMouseEvent *event)
     {
-        lastMousePos = event->posF();
-
         QString str = "Move mouse to translate map";
         QToolTip::showText(this->mapToGlobal(event->pos()), str, this);
+
+        if (lastMousePos.x() == 0 && lastMousePos.y() == 0) {
+            lastMousePos = event->posF();
+            return;
+        }
+
+        translatex += event->x() - lastMousePos.x();
+        translatey += event->y() - lastMousePos.y();
+
+        lastMousePos = event->posF();
+
+        update();
     }
 
     void TrackPathWidget::mouseReleaseEvent(QMouseEvent *event)
     {
-        translatex = event->x();// - lastMousePos.x();
-        translatey = event->y();// - lastMousePos.y();
-
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);
     }
