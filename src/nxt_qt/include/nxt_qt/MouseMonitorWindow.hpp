@@ -6,12 +6,15 @@
 #include <QPainterPath>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
+#include <QTimer>
 
 #include "nxt_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
 #include "nxt_qt/MouseMonitorNode.hpp"
 
-#define SAMPLE_RANGE 300
+#include <QToolButton>
+
+#define SAMPLE_RANGE 500
 
 namespace minotaur
 {
@@ -33,6 +36,11 @@ namespace minotaur
             bool sensor1_enable;
             bool sensor2_enable;
 
+        protected:
+            void paintEvent(QPaintEvent *event);
+            void mouseMoveEvent(QMouseEvent *event);
+            void mouseReleaseEvent(QMouseEvent *event);
+
         public:
             TrackPathWidget(QWidget *parent = 0) : QWidget(parent) {}
             virtual ~TrackPathWidget() {}
@@ -44,25 +52,19 @@ namespace minotaur
             void zoomValueChanged(const int value);
             void sensor1Enable(const int status);
             void sensor2Enable(const int status);
-
-        protected:
-            void paintEvent(QPaintEvent *event);
-            void mouseMoveEvent(QMouseEvent *event);
-            void mouseReleaseEvent(QMouseEvent *event);
     };
 
     class DirectionWidget : public QWidget
     {
             Q_OBJECT
+        protected:
+            void paintEvent(QPaintEvent *event);
 
         public:
             DirectionWidget(QWidget *parent = 0) : QWidget(parent) {}
             virtual ~DirectionWidget() {}
 
             void updateWidget(MouseData data);
-
-        protected:
-            void paintEvent(QPaintEvent *event);
     };
 
     class MouseMonitorWindow : public QMainWindow, public Ui::MouseMonitorMainWindow
@@ -75,6 +77,12 @@ namespace minotaur
             DirectionWidget *directionWidget1;
             DirectionWidget *directionWidget2;
             TrackPathWidget *pathWidget;
+
+            QToolButton *sampleRateBtn;
+            QToolButton *resolutionBtn;
+
+            QTimer *timer;
+            int sampleRateMs;
 
             // Plot stuff
             double xSamplesSensor1[SAMPLE_RANGE];
@@ -103,6 +111,7 @@ namespace minotaur
             QwtPlotCurve xSpeed2Curve;
             QwtPlotCurve ySpeed2Curve;
 
+            // Init functions
             void initWidgets();
             void initTable();
             void initPlots();
@@ -113,18 +122,24 @@ namespace minotaur
                           double yStep,
                           QString xAxisTitle,
                           QString yAxisTitle);
+            void initToolbar();
+            void initTimer();
+            void connectSlots();
 
             void updatePlotSensor1(MouseData data);
             void updatePlotSensor2(MouseData data);
 
         private Q_SLOTS:
             void processMouseData(const MouseData data);
-            void processMouseSettings(const std::string id,
-                                      const pln_minotaur::PLN2033_Settings settings);
+            void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
             void openResolutionSettings();
             void openSamplingRateSettings();
             void openAboutWindow();
+            void sampleRateBtnClicked();
+            void resolutionBtnClicked();
+
+            void timerTimeout();
 
         public:
             MouseMonitorWindow(QWidget *parent = 0);

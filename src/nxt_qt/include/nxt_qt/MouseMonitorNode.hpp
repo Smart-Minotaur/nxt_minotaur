@@ -29,14 +29,19 @@ namespace minotaur
             ros::Subscriber subData;
             ros::Subscriber subSettings;
 
-            // Service
             ros::ServiceClient serviceData;
             ros::ServiceClient serviceSettings;
 
             void processMouseDataMessage(
                 const nxt_beagle::MouseMonitorSensorData& msg);
 
+            MouseData convertMouseDataMessage(
+                const nxt_beagle::MouseMonitorSensorData& msg);
+
             void processMouseSettingsMessage(
+                const nxt_beagle::MouseMonitorSensorSettings& settingsMsg);
+
+            pln_minotaur::PLN2033_Settings convertMouseSettingsMessage(
                 const nxt_beagle::MouseMonitorSensorSettings& settingsMsg);
 
         public:
@@ -44,12 +49,13 @@ namespace minotaur
             virtual ~MouseMonitorNode();
 
             void run();
+            pln_minotaur::PLN2033_Settings getMouseSettings(std::string id);
+            MouseData getMouseData(std::string id);
 
         Q_SIGNALS:
             void rosShutdown();
             void measuredMouseData(const MouseData data);
-            void measuredMouseSettings(const std::string id,
-                                       const pln_minotaur::PLN2033_Settings settings);
+            void measuredMouseSettings(const pln_minotaur::PLN2033_Settings settings);
     };
 
 }

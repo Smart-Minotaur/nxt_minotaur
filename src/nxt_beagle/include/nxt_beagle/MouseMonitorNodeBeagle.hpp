@@ -30,6 +30,14 @@ namespace minotaur
                           nxt_beagle::MouseMonitorSensorGetData::Response &res);
             bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
                               nxt_beagle::MouseMonitorSensorGetSettings::Response &res);
+
+        nxt_beagle::MouseMonitorSensorSettings :
+            getSettings(
+                pln_minotaur::IPLNTrackingDevice *sensor);
+
+            nxt_beagle::MouseMonitorSensorData getData(
+                pln_minotaur::IPLNTrackingDevice *sensor)
+
             void publishData(pln_minotaur::IPLNTrackingDevice *sensor);
             void publishSettings(pln_minotaur::IPLNTrackingDevice *sensor);
 

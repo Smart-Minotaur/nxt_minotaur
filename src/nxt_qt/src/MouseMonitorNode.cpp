@@ -21,9 +21,6 @@ namespace minotaur
 
         serviceData = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetData>("getSensorData");
         serviceSettings= nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetSettings>("getSensorSettings");
-
-        // TODO:
-        // if (client.call(srv))
     }
 
     MouseMonitorNode::~MouseMonitorNode() {}
@@ -34,7 +31,32 @@ namespace minotaur
         Q_EMIT rosShutdown();
     }
 
+    MouseData MouseMonitorNode::getMouseData(std::string id)
+    {
+        nxt_beagle::MouseMonitorSensorGetData srv;
+        srv.request.id = id;
+
+        MouseData data;
+
+        if (serviceData.call(srv))
+            data = convertMouseDataMessage(srv.response.data);
+        else {
+            ROS_ERROR("Failed to call service getSensorData");
+            data.id = "";
+        }
+
+        return data;
+    }
+
     void MouseMonitorNode::processMouseDataMessage(
+        const nxt_beagle::MouseMonitorSensorData& msg)
+    {
+        MouseData data = convertMouseDataMessage(msg);
+
+        Q_EMIT measuredMouseData(data);
+    }
+
+    MouseData MouseMonitorNode::convertMouseDataMessage(
         const nxt_beagle::MouseMonitorSensorData& msg)
     {
         MouseData data;
@@ -45,14 +67,40 @@ namespace minotaur
         data.x_speed = msg.x_speed;
         data.y_speed = msg.y_speed;
 
-        Q_EMIT measuredMouseData(data);
+        return data;
+    }
+
+    pln_minotaur::PLN2033_Settings MouseMonitorNode::getMouseSettings(std::string id)
+    {
+        nxt_beagle::MouseMonitorSensorGetSettings srv;
+        srv.request.id = id;
+
+        pln_minotaur::PLN2033_Settings settings;
+
+        if (serviceSettings.call(srv))
+            settings = convertMouseSettingsMessage(srv.response.settings);
+        else {
+            ROS_ERROR("Failed to call service getSensorData");
+            settings.spiDevice = "";
+        }
+
+        return settings;
     }
 
     void MouseMonitorNode::processMouseSettingsMessage(
         const nxt_beagle::MouseMonitorSensorSettings& settingsMsg)
     {
+        pln_minotaur::PLN2033_Settings settings = convertMouseSettingsMessage(settingsMsg);
+
+        Q_EMIT measuredMouseSettings(settings);
+    }
+
+    pln_minotaur::PLN2033_Settings MouseMonitorNode::convertMouseSettingsMessage(
+        const nxt_beagle::MouseMonitorSensorSettings& settingsMsg)
+    {
         pln_minotaur::PLN2033_Settings settings;
 
+        settings.spiDevice = settingsMsg.id;
         settings.status_register = settingsMsg.status_register;
         settings.delta_x_disp_register = settingsMsg.delta_x_disp_register; // TODO
         settings.delta_y_disp_register = settingsMsg.delta_y_disp_register; // TODO
@@ -67,7 +115,7 @@ namespace minotaur
         settings.miscellaneous_register = settingsMsg.miscellaneous_register;
         settings.interrupt_output_register = settingsMsg.interrupt_output_register;
 
-        Q_EMIT measuredMouseSettings(settingsMsg.id, settings);
+        return settings;
     }
 
 }
