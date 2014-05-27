@@ -34,7 +34,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="SensorDataTab">
        <attribute name="title">
@@ -431,7 +431,7 @@ QGroupBox::title {
                 </widget>
                </item>
                <item row="0" column="3">
-                <widget class="QLineEdit" name="y_disp_abs">
+                <widget class="QLineEdit" name="y_disp1_abs">
                  <property name="readOnly">
                   <bool>true</bool>
                  </property>

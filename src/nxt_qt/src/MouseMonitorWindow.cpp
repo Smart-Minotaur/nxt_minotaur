@@ -11,15 +11,6 @@
 
 #define DEFAULT_SAMPLE_RATE_MS 1000
 
-// Plots
-#define MAX_Y_RANGE_DISP 2
-#define Y_STEP_DISP MAX_Y_RANGE_DISP / 10
-#define X_STEP_DISP SAMPLE_RANGE / 10
-
-#define MAX_Y_RANGE_SPEED 100
-#define Y_STEP_SPEED MAX_Y_RANGE_SPEED / 5
-#define X_STEP_SPEED SAMPLE_RANGE / 10
-
 namespace minotaur
 {
 
@@ -129,6 +120,11 @@ namespace minotaur
         pathWidget = new TrackPathWidget(trackPathFrame);
         trackPathFrame->layout()->addWidget(pathWidget);
         pathWidget->init();
+
+        x_disp1_abs->setText("0");
+        y_disp1_abs->setText("0");
+        x_disp2_abs->setText("0");
+        y_disp2_abs->setText("0");
     }
 
     void MouseMonitorWindow::initTable()
@@ -200,8 +196,8 @@ namespace minotaur
 
     void MouseMonitorWindow::timerTimeout()
     {
-        //processMouseData(monitorNode.getMouseData(SENSOR1));
-        //processMouseData(monitorNode.getMouseData(SENSOR2));
+        processMouseData(monitorNode.getMouseData(SENSOR1));
+        processMouseData(monitorNode.getMouseData(SENSOR2));
     }
 
     MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
@@ -221,6 +217,19 @@ namespace minotaur
             directionWidget1->updateWidget(data);
             pathWidget->updateWidget(data);
             updatePlotSensor1(data);
+
+            QString txt;
+            double value;
+
+            txt = x_disp1_abs->text();
+            value = txt.toDouble();
+            value += data.x_disp;
+            x_disp1_abs->setText(QString("%1").arg(value, 0, 'f', 8));
+
+            txt = y_disp1_abs->text();
+            value = txt.toDouble();
+            value += data.y_disp;
+            y_disp1_abs->setText(QString("%1").arg(value, 0, 'f', 8));
         } else if (data.id == SENSOR2) {
             name2->setText(QString::fromStdString(data.id));
             x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
@@ -231,6 +240,19 @@ namespace minotaur
             directionWidget2->updateWidget(data);
             pathWidget->updateWidget(data);
             updatePlotSensor2(data);
+
+            QString txt;
+            double value;
+
+            txt = x_disp2_abs->text();
+            value = txt.toDouble();
+            value += data.x_disp;
+            x_disp2_abs->setText(QString("%1").arg(value, 0, 'f', 8));
+
+            txt = y_disp2_abs->text();
+            value = txt.toDouble();
+            value += data.y_disp;
+            y_disp2_abs->setText(QString("%1").arg(value, 0, 'f', 8));
         }
     }
 

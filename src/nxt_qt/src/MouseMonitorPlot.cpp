@@ -3,7 +3,7 @@
 // TODO
 #define DEFAULT_X_STEP 10
 #define DEFAULT_Y_STEP 10
-#define DEFAULT_MAX_SIZE 300
+#define DEFAULT_MAX_SIZE 500
 
 namespace minotaur
 {
