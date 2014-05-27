@@ -3,6 +3,8 @@
 
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
+#include <qwt_plot.h>
+#include <QVector>
 
 namespace minotaur
 {
@@ -14,14 +16,25 @@ namespace minotaur
         private:
             QwtPlotCurve curve;
 
-            //double values[];
+            QVector<double> xData;
+            QVector<double> yData;
+
+            int xStep;
+            int yStep;
+            int maxSize;
+
+            std::string xAxisTitle;
+            std::string yAxisTitle;
 
         public:
             MouseMonitorPlot(QwtPlot *parent = 0) : QwtPlot(parent) {}
             virtual ~MouseMonitorPlot() {}
 
-            void init(std::string title, QColor color);
-            void updatePlot();
+            void init(QColor color,
+                      std::string title,
+                      std::string xAxisTitle,
+                      std::string yAxisTitle);
+            void updatePlot(double data);
     };
 
 }
