@@ -100,7 +100,7 @@ namespace minotaur
 
         settings = sensor->readPLNSettings();
 
-        settingsMsg.id = settings.spiDevice;
+        settingsMsg.spiDevice = settings.spiDevice;
         settingsMsg.status_register = settings.status_register;
         settingsMsg.delta_x_disp_register = 0; // TODO
         settingsMsg.delta_y_disp_register = 0; // TODO

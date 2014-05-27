@@ -138,6 +138,7 @@ namespace minotaur
             void openAboutWindow();
             void sampleRateBtnClicked();
             void resolutionBtnClicked();
+            void getSensorSettingsBtnClicked();
 
             void timerTimeout();
 

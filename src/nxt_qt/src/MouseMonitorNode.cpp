@@ -100,7 +100,7 @@ namespace minotaur
     {
         pln_minotaur::PLN2033_Settings settings;
 
-        settings.spiDevice = settingsMsg.id;
+        settings.spiDevice = settingsMsg.spiDevice;
         settings.status_register = settingsMsg.status_register;
         settings.delta_x_disp_register = settingsMsg.delta_x_disp_register; // TODO
         settings.delta_y_disp_register = settingsMsg.delta_y_disp_register; // TODO
