@@ -7,9 +7,9 @@ namespace minotaur
 
     MouseMonitorNode::MouseMonitorNode()
     {
-        ROS_INFO("Subscribing to topic \"%s\"", ROS_MOUSE_DATA_TOPIC);
+        //ROS_INFO("Subscribing to topic \"%s\"", ROS_MOUSE_DATA_TOPIC);
 
-        subData = nodeHandle.subscribe(ROS_MOUSE_DATA_TOPIC,
+        /*subData = nodeHandle.subscribe(ROS_MOUSE_DATA_TOPIC,
                                        100,
                                        &MouseMonitorNode::processMouseDataMessage,
                                        this);
@@ -17,7 +17,7 @@ namespace minotaur
         subSettings = nodeHandle.subscribe(ROS_MOUSE_SETTINGS_TOPIC,
                                            100,
                                            &MouseMonitorNode::processMouseSettingsMessage,
-                                           this);
+                                           this);*/
 
         serviceData = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetData>("getSensorData");
         serviceSettings= nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetSettings>("getSensorSettings");

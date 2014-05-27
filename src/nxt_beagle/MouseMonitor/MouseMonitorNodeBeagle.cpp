@@ -1,5 +1,7 @@
 #include "nxt_beagle/MouseMonitorNodeBeagle.hpp"
 
+#include <iostream>
+
 namespace minotaur
 {
 
@@ -45,11 +47,14 @@ namespace minotaur
         nxt_beagle::MouseMonitorSensorGetData::Request &req,
         nxt_beagle::MouseMonitorSensorGetData::Response &res)
     {
-        if (req.id == SENSOR1)
+        std::cout << "Get Data" << std::endl;
+        if (req.id == SENSOR1) {
             res.data = getData(sensor1);
-        else if (req.id == SENSOR2)
+            std::cout << "SENSOR1: " << res.data.x_disp << " " << res.data.y_disp << std::endl;
+        } else if (req.id == SENSOR2) {
             res.data = getData(sensor2);
-        else
+            std::cout << "SENSOR1: " << res.data.x_disp << " " << res.data.y_disp << std::endl;
+        } else
             return false;
 
         return true;
