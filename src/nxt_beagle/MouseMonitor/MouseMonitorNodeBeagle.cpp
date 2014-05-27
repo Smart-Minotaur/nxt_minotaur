@@ -39,8 +39,9 @@ namespace minotaur
         }*/
     }
 
-    bool sendData(nxt_beagle::MouseMonitorSensorGetData::Request &req,
-                  nxt_beagle::MouseMonitorSensorGetData::Response &res)
+    bool MouseMonitorNodeBeagle::sendData(
+        nxt_beagle::MouseMonitorSensorGetData::Request &req,
+        nxt_beagle::MouseMonitorSensorGetData::Response &res)
     {
         if (req.id == SENSOR1)
             res.data = getData(sensor1);
@@ -52,8 +53,9 @@ namespace minotaur
         return true;
     }
 
-    bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
-                      nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
+    bool MouseMonitorNodeBeagle::sendSettings(
+        nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
+        nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
     {
         if (req.id == SENSOR1)
             res.settings = getSettings(sensor1);
@@ -77,7 +79,7 @@ namespace minotaur
                     data.y_speed,
                     data.x_disp,
                     data.y_disp)) {
-            data.id = ""; // TODO
+            data.id = "";
         }
 
         return data;

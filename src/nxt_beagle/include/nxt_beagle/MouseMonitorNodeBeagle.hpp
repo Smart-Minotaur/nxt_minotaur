@@ -19,7 +19,6 @@ namespace minotaur
             ros::Publisher pubData;
             ros::Publisher pubSettings;
 
-            // Service
             ros::ServiceServer serviceData;
             ros::ServiceServer serviceSettings;
 
@@ -31,8 +30,7 @@ namespace minotaur
             bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
                               nxt_beagle::MouseMonitorSensorGetSettings::Response &res);
 
-        nxt_beagle::MouseMonitorSensorSettings :
-            getSettings(
+            nxt_beagle::MouseMonitorSensorSettings getSettings(
                 pln_minotaur::IPLNTrackingDevice *sensor);
 
             nxt_beagle::MouseMonitorSensorData getData(
