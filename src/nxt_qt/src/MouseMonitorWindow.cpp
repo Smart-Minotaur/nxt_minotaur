@@ -149,132 +149,53 @@ namespace minotaur
 
     void MouseMonitorWindow::initPlots()
     {
-        memset(xDisp1, 0, SAMPLE_RANGE * sizeof(double));
-        memset(yDisp1, 0, SAMPLE_RANGE * sizeof(double));
-        memset(xDisp2, 0, SAMPLE_RANGE * sizeof(double));
-        memset(yDisp2, 0, SAMPLE_RANGE * sizeof(double));
+        xDisp1Plot = new MouseMonitorPlot();
+        xDisp1Plot->init(Qt::blue, "X Displacement", "step", "cm");
+        dispBox1->layout()->addWidget(xDisp1Plot);
 
-        memset(xSpeed1, 0, SAMPLE_RANGE * sizeof(double));
-        memset(ySpeed1, 0, SAMPLE_RANGE * sizeof(double));
-        memset(xSpeed2, 0, SAMPLE_RANGE * sizeof(double));
-        memset(ySpeed2, 0, SAMPLE_RANGE * sizeof(double));
+        yDisp1Plot = new MouseMonitorPlot();
+        yDisp1Plot->init(Qt::blue, "Y Displacement", "step", "cm");
+        dispBox1->layout()->addWidget(yDisp1Plot);
 
-        for(int i = 0; i < SAMPLE_RANGE; ++i) {
-            xSamplesSensor1[i] = i;
-            xSamplesSensor2[i] = i;
-        }
+        xDisp2Plot = new MouseMonitorPlot();
+        xDisp2Plot->init(Qt::red, "X Displacement", "step", "cm");
+        dispBox2->layout()->addWidget(xDisp2Plot);
 
-        sampleCountSensor1 = 0;
-        sampleCountSensor2 = 0;
+        yDisp2Plot = new MouseMonitorPlot();
+        yDisp2Plot->init(Qt::red, "Y Displacement", "step", "cm");
+        dispBox2->layout()->addWidget(yDisp2Plot);
 
-        // Displacement
-        xDisp1Curve.setPen(QColor(Qt::blue));
-        xDisp1Curve.setSamples(xSamplesSensor1, xDisp1, SAMPLE_RANGE);
-        xDisp1Curve.attach(x_disp1_viz);
-        initPlot(x_disp1_viz, "X Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
+        xSpeed1Plot = new MouseMonitorPlot();
+        xSpeed1Plot->init(Qt::blue, "X Speed", "step", "cm/s");
+        speedBox1->layout()->addWidget(xSpeed1Plot);
 
-        yDisp1Curve.setPen(QColor(Qt::blue));
-        yDisp1Curve.setSamples(xSamplesSensor1, yDisp1, SAMPLE_RANGE);
-        yDisp1Curve.attach(y_disp1_viz);
-        initPlot(y_disp1_viz, "Y Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
+        ySpeed1Plot = new MouseMonitorPlot();
+        ySpeed1Plot->init(Qt::blue, "Y Speed", "step", "cm/s");
+        speedBox1->layout()->addWidget(ySpeed1Plot);
 
-        xDisp2Curve.setPen(QColor(Qt::red));
-        xDisp2Curve.setSamples(xSamplesSensor2, xDisp2, SAMPLE_RANGE);
-        xDisp2Curve.attach(x_disp2_viz);
-        initPlot(x_disp2_viz, "X Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
+        xSpeed2Plot = new MouseMonitorPlot();
+        xSpeed2Plot->init(Qt::red, "X Speed", "step", "cm/s");
+        speedBox2->layout()->addWidget(xSpeed2Plot);
 
-        yDisp2Curve.setPen(QColor(Qt::red));
-        yDisp2Curve.setSamples(xSamplesSensor2, yDisp2, SAMPLE_RANGE);
-        yDisp2Curve.attach(y_disp2_viz);
-        initPlot(y_disp2_viz, "Y Displacement", MAX_Y_RANGE_DISP, X_STEP_DISP, Y_STEP_DISP, "step", "cm");
-
-        // Speed
-        xSpeed1Curve.setPen(QColor(Qt::blue));
-        xSpeed1Curve.setSamples(xSamplesSensor1, xSpeed1, SAMPLE_RANGE);
-        xSpeed1Curve.attach(x_speed1_viz);
-        initPlot(x_speed1_viz, "X Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
-
-        ySpeed1Curve.setPen(QColor(Qt::blue));
-        ySpeed1Curve.setSamples(xSamplesSensor1, ySpeed1, SAMPLE_RANGE);
-        ySpeed1Curve.attach(y_speed1_viz);
-        initPlot(y_speed1_viz, "Y Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
-
-        xSpeed2Curve.setPen(QColor(Qt::red));
-        xSpeed2Curve.setSamples(xSamplesSensor2, xSpeed2, SAMPLE_RANGE);
-        xSpeed2Curve.attach(x_speed2_viz);
-        initPlot(x_speed2_viz, "X Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
-
-        ySpeed2Curve.setPen(QColor(Qt::red));
-        ySpeed2Curve.setSamples(xSamplesSensor2, ySpeed2, SAMPLE_RANGE);
-        ySpeed2Curve.attach(y_speed2_viz);
-        initPlot(y_speed2_viz, "Y Speed", MAX_Y_RANGE_SPEED, X_STEP_SPEED, Y_STEP_SPEED, "step", "cm/s");
-    }
-
-    void MouseMonitorWindow::initPlot(QwtPlot *plot,
-                                      QString title,
-                                      double maxYRange,
-                                      double xStep,
-                                      double yStep,
-                                      QString xAxisTitle,
-                                      QString yAxisTitle)
-    {
-        plot->setTitle(title);
-        plot->setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, xStep);
-        plot->setAxisScale(QwtPlot::yLeft, -maxYRange, maxYRange, yStep);
-        plot->setAxisTitle(QwtPlot::xBottom, xAxisTitle);
-        plot->setAxisTitle(QwtPlot::yLeft, yAxisTitle);
+        ySpeed2Plot = new MouseMonitorPlot();
+        ySpeed2Plot->init(Qt::red, "Y Speed", "step", "cm/s");
+        speedBox2->layout()->addWidget(ySpeed2Plot);
     }
 
     void MouseMonitorWindow::updatePlotSensor1(MouseData data)
     {
-        // Displacement plot
-        xDisp1[sampleCountSensor1] = data.x_disp;
-        yDisp1[sampleCountSensor1] = data.y_disp;
-
-        xDisp1Curve.setSamples(xSamplesSensor1, xDisp1, SAMPLE_RANGE);
-        yDisp1Curve.setSamples(xSamplesSensor1, yDisp1, SAMPLE_RANGE);
-
-        x_disp1_viz->replot();
-        y_disp1_viz->replot();
-
-        // Speed plot
-        xSpeed1[sampleCountSensor1] = data.x_speed;
-        ySpeed1[sampleCountSensor1] = data.y_speed;
-
-        xSpeed1Curve.setSamples(xSamplesSensor1, xSpeed1, SAMPLE_RANGE);
-        ySpeed1Curve.setSamples(xSamplesSensor1, ySpeed1, SAMPLE_RANGE);
-
-        x_speed1_viz->replot();
-        y_speed1_viz->replot();
-
-        ++sampleCountSensor1;
-        sampleCountSensor1 %= SAMPLE_RANGE;
+        xDisp1Plot->updatePlot(data.x_disp);
+        yDisp1Plot->updatePlot(data.y_disp);
+        xSpeed1Plot->updatePlot(data.x_speed);
+        ySpeed1Plot->updatePlot(data.y_speed);
     }
 
     void MouseMonitorWindow::updatePlotSensor2(MouseData data)
     {
-        // Displacement plot
-        xDisp2[sampleCountSensor2] = data.x_disp;
-        yDisp2[sampleCountSensor2] = data.y_disp;
-
-        xDisp2Curve.setSamples(xSamplesSensor2, xDisp2, SAMPLE_RANGE);
-        yDisp2Curve.setSamples(xSamplesSensor2, yDisp2, SAMPLE_RANGE);
-
-        x_disp2_viz->replot();
-        y_disp2_viz->replot();
-
-        // Speed plot
-        xSpeed2[sampleCountSensor2] = data.x_speed;
-        ySpeed2[sampleCountSensor2] = data.y_speed;
-
-        xSpeed2Curve.setSamples(xSamplesSensor2, xSpeed2, SAMPLE_RANGE);
-        ySpeed2Curve.setSamples(xSamplesSensor2, ySpeed2, SAMPLE_RANGE);
-
-        x_speed2_viz->replot();
-        y_speed2_viz->replot();
-
-        ++sampleCountSensor2;
-        sampleCountSensor2 %= SAMPLE_RANGE;
+        xDisp2Plot->updatePlot(data.x_disp);
+        yDisp2Plot->updatePlot(data.y_disp);
+        xSpeed2Plot->updatePlot(data.x_speed);
+        ySpeed2Plot->updatePlot(data.y_speed);
     }
 
     void MouseMonitorWindow::timerTimeout()

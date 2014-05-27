@@ -16,6 +16,7 @@
 
 #include "nxt_qt/MouseMonitorDirectionWidget.hpp"
 #include "nxt_qt/MouseMonitorTrackPathWidget.hpp"
+#include "nxt_qt/MouseMonitorPlot.hpp"
 
 #define SAMPLE_RANGE 500
 
@@ -47,43 +48,20 @@ namespace minotaur
             int sampleRateMs;
 
             // Plot stuff
-            double xSamplesSensor1[SAMPLE_RANGE];
-            double xSamplesSensor2[SAMPLE_RANGE];
+            MouseMonitorPlot *xDisp1Plot;
+            MouseMonitorPlot *yDisp1Plot;
+            MouseMonitorPlot *xDisp2Plot;
+            MouseMonitorPlot *yDisp2Plot;
 
-            int sampleCountSensor1;
-            int sampleCountSensor2;
-
-            double xDisp1[SAMPLE_RANGE];
-            double yDisp1[SAMPLE_RANGE];
-            double xDisp2[SAMPLE_RANGE];
-            double yDisp2[SAMPLE_RANGE];
-
-            double xSpeed1[SAMPLE_RANGE];
-            double ySpeed1[SAMPLE_RANGE];
-            double xSpeed2[SAMPLE_RANGE];
-            double ySpeed2[SAMPLE_RANGE];
-
-            QwtPlotCurve xDisp1Curve;
-            QwtPlotCurve yDisp1Curve;
-            QwtPlotCurve xDisp2Curve;
-            QwtPlotCurve yDisp2Curve;
-
-            QwtPlotCurve xSpeed1Curve;
-            QwtPlotCurve ySpeed1Curve;
-            QwtPlotCurve xSpeed2Curve;
-            QwtPlotCurve ySpeed2Curve;
+            MouseMonitorPlot *xSpeed1Plot;
+            MouseMonitorPlot *ySpeed1Plot;
+            MouseMonitorPlot *xSpeed2Plot;
+            MouseMonitorPlot *ySpeed2Plot;
 
             // Init functions
             void initWidgets();
             void initTable();
             void initPlots();
-            void initPlot(QwtPlot *plot,
-                          QString title,
-                          double maxYRange,
-                          double xStep,
-                          double yStep,
-                          QString xAxisTitle,
-                          QString yAxisTitle);
             void initToolbar();
             void initTimer();
             void connectSlots();
