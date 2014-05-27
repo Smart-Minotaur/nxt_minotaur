@@ -42,11 +42,11 @@ namespace minotaur
     bool sendData(nxt_beagle::MouseMonitorSensorGetData::Request &req,
                   nxt_beagle::MouseMonitorSensorGetData::Response &res)
     {
-        if (req.id == SENSOR1) {
+        if (req.id == SENSOR1)
             res.data = getData(sensor1);
-        } else if (req.id == SENSOR2) {
+        else if (req.id == SENSOR2)
             res.data = getData(sensor2);
-        } else
+        else
             return false;
 
         return true;
@@ -55,11 +55,11 @@ namespace minotaur
     bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
                       nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
     {
-        if (req.id == SENSOR1) {
+        if (req.id == SENSOR1)
             res.settings = getSettings(sensor1);
-        } else if (req.id == SENSOR2) {
+        else if (req.id == SENSOR2)
             res.settings = getSettings(sensor2);
-        } else
+        else
             return false;
 
         return true;
@@ -72,15 +72,15 @@ namespace minotaur
 
         data.id = sensor->readPLNSettings().spiDevice;
 
-        if (sensor->readStatusAndDisplacementAndSpeed(
+        if (!sensor->readStatusAndDisplacementAndSpeed(
                     data.x_speed,
                     data.y_speed,
                     data.x_disp,
                     data.y_disp)) {
-            return data;
+            data.id = ""; // TODO
         }
 
-        data.id = ""; // TODO
+        return data;
     }
 
     void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
