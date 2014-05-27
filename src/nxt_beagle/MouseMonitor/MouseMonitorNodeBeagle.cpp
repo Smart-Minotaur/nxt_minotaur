@@ -7,10 +7,10 @@ namespace minotaur
         sensor1(new pln_minotaur::PLN2033(SENSOR1)),
         sensor2(new pln_minotaur::PLN2033(SENSOR2))
     {
-        pubData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
+        /*pubData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
                       ROS_MOUSE_DATA_TOPIC, 100);
         pubSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
-                          ROS_MOUSE_SETTINGS_TOPIC, 100);
+                          ROS_MOUSE_SETTINGS_TOPIC, 100);*/
 
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
@@ -24,10 +24,11 @@ namespace minotaur
 
     void MouseMonitorNodeBeagle::run()
     {
-        //ros::Rate loop_rate(10);
         ros::spin();
 
-        /*while (ros::ok()) {
+        /*
+        ros::Rate loop_rate(10);
+        while (ros::ok()) {
             publishData(sensor1);
             publishData(sensor2);
 
@@ -36,7 +37,8 @@ namespace minotaur
 
             ros::spinOnce();
             loop_rate.sleep();
-        }*/
+        }
+        */
     }
 
     bool MouseMonitorNodeBeagle::sendData(

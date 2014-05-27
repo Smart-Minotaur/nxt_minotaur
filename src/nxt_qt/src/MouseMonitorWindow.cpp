@@ -1,17 +1,15 @@
 #include "nxt_qt/MouseMonitorWindow.hpp"
-#include <QPainter>
+
 #include <QWidget>
-#include <QMouseEvent>
-#include <QToolTip>
 #include <QMessageBox>
 #include <QToolBar>
 #include <QToolButton>
 #include <string>
 #include <iostream>
+
 #include "ros/ros.h"
 
-// Direction grid params
-#define GRID_SCALE 20
+#define DEFAULT_SAMPLE_RATE_MS 1000
 
 // Plots
 #define MAX_Y_RANGE_DISP 2
@@ -33,11 +31,12 @@ namespace minotaur
         initWidgets();
         initTable();
         initPlots();
+        initTimer();
         initToolbar();
 
         connectSlots();
 
-        initTimer();
+        timer->start(sampleRateMs);
     }
 
     MouseMonitorWindow::~MouseMonitorWindow()
@@ -61,24 +60,22 @@ namespace minotaur
 
         connect(trackSensor1, SIGNAL(stateChanged(int)),
                 pathWidget, SLOT(sensor1Enable(const int)));
-
         connect(trackSensor2, SIGNAL(stateChanged(int)),
                 pathWidget, SLOT(sensor2Enable(const int)));
 
-        connect(actionSetResolution, SIGNAL(triggered()), this, SLOT(openResolutionSettings()));
-        connect(actionSetIntervall, SIGNAL(triggered()), this, SLOT(openSamplingRateSettings()));
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
 
         connect(getSensorSettingsBtn, SIGNAL(clicked()), this, SLOT(getSensorSettingsBtnClicked()));
+
+        connect(detailDebugging, SIGNAL(stateChanged(int)), this, SLOT(detailDebuggingEnable(const int)));
     }
 
     void MouseMonitorWindow::initTimer()
     {
-        sampleRateMs = 1000;
+        sampleRateMs = DEFAULT_SAMPLE_RATE_MS;
 
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
-        timer->start(sampleRateMs);
     }
 
     void MouseMonitorWindow::initToolbar()
@@ -90,21 +87,35 @@ namespace minotaur
         sampleRateBtn->setArrowType(Qt::DownArrow);
         sampleRateBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-        resolutionBtn = new QToolButton(this);
-        resolutionBtn->setText("Set Resolution");
-        resolutionBtn->setArrowType(Qt::DownArrow);
-        resolutionBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        resolution1Btn = new QToolButton(this);
+        resolution1Btn->setText("Set resolution sensor 1");
+        resolution1Btn->setArrowType(Qt::DownArrow);
+        resolution1Btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-        QLineEdit *sampleRateEdit = new QLineEdit(this);
-        QLineEdit *resolutionInit = new QLineEdit(this);
+        resolution2Btn = new QToolButton(this);
+        resolution2Btn->setText("Set resolution sensor 2");
+        resolution2Btn->setArrowType(Qt::DownArrow);
+        resolution2Btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+        sampleRateEdit = new QLineEdit(this);
+        sampleRateEdit->setText(QString("%1").arg(sampleRateMs));
+
+        resolution1Edit = new QLineEdit(this);
+        resolution1Edit->setText("Get sensor settings");
+
+        resolution2Edit = new QLineEdit(this);
+        resolution2Edit->setText("Get sensor settings");
 
         toolBar->addWidget(sampleRateBtn);
         toolBar->addWidget(sampleRateEdit);
-        toolBar->addWidget(resolutionBtn);
-        toolBar->addWidget(resolutionInit);
+        toolBar->addWidget(resolution1Btn);
+        toolBar->addWidget(resolution1Edit);
+        toolBar->addWidget(resolution2Btn);
+        toolBar->addWidget(resolution2Edit);
 
         connect(sampleRateBtn, SIGNAL(clicked()), this, SLOT(sampleRateBtnClicked()));
-        connect(resolutionBtn, SIGNAL(clicked()), this, SLOT(resolutionBtnClicked()));
+        connect(resolution1Btn, SIGNAL(clicked()), this, SLOT(resolution1BtnClicked()));
+        connect(resolution2Btn, SIGNAL(clicked()), this, SLOT(resolution2BtnClicked()));
     }
 
     void MouseMonitorWindow::initWidgets()
@@ -132,6 +143,7 @@ namespace minotaur
                      << "Misc" << "Interrupt Output";
 
         sensorSettingsTable->setHorizontalHeaderLabels(headerLabels);
+        sensorSettingsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
         sensorSettingsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     }
 
@@ -265,36 +277,35 @@ namespace minotaur
         sampleCountSensor2 %= SAMPLE_RANGE;
     }
 
-    MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
-    {
-        return monitorNode;
-    }
-
     void MouseMonitorWindow::timerTimeout()
     {
         processMouseData(monitorNode.getMouseData(SENSOR1));
-
         processMouseData(monitorNode.getMouseData(SENSOR2));
+    }
+
+    MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
+    {
+        return monitorNode;
     }
 
     void MouseMonitorWindow::processMouseData(const MouseData data)
     {
         if (data.id == SENSOR1) {
             name1->setText(QString::fromStdString(data.id));
-            x_disp1->setText(QString("%1").arg(data.x_disp, 0, 'f', 2));
-            y_disp1->setText(QString("%1").arg(data.y_disp, 0, 'f', 2));
-            x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
-            y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
+            x_disp1->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
+            y_disp1->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
+            x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
+            y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
 
             directionWidget1->updateWidget(data);
             pathWidget->updateWidget(data);
             updatePlotSensor1(data);
         } else if (data.id == SENSOR2) {
             name2->setText(QString::fromStdString(data.id));
-            x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 2));
-            y_disp2->setText(QString("%1").arg(data.y_disp, 0, 'f', 2));
-            x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 2));
-            y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 2));
+            x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
+            y_disp2->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
+            x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
+            y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
 
             directionWidget2->updateWidget(data);
             pathWidget->updateWidget(data);
@@ -305,44 +316,34 @@ namespace minotaur
     void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
     {
         if (settings.spiDevice == SENSOR1) {
-            sensorSettingsTable->setItem(0, 0, new QTableWidgetItem(settings.status_register));
-            sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(settings.delta_x_disp_register));
-            sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(settings.delta_y_disp_register));
-            sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(settings.command_high_register));
-            sensorSettingsTable->setItem(0, 4, new QTableWidgetItem(settings.command_low_register));
-            sensorSettingsTable->setItem(0, 5, new QTableWidgetItem(settings.memory_pointer_register));
-            sensorSettingsTable->setItem(0, 6, new QTableWidgetItem(settings.memory_data_register));
-            sensorSettingsTable->setItem(0, 7, new QTableWidgetItem(settings.mode_control_register));
-            sensorSettingsTable->setItem(0, 8, new QTableWidgetItem(settings.power_control_register));
-            sensorSettingsTable->setItem(0, 9, new QTableWidgetItem(settings.mode_status_register));
-            sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(settings.system_control_register));
-            sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(settings.miscellaneous_register));
-            sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(settings.interrupt_output_register));
-        } else {
-            sensorSettingsTable->setItem(1, 0, new QTableWidgetItem(settings.status_register));
-            sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(settings.delta_x_disp_register));
-            sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(settings.delta_y_disp_register));
-            sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(settings.command_high_register));
-            sensorSettingsTable->setItem(1, 4, new QTableWidgetItem(settings.command_low_register));
-            sensorSettingsTable->setItem(1, 5, new QTableWidgetItem(settings.memory_pointer_register));
-            sensorSettingsTable->setItem(1, 6, new QTableWidgetItem(settings.memory_data_register));
-            sensorSettingsTable->setItem(1, 7, new QTableWidgetItem(settings.mode_control_register));
-            sensorSettingsTable->setItem(1, 8, new QTableWidgetItem(settings.power_control_register));
-            sensorSettingsTable->setItem(1, 9, new QTableWidgetItem(settings.mode_status_register));
-            sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(settings.system_control_register));
-            sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(settings.miscellaneous_register));
-            sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(settings.interrupt_output_register));
+            sensorSettingsTable->setItem(0, 0, new QTableWidgetItem(uintToQString(settings.status_register)));
+            sensorSettingsTable->setItem(0, 1, new QTableWidgetItem(uintToQString(settings.delta_x_disp_register)));
+            sensorSettingsTable->setItem(0, 2, new QTableWidgetItem(uintToQString(settings.delta_y_disp_register)));
+            sensorSettingsTable->setItem(0, 3, new QTableWidgetItem(uintToQString(settings.command_high_register)));
+            sensorSettingsTable->setItem(0, 4, new QTableWidgetItem(uintToQString(settings.command_low_register)));
+            sensorSettingsTable->setItem(0, 5, new QTableWidgetItem(uintToQString(settings.memory_pointer_register)));
+            sensorSettingsTable->setItem(0, 6, new QTableWidgetItem(uintToQString(settings.memory_data_register)));
+            sensorSettingsTable->setItem(0, 7, new QTableWidgetItem(uintToQString(settings.mode_control_register)));
+            sensorSettingsTable->setItem(0, 8, new QTableWidgetItem(uintToQString(settings.power_control_register)));
+            sensorSettingsTable->setItem(0, 9, new QTableWidgetItem(uintToQString(settings.mode_status_register)));
+            sensorSettingsTable->setItem(0, 10, new QTableWidgetItem(uintToQString(settings.system_control_register)));
+            sensorSettingsTable->setItem(0, 11, new QTableWidgetItem(uintToQString(settings.miscellaneous_register)));
+            sensorSettingsTable->setItem(0, 12, new QTableWidgetItem(uintToQString(settings.interrupt_output_register)));
+        } else if (settings.spiDevice == SENSOR2) {
+            sensorSettingsTable->setItem(1, 0, new QTableWidgetItem(uintToQString(settings.status_register)));
+            sensorSettingsTable->setItem(1, 1, new QTableWidgetItem(uintToQString(settings.delta_x_disp_register)));
+            sensorSettingsTable->setItem(1, 2, new QTableWidgetItem(uintToQString(settings.delta_y_disp_register)));
+            sensorSettingsTable->setItem(1, 3, new QTableWidgetItem(uintToQString(settings.command_high_register)));
+            sensorSettingsTable->setItem(1, 4, new QTableWidgetItem(uintToQString(settings.command_low_register)));
+            sensorSettingsTable->setItem(1, 5, new QTableWidgetItem(uintToQString(settings.memory_pointer_register)));
+            sensorSettingsTable->setItem(1, 6, new QTableWidgetItem(uintToQString(settings.memory_data_register)));
+            sensorSettingsTable->setItem(1, 7, new QTableWidgetItem(uintToQString(settings.mode_control_register)));
+            sensorSettingsTable->setItem(1, 8, new QTableWidgetItem(uintToQString(settings.power_control_register)));
+            sensorSettingsTable->setItem(1, 9, new QTableWidgetItem(uintToQString(settings.mode_status_register)));
+            sensorSettingsTable->setItem(1, 10, new QTableWidgetItem(uintToQString(settings.system_control_register)));
+            sensorSettingsTable->setItem(1, 11, new QTableWidgetItem(uintToQString(settings.miscellaneous_register)));
+            sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(uintToQString(settings.interrupt_output_register)));
         }
-    }
-
-    void MouseMonitorWindow::openResolutionSettings()
-    {
-
-    }
-
-    void MouseMonitorWindow::openSamplingRateSettings()
-    {
-
     }
 
     void MouseMonitorWindow::openAboutWindow()
@@ -353,169 +354,47 @@ namespace minotaur
 
     void MouseMonitorWindow::sampleRateBtnClicked()
     {
+        sampleRateMs = sampleRateEdit->text().toInt();
+        timer->setInterval(sampleRateMs);
+    }
+
+    void MouseMonitorWindow::resolution1BtnClicked()
+    {
 
     }
 
-    void MouseMonitorWindow::resolutionBtnClicked()
+    void MouseMonitorWindow::resolution2BtnClicked()
     {
 
     }
 
     void MouseMonitorWindow::getSensorSettingsBtnClicked()
     {
-        processMouseSettings(monitorNode.getMouseSettings(SENSOR1));
-
-        processMouseSettings(monitorNode.getMouseSettings(SENSOR2));
-    }
-
-    // Widgets ========================================================
-
-    void DirectionWidget::paintEvent(QPaintEvent *event)
-    {
-        QPainter painter(this);
-
-        double gridWidth = this->width();
-        double gridHeight = this->height();
-
-        int xSteps = (int) (gridWidth / GRID_SCALE);
-        int ySteps = (int) (gridHeight / GRID_SCALE);
-
-        painter.setPen(QPen(Qt::gray, 1));
-
-        for (int i = 0; i <= xSteps; ++i) {
-            painter.drawLine(i * GRID_SCALE, 0,
-                             i * GRID_SCALE, ySteps * GRID_SCALE);
+        // TODO: X and Y resolution
+        pln_minotaur::PLN2033_Settings settings1 = monitorNode.getMouseSettings(SENSOR1);
+        if (settings1.spiDevice == SENSOR1) {
+            resolution1Edit->setText(QString("%1").arg(settings1.getXResolution()));
+            processMouseSettings(settings1);
         }
 
-        for (int i = 0; i <= ySteps; ++i) {
-            painter.drawLine(0, i * GRID_SCALE,
-                             xSteps * GRID_SCALE, i * GRID_SCALE);
+        pln_minotaur::PLN2033_Settings settings2 = monitorNode.getMouseSettings(SENSOR2);
+        if (settings2.spiDevice == SENSOR2) {
+            resolution2Edit->setText(QString("%1").arg(settings2.getXResolution()));
+            processMouseSettings(settings2);
         }
     }
 
-    void DirectionWidget::updateWidget(MouseData data)
-    {
-        // TODO: Update the data
-
-        update();
-    }
-
-    void TrackPathWidget::init()
-    {
-        // TODO
-        startx = geometry().width() / 2.0;
-        starty = 20;
-
-        sensor1_path.moveTo(QPointF(startx, starty));
-        sensor2_path.moveTo(QPointF(startx, starty));
-
-        translatex = 0.0;
-        translatey = 0.0;
-        lastMousePos.setX(0.0);
-        lastMousePos.setY(0.0);
-
-        zoom = 1;
-        sensor1_enable = true;
-        sensor2_enable = true;
-    }
-
-    void TrackPathWidget::paintEvent(QPaintEvent *event)
-    {
-        QPainter painter(this);
-
-        // Draw grid
-        double gridWidth = this->width();
-        double gridHeight = this->height();
-
-        int xSteps = (int) (gridWidth / GRID_SCALE);
-        int ySteps = (int) (gridHeight / GRID_SCALE);
-
-        painter.setPen(QPen(Qt::gray, 1));
-
-        for (int i = 0; i <= xSteps; ++i) {
-            painter.drawLine(i * GRID_SCALE, 0,
-                             i * GRID_SCALE, ySteps * GRID_SCALE);
-        }
-
-        for (int i = 0; i <= ySteps; ++i) {
-            painter.drawLine(0, i * GRID_SCALE,
-                             xSteps * GRID_SCALE, i * GRID_SCALE);
-        }
-
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.scale((qreal) zoom, (qreal) zoom);
-        painter.translate(QPointF(translatex, translatey));
-
-        // Draw path
-        if (sensor1_enable) {
-            painter.setPen(Qt::blue);
-            painter.drawPath(sensor1_path);
-        }
-
-        if (sensor2_enable) {
-            painter.setPen(Qt::red);
-            painter.drawPath(sensor2_path);
-        }
-    }
-
-    void TrackPathWidget::updateWidget(MouseData data)
-    {
-        if (data.id == "/dev/spidev1.0")
-            sensor1_path.lineTo(sensor1_path.currentPosition() + QPointF(data.x_disp, data.y_disp));
-        else if (data.id == "/dev/spidev1.1")
-            sensor2_path.lineTo(sensor2_path.currentPosition() + QPointF(data.x_disp, data.y_disp));
-
-        update();
-    }
-
-    void TrackPathWidget::zoomValueChanged(const int value)
-    {
-        zoom = value;
-        update();
-    }
-
-    void TrackPathWidget::sensor1Enable(const int status)
+    void MouseMonitorWindow::detailDebuggingEnable(const int status)
     {
         if (status == 2)
-            this->sensor1_enable = true;
+            detailDebugginFrame->setEnabled(true);
         else
-            this->sensor1_enable = false;
-
-        update();
+            detailDebugginFrame->setEnabled(false);
     }
 
-    void TrackPathWidget::sensor2Enable(const int status)
+    QString MouseMonitorWindow::uintToQString(uint data)
     {
-        if (status == 2)
-            this->sensor2_enable = true;
-        else
-            this->sensor2_enable = false;
-
-        update();
-    }
-
-    void TrackPathWidget::mouseMoveEvent(QMouseEvent *event)
-    {
-        QString str = "Move mouse to translate map";
-        QToolTip::showText(this->mapToGlobal(event->pos()), str, this);
-
-        if (lastMousePos.x() == 0 && lastMousePos.y() == 0) {
-            lastMousePos = event->posF();
-            return;
-        }
-
-        translatex += event->x() - lastMousePos.x();
-        translatey += event->y() - lastMousePos.y();
-
-        lastMousePos = event->posF();
-
-        update();
-    }
-
-    void TrackPathWidget::mouseReleaseEvent(QMouseEvent *event)
-    {
-        lastMousePos.setX(0.0);
-        lastMousePos.setY(0.0);
+        return QString("%1").arg(data, 4, 16, QChar('0'));
     }
 
 }
