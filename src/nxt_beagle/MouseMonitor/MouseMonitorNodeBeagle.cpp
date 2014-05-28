@@ -11,12 +11,6 @@ namespace minotaur
     {
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
-
-        // TODO
-        sensor1->setXResolution(100);
-        sensor1->setYResolution(100);
-        sensor2->setXResolution(100);
-        sensor2->setYResolution(100);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
@@ -58,20 +52,20 @@ namespace minotaur
         return true;
     }
 
-    /*bool MouseMonitorNodeBeagle::setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
+    bool MouseMonitorNodeBeagle::setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
             nxt_beagle::MouseMonitorSensorSetResolution::Response &res)
     {
         if (req.id == SENSOR1) {
-            sensor1->setXResolution(req.res);
-            sensor1->setYResolution(req.res);
+            sensor1->setXResolution(req.newResolution);
+            sensor1->setYResolution(req.newResolution);
         } else if (req.id == SENSOR2) {
-            sensor2->setXResolution(req.res);
-            sensor2->setYResolution(req.res);
+            sensor2->setXResolution(req.newResolution);
+            sensor2->setYResolution(req.newResolution);
         } else
             return false;
 
         return true;
-    }*/
+    }
 
     nxt_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
         std::string id,

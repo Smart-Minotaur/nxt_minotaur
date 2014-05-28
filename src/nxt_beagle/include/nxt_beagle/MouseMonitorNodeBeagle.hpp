@@ -27,8 +27,8 @@ namespace minotaur
             bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
                               nxt_beagle::MouseMonitorSensorGetSettings::Response &res);
 
-            /*bool setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
-                                nxt_beagle::MouseMonitorSensorSetResolution::Response &res);*/
+            bool setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
+                                nxt_beagle::MouseMonitorSensorSetResolution::Response &res);
 
             nxt_beagle::MouseMonitorSensorSettings getSettings(
                 pln_minotaur::IPLNTrackingDevice *sensor);

@@ -10,6 +10,13 @@ namespace minotaur
     class DirectionWidget : public QWidget
     {
             Q_OBJECT
+
+        private:
+            double sensor1_x;
+            double sensor1_y;
+            double sensor2_x;
+            double sensor2_y;
+
         protected:
             void paintEvent(QPaintEvent *event);
 

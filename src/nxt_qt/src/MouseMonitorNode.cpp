@@ -11,10 +11,7 @@ namespace minotaur
 
         serviceData = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetData>("getSensorData");
         serviceSettings= nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetSettings>("getSensorSettings");
-	serviceSetResolution = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorSetResolution>("setResolution");
-
-	
-// 	connect(&monitorWindow, SIGNAL(setResolution(std::string, int), this, SLOT(setResolutionSlot(std::string, int)));
+        serviceSetResolution = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorSetResolution>("setResolution");
     }
 
     MouseMonitorNode::~MouseMonitorNode() {}
@@ -55,23 +52,21 @@ namespace minotaur
 
         return data;
     }
-    
+
     bool MouseMonitorNode::sendResolution(std::string id, int resolution)
     {
-      nxt_beagle::MouseMonitorSensorSetResolution srv;
-      srv.request.id = id;
-      srv.request.newResolution = resolution;     
-      
-      if(serviceSetResolution.call(srv))
-      {
-	return true;
-      }
-      else
-      {
-	ROS_ERROR("Failed to call service setResolution");
-      }
+        nxt_beagle::MouseMonitorSensorSetResolution srv;
+        srv.request.id = id;
+        srv.request.newResolution = resolution;
+
+        if(serviceSetResolution.call(srv)) {
+            return true;
+        } else {
+            ROS_ERROR("Failed to call service setResolution");
+        }
+
+        return false;
     }
-    
 
     pln_minotaur::PLN2033_Settings MouseMonitorNode::getMouseSettings(std::string id)
     {

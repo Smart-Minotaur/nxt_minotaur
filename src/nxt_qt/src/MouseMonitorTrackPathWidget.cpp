@@ -129,7 +129,16 @@ namespace minotaur
 
     void TrackPathWidget::reset()
     {
-        init(startx, starty);
+        sensor1_path = QPainterPath();
+        sensor2_path = QPainterPath();
+
+        sensor1_path.moveTo(QPointF(startx, starty));
+        sensor2_path.moveTo(QPointF(startx, starty));
+
+        translatex = 0.0;
+        translatey = 0.0;
+        lastMousePos.setX(0.0);
+        lastMousePos.setY(0.0);
 
         update();
     }

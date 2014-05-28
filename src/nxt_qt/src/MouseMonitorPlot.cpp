@@ -1,7 +1,7 @@
 #include "nxt_qt/MouseMonitorPlot.hpp"
 
-#define DEFAULT_X_STEP 10
-#define DEFAULT_Y_STEP 20
+#define DEFAULT_X_STEP 30
+#define DEFAULT_Y_STEP 10
 #define DEFAULT_MAX_SIZE 400
 
 namespace minotaur
