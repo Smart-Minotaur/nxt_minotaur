@@ -8,6 +8,7 @@
 #include "nxt_beagle/MouseMonitorConfig.hpp"
 #include "PLN2033_Settings.h"
 
+
 namespace minotaur
 {
 
@@ -24,6 +25,8 @@ namespace minotaur
             Q_OBJECT
 
         private:
+// 	    MouseMonitorWindow monitorWindow;
+	    
             ros::NodeHandle nodeHandle;
 
             ros::Subscriber subData;
@@ -31,6 +34,7 @@ namespace minotaur
 
             ros::ServiceClient serviceData;
             ros::ServiceClient serviceSettings;
+	    ros::ServiceClient serviceSetResolution;
 
             void processMouseDataMessage(
                 const nxt_beagle::MouseMonitorSensorData& msg);
@@ -51,11 +55,14 @@ namespace minotaur
             void run();
             pln_minotaur::PLN2033_Settings getMouseSettings(std::string id);
             MouseData getMouseData(std::string id);
+	    bool sendResolution(std::string id, int resolution);
 
         Q_SIGNALS:
             void rosShutdown();
             void measuredMouseData(const MouseData data);
             void measuredMouseSettings(const pln_minotaur::PLN2033_Settings settings);
+
+      
     };
 
 }

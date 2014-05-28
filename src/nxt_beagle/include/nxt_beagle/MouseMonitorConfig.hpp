@@ -11,6 +11,7 @@
 #include "nxt_beagle/MouseMonitorSensorSettings.h"
 #include "nxt_beagle/MouseMonitorSensorGetSettings.h"
 #include "nxt_beagle/MouseMonitorSensorGetData.h"
+#include "nxt_beagle/MouseMonitorSensorSetResolution.h"
 
 #define SENSOR1 "/dev/spidev1.0"
 #define SENSOR2 "/dev/spidev1.1"

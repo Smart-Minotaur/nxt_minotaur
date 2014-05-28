@@ -92,6 +92,7 @@ namespace minotaur
             virtual ~MouseMonitorWindow();
 
             MouseMonitorNode& getMonitorNode();
+      
     };
 
 }

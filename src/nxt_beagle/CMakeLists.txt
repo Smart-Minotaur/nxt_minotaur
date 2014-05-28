@@ -39,6 +39,7 @@ add_service_files(
     nxtAddUltrasonic.srv
     MouseMonitorSensorGetSettings.srv
     MouseMonitorSensorGetData.srv
+    MouseMonitorSensorSetResolution.srv
 )
 
 ## Generate added messages and services with any dependencies listed here
