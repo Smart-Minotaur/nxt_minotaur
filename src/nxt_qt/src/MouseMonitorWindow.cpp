@@ -365,13 +365,18 @@ namespace minotaur
 
     void MouseMonitorWindow::resolution1BtnClicked()
     {
-
+      bool ok;
+      int res = resolution1Edit->text().toInt(&ok, 10);
+      monitorNode.sendResolution(SENSOR1, res);
     }
 
     void MouseMonitorWindow::resolution2BtnClicked()
     {
-
+      bool ok;
+      int res = resolution2Edit->text().toInt(&ok, 10);
+      monitorNode.sendResolution(SENSOR2, res);
     }
+    
 
     void MouseMonitorWindow::getSensorSettingsBtnClicked()
     {
