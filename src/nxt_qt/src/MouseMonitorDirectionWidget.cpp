@@ -19,10 +19,12 @@ namespace minotaur
 
         double gridWidth = this->width();
         double gridHeight = this->height();
-	double gridCentre = (int) (gridWidth / 2);
 
         int xSteps = (int) (gridWidth / GRID_SCALE);
         int ySteps = (int) (gridHeight / GRID_SCALE);
+	
+	int gridCentre_x = (int) ((gridWidth * xSteps) / 2);
+	int gridCentre_y = (int) ((gridHeight * ySteps) / 2);
 
         painter.setPen(QPen(Qt::gray, 1));
 
@@ -37,12 +39,12 @@ namespace minotaur
         }
         
         painter.setPen(QPen(Qt::red, 3));
-	painter.drawLine(QPointF(gridCentre, gridCentre), 
-			  QPointF(gridCentre + sensor1_x, gridCentre + sensor1_y));
+	painter.drawLine(QPointF(gridCentre_x, gridCentre_y), 
+			  QPointF(gridCentre_x + sensor1_x, gridCentre_y - sensor1_y));
 			  
 	painter.setPen(QPen(Qt::red, 3));
-	painter.drawLine(QPointF(gridCentre, gridCentre), 
-			  QPointF(gridCentre + sensor2_x, gridCentre + sensor2_y));
+	painter.drawLine(QPointF(gridCentre_x, gridCentre_y), 
+			  QPointF(gridCentre_x + sensor2_x, gridCentre_y - sensor2_y));
     }
 
     void DirectionWidget::updateWidget(MouseData data)
