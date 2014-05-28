@@ -24,6 +24,7 @@ namespace minotaur
         initPlots();
         initTimer();
         initToolbar();
+        initDetail();
 
         connectSlots();
 
@@ -45,6 +46,9 @@ namespace minotaur
         delete ySpeed1Plot;
         delete xSpeed2Plot;
         delete ySpeed2Plot;
+
+        delete detail1Plot;
+        delete detail2Plot;
     }
 
     void MouseMonitorWindow::connectSlots()
@@ -68,6 +72,8 @@ namespace minotaur
 
         // Detail debugging tab
         connect(detailDebugging, SIGNAL(stateChanged(int)), this, SLOT(detailDebuggingEnable(const int)));
+        connect(getData1Btn, SIGNAL(clicked()), this, SLOT(getData1BtnClicked()));
+        connect(getData2Btn, SIGNAL(clicked()), this, SLOT(getData2BtnClicked()));
     }
 
     void MouseMonitorWindow::initTimer()
@@ -128,7 +134,7 @@ namespace minotaur
 
         pathWidget = new TrackPathWidget(trackPathFrame);
         trackPathFrame->layout()->addWidget(pathWidget);
-        pathWidget->init();
+        pathWidget->init(20, 20);//trackPathFrame->width() / 2.0, trackPathFrame->height() / 2);
 
         x_disp1_abs->setText("0");
         y_disp1_abs->setText("0");
@@ -185,6 +191,33 @@ namespace minotaur
         ySpeed2Plot = new MouseMonitorPlot();
         ySpeed2Plot->init(Qt::red, "Y Speed", "step", "cm/s");
         speedBox2->layout()->addWidget(ySpeed2Plot);
+    }
+
+    void MouseMonitorWindow::initDetail()
+    {
+        QStringList headerLabels;
+        headerLabels << "X Displacement" << "Y Displacement"
+                     << "X Speed" << "Y Speed";
+
+        detail1Table->setColumnCount(4);
+
+        detail1Table->setHorizontalHeaderLabels(headerLabels);
+        detail1Table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        detail1Table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+        detail2Table->setColumnCount(4);
+
+        detail2Table->setHorizontalHeaderLabels(headerLabels);
+        detail2Table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        detail2Table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+        detail1Plot = new MouseMonitorPlot();
+        detail1Plot->init(Qt::red, "X Displacement", "step", "cm");
+        detail1Box->layout()->addWidget(detail1Plot);
+
+        detail2Plot = new MouseMonitorPlot();
+        detail2Plot->init(Qt::blue, "X Displacement", "step", "cm");
+        detail2Box->layout()->addWidget(detail2Plot);
     }
 
     void MouseMonitorWindow::timerTimeout()
@@ -342,7 +375,6 @@ namespace minotaur
 
     void MouseMonitorWindow::getSensorSettingsBtnClicked()
     {
-        // TODO: X and Y resolution
         pln_minotaur::PLN2033_Settings settings1 = monitorNode.getMouseSettings(SENSOR1);
         if (settings1.spiDevice == SENSOR1) {
             resolution1Edit->setText(QString("%1").arg(settings1.getXResolution()));
@@ -368,10 +400,53 @@ namespace minotaur
 
     void MouseMonitorWindow::detailDebuggingEnable(const int status)
     {
-        if (status == 2)
+        if (status == 2) {
+            timer->stop();
             detailDebugginFrame->setEnabled(true);
-        else
+        } else {
+            timer->start();
             detailDebugginFrame->setEnabled(false);
+        }
+    }
+
+    void MouseMonitorWindow::getData1BtnClicked()
+    {
+        MouseData data = monitorNode.getMouseData(SENSOR1);
+
+        QString xd = QString::number(data.x_disp);
+        QString yd = QString::number(data.y_disp);
+        QString txt;
+        txt = xd + ", " + yd;
+
+        detail1Edit->setText(txt);
+
+        detail1Table->insertRow(0);
+        detail1Table->setItem(0, 0, new QTableWidgetItem(QString("%1").arg(data.x_disp, 0, 'f')));
+        detail1Table->setItem(0, 1, new QTableWidgetItem(QString("%1").arg(data.y_disp, 0, 'f')));
+        detail1Table->setItem(0, 2, new QTableWidgetItem(QString("%1").arg(data.x_disp, 0, 'f')));
+        detail1Table->setItem(0, 3, new QTableWidgetItem(QString("%1").arg(data.y_speed, 0, 'f')));
+
+        detail1Plot->updatePlot(data.y_disp);
+    }
+
+    void MouseMonitorWindow::getData2BtnClicked()
+    {
+        MouseData data = monitorNode.getMouseData(SENSOR2);
+
+        QString xd = QString::number(data.x_disp);
+        QString yd = QString::number(data.y_disp);
+        QString txt;
+        txt = xd + ", " + yd;
+
+        detail2Edit->setText(txt);
+
+        detail2Table->insertRow(0);
+        detail2Table->setItem(0, 0, new QTableWidgetItem(QString("%1").arg(data.x_disp, 0, 'f')));
+        detail2Table->setItem(0, 1, new QTableWidgetItem(QString("%1").arg(data.y_disp, 0, 'f')));
+        detail2Table->setItem(0, 2, new QTableWidgetItem(QString("%1").arg(data.x_disp, 0, 'f')));
+        detail2Table->setItem(0, 3, new QTableWidgetItem(QString("%1").arg(data.y_speed, 0, 'f')));
+
+        detail2Plot->updatePlot(data.y_disp);
     }
 
     QString MouseMonitorWindow::uintToQString(uint data)

@@ -34,7 +34,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="SensorDataTab">
        <attribute name="title">
@@ -716,7 +716,7 @@ QGroupBox::title {
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QGroupBox" name="groupBox_7">
+              <widget class="QGroupBox" name="detail1Box">
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
      border: 2px solid gray;
@@ -735,26 +735,27 @@ QGroupBox::title {
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="QPushButton" name="getData1Btn">
                   <property name="text">
-                   <string>PushButton</string>
+                   <string>Get Data</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit"/>
+                 <widget class="QLineEdit" name="detail1Edit">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="tableWidget"/>
-                </item>
-                <item>
-                 <widget class="QwtPlot" name="qwtPlot"/>
+                 <widget class="QTableWidget" name="detail1Table"/>
                 </item>
                </layout>
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="groupBox_6">
+              <widget class="QGroupBox" name="detail2Box">
                <property name="styleSheet">
                 <string notr="true">QGroupBox {
      border: 2px solid gray;
@@ -773,20 +774,21 @@ QGroupBox::title {
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">
                 <item>
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="getData2Btn">
                   <property name="text">
                    <string>Get Data</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_2"/>
+                 <widget class="QLineEdit" name="detail2Edit">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="tableWidget_2"/>
-                </item>
-                <item>
-                 <widget class="QwtPlot" name="qwtPlot_2"/>
+                 <widget class="QTableWidget" name="detail2Table"/>
                 </item>
                </layout>
               </widget>
@@ -847,13 +849,6 @@ QGroupBox::title {
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

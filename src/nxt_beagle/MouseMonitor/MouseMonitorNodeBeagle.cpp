@@ -36,19 +36,32 @@ namespace minotaur
     {
         if (req.id == SENSOR1) {
             res.data = getData(SENSOR1, sensor1);
-            std::cout << "SENSOR1: " << res.data.x_disp << " " << res.data.y_disp << std::endl;
         } else if (req.id == SENSOR2) {
             res.data = getData(SENSOR2, sensor2);
-            std::cout << "SENSOR2: " << res.data.x_disp << " " << res.data.y_disp << std::endl;
         } else
             return false;
 
         return true;
     }
 
-    bool MouseMonitorNodeBeagle::sendSettings(
+    /*bool MouseMonitorNodeBeagle::sendSettings(
         nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
         nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
+    {
+        if (req.id == SENSOR1) {
+            sensor1->setXResolution(req.res);
+            sensor1->setYResolution(req.res);
+        } else if (req.id == SENSOR2) {
+            sensor2->setXResolution(req.res);
+            sensor2->setYResolution(req.res);
+        } else
+            return false;
+
+        return true;
+    }*/
+
+    bool MouseMonitorNodeBeagle::setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
+            nxt_beagle::MouseMonitorSensorSetResolution::Response &res)
     {
         if (req.id == SENSOR1)
             res.settings = getSettings(sensor1);
@@ -71,17 +84,15 @@ namespace minotaur
         // TODO: Here is a bug.
         //pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
         //data.id = sensor1->readPLNSettings().spiDevice;
-        data.id = id;
 
         if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
+            data.id = id;
             data.x_speed = xs;
             data.y_speed = ys;
             data.x_disp = xd;
             data.y_disp = yd;
-        } else {
-            std::cout << "NO MOVEMENT" << std::endl;
+        } else
             data.id = "";
-        }
 
         return data;
     }

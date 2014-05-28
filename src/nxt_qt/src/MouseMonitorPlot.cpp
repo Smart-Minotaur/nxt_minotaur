@@ -1,9 +1,8 @@
 #include "nxt_qt/MouseMonitorPlot.hpp"
 
-// TODO
 #define DEFAULT_X_STEP 10
-#define DEFAULT_Y_STEP 10
-#define DEFAULT_MAX_SIZE 500
+#define DEFAULT_Y_STEP 20
+#define DEFAULT_MAX_SIZE 400
 
 namespace minotaur
 {
@@ -22,8 +21,7 @@ namespace minotaur
         curve.attach(this);
 
         setTitle(QString(title.c_str()));
-        /*setAxisScale(QwtPlot::xBottom, 0, SAMPLE_RANGE, xStep);
-        setAxisScale(QwtPlot::yLeft, -maxYRange, maxYRange, yStep);*/
+        setAxisScale(QwtPlot::xBottom, 0, maxSize, xStep);
         setAxisTitle(QwtPlot::xBottom, QString(xAxisTitle.c_str()));
         setAxisTitle(QwtPlot::yLeft, QString(yAxisTitle.c_str()));
     }

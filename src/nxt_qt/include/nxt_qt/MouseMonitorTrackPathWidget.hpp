@@ -38,7 +38,7 @@ namespace minotaur
             TrackPathWidget(QWidget *parent = 0) : QWidget(parent) {}
             virtual ~TrackPathWidget() {}
 
-            void init();
+            void init(double posx, double posy);
             void updateWidget(MouseData data);
             void reset();
 
