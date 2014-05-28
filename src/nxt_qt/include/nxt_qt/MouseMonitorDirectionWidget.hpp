@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "nxt_qt/MouseMonitorNode.hpp"
 
+#define DEFAULT_AMPLIFY 500
+
 namespace minotaur
 {
 
@@ -17,11 +19,16 @@ namespace minotaur
             double sensor2_x;
             double sensor2_y;
 
+            double amplify;
+
         protected:
             void paintEvent(QPaintEvent *event);
 
         public:
-            DirectionWidget(QWidget *parent = 0) : QWidget(parent) {}
+            DirectionWidget(QWidget *parent = 0) :
+                QWidget(parent),
+                amplify(DEFAULT_AMPLIFY) {}
+
             virtual ~DirectionWidget() {}
 
             void updateWidget(MouseData data);

@@ -18,6 +18,7 @@ namespace minotaur
             ros::NodeHandle nodeHandle;
             ros::ServiceServer serviceData;
             ros::ServiceServer serviceSettings;
+            ros::ServiceServer serviceSetResolution;
 
             pln_minotaur::IPLNTrackingDevice *sensor1;
             pln_minotaur::IPLNTrackingDevice *sensor2;

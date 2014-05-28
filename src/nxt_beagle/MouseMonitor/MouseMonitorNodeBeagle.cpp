@@ -11,6 +11,7 @@ namespace minotaur
     {
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
+        serviceSetResolution = nodeHandle.advertiseService("setResolution", &MouseMonitorNodeBeagle::setResolution, this);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()

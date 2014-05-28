@@ -35,11 +35,11 @@ namespace minotaur
 
         painter.setPen(QPen(Qt::blue, 3));
         painter.drawLine(QPointF(gridCentre_x, gridCentre_y),
-                         QPointF(gridCentre_x + sensor1_x, gridCentre_y - sensor1_y));
+                         QPointF((gridCentre_x + sensor1_x) * amplify, (gridCentre_y - sensor1_y) * amplify));
 
         painter.setPen(QPen(Qt::red, 3));
         painter.drawLine(QPointF(gridCentre_x, gridCentre_y),
-                         QPointF(gridCentre_x + sensor2_x, gridCentre_y - sensor2_y));
+                         QPointF((gridCentre_x + sensor2_x) * amplify, (gridCentre_y - sensor2_y) * amplify));
     }
 
     void DirectionWidget::updateWidget(MouseData data)
