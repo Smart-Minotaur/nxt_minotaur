@@ -128,4 +128,13 @@ namespace minotaur
         lastMousePos.setY(0.0);
     }
 
+    void TrackPathWidget::reset()
+    {
+        // TODO
+        sensor1_path.moveTo(QPointF(10, 10));
+        sensor2_path.moveTo(QPointF(10, 10));
+
+        update();
+    }
+
 }

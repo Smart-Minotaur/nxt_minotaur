@@ -26,20 +26,11 @@ namespace minotaur
         private:
             ros::NodeHandle nodeHandle;
 
-            ros::Subscriber subData;
-            ros::Subscriber subSettings;
-
             ros::ServiceClient serviceData;
             ros::ServiceClient serviceSettings;
 
-            void processMouseDataMessage(
-                const nxt_beagle::MouseMonitorSensorData& msg);
-
             MouseData convertMouseDataMessage(
                 const nxt_beagle::MouseMonitorSensorData& msg);
-
-            void processMouseSettingsMessage(
-                const nxt_beagle::MouseMonitorSensorSettings& settingsMsg);
 
             pln_minotaur::PLN2033_Settings convertMouseSettingsMessage(
                 const nxt_beagle::MouseMonitorSensorSettings& settingsMsg);

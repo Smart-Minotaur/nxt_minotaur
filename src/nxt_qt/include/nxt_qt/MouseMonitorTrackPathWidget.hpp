@@ -40,6 +40,7 @@ namespace minotaur
 
             void init();
             void updateWidget(MouseData data);
+            void reset();
 
         public Q_SLOTS:
             void zoomValueChanged(const int value);

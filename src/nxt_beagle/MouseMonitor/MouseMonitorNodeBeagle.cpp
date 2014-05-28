@@ -9,19 +9,14 @@ namespace minotaur
         sensor1(new pln_minotaur::PLN2033(SENSOR1)),
         sensor2(new pln_minotaur::PLN2033(SENSOR2))
     {
-        /*pubData = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorData>(
-                      ROS_MOUSE_DATA_TOPIC, 100);
-        pubSettings = nodeHandle.advertise<nxt_beagle::MouseMonitorSensorSettings>(
-                          ROS_MOUSE_SETTINGS_TOPIC, 100);*/
-
         serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
         serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
 
-	// TODO
-	sensor1->setXResolution(100);
-	sensor1->setYResolution(100);
-	sensor2->setXResolution(100);
-	sensor2->setYResolution(100);
+        // TODO
+        sensor1->setXResolution(100);
+        sensor1->setYResolution(100);
+        sensor2->setXResolution(100);
+        sensor2->setYResolution(100);
     }
 
     MouseMonitorNodeBeagle::~MouseMonitorNodeBeagle()
@@ -33,20 +28,6 @@ namespace minotaur
     void MouseMonitorNodeBeagle::run()
     {
         ros::spin();
-
-        /*
-        ros::Rate loop_rate(10);
-        while (ros::ok()) {
-            publishData(sensor1);
-            publishData(sensor2);
-
-            publishSettings(sensor1);
-            publishSettings(sensor2);
-
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
-        */
     }
 
     bool MouseMonitorNodeBeagle::sendData(
@@ -80,37 +61,29 @@ namespace minotaur
     }
 
     nxt_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
-	std::string id,
+        std::string id,
         pln_minotaur::IPLNTrackingDevice *sensor)
     {
         nxt_beagle::MouseMonitorSensorData data;
-	double xs, ys; // Speed
+        double xs, ys; // Speed
         double xd, yd; // Displacement
 
-	// TODO: Here is a bug.
-	//pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
+        // TODO: Here is a bug.
+        //pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
         //data.id = sensor1->readPLNSettings().spiDevice;
-	data.id = id;
+        data.id = id;
 
         if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
-		data.x_speed = xs;
-                data.y_speed = ys;
-                data.x_disp = xd;
-                data.y_disp = yd;
+            data.x_speed = xs;
+            data.y_speed = ys;
+            data.x_disp = xd;
+            data.y_disp = yd;
         } else {
-		std::cout << "NO MOVEMENT" << std::endl;
-        	data.id = "";
-	}
+            std::cout << "NO MOVEMENT" << std::endl;
+            data.id = "";
+        }
 
         return data;
-    }
-
-    void MouseMonitorNodeBeagle::publishData(pln_minotaur::IPLNTrackingDevice *sensor)
-    {
-	// TODO
-        nxt_beagle::MouseMonitorSensorData data = getData("", sensor);
-
-        pubData.publish(data);
     }
 
     nxt_beagle::MouseMonitorSensorSettings MouseMonitorNodeBeagle::getSettings(
@@ -137,13 +110,6 @@ namespace minotaur
         settingsMsg.interrupt_output_register = settings.interrupt_output_register;
 
         return settingsMsg;
-    }
-
-    void MouseMonitorNodeBeagle::publishSettings(pln_minotaur::IPLNTrackingDevice *sensor)
-    {
-        nxt_beagle::MouseMonitorSensorSettings settingsMsg = getSettings(sensor);
-
-        pubSettings.publish(settingsMsg);
     }
 
 }

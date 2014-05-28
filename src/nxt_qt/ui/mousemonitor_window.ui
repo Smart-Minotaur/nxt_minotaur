@@ -361,7 +361,7 @@ QGroupBox::title {
        <attribute name="title">
         <string>Track Path</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_17">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -542,6 +542,25 @@ QGroupBox::title {
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="trackPathResetBtn">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Reset path and values</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

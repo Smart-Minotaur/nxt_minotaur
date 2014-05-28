@@ -9,7 +9,7 @@
 
 #include "ros/ros.h"
 
-#define DEFAULT_SAMPLE_RATE_MS 1000
+#define DEFAULT_SAMPLE_RATE_MS 100
 
 namespace minotaur
 {
@@ -36,16 +36,20 @@ namespace minotaur
         delete directionWidget2;
         delete pathWidget;
         delete timer;
+
+        delete xDisp1Plot;
+        delete yDisp1Plot;
+        delete xDisp2Plot;
+        delete yDisp2Plot;
+        delete xSpeed1Plot;
+        delete ySpeed1Plot;
+        delete xSpeed2Plot;
+        delete ySpeed2Plot;
     }
 
     void MouseMonitorWindow::connectSlots()
     {
-        connect(&monitorNode, SIGNAL(measuredMouseData(const MouseData)),
-                this, SLOT(processMouseData(const MouseData)));
-
-        connect(&monitorNode, SIGNAL(measuredMouseSettings(const pln_minotaur::PLN2033_Settings)),
-                this, SLOT(processMouseSettings(const pln_minotaur::PLN2033_Settings)));
-
+        // Track path tab
         connect(zoomSlider, SIGNAL(valueChanged(int)),
                 pathWidget, SLOT(zoomValueChanged(const int)));
 
@@ -54,10 +58,15 @@ namespace minotaur
         connect(trackSensor2, SIGNAL(stateChanged(int)),
                 pathWidget, SLOT(sensor2Enable(const int)));
 
+        connect(trackPathResetBtn, SIGNAL(clicked()), this, SLOT(trackPathResetBtnClicked()));
+
+        // Menu bar
         connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
 
+        // Sensor data tab
         connect(getSensorSettingsBtn, SIGNAL(clicked()), this, SLOT(getSensorSettingsBtnClicked()));
 
+        // Detail debugging tab
         connect(detailDebugging, SIGNAL(stateChanged(int)), this, SLOT(detailDebuggingEnable(const int)));
     }
 
@@ -178,49 +187,31 @@ namespace minotaur
         speedBox2->layout()->addWidget(ySpeed2Plot);
     }
 
-    void MouseMonitorWindow::updatePlotSensor1(MouseData data)
-    {
-        xDisp1Plot->updatePlot(data.x_disp);
-        yDisp1Plot->updatePlot(data.y_disp);
-        xSpeed1Plot->updatePlot(data.x_speed);
-        ySpeed1Plot->updatePlot(data.y_speed);
-    }
-
-    void MouseMonitorWindow::updatePlotSensor2(MouseData data)
-    {
-        xDisp2Plot->updatePlot(data.x_disp);
-        yDisp2Plot->updatePlot(data.y_disp);
-        xSpeed2Plot->updatePlot(data.x_speed);
-        ySpeed2Plot->updatePlot(data.y_speed);
-    }
-
     void MouseMonitorWindow::timerTimeout()
     {
         processMouseData(monitorNode.getMouseData(SENSOR1));
         processMouseData(monitorNode.getMouseData(SENSOR2));
     }
 
-    MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
-    {
-        return monitorNode;
-    }
-
+    /**
+     * This function is called to update all display widgets with the new
+     * sensor data.
+     */
     void MouseMonitorWindow::processMouseData(const MouseData data)
     {
+        updateData(data);
+        pathWidget->updateWidget(data);
+        updateDirectionWidgets(data);
+        updatePlot(data);
+        updateAbsValue(data);
+    }
+
+    void MouseMonitorWindow::updateAbsValue(MouseData data)
+    {
+        QString txt;
+        double value;
+
         if (data.id == SENSOR1) {
-            name1->setText(QString::fromStdString(data.id));
-            x_disp1->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
-            y_disp1->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
-            x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
-            y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
-
-            directionWidget1->updateWidget(data);
-            pathWidget->updateWidget(data);
-            updatePlotSensor1(data);
-
-            QString txt;
-            double value;
-
             txt = x_disp1_abs->text();
             value = txt.toDouble();
             value += data.x_disp;
@@ -231,19 +222,6 @@ namespace minotaur
             value += data.y_disp;
             y_disp1_abs->setText(QString("%1").arg(value, 0, 'f', 8));
         } else if (data.id == SENSOR2) {
-            name2->setText(QString::fromStdString(data.id));
-            x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
-            y_disp2->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
-            x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
-            y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
-
-            directionWidget2->updateWidget(data);
-            pathWidget->updateWidget(data);
-            updatePlotSensor2(data);
-
-            QString txt;
-            double value;
-
             txt = x_disp2_abs->text();
             value = txt.toDouble();
             value += data.x_disp;
@@ -256,6 +234,50 @@ namespace minotaur
         }
     }
 
+    void MouseMonitorWindow::updatePlot(MouseData data)
+    {
+        if (data.id == SENSOR1) {
+            xDisp1Plot->updatePlot(data.x_disp);
+            yDisp1Plot->updatePlot(data.y_disp);
+            xSpeed1Plot->updatePlot(data.x_speed);
+            ySpeed1Plot->updatePlot(data.y_speed);
+        } else if (data.id == SENSOR2) {
+            xDisp2Plot->updatePlot(data.x_disp);
+            yDisp2Plot->updatePlot(data.y_disp);
+            xSpeed2Plot->updatePlot(data.x_speed);
+            ySpeed2Plot->updatePlot(data.y_speed);
+        }
+    }
+
+    void MouseMonitorWindow::updateDirectionWidgets(MouseData data)
+    {
+        if (data.id == SENSOR1) {
+            directionWidget1->updateWidget(data);
+        } else if (data.id == SENSOR2) {
+            directionWidget2->updateWidget(data);
+        }
+    }
+
+    void MouseMonitorWindow::updateData(MouseData data)
+    {
+        if (data.id == SENSOR1) {
+            name1->setText(QString::fromStdString(data.id));
+            x_disp1->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
+            y_disp1->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
+            x_speed1->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
+            y_speed1->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
+        } else if (data.id == SENSOR2) {
+            name2->setText(QString::fromStdString(data.id));
+            x_disp2->setText(QString("%1").arg(data.x_disp, 0, 'f', 8));
+            y_disp2->setText(QString("%1").arg(data.y_disp, 0, 'f', 8));
+            x_speed2->setText(QString("%1").arg(data.x_speed, 0, 'f', 8));
+            y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
+        }
+    }
+
+    /**
+     * This function is used to update the table with the sensors settings.
+     */
     void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
     {
         if (settings.spiDevice == SENSOR1) {
@@ -288,6 +310,13 @@ namespace minotaur
             sensorSettingsTable->setItem(1, 12, new QTableWidgetItem(uintToQString(settings.interrupt_output_register)));
         }
     }
+
+    MouseMonitorNode& MouseMonitorWindow::getMonitorNode()
+    {
+        return monitorNode;
+    }
+
+    // The event handlers for the widgets
 
     void MouseMonitorWindow::openAboutWindow()
     {
@@ -325,6 +354,16 @@ namespace minotaur
             resolution2Edit->setText(QString("%1").arg(settings2.getXResolution()));
             processMouseSettings(settings2);
         }
+    }
+
+    void MouseMonitorWindow::trackPathResetBtnClicked()
+    {
+        x_disp1_abs->setText("0");
+        y_disp1_abs->setText("0");
+        x_disp2_abs->setText("0");
+        y_disp2_abs->setText("0");
+
+        pathWidget->reset();
     }
 
     void MouseMonitorWindow::detailDebuggingEnable(const int status)

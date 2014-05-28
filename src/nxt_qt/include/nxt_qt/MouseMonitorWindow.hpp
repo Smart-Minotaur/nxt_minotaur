@@ -66,15 +66,18 @@ namespace minotaur
             void initTimer();
             void connectSlots();
 
-            void updatePlotSensor1(MouseData data);
-            void updatePlotSensor2(MouseData data);
+
+            void updateAbsValue(MouseData data);
+            void updatePlot(MouseData data);
+            void updateDirectionWidgets(MouseData data);
+            void updateData(MouseData data);
 
             QString uintToQString(uint data);
 
-        private Q_SLOTS:
             void processMouseData(const MouseData data);
             void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
+        private Q_SLOTS:
             void openAboutWindow();
 
             void sampleRateBtnClicked();
@@ -84,6 +87,7 @@ namespace minotaur
             void detailDebuggingEnable(const int status);
 
             void getSensorSettingsBtnClicked();
+            void trackPathResetBtnClicked();
 
             void timerTimeout();
 
