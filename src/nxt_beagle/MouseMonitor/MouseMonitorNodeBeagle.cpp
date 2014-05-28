@@ -44,9 +44,22 @@ namespace minotaur
         return true;
     }
 
-    /*bool MouseMonitorNodeBeagle::sendSettings(
+    bool MouseMonitorNodeBeagle::sendSettings(
         nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
         nxt_beagle::MouseMonitorSensorGetSettings::Response &res)
+    {
+        if (req.id == SENSOR1)
+            res.settings = getSettings(sensor1);
+        else if (req.id == SENSOR2)
+            res.settings = getSettings(sensor2);
+        else
+            return false;
+
+        return true;
+    }
+
+    /*bool MouseMonitorNodeBeagle::setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
+            nxt_beagle::MouseMonitorSensorSetResolution::Response &res)
     {
         if (req.id == SENSOR1) {
             sensor1->setXResolution(req.res);
@@ -59,19 +72,6 @@ namespace minotaur
 
         return true;
     }*/
-
-    bool MouseMonitorNodeBeagle::setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
-            nxt_beagle::MouseMonitorSensorSetResolution::Response &res)
-    {
-        if (req.id == SENSOR1)
-            res.settings = getSettings(sensor1);
-        else if (req.id == SENSOR2)
-            res.settings = getSettings(sensor2);
-        else
-            return false;
-
-        return true;
-    }
 
     nxt_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
         std::string id,
