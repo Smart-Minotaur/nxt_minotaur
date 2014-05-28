@@ -7,17 +7,7 @@ namespace minotaur
 
     MouseMonitorNode::MouseMonitorNode()
     {
-        //ROS_INFO("Subscribing to topic \"%s\"", ROS_MOUSE_DATA_TOPIC);
-
-        /*subData = nodeHandle.subscribe(ROS_MOUSE_DATA_TOPIC,
-                                       100,
-                                       &MouseMonitorNode::processMouseDataMessage,
-                                       this);
-
-        subSettings = nodeHandle.subscribe(ROS_MOUSE_SETTINGS_TOPIC,
-                                           100,
-                                           &MouseMonitorNode::processMouseSettingsMessage,
-                                           this);*/
+        ROS_INFO("Creating service clients");
 
         serviceData = nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetData>("getSensorData");
         serviceSettings= nodeHandle.serviceClient<nxt_beagle::MouseMonitorSensorGetSettings>("getSensorSettings");
@@ -50,14 +40,6 @@ namespace minotaur
         }
 
         return data;
-    }
-
-    void MouseMonitorNode::processMouseDataMessage(
-        const nxt_beagle::MouseMonitorSensorData& msg)
-    {
-        MouseData data = convertMouseDataMessage(msg);
-
-        Q_EMIT measuredMouseData(data);
     }
 
     MouseData MouseMonitorNode::convertMouseDataMessage(
@@ -106,14 +88,6 @@ namespace minotaur
         }
 
         return settings;
-    }
-
-    void MouseMonitorNode::processMouseSettingsMessage(
-        const nxt_beagle::MouseMonitorSensorSettings& settingsMsg)
-    {
-        pln_minotaur::PLN2033_Settings settings = convertMouseSettingsMessage(settingsMsg);
-
-        Q_EMIT measuredMouseSettings(settings);
     }
 
     pln_minotaur::PLN2033_Settings MouseMonitorNode::convertMouseSettingsMessage(

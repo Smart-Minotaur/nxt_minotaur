@@ -16,9 +16,6 @@ namespace minotaur
     {
         private:
             ros::NodeHandle nodeHandle;
-            ros::Publisher pubData;
-            ros::Publisher pubSettings;
-
             ros::ServiceServer serviceData;
             ros::ServiceServer serviceSettings;
 
@@ -30,15 +27,15 @@ namespace minotaur
             bool sendSettings(nxt_beagle::MouseMonitorSensorGetSettings::Request &req,
                               nxt_beagle::MouseMonitorSensorGetSettings::Response &res);
 
+            /*bool setResolution(nxt_beagle::MouseMonitorSensorSetResolution::Request &req,
+                                nxt_beagle::MouseMonitorSensorSetResolution::Response &res);*/
+
             nxt_beagle::MouseMonitorSensorSettings getSettings(
                 pln_minotaur::IPLNTrackingDevice *sensor);
 
             nxt_beagle::MouseMonitorSensorData getData(
-		std::string id,
+                std::string id,
                 pln_minotaur::IPLNTrackingDevice *sensor);
-
-            void publishData(pln_minotaur::IPLNTrackingDevice *sensor);
-            void publishSettings(pln_minotaur::IPLNTrackingDevice *sensor);
 
         public:
             MouseMonitorNodeBeagle();

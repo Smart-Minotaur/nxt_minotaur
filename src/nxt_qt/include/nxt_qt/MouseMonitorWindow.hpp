@@ -6,10 +6,6 @@
 #include <QTimer>
 #include <QToolButton>
 
-// TODO: Remove that
-#include <qwt_plot_curve.h>
-#include <qwt_plot_layout.h>
-
 #include "nxt_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
 #include "nxt_qt/MouseMonitorNode.hpp"
@@ -58,32 +54,41 @@ namespace minotaur
             MouseMonitorPlot *xSpeed2Plot;
             MouseMonitorPlot *ySpeed2Plot;
 
+            // TODO
+            MouseMonitorPlot *detail1Plot;
+            MouseMonitorPlot *detail2Plot;
+
             // Init functions
             void initWidgets();
             void initTable();
             void initPlots();
             void initToolbar();
             void initTimer();
+            void initDetail();
             void connectSlots();
 
-            void updatePlotSensor1(MouseData data);
-            void updatePlotSensor2(MouseData data);
+            void updateAbsValue(MouseData data);
+            void updatePlot(MouseData data);
+            void updateDirectionWidgets(MouseData data);
+            void updateData(MouseData data);
 
             QString uintToQString(uint data);
 
-        private Q_SLOTS:
             void processMouseData(const MouseData data);
             void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
+        private Q_SLOTS:
             void openAboutWindow();
 
             void sampleRateBtnClicked();
             void resolution1BtnClicked();
             void resolution2BtnClicked();
+            void getSensorSettingsBtnClicked();
+            void trackPathResetBtnClicked();
+            void getData1BtnClicked();
+            void getData2BtnClicked();
 
             void detailDebuggingEnable(const int status);
-
-            void getSensorSettingsBtnClicked();
 
             void timerTimeout();
 

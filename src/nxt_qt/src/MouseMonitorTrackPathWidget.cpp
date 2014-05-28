@@ -10,11 +10,10 @@
 namespace minotaur
 {
 
-    void TrackPathWidget::init()
+    void TrackPathWidget::init(double posx, double posy)
     {
-        // TODO
-        startx = geometry().width() / 2.0;
-        starty = 20;
+        startx = posx;
+        starty = posy;
 
         sensor1_path.moveTo(QPointF(startx, starty));
         sensor2_path.moveTo(QPointF(startx, starty));
@@ -53,8 +52,8 @@ namespace minotaur
         }
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.scale((qreal) zoom, (qreal) zoom);
         painter.translate(QPointF(translatex, translatey));
+        painter.scale((qreal) zoom, (qreal) zoom);
 
         // Draw path
         if (sensor1_enable) {
@@ -126,6 +125,13 @@ namespace minotaur
     {
         lastMousePos.setX(0.0);
         lastMousePos.setY(0.0);
+    }
+
+    void TrackPathWidget::reset()
+    {
+        init(startx, starty);
+
+        update();
     }
 
 }
