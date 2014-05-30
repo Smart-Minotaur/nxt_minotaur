@@ -126,10 +126,10 @@ namespace minotaur
 
     void MouseMonitorWindow::initWidgets()
     {
-        directionWidget1 = new DirectionWidget(directionFrame1);
+        directionWidget1 = new DirectionWidget(Qt::blue, directionFrame1);
         directionFrame1->layout()->addWidget(directionWidget1);
 
-        directionWidget2 = new DirectionWidget(directionFrame2);
+        directionWidget2 = new DirectionWidget(Qt::red, directionFrame2);
         directionFrame2->layout()->addWidget(directionWidget2);
 
         pathWidget = new TrackPathWidget(trackPathFrame);

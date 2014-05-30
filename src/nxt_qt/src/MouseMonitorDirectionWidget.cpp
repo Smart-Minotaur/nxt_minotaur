@@ -18,8 +18,8 @@ namespace minotaur
         int xSteps = (int) (gridWidth / GRID_SCALE);
         int ySteps = (int) (gridHeight / GRID_SCALE);
 
-        int gridCentre_x = (int) ((gridWidth * xSteps) / 2);
-        int gridCentre_y = (int) ((gridHeight * ySteps) / 2);
+        int gridCentre_x = (int) ((GRID_SCALE * xSteps) / 2);
+        int gridCentre_y = (int) ((GRID_SCALE * ySteps) / 2);
 
         painter.setPen(QPen(Qt::gray, 1));
 
@@ -33,24 +33,17 @@ namespace minotaur
                              xSteps * GRID_SCALE, i * GRID_SCALE);
         }
 
-        painter.setPen(QPen(Qt::blue, 3));
+        painter.setPen(QPen(color, 3));
         painter.drawLine(QPointF(gridCentre_x, gridCentre_y),
-                         QPointF((gridCentre_x + sensor1_x) * amplify, (gridCentre_y - sensor1_y) * amplify));
+                         QPointF(gridCentre_x + (sensor_x * amplify), gridCentre_y - (sensor_y * amplify)));
 
-        painter.setPen(QPen(Qt::red, 3));
-        painter.drawLine(QPointF(gridCentre_x, gridCentre_y),
-                         QPointF((gridCentre_x + sensor2_x) * amplify, (gridCentre_y - sensor2_y) * amplify));
     }
 
     void DirectionWidget::updateWidget(MouseData data)
     {
-        if (data.id == SENSOR1) {
-            sensor1_x = data.x_disp;
-            sensor1_y = data.y_disp;
-        } else if (data.id == SENSOR2) {
-            sensor2_x = data.x_disp;
-            sensor2_y = data.y_disp;
-        }
+        sensor_x = data.x_disp;
+        sensor_y = data.y_disp;
+
         update();
     }
 
