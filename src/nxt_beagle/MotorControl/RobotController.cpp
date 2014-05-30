@@ -91,7 +91,7 @@ namespace minotaur
         geometry_msgs::Twist nextVelocity = getMeasuredVelocity(theta);
         
         //calculate new pose via deadReckoning
-        odometry.pose.pose.position.x += ((odometry.twist.twist.linear.x + nextVelocity.linear.x) / 2) * intervalSec ;
+        odometry.pose.pose.position.x += ((odometry.twist.twist.linear.x + nextVelocity.linear.x) / 2) * intervalSec;
         odometry.pose.pose.position.y += ((odometry.twist.twist.linear.y + nextVelocity.linear.y) / 2) * intervalSec;
         odometry.pose.pose.orientation = tf::createQuaternionMsgFromYaw(theta + ((odometry.twist.twist.angular.z + nextVelocity.angular.z) / 2 ) * intervalSec);
         

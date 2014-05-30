@@ -1,5 +1,5 @@
 #include "nxt_beagle/Config.hpp"
-#include "nxt_qt/QPIDNode.hpp"
+#include "nxt_qt/QMinotaurNavigateNode.hpp"
 #include "nxt_beagle/Config.hpp"
 #include "nxt_beagle/PIDParam.h"
 #include <tf/transform_broadcaster.h>
@@ -9,17 +9,17 @@
 
 namespace minotaur
 {
-    QPIDNode::QPIDNode()
+    QMinotaurNavigateNode::QMinotaurNavigateNode()
     {
         ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
         odometrySub = nodeHandle.subscribe(ROS_ODOM_TOPIC,
                                                       50,
-                                                      &QPIDNode::processOdometryMsg,
+                                                      &QMinotaurNavigateNode::processOdometryMsg,
                                                       this);
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
         ultrasensorSub = nodeHandle.subscribe(NXT_ULTRA_SENSOR_TOPIC,
                                                       50,
-                                                      &QPIDNode::processSensorMsg,
+                                                      &QMinotaurNavigateNode::processSensorMsg,
                                                       this);
         
         ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
@@ -31,7 +31,7 @@ namespace minotaur
         float direction;
         std::string model;
         if(!ros::param::get(PARAM_CURRENT_MODEL(), model))
-            throw std::logic_error("QPIDNode: No current model available");
+            throw std::logic_error("QMinotaurNavigateNode: No current model available");
         
         while(ros::param::has(PARAM_SENSOR(model, i)))
         {
@@ -41,7 +41,7 @@ namespace minotaur
         }
     }
     
-    void QPIDNode::setRobotVelocity(const float p_linVel, const float p_angVel)
+    void QMinotaurNavigateNode::setRobotVelocity(const float p_linVel, const float p_angVel)
     {
         geometry_msgs::Twist msg;
         
@@ -59,7 +59,7 @@ namespace minotaur
         robotVelocityPublisher.publish(msg);
     }
     
-    void QPIDNode::setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd)
+    void QMinotaurNavigateNode::setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd)
     {
         nxt_beagle::PIDParam msg;
         msg.Kp = p_Kp;
@@ -68,27 +68,32 @@ namespace minotaur
         pidPramPublisher.publish(msg);
     }
     
-    void QPIDNode::run()
+    void QMinotaurNavigateNode::run()
     {
         ros::spin();
         Q_EMIT rosShutdown();
     }
     
-    void QPIDNode::processOdometryMsg(const nav_msgs::Odometry& p_msg)
+    void QMinotaurNavigateNode::processOdometryMsg(const nav_msgs::Odometry& p_msg)
     {
         mutex.lock();
         lastOdometry = p_msg;
         mutex.unlock();
         
-        QRobotVelocity vel;
-        double theta = tf::getYaw(p_msg.pose.pose.orientation);
-        vel.linearVelocity = p_msg.twist.twist.linear.x / cos(theta);
-        vel.angularVelocity = p_msg.twist.twist.angular.z;
+        QOdometry odom;
         
-        Q_EMIT measuredVelocityUpdated(vel);
+        odom.x = p_msg.pose.pose.position.x;
+        odom.y = p_msg.pose.pose.position.y;
+        odom.theta = tf::getYaw(p_msg.pose.pose.orientation);
+        
+        odom.linVelX = p_msg.twist.twist.linear.x;
+        odom.linVelY = p_msg.twist.twist.linear.y;
+        odom.angVel = p_msg.twist.twist.angular.z;
+        
+        Q_EMIT odometryUpdated(odom);
     }
     
-    void QPIDNode::processSensorMsg(const nxt_beagle::UltraSensor p_msg)
+    void QMinotaurNavigateNode::processSensorMsg(const nxt_beagle::UltraSensor p_msg)
     {
         QUltraSensor msg;
         msg.id = p_msg.sensorID;

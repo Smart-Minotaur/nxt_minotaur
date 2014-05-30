@@ -14,17 +14,23 @@
 
 namespace minotaur
 {
-    class QRobotVelocity
+    class QOdometry
     {
     public:
-        float linearVelocity;
-        float angularVelocity;
+        float linVelX;
+        float linVelY;
+        float angVel;
         
-        QRobotVelocity()
-        :linearVelocity(0), angularVelocity(0) { }
-        QRobotVelocity(const float p_linVel, const float p_angVel)
-        :linearVelocity(p_linVel), angularVelocity(p_angVel) { }
-        virtual ~QRobotVelocity() { }
+        float sigmaVel[2][2];
+        
+        float x;
+        float y;
+        float theta;
+        
+        float sigmaPos[3][3];
+        
+        QOdometry() { }
+        virtual ~QOdometry() { }
     };
     
     class QUltraSensor
@@ -38,7 +44,7 @@ namespace minotaur
         virtual ~QUltraSensor() { }
     };
     
-    class QPIDNode : public QThread
+    class QMinotaurNavigateNode : public QThread
     {
         Q_OBJECT
         
@@ -60,8 +66,8 @@ namespace minotaur
         void processOdometryMsg(const nav_msgs::Odometry& p_msg);
         void processSensorMsg(const nxt_beagle::UltraSensor p_msg);
     public:
-        QPIDNode();
-        virtual ~QPIDNode() { }
+        QMinotaurNavigateNode();
+        virtual ~QMinotaurNavigateNode() { }
         
         void setRobotVelocity(const float p_linVel, const float p_angVel);
         void setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd);
@@ -70,12 +76,12 @@ namespace minotaur
         
     Q_SIGNALS:
         void rosShutdown();
-        void measuredVelocityUpdated(const QRobotVelocity p_msg);
+        void odometryUpdated(const QOdometry p_msg);
         void measuredSensor(const QUltraSensor p_msg);
     };
 }
 
-Q_DECLARE_METATYPE(minotaur::QRobotVelocity);
+Q_DECLARE_METATYPE(minotaur::QOdometry);
 Q_DECLARE_METATYPE(minotaur::QUltraSensor);
 
 #endif

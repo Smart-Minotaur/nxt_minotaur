@@ -11,7 +11,7 @@
 #define MAX_PLOT_LIN_VEL 0.3
 #define MAX_PLOT_ANG_VEL 2.0
 
-#define MAX_KP 2.0f
+#define MAX_KP 10.0f
 #define MAX_KI 2.0f
 #define MAX_KD 2.0f
 #define DEF_KP 0.5f
@@ -31,8 +31,8 @@ namespace minotaur
         centralwidget->layout()->addWidget(sensorPainter);
         sensorPainter->setMinimumSize(200, 400);
         
-        connect(&pidNode, SIGNAL(measuredVelocityUpdated(const QRobotVelocity)), this, SLOT(processMeasuredVelocity(const QRobotVelocity)));
-        connect(&pidNode, SIGNAL(measuredSensor(const QUltraSensor)), this, SLOT(processMeasuredSensor(const QUltraSensor)));
+        connect(&navNode, SIGNAL(odometryUpdated(const QOdometry)), this, SLOT(processMeasuredVelocity(const QOdometry)));
+        connect(&navNode, SIGNAL(measuredSensor(const QUltraSensor)), this, SLOT(processMeasuredSensor(const QUltraSensor)));
         
         connect(BrakeButton, SIGNAL(clicked()), this, SLOT(brake()));
         
@@ -110,9 +110,9 @@ namespace minotaur
         MeasureAngPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
     }
     
-    QPIDNode& PIDWindow::getPIDNode()
+    QMinotaurNavigateNode& PIDWindow::getNavigationNode()
     {
-        return pidNode;
+        return navNode;
     }
     
     void PIDWindow::brake()
@@ -125,7 +125,7 @@ namespace minotaur
     void PIDWindow::setVelocity()
     {
         updateVelocityValues();
-        pidNode.setRobotVelocity(getLinearVel(), getAngVel());
+        navNode.setRobotVelocity(getLinearVel(), getAngVel());
     }
     
     void PIDWindow::updateVelocityValues()
@@ -157,7 +157,7 @@ namespace minotaur
     void PIDWindow::setPID()
     {
         updatePIDValues();
-        pidNode.setPIDParameter(getKP(), getKI(), getKD());
+        navNode.setPIDParameter(getKP(), getKI(), getKD());
     }
     
     void PIDWindow::updatePIDValues()
@@ -182,29 +182,30 @@ namespace minotaur
         return ((float) (KDSlider->value()) / 100.0f) * MAX_KD;
     }
     
-    void PIDWindow::processMeasuredVelocity(const QRobotVelocity p_velocity)
+    void PIDWindow::processMeasuredVelocity(const QOdometry p_odom)
     {
-        updateMeasuredProgressBars(p_velocity);
-        updateMeasuredPlot(p_velocity);
+        float linVel = p_odom.linVelX / cos(p_odom.theta);
+        updateMeasuredProgressBars(linVel, p_odom.angVel);
+        updateMeasuredPlot(linVel, p_odom.angVel);
     }
     
-    void PIDWindow::updateMeasuredProgressBars(const QRobotVelocity& p_velocity)
+    void PIDWindow::updateMeasuredProgressBars(const float p_linVel, const float p_angVel)
     {
-        int value = abs((p_velocity.linearVelocity / MAX_LIN_VEL) * 100);
+        int value = abs((p_linVel / MAX_LIN_VEL) * 100);
         LinMeasuredProgressBar->setValue(value);
         updateProgressBarColor(LinMeasuredProgressBar);
-        LinMeasuredValueLabel->setText(QString::number(p_velocity.linearVelocity, 'f', 2));
+        LinMeasuredValueLabel->setText(QString::number(p_linVel, 'f', 2));
         
-        value = abs((p_velocity.angularVelocity / MAX_ANG_VEL) * 100);
+        value = abs((p_angVel / MAX_ANG_VEL) * 100);
         AngMeasuredProgressBar->setValue(value);
         updateProgressBarColor(AngMeasuredProgressBar);
-        AngMeasuredValueLabel->setText(QString::number(p_velocity.angularVelocity, 'f', 2));
+        AngMeasuredValueLabel->setText(QString::number(p_angVel, 'f', 2));
     }
     
-    void PIDWindow::updateMeasuredPlot(const QRobotVelocity& p_velocity)
+    void PIDWindow::updateMeasuredPlot(const float p_linVel, const float p_angVel)
     {
-        linSamples[sampleCount] = p_velocity.linearVelocity;
-        angSamples[sampleCount] = p_velocity.angularVelocity;
+        linSamples[sampleCount] = p_linVel;
+        angSamples[sampleCount] = p_angVel;
         
         linCurve.setSamples(xSamples, linSamples, SAMPLE_RANGE);
         angCurve.setSamples(xSamples, angSamples, SAMPLE_RANGE);
