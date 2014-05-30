@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
     qt_build
     roscpp
     nxt_beagle
+    minotaur_pc
 )
 
 ## Generate added messages and services with any dependencies listed here

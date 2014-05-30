@@ -38,7 +38,9 @@ namespace minotaur
     void BlockingQueue<T>::enqueue(const T &p_obj)
     {
         pthread_mutex_lock(&mutex);
+	
         queue.push_back(p_obj);
+	
         pthread_mutex_unlock(&mutex);
         pthread_cond_signal(&popCondition);
     }
@@ -51,8 +53,11 @@ namespace minotaur
             pthread_cond_wait(&popCondition, &mutex);
         
         T result = queue.front();
-        
+        queue.pop_front();
+	
         pthread_mutex_unlock(&mutex);
+	
+	return result;
     }
 }
 

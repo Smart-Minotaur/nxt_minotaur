@@ -49,7 +49,7 @@ namespace minotaur
         QPainter painter(this);
         
         painter.setBrush(QBrush(Qt::white));
-        painter.drawRect(0, 0, width(), height());
+        painter.drawRect(0, 0, width() - 1, height() - 1);
         
         painter.setBrush(QBrush(Qt::blue));
         

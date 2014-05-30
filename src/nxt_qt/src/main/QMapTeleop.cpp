@@ -1,9 +1,8 @@
 #include <QtGui>
 #include <QApplication>
-#include "nxt_qt/PIDWindow.hpp"
+#include "nxt_qt/MapWindow.hpp"
 
-#define NODE_NAME "QPIDControl"
-#define INTERVAL 25
+#define NODE_NAME "QMapTeleop"
 
 int main(int argc, char **argv)
 {
@@ -17,7 +16,7 @@ int main(int argc, char **argv)
     qRegisterMetaType<minotaur::QOdometry>("QOdometry");
     qRegisterMetaType<minotaur::QUltraSensor>("QUltraSensor");
     QApplication app(argc, argv);
-    minotaur::PIDWindow w;
+    minotaur::MapWindow w;
     
     w.show();
     w.getNavigationNode().start();
