@@ -1,0 +1,5 @@
+<launch>
+    
+    <node pkg="mouse_monitor" type="MouseMonitorBeagle" name="MouseMonitorBeagle" output="screen" />
+
+</launch>

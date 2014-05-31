@@ -1,0 +1,6 @@
+<launch>
+    
+    <node pkg="robot_control_beagle" type="RobotControl" name="RobotControl" output="screen" />
+    <rosparam command="load" file="$(find robot_control_beagle)/param/models.yaml"/>
+
+</launch>
