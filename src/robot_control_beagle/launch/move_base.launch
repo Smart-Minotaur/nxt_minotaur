@@ -1,0 +1,16 @@
+<launch>
+    
+    <!--node name="map_server" pkg="map_server" type="map_server" args="$(find robot_control_beagle)/map/empty_map.png 10"/>
+    
+    <include file="$(find amcl)/examples/amcl_omni.launch" /-->
+    
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!--remap from="/cmd_vel" to="/guardian_controller/command" /-->
+        <rosparam file="$(find robot_control_beagle)/param/common_costmap.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find robot_control_beagle)/param/common_costmap.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find robot_control_beagle)/param/global_costmap.yaml" command="load" />
+        <rosparam file="$(find robot_control_beagle)/param/local_costmap.yaml" command="load" />
+        <rosparam file="$(find robot_control_beagle)/param/local_planner.yaml" command="load" />
+    </node>
+
+</launch>
