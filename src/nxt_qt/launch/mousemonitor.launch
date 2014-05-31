@@ -1,5 +1,0 @@
-<launch>
-    
-    <node pkg="nxt_qt" type="MouseMonitor" name="MouseMonitor" output="screen" />
-
-</launch>
