@@ -1,0 +1,6 @@
+<launch>
+    
+    <node pkg="pid_monitor_pc" type="pid_monitor_pc" name="pid_monitor_pc" output="screen" />
+    <rosparam command="load" file="$(find robot_control_beagle)/param/models.yaml"/>
+
+</launch>

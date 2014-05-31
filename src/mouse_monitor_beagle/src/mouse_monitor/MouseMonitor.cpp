@@ -1,5 +1,5 @@
-#include "mouse_monitor/MouseMonitorNodeBeagle.hpp"
-#include "mouse_monitor/MouseMonitorConfig.hpp"
+#include "mouse_monitor_beagle/MouseMonitorNodeBeagle.hpp"
+#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
 
 int main(int argc, char **argv)
 {

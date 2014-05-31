@@ -2,7 +2,7 @@
 #define MOUSE_MONITOR_NODE_BEAGLE_H
 
 #include <ros/ros.h>
-#include "mouse_monitor/MouseMonitorConfig.hpp"
+#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
 
 // PLN2033 software
 #include "IPLNTrackingDevice.h"
