@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# The following packages are available:
+
+# mm_b = mouse_monitor_beagle
+# mm_p = mouse_monitor_pc
+# pm_p = pid_monitor_pc
+# rc_b = robot_control_beagle
+# map_p = map_monitor_pc
+# m_p = minotaur_pc
+# mb_b = robot_control_beagle: Move base
+
+BEAGLE_IP=141.37.31.129
+PC_IP=141.37.31.114
+
+if [ -z "$1" ]
+then
+	echo "Give package to start."
+fi
+
+source devel/setup.bash
+
+if [ "$1" == "mm_b" ]
+then
+	export ROS_IP=$BEAGLE_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch mouse_monitor_beagle mousemonitor.launch
+elif [ "$1" == "mm_p" ]
+then
+	export ROS_IP=$PC_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch mouse_monitor_pc mousemonitor.launch
+elif [ "$1" == "pm_p" ]
+then
+	export ROS_IP=$PC_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch pid_monitor_pc pidcontrol.launch
+elif [ "$1" == "rc_b" ]
+then
+	export ROS_IP=$BEAGLE_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch robot_control_beagle control.launch
+elif [ "$1" == "map_p" ]
+then
+	export ROS_IP=$PC_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch map_monitor_pc mapteleop.launch
+elif [ "$1" == "m_p" ]
+then
+	export ROS_IP=$PC_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch minotaur_pc teleop.launch
+elif [ "$1" == "mb_b" ]
+then
+	export ROS_IP=$PC_IP
+	export ROS_MASTER_URI=http://$PC_IP:11311
+	roslaunch robot_control_beagle move_base.launch
+fi
