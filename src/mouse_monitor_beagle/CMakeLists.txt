@@ -33,19 +33,21 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
-# get source files
-file(GLOB MOUSE_MONITOR_SRC_DIR src/mouse_monitor)
-file(GLOB MOUSE_MONITOR_SRC ${MOUSE_MONITOR_SRC_DIR}/*.cpp)
+if(${USE_MOUSE_SENSOR})
+    # get source files
+    file(GLOB MOUSE_MONITOR_SRC_DIR src/mouse_monitor)
+    file(GLOB MOUSE_MONITOR_SRC ${MOUSE_MONITOR_SRC_DIR}/*.cpp)
 
-# get dependencies to PLN library
-set(PLN_MINOTAUR_SVN_DIRECTORY ../../../pln_minotaur)
-file(GLOB PLN_MINOTAUR_LIB ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/build)
-file(GLOB PLN_MINOTAUR_INCLUDE_DIRECTORY ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/src)
+    # get dependencies to PLN library
+    set(PLN_MINOTAUR_SVN_DIRECTORY ../../../pln_minotaur)
+    file(GLOB PLN_MINOTAUR_LIB ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/build)
+    file(GLOB PLN_MINOTAUR_INCLUDE_DIRECTORY ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/src)
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} include)
-link_directories(${PLN_MINOTAUR_LIB})
+    include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} include)
+    link_directories(${PLN_MINOTAUR_LIB})
 
-# compile excuteable
-add_executable(MouseMonitorBeagle ${MOUSE_MONITOR_SRC})
-target_link_libraries(MouseMonitorBeagle ${catkin_LIBRARIES} pln_minotaur)
-add_dependencies(MouseMonitorBeagle mouse_monitor_beagle_generate_messages_cpp)
+    # compile excuteable
+    add_executable(MouseMonitorBeagle ${MOUSE_MONITOR_SRC})
+    target_link_libraries(MouseMonitorBeagle ${catkin_LIBRARIES} pln_minotaur)
+    add_dependencies(MouseMonitorBeagle mouse_monitor_beagle_generate_messages_cpp)
+endif(${USE_MOUSE_SENSOR})
