@@ -47,7 +47,7 @@ if(${USE_MOUSE_SENSOR})
     link_directories(${PLN_MINOTAUR_LIB})
 
     # compile excuteable
-    add_executable(MouseMonitorBeagle ${MOUSE_MONITOR_SRC})
-    target_link_libraries(MouseMonitorBeagle ${catkin_LIBRARIES} pln_minotaur)
-    add_dependencies(MouseMonitorBeagle mouse_monitor_beagle_generate_messages_cpp)
+    add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_SRC})
+    target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} pln_minotaur)
+    add_dependencies(${PROJECT_NAME} mouse_monitor_beagle_generate_messages_cpp)
 endif(${USE_MOUSE_SENSOR})

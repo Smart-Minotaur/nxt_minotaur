@@ -1,5 +1,5 @@
 <launch>
-    
-    <node pkg="mouse_monitor" type="MouseMonitorBeagle" name="MouseMonitorBeagle" output="screen" />
+
+    <node pkg="mouse_monitor_beagle" type="mouse_monitor_beagle" name="mouse_monitor_beagle" output="screen" />
 
 </launch>
