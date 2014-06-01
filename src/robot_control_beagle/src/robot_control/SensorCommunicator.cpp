@@ -1,6 +1,6 @@
-#include "robot_control/SensorCommunicator.hpp"
-#include "robot_control/Utils.hpp"
-#include "robot_control_beagle/UltraSensor.h"
+#include "robot_control_beagle/SensorCommunicator.hpp"
+#include "robot_control_beagle/Utils.hpp"
+#include "robot_control_beagle/UltrasonicData.h"
 #include "nxt_control/NxtOpcodes.hpp"
 #include "nxt_control/NxtExceptions.hpp"
 
@@ -9,7 +9,7 @@ namespace minotaur
     void SensorCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
     {
         ROS_INFO("Publishing on topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
-        sensorDataPub = p_handle.advertise<robot_control_beagle::UltraSensor>(NXT_ULTRA_SENSOR_TOPIC, 50); 
+        sensorDataPub = p_handle.advertise<robot_control_beagle::UltrasonicData>(NXT_ULTRA_SENSOR_TOPIC, 50); 
         
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_CLEAR_SENSOR_TOPIC);
         clearSensorSub = p_handle.subscribe(NXT_CLEAR_SENSOR_TOPIC, 50, &SensorCommunicator::processClearSensorMsg, this);
@@ -25,7 +25,7 @@ namespace minotaur
     
     void SensorCommunicator::publish()
     {
-        robot_control_beagle::UltraSensor msg;
+        robot_control_beagle::UltrasonicData msg;
         ros::Rate sendRate(50);
         for(int i = 0; i < sensorController.count(); ++i)
         {

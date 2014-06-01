@@ -4,12 +4,12 @@
 #include <signal.h>
 #include <termios.h>
 #include <vector>
-#include "nxt_beagle/Config.hpp"
+#include "robot_control_beagle/Utils.hpp"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose.h"
 #include "minotaur_pc/MapCreator.hpp"
-#include "nxt_beagle/UltraSensor.h"
+#include "robot_control_beagle/UltrasonicData.h"
 #include "minotaur_pc/BlockingQueue.hpp"
 #include "minotaur_pc/RobotPosition.hpp"
 
@@ -29,7 +29,7 @@ ros::Subscriber ultraSensorSub;
 ros::Publisher robotVelocityPublisher;
 
 minotaur::MapCreator mapCreator;
-minotaur::BlockingQueue<nxt_beagle::UltraSensor> queue;
+minotaur::BlockingQueue<robot_control_beagle::UltrasonicData> queue;
 std::vector<int> sensor;
 
 pthread_mutex_t positionMutex;
@@ -46,7 +46,7 @@ void sighandler(int sig);
 bool initCommunication(ros::NodeHandle &p_handle);
 bool initMapCreator();
 void processOdomMsg(const nav_msgs::Odometry p_msg);
-void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg);
+void processUltraSensorMsg(const robot_control_beagle::UltrasonicData p_msg);
 void initKeyHandling();
 void startThreads();
 void joinThreads();
@@ -89,7 +89,7 @@ void setSignalAction()
 
 void sighandler(int sig)
 {
-    nxt_beagle::UltraSensor poisonPill;
+    robot_control_beagle::UltrasonicData poisonPill;
     poisonPill.sensorID = 4;
     run = false;
     queue.enqueue(poisonPill);
@@ -178,7 +178,7 @@ void processOdomMsg(const nav_msgs::Odometry p_msg)
     pthread_mutex_unlock(&positionMutex);
 }
 
-void processUltraSensorMsg(const nxt_beagle::UltraSensor p_msg)
+void processUltraSensorMsg(const robot_control_beagle::UltrasonicData p_msg)
 {
     queue.enqueue(p_msg);
 }
@@ -285,7 +285,7 @@ void *eventLoop(void * p_arg)
 
 void *mapLoop(void * arg)
 {
-    nxt_beagle::UltraSensor sensorMsg;
+    robot_control_beagle::UltrasonicData sensorMsg;
     
     while(run)
     {

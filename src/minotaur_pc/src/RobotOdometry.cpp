@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include "minotaur_pc/RobotOdometry.hpp"
-#include "nxt_beagle/Config.hpp"
 
 namespace minotaur
 {

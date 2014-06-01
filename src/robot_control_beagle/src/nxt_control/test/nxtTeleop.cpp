@@ -6,7 +6,7 @@
 #include <termios.h>
 #include <poll.h>
 #include "ros/ros.h"
-#include "robot_control/Utils.hpp"
+#include "robot_control_beagle/Utils.hpp"
 #include "nxt_control/Motor.hpp"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"

@@ -2,7 +2,7 @@
  * Author: Fabian Meyer 
  */
 
-#include "robot_control/MotorVelocity.hpp"
+#include "robot_control_beagle/MotorVelocity.hpp"
 
 namespace minotaur
 {

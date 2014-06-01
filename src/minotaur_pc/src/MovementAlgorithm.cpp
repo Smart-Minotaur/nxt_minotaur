@@ -1,9 +1,5 @@
-
 #include <cmath>
 #include "minotaur_pc/MovementAlgorithm.hpp"
-
-
-
 
 namespace minotaur
 {

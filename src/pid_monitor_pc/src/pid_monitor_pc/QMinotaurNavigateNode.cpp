@@ -1,6 +1,6 @@
-#include "robot_control/Utils.hpp"
+#include "robot_control_beagle/Utils.hpp"
 #include "pid_monitor_pc/QMinotaurNavigateNode.hpp"
-#include "robot_control_beagle/PIDParam.h"
+#include "robot_control_beagle/SetPIDParameter.h"
 #include <tf/transform_broadcaster.h>
 #include <cmath>
 
@@ -24,7 +24,7 @@ namespace minotaur
         ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
         robotVelocityPublisher = nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
-        pidPramPublisher = nodeHandle.advertise<robot_control_beagle::PIDParam>(NXT_SET_PID_PARAMETER, 50);
+        pidPramPublisher = nodeHandle.advertise<robot_control_beagle::SetPIDParameter>(NXT_SET_PID_PARAMETER, 50);
         
         int i = 0;
         float direction;
@@ -60,7 +60,7 @@ namespace minotaur
     
     void QMinotaurNavigateNode::setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd)
     {
-        robot_control_beagle::PIDParam msg;
+        robot_control_beagle::SetPIDParameter msg;
         msg.Kp = p_Kp;
         msg.Ki = p_Ki;
         msg.Kd = p_Kd;
@@ -92,7 +92,7 @@ namespace minotaur
         Q_EMIT odometryUpdated(odom);
     }
     
-    void QMinotaurNavigateNode::processSensorMsg(const robot_control_beagle::UltraSensor p_msg)
+    void QMinotaurNavigateNode::processSensorMsg(const robot_control_beagle::UltrasonicData p_msg)
     {
         QUltraSensor msg;
         msg.id = p_msg.sensorID;

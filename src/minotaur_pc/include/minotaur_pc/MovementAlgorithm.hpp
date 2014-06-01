@@ -1,11 +1,8 @@
 #ifndef MINOTAUR_PC_MOVEMENT_ALGORITHM_HEADER_HPP_
 #define MINOTAUR_PC_MOVEMENT_ALGORITHM_HEADER_HPP_
 
-
-
 #include "minotaur_pc/Map.hpp"
 #include "minotaur_pc/RobotPosition.hpp"
-
 
 #define MIN_DISTANCE_TO_OBSTACLE 10
 #define OBSTACLE_THRESHOLD 2

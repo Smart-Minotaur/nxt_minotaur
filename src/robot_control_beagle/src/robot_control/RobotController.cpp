@@ -2,8 +2,8 @@
  * Author: Fabian Meyer 
  */
 
-#include "robot_control/RobotController.hpp"
-#include "robot_control/MotorVelocity.hpp"
+#include "robot_control_beagle/RobotController.hpp"
+#include "robot_control_beagle/MotorVelocity.hpp"
 
 namespace minotaur
 {

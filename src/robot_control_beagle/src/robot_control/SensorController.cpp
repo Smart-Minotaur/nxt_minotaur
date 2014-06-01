@@ -1,4 +1,4 @@
-#include "robot_control/SensorController.hpp"
+#include "robot_control_beagle/SensorController.hpp"
 #include <sstream>
 #include <stdexcept>
 

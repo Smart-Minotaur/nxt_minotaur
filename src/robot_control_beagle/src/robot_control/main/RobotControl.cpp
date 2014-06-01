@@ -7,12 +7,12 @@
 #include <signal.h>
 #include <exception>
 #include <string>
-#include "robot_control/Utils.hpp"
+#include "robot_control_beagle/Utils.hpp"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
 #include "nxt_control/NxtExceptions.hpp"
-#include "robot_control/RobotCommunicator.hpp"
-#include "robot_control/SensorCommunicator.hpp"
+#include "robot_control_beagle/RobotCommunicator.hpp"
+#include "robot_control_beagle/SensorCommunicator.hpp"
 
 #define NODE_NAME "RobotControl"
 #define WHEEL_TRACK 0.12f

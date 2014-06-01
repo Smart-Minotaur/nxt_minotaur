@@ -5,8 +5,8 @@
 #ifndef ROBOT_CONTROL_IPID_CONTROLLER_HPP
 #define ROBOT_CONTROL_IPID_CONTROLLER_HPP
 
-#include "robot_control/MotorVelocity.hpp"
-#include "robot_control/PIDParameter.hpp"
+#include "robot_control_beagle/MotorVelocity.hpp"
+#include "robot_control_beagle/PIDParameter.hpp"
 #include "nxt_control/Motor.hpp"
 
 namespace minotaur

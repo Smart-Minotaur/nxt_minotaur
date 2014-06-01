@@ -5,7 +5,7 @@
 #ifndef ROBOT_CONTROL_PID_CONTROLLER_HPP
 #define ROBOT_CONTROL_PID_CONTROLLER_HPP
 
-#include "robot_control/IPIDController.hpp"
+#include "robot_control_beagle/IPIDController.hpp"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
 #define MS_TO_SEC(ms) (((float) ms) / 1000.0f)

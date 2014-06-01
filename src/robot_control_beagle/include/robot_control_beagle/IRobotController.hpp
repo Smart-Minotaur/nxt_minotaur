@@ -5,7 +5,7 @@
 #ifndef ROBOT_CONTROL_IROBOT_CONTROLLER_HPP_
 #define ROBOT_CONTROL_IROBOT_CONTROLLER_HPP_
 
-#include "robot_control/IPIDController.hpp"
+#include "robot_control_beagle/IPIDController.hpp"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/PoseWithCovariance.h"

@@ -5,8 +5,8 @@
 #ifndef ROBOT_CONTROL_ROBOT_CONTROLLER_HPP_
 #define ROBOT_CONTROL_ROBOT_CONTROLLER_HPP_
 
-#include "robot_control/IRobotController.hpp"
-#include "robot_control/PIDController.hpp"
+#include "robot_control_beagle/IRobotController.hpp"
+#include "robot_control_beagle/PIDController.hpp"
 #include <tf/transform_broadcaster.h>
 
 namespace minotaur

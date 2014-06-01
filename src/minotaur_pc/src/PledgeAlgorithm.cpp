@@ -1,4 +1,3 @@
-
 #include <cmath>
 
 #include "minotaur_pc/PledgeAlgorithm.hpp"

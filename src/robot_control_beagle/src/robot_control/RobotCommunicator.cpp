@@ -1,5 +1,5 @@
-#include "robot_control/RobotCommunicator.hpp"
-#include "robot_control/Utils.hpp"
+#include "robot_control_beagle/RobotCommunicator.hpp"
+#include "robot_control_beagle/Utils.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
 
 #define WHEEL_TRACK 0.12f
@@ -88,7 +88,7 @@ namespace minotaur
         unlock();
     }
     
-    void RobotCommunicator::processPIDParamMsg(const robot_control_beagle::PIDParam& p_msg)
+    void RobotCommunicator::processPIDParamMsg(const robot_control_beagle::SetPIDParameter& p_msg)
     {
         minotaur::PIDParameter params(p_msg.Kp, p_msg.Ki, p_msg.Kd);
         ROS_INFO("Changing PIDParameter to: Kp = %.4f; Ki = %.4f; Kd = %.4f.",params.Kp, params.Ki, params.Kd);  

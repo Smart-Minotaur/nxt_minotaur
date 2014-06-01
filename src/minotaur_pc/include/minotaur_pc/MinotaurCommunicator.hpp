@@ -7,7 +7,7 @@
 #include "minotaur_pc/SensorMeasurement.hpp"
 #include "minotaur_pc/BlockingQueue.hpp"
 #include "nav_msgs/Odometry.h"
-#include "nxt_beagle/UltraSensor.h"
+#include "robot_control_beagle/UltrasonicData.h"
 
 namespace minotaur
 {
@@ -21,7 +21,7 @@ namespace minotaur
         ros::Subscriber measureSensorSub;
         ros::Publisher targetPosPub;
         
-        void processMeasureSensorMsg(const nxt_beagle::UltraSensor& p_msg);
+        void processMeasureSensorMsg(const robot_control_beagle::UltrasonicData& p_msg);
         void processOdometryMsg(const nav_msgs::Odometry& p_msgs);
     public:
         MinotaurCommunicator() { }

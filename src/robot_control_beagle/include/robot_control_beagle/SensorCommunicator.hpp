@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include <pthread.h>
-#include "robot_control/SensorController.hpp"
+#include "robot_control_beagle/SensorController.hpp"
 #include "robot_control_beagle/AddUltrasonic.h"
 #include "robot_control_beagle/GetUltrasonic.h"
 #include "robot_control_beagle/ClearSensor.h"

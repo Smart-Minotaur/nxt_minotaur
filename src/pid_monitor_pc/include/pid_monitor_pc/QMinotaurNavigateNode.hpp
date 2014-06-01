@@ -7,8 +7,8 @@
 #include <QMetaType>
 #include <QMutex>
 #include <vector>
-#include "robot_control/MotorVelocity.hpp"
-#include "robot_control_beagle/UltraSensor.h"
+#include "robot_control_beagle/MotorVelocity.hpp"
+#include "robot_control_beagle/UltrasonicData.h"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 
@@ -64,7 +64,7 @@ namespace minotaur
         nav_msgs::Odometry lastOdometry;
         
         void processOdometryMsg(const nav_msgs::Odometry& p_msg);
-        void processSensorMsg(const robot_control_beagle::UltraSensor p_msg);
+        void processSensorMsg(const robot_control_beagle::UltrasonicData p_msg);
     public:
         QMinotaurNavigateNode();
         virtual ~QMinotaurNavigateNode() { }

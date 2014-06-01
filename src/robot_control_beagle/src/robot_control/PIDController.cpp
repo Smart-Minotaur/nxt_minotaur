@@ -3,7 +3,7 @@
  */
 
 #include <ros/ros.h>
-#include "robot_control/PIDController.hpp"
+#include "robot_control_beagle/PIDController.hpp"
 
 #define MS_PER_SECOND 1000
 #define DEGREE_PER_TICK 1.0f

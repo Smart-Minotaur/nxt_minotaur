@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	robot_control_beagle
 	minotaur_pc
+	pid_monitor_pc
 )
 
 catkin_package()
@@ -39,10 +40,8 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 file(GLOB MAP_MONITOR_PC_SOURCES src/${PROJECT_NAME}/*.cpp)
 
 include_directories(include ${catkin_INCLUDE_DIRS} "/usr/local/qwt-6.0.1/include")
-
-add_executable(${PROJECT_NAME} ${MAP_MONITOR_PC_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-
 link_directories("/usr/local/qwt-6.0.1/lib")
 
+add_executable(${PROJECT_NAME} ${MAP_MONITOR_PC_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt)
 add_dependencies(${PROJECT_NAME} robot_control_beagle_generate_messages_cpp)

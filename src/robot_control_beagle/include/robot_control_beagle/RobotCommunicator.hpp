@@ -5,8 +5,8 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include "nxt_control/Motor.hpp"
-#include "robot_control/RobotController.hpp"
-#include "robot_control_beagle/PIDParam.h"
+#include "robot_control_beagle/RobotController.hpp"
+#include "robot_control_beagle/SetPIDParameter.h"
 #include "move_base_msgs/MoveBaseActionFeedback.h"
 
 namespace minotaur
@@ -28,7 +28,7 @@ namespace minotaur
         pthread_mutex_t robotMutex;
         
         void processSetVelocityMsg(const geometry_msgs::Twist& p_msg);
-        void processPIDParamMsg(const robot_control_beagle::PIDParam &p_msg);
+        void processPIDParamMsg(const robot_control_beagle::SetPIDParameter &p_msg);
     public:
         RobotCommunicator();
         virtual ~RobotCommunicator() { }

@@ -5,7 +5,7 @@
 #include <ros/ros.h>
 #include "robot_control_beagle/GetUltrasonic.h"
 #include "robot_control_beagle/AddUltrasonic.h"
-#include "robot_control/Utils.hpp"
+#include "robot_control_beagle/Utils.hpp"
 
 #define TEST_COUNT 100
 

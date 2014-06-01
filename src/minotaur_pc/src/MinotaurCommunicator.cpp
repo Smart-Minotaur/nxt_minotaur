@@ -1,6 +1,6 @@
 #include "minotaur_pc/MinotaurCommunicator.hpp"
 #include "minotaur_pc/Movement.hpp"
-#include "nxt_beagle/Config.hpp"
+#include "robot_control_beagle/Utils.hpp"
 
 namespace minotaur
 {
@@ -35,7 +35,7 @@ namespace minotaur
         targetPosPub.publish(msg);
     }
     
-    void MinotaurCommunicator::processMeasureSensorMsg(const nxt_beagle::UltraSensor& p_msg)
+    void MinotaurCommunicator::processMeasureSensorMsg(const robot_control_beagle::UltrasonicData& p_msg)
     {
         queue->enqueue(SensorMeasurement(p_msg.sensorID, p_msg.distance));
     }
