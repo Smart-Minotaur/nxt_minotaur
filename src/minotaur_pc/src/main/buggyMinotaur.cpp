@@ -4,6 +4,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <pthread.h>
+#include <signal.h>
 #include "minotaur_pc/RobotPosition.hpp"
 #include "minotaur_pc/BugZeroAlgorithm.hpp"
 #include "minotaur_pc/PLock.hpp"
@@ -27,6 +28,10 @@ pthread_t bugThread;
 pthread_mutex_t bugMutex;
 pthread_mutex_t posMutex;
 
+struct sigaction sa;
+
+void setSignalAction();
+void sighandler(int sig);
 bool initBugzero();
 bool initCommunication(ros::NodeHandle &p_handle);
 void startThread();
@@ -43,20 +48,38 @@ int main(int argc, char **argv)
     ros::init(argc, argv, NODE_NAME);
     ros::NodeHandle handle;
     
+    setSignalAction();
+    
     if(!initBugzero())
         return -1;
     if(!initCommunication(handle))
         return -1;
     
-    
+    startThread();
     ros::spin();
     pthread_join(bugThread, &ret);
     
     return 0;
 }
 
+void setSignalAction()
+{
+    memset(&sa, 0, sizeof(struct sigaction));
+    sa.sa_handler = sighandler;
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGQUIT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
+}
+
+void sighandler(int sig)
+{
+    run = false;
+}
+
 bool initBugzero()
 {
+    ROS_INFO("Initializing BugZeroAlgorithm...");
+    
     if(!ros::master::check()) {
         ROS_ERROR("Roscore has to be started.");
         return false;
@@ -85,6 +108,7 @@ bool initBugzero()
             sensorMapping.push_back(RIGHT_SENSOR);
         else
             sensorMapping.push_back(FRONT_SENSOR);
+        ++i;
     }
     
     pthread_mutex_init(&bugMutex, NULL);
@@ -95,11 +119,12 @@ bool initBugzero()
 
 bool initCommunication(ros::NodeHandle &p_handle)
 {
+    ROS_INFO("Initializing Communication...");
     if(!ros::master::check()) {
         ROS_ERROR("Roscore has to be started.");
         return false;
     }
-    
+
     try {
         ROS_INFO("Subscribing on topic \"%s\"...", ROS_ODOM_TOPIC);
         odomSub = p_handle.subscribe(ROS_ODOM_TOPIC, 100, processOdometryMsg); 
@@ -112,7 +137,7 @@ bool initCommunication(ros::NodeHandle &p_handle)
         ROS_ERROR("InitCommunication: %s.", e.what());
         return false;
     }
-    
+
     return true;
 }
 
