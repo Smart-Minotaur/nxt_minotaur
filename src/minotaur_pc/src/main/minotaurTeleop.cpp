@@ -3,14 +3,10 @@
 #include <tf/transform_broadcaster.h>
 #include <signal.h>
 #include <termios.h>
-#include <vector>
 #include "robot_control_beagle/Utils.hpp"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose.h"
-#include "minotaur_pc/MapCreator.hpp"
-#include "robot_control_beagle/UltrasonicData.h"
-#include "minotaur_pc/BlockingQueue.hpp"
 #include "minotaur_pc/RobotPosition.hpp"
 
 #define MAX_LINEAR_VEL 0.2
@@ -25,12 +21,7 @@
 volatile bool run;
 
 ros::Subscriber odometrySub;
-ros::Subscriber ultraSensorSub;
 ros::Publisher robotVelocityPublisher;
-
-minotaur::MapCreator mapCreator;
-minotaur::BlockingQueue<robot_control_beagle::UltrasonicData> queue;
-std::vector<int> sensor;
 
 pthread_mutex_t positionMutex;
 pthread_t eventThread;
@@ -44,14 +35,11 @@ struct sigaction sa;
 void setSignalAction();
 void sighandler(int sig);
 bool initCommunication(ros::NodeHandle &p_handle);
-bool initMapCreator();
 void processOdomMsg(const nav_msgs::Odometry p_msg);
-void processUltraSensorMsg(const robot_control_beagle::UltrasonicData p_msg);
 void initKeyHandling();
 void startThreads();
 void joinThreads();
 void *eventLoop(void * p_arg);
-void *mapLoop(void * arg);
 
 int main(int argc, char** argv)
 {   
@@ -61,8 +49,6 @@ int main(int argc, char** argv)
     setSignalAction();
     if(!initCommunication(handle))
         return -1;
-    if(!initMapCreator())
-        return -2;
     initKeyHandling();
     
     startThreads();
@@ -70,8 +56,6 @@ int main(int argc, char** argv)
         ros::spinOnce();
     joinThreads();
     
-    ROS_INFO("Saving Map...");
-    mapCreator.createTextFile("/home/fabian/teleop_grid");
     
     ros::shutdown();
     
@@ -89,10 +73,7 @@ void setSignalAction()
 
 void sighandler(int sig)
 {
-    robot_control_beagle::UltrasonicData poisonPill;
-    poisonPill.sensorID = 4;
     run = false;
-    queue.enqueue(poisonPill);
 }
 
 bool initCommunication(ros::NodeHandle &p_handle)
@@ -106,9 +87,6 @@ bool initCommunication(ros::NodeHandle &p_handle)
     ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
     odometrySub = p_handle.subscribe(ROS_ODOM_TOPIC, 50, processOdomMsg);
     
-    ROS_INFO("Subscribing to topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
-    ultraSensorSub = p_handle.subscribe(NXT_ULTRA_SENSOR_TOPIC, 50, processUltraSensorMsg);
-    
     ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
     robotVelocityPublisher = p_handle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
     
@@ -119,68 +97,11 @@ bool initCommunication(ros::NodeHandle &p_handle)
     return true;
 }
 
-bool initMapCreator()
-{
-    std::string model;
-    if(!ros::param::get(PARAM_CURRENT_MODEL(), model))
-    {
-        ROS_ERROR("Unable to get current Model.");
-        return false;
-    }
-    
-    ROS_INFO("Extracted \"%s\" as current Model.", model.c_str());
-    
-    int i = 0;
-    float direction, dx, dy;
-    sensor.clear();
-    while(true)
-    {
-        if(!ros::param::has(PARAM_SENSOR(model, i)))
-            break;
-        ROS_INFO("Adding Sensor %d...", i);
-        
-        if(!ros::param::get(PARAM_SENSOR_DIRECTION(model, i), direction))
-        {
-            ROS_ERROR("Sensor %d does not have direction parameter.", i);
-            return false;
-        }
-        
-        if(!ros::param::get(PARAM_SENSOR_DX(model, i), dx))
-        {
-            ROS_ERROR("Sensor %d does not have dx parameter.", i);
-            return false;
-        }
-        
-        if(!ros::param::get(PARAM_SENSOR_DY(model, i), dy))
-        {
-            ROS_ERROR("Sensor %d does not have dy parameter.", i);
-            return false;
-        }
-        
-        if(direction > 0)
-            sensor.push_back(MAP_CREATOR_LEFT_SENSOR);
-        else if(direction < 0)
-            sensor.push_back(MAP_CREATOR_RIGHT_SENSOR);
-        else
-            sensor.push_back(MAP_CREATOR_FRONT_SENSOR);
-        
-        mapCreator.setSensorDistances(sensor[i], dx, dy);
-        ++i;
-    }
-    
-    return true;
-}
-
 void processOdomMsg(const nav_msgs::Odometry p_msg)
 {
     pthread_mutex_lock(&positionMutex);
     currentPosition.convert(p_msg.pose);
     pthread_mutex_unlock(&positionMutex);
-}
-
-void processUltraSensorMsg(const robot_control_beagle::UltrasonicData p_msg)
-{
-    queue.enqueue(p_msg);
 }
 
 void initKeyHandling()
@@ -203,14 +124,12 @@ void startThreads()
     run = true;
     pthread_mutex_init(&positionMutex, NULL);
     pthread_create(&eventThread, NULL, eventLoop, NULL);
-    //pthread_create(&mapThread, NULL, mapLoop, NULL);
 }
 
 void joinThreads()
 {
     void *ret;
     pthread_join(eventThread, &ret);
-    //pthread_join(mapThread, &ret);
 }
 
 void *eventLoop(void * p_arg)
@@ -279,29 +198,6 @@ void *eventLoop(void * p_arg)
     
     tcsetattr(0, TCSANOW, &oldtio);
     ROS_INFO("Eventloop terminated.");
-    
-    return NULL;
-}
-
-void *mapLoop(void * arg)
-{
-    robot_control_beagle::UltrasonicData sensorMsg;
-    
-    while(run)
-    {
-        sensorMsg = queue.dequeue();
-        
-        if(sensorMsg.sensorID < 4)
-        {
-            pthread_mutex_lock(&positionMutex);
-            mapCreator.setPosition(currentPosition);
-            pthread_mutex_unlock(&positionMutex);
-            
-            mapCreator.step(sensor[sensorMsg.sensorID], sensorMsg.distance);
-        }
-    }
-    
-    ROS_INFO("MapLoop terminated.");
     
     return NULL;
 }

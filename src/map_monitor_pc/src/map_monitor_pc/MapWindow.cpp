@@ -58,38 +58,4 @@ namespace minotaur
     {
         return navNode;
     }
-    
-    void MapWindow::keyPressEvent(QKeyEvent *p_event)
-    {
-        if(p_event->key() == Qt::Key_Up)
-           linVel += MAX_LIN_VEL;
-        
-        if(p_event->key() == Qt::Key_Down)
-            linVel -= MAX_LIN_VEL;
-        
-        if(p_event->key() == Qt::Key_Left)
-            angVel += MAX_ANG_VEL;
-
-        if(p_event->key() == Qt::Key_Right)
-            angVel -= MAX_ANG_VEL;
-        
-        navNode.setRobotVelocity(linVel, angVel);
-    }
-    
-    void MapWindow::keyReleaseEvent(QKeyEvent *p_event)
-    {
-        if(p_event->key() == Qt::Key_Up)
-           linVel -= MAX_LIN_VEL;
-        
-        if(p_event->key() == Qt::Key_Down)
-            linVel += MAX_LIN_VEL;
-        
-        if(p_event->key() == Qt::Key_Left)
-            angVel -= MAX_ANG_VEL;
-
-        if(p_event->key() == Qt::Key_Right)
-            angVel += MAX_ANG_VEL;
-        
-        navNode.setRobotVelocity(linVel, angVel);
-    }
 }
