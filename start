@@ -10,7 +10,7 @@
 # m_p = minotaur_pc
 # mb_b = robot_control_beagle: Move base
 
-BEAGLE_IP=141.37.31.129
+BEAGLE_IP=141.37.31.128
 PC_IP=141.37.31.114
 
 if [ -z "$1" ]

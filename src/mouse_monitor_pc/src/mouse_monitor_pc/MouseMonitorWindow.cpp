@@ -375,7 +375,6 @@ namespace minotaur
         monitorNode.sendResolution(SENSOR2, res);
     }
 
-
     void MouseMonitorWindow::getSensorSettingsBtnClicked()
     {
         pln_minotaur::PLN2033_Settings settings1 = monitorNode.getMouseSettings(SENSOR1);

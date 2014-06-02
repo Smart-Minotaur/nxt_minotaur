@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Runs catkin_make with the correct whitelist entries.
+
+# beagle = all packages for the beagle bone
+# mm = Mouse Monitor for pc
+# pc = All other pc packages
+
+if [ -z "$1" ]
+then
+        echo "Give packages to compile."
+fi
+
+if [ "$1" == "beagle" ]
+then
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="mouse_monitor_beagle;robot_control_beagle" -DUSE_MOUSE_SENSOR="TRUE"
+elif [ "$1" == "mm" ]
+then
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="mouse_monitor_beagle;mouse_monitor_pc"
+elif [ "$1" == "pc" ]
+then
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="robot_control_beagle;minotaur_pc;pid_monitor_pc;map_monitor_pc"
+elif [ "$1" == "clean" ]
+then
+	rm -rf devel/ build/
+fi
+

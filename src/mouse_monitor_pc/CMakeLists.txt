@@ -55,6 +55,7 @@ file(GLOB MOUSE_MONITOR_PC_SOURCES src/${PROJECT_NAME}/*.cpp)
 link_directories(${PLN_MINOTAUR_LIB})
 link_directories("/usr/local/qwt-6.0.1/lib")
 include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} "/usr/local/qwt-6.0.1/include")
+
 add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_PC_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt ${PLN_MINOTAUR_LIB_NAME})
