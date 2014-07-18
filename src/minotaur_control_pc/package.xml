@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+    <name>minotaur_control_pc</name>
+    <version>1.0.0</version>
+    <description>The minotaur_control_pc package</description>
+    
+    
+    <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
+    <license>TODO</license>
+    
+    <buildtool_depend>catkin</buildtool_depend>
+    
+    <build_depend>tf</build_depend>
+    <build_depend>message_generation</build_depend>
+    <build_depend>roscpp</build_depend>
+    <build_depend>robot_control_beagle</build_depend>
+    
+    <run_depend>tf</run_depend>
+    <run_depend>message_runtime</run_depend>
+    <run_depend>roscpp</run_depend>
+    
+</package>
