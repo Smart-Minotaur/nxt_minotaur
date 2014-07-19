@@ -19,7 +19,7 @@ then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="mouse_monitor_beagle;mouse_monitor_pc"
 elif [ "$1" == "pc" ]
 then
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="robot_control_beagle;minotaur_pc;pid_monitor_pc;map_monitor_pc"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="robot_control_beagle;minotaur_pc;pid_monitor_pc;map_monitor_pc;minotaur_control_pc;minotaur_maze_pc"
 elif [ "$1" == "clean" ]
 then
 	rm -rf devel/ build/

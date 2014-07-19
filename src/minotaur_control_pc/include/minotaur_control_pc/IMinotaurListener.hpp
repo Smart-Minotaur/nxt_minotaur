@@ -1,5 +1,5 @@
-#ifndef MINOTAUR_MINOTAUR_LISTENER_H
-#define MINOTAUR_MINOTAUR_LISTENER_H
+#ifndef MINOTAUR_MINOTAUR_LISTENER_HPP
+#define MINOTAUR_MINOTAUR_LISTENER_HPP
 
 #include <nav_msgs/Odometry.h>
 #include "robot_control_beagle/UltrasonicData.h"

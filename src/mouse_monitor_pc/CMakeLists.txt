@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mouse_monitor_pc)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
+
 find_package(catkin REQUIRED COMPONENTS
 	qt_build
 	roscpp
 	mouse_monitor_beagle
 )
+
+find_package(Qwt REQUIRED)
 
 catkin_package()
 
@@ -53,10 +57,9 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 file(GLOB MOUSE_MONITOR_PC_SOURCES src/${PROJECT_NAME}/*.cpp)
 
 link_directories(${PLN_MINOTAUR_LIB})
-link_directories("/usr/local/qwt-6.0.1/lib")
-include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} "/usr/local/qwt-6.0.1/include")
+include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} ${QWT_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_PC_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 
-target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt ${PLN_MINOTAUR_LIB_NAME})
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} ${PLN_MINOTAUR_LIB_NAME} ${QWT_LIBRARIES})
 add_dependencies(${PROJECT_NAME} mouse_monitor_beagle_generate_messages_cpp)

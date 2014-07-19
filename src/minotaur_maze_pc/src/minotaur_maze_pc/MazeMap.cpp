@@ -1,10 +1,10 @@
-#include <stderr>
-#include <sstrream>
+#include <stdexcept>
+#include <sstream>
 #include "minotaur_maze_pc/MazeMap.hpp"
 
 namespace minotaur
 {
-    MazeMap(unsigned int p_width, unsigned int p_height)
+    MazeMap::MazeMap(unsigned int p_width, unsigned int p_height)
     :width(p_width), height(p_height)
     {
         mazeGrid = new MazeNode*[width];
@@ -12,14 +12,14 @@ namespace minotaur
             mazeGrid[i] = new MazeNode[height];
     }
    
-    ~MazeMap()
+    MazeMap::~MazeMap()
     {
         for(int i = 0; i < width; ++i)
             delete[] mazeGrid[i];
-        delete[] mazeGrid[i];
+        delete[] mazeGrid;
     }
 
-    MazeNode& node(unsigned int p_x, unsigned int p_y)
+    MazeNode& MazeMap::node(unsigned int p_x, unsigned int p_y)
     {
         if(p_x >= width) {
             std::stringstream ss;
@@ -35,28 +35,28 @@ namespace minotaur
         return mazeGrid[p_x][p_y];
     }
 
-    unsigned int getWidth()
+    unsigned int MazeMap::getWidth()
     {
         return width;
     }
     
-    unsigned int getHeight()
+    unsigned int MazeMap::getHeight()
     {
         return height;
     }
 
-    void setNodeDimension(unsigned int p_width, unsigned int p_height)
+    void MazeMap::setNodeDimension(unsigned int p_width, unsigned int p_height)
     {
         nodeWidth = p_width;
         nodeHeight = p_height;
     }
     
-    unsigned int getNodeWidth()
+    unsigned int MazeMap::getNodeWidth()
     {
         return nodeWidth;
     }
     
-    unsigned int getNodeHeight()
+    unsigned int MazeMap::getNodeHeight()
     {
         return nodeHeight;
     }

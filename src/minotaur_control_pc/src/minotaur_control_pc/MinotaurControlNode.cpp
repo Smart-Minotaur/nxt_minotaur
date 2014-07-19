@@ -1,22 +1,26 @@
-#include <stderr>
+#include <stdexcept>
 #include <string>
+#include <cmath>
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/PoseStamped.h>
 #include "robot_control_beagle/Utils.hpp"
-#include "minotaur_control_pc/MinotaurControlNode.h"
+#include "minotaur_control_pc/MinotaurControlNode.hpp"
 #include "robot_control_beagle/SetPIDParameter.h"
+
+#define DEG_TO_RAD(deg) ((M_PI * deg) / 180)
 
 namespace minotaur
 {
     void MinotaurControlNode::connectToROS(ros::NodeHandle &p_nodeHandle)
     {
         ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
-        odometrySub = p_nodeHandle.subscribe(ROS_ODOM_TOPIC,
+        odometrySubscriber = p_nodeHandle.subscribe(ROS_ODOM_TOPIC,
                                                       50,
                                                       &MinotaurControlNode::processOdometryMsg,
                                                       this);
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
-        ultrasensorSub = p_nodeHandle.subscribe(NXT_ULTRA_SENSOR_TOPIC,
+        ultrasonicSubscriber = p_nodeHandle.subscribe(NXT_ULTRA_SENSOR_TOPIC,
                                                       50,
                                                       &MinotaurControlNode::processSensorMsg,
                                                       this);
@@ -24,8 +28,9 @@ namespace minotaur
         ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
         robotVelocityPublisher = p_nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
-        pidPramPublisher = p_nodeHandle.advertise<robot_control_beagle::SetPIDParameter>(NXT_SET_PID_PARAMETER, 50);
-        
+        pidParamPublisher = p_nodeHandle.advertise<robot_control_beagle::SetPIDParameter>(NXT_SET_PID_PARAMETER, 50);
+        ROS_INFO("Publishing on topic \"%s\"...", ROS_SIMPLE_GOAL);
+        targetPosPub = p_nodeHandle.advertise<geometry_msgs::PoseStamped>(ROS_SIMPLE_GOAL, 50);
         connected = true;
     }
         
@@ -36,16 +41,16 @@ namespace minotaur
         
         geometry_msgs::Twist msg;
         
-        mutex.lock();
+        pthread_mutex_lock(&odomMutex);
         double theta = tf::getYaw(lastOdometry.pose.pose.orientation);
-        mutex.unlock();
+        pthread_mutex_unlock(&odomMutex);
         
-        msg.linear.x = cos(theta) * p_linVel;
-        msg.linear.y = sin(theta) * p_linVel;
+        msg.linear.x = cos(theta) * p_linearVelocity;
+        msg.linear.y = sin(theta) * p_linearVelocity;
         msg.linear.z = 0;
         msg.angular.x = 0;
         msg.angular.y = 0;
-        msg.angular.z = p_angVel;
+        msg.angular.z = p_angularVelocity;
         
         robotVelocityPublisher.publish(msg);
     }
@@ -59,10 +64,26 @@ namespace minotaur
         msg.Kp = p_Kp;
         msg.Ki = p_Ki;
         msg.Kd = p_Kd;
-        pidPramPublisher.publish(msg);
+        pidParamPublisher.publish(msg);
     }
     
-    void spin()
+    void MinotaurControlNode::setSimpleTarget(const float p_x, const float p_y, const float p_theta)
+    {
+        geometry_msgs::PoseStamped msg;
+        
+        msg.header.stamp = ros::Time::now();
+        msg.header.frame_id = MINOTAUR_BASE_FRAME;
+        
+        msg.pose.position.x = p_x;
+        msg.pose.position.y = p_y;
+        msg.pose.position.z = 0;
+        
+        msg.pose.orientation = tf::createQuaternionMsgFromYaw(p_theta);
+        
+        targetPosPub.publish(msg);
+    }
+    
+    void MinotaurControlNode::spin()
     {
         if(!connected)
             throw std::logic_error("MinotaurControlNode: not connected to ROS");
@@ -78,6 +99,9 @@ namespace minotaur
     
     void MinotaurControlNode::processOdometryMsg(const nav_msgs::Odometry &p_msg)
     {
+        pthread_mutex_lock(&odomMutex);
+        lastOdometry = p_msg;
+        pthread_mutex_unlock(&odomMutex);
         listener->onReceiveOdometry(p_msg);
     }
     

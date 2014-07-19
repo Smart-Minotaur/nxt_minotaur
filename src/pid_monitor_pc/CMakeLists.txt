@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(pid_monitor_pc)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake-modules")
+
 find_package(catkin REQUIRED COMPONENTS
 	qt_build
 	roscpp
 	robot_control_beagle
 )
+
+find_package(Qwt REQUIRED)
 
 catkin_package(
     INCLUDE_DIRS include
@@ -40,13 +44,12 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 file(GLOB PID_MONITOR_PC_LIB_SOURCES src/${PROJECT_NAME}/*.cpp)
 file(GLOB PID_MONITOR_PC_MAIN_SOURCES src/${PROJECT_NAME}/main/*.cpp)
 
-include_directories(include ${catkin_INCLUDE_DIRS} "/usr/local/qwt-6.0.1/include")
-link_directories("/usr/local/qwt-6.0.1/lib")
+include_directories(include ${catkin_INCLUDE_DIRS} ${QWT_INCLUDE_DIRS})
 
 add_library(PIDMonitor ${PID_MONITOR_PC_LIB_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(PIDMonitor ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt)
+target_link_libraries(PIDMonitor ${QT_LIBRARIES} ${catkin_LIBRARIES} ${QWT_LIBRARIES})
 add_dependencies(PIDMonitor robot_control_beagle_generate_messages_cpp)
 
 add_executable(${PROJECT_NAME} ${PID_MONITOR_PC_MAIN_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} qwt PIDMonitor)
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} ${QWT_LIBRARIES} PIDMonitor)
 add_dependencies(${PROJECT_NAME} robot_control_beagle_generate_messages_cpp)

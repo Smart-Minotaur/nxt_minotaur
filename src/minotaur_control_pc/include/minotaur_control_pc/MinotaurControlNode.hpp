@@ -2,13 +2,16 @@
  * It is an abstraction of the ROS communication, so no more ROS logic is needed
  * to control the minotaur. */
 
-#ifndef MINOTAUR_MINOTAUR_CONTROL_NODE_H
-#define MINOTAUR_MINOTAUR_CONTROL_NODE_H
+#ifndef MINOTAUR_MINOTAUR_CONTROL_NODE_HPP
+#define MINOTAUR_MINOTAUR_CONTROL_NODE_HPP
 
 #include <ros/ros.h>
 #include <vector>
-#include "minotaur_control_pc/IMinotaurListener.h"
-#include "minotaur_control_pc/SensorSetting.h"
+#include <pthread.h>
+#include <nav_msgs/Odometry.h>
+#include "robot_control_beagle/UltrasonicData.h"
+#include "minotaur_control_pc/IMinotaurListener.hpp"
+#include "minotaur_control_pc/SensorSetting.hpp"
 
 namespace minotaur
 {
@@ -28,23 +31,28 @@ namespace minotaur
         
         ros::Publisher robotVelocityPublisher;
         ros::Publisher pidParamPublisher;
+        ros::Publisher targetPosPub;
+        
+        nav_msgs::Odometry lastOdometry;
+        pthread_mutex_t odomMutex;
         
         DefaultMinotaurListener defaultListener;
         IMinotaurListener *listener;
         
         bool connected;
         
-        void processOdometryMsg(const nav_msgs::Odometry& p_msg);
-        void processSensorMsg(const robot_control_beagle::UltrasonicData p_msg);
+        void processOdometryMsg(const nav_msgs::Odometry &p_msg);
+        void processSensorMsg(const robot_control_beagle::UltrasonicData &p_msg);
         
     public:
-        MinotaurControlNode(): connected(false), listener(&defaultListener) { }
-        ~MinotaurControlNode() { }
+        MinotaurControlNode(): connected(false), listener(&defaultListener) { pthread_mutex_init(&odomMutex, NULL); }
+        ~MinotaurControlNode() { pthread_mutex_destroy(&odomMutex); }
         
         void connectToROS(ros::NodeHandle &p_nodeHandle);
         
         void setVelocity(const float p_linearVelocity, const float p_angularVelocity);
         void setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd);
+        void setSimpleTarget(const float p_x, const float p_y, const float p_theta);
         void spin();
         
         void setMinotaurListener(IMinotaurListener *p_listener);
