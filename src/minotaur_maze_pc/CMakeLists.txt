@@ -7,6 +7,7 @@ find_package(catkin REQUIRED
     tf
     message_generation
     robot_control_beagle
+    minotaur_control_pc
 )
 
 catkin_package(
