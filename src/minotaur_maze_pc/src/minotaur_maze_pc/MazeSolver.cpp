@@ -9,6 +9,7 @@ namespace minotaur
         navigator = p_config.navigator;
         
         map.setNodeDimension(p_config.nodeWidth, p_config.nodeHeight);
+        minotaurNode.setMinotaurListener(this);
         robot.x = p_config.mapWidth / 2;
         robot.y = p_config.mapHeight / 2;
         robot.direction = p_config.initialRobotDirection;
@@ -41,16 +42,26 @@ namespace minotaur
     void MazeSolver::run()
     {
         while(keepRunning)
-        {
-            pthread_mutex_lock(&pauseMutex);
-            while(paused)                
-                pthread_cond_wait(&pauseCond, &pauseMutex);
-            pthread_mutex_unlock(&pauseMutex);
-            
-            if(!keepRunning)
-                break;
-            
-            navigator->moveToNextNode(robot.direction);
+            runExceptionSave();
+    }
+    
+    void MazeSolver::runExceptionSave()
+    {
+        try {
+            while(keepRunning)
+            {
+                pthread_mutex_lock(&pauseMutex);
+                while(paused)                
+                    pthread_cond_wait(&pauseCond, &pauseMutex);
+                pthread_mutex_unlock(&pauseMutex);
+                
+                if(!keepRunning)
+                    break;
+                
+                navigator->moveToNextNode(robot.direction);
+            }
+        } catch (std::exception const &e) {
+            ROS_ERROR("MazeSolver: exception during spin: %s.", e.what());
         }
     }
     
@@ -94,5 +105,15 @@ namespace minotaur
     const MazeMap& MazeSolver::getMap() const
     {
         return map;
+    }
+    
+    void MazeSolver::onReceiveOdometry(const nav_msgs::Odometry &p_odometry)
+    {
+        navigator->receivedOdometry(p_odometry);
+    }
+    
+    void MazeSolver::onReceivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData)
+    {
+        navigator->receivedUltrasonicData(p_sensorData);
     }
 }

@@ -118,7 +118,7 @@ namespace minotaur
     
     void MinotaurControlNode::processSensorMsg(const robot_control_beagle::UltrasonicData &p_msg)
     {
-        listener->onReceiveUltrasonicData(p_msg);
+        listener->onReceivedUltrasonicData(p_msg);
     }
     
     std::vector<SensorSetting> MinotaurControlNode::getSensorSettings()

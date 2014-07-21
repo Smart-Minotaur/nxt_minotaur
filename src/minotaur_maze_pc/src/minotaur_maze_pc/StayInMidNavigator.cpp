@@ -33,26 +33,25 @@ namespace minotaur
     
     void StayInMidNavigator::setMovementTarget(const nav_msgs::Odometry &p_odometry)
     {
-        float distance;
-        
         //determine the distance until the robot is in the next cell
+        float distanceToNextCell;
         if(isMovingVertically())
-            distance = map->getNodeHeight();
+            distanceToNextCell = map->getNodeHeight();
         else
-            distance = map->getNodeWidth();
+            distanceToNextCell = map->getNodeWidth();
         
         // get current direction of robot
         float theta = tf::getYaw(p_odometry.pose.pose.orientation);
         
         // determine target position
-        targetX = p_odometry.pose.pose.position.x + cos(theta) * distance;
-        targetY = p_odometry.pose.pose.position.y + sin(theta) * distance;
+        targetX = p_odometry.pose.pose.position.x + cos(theta) * distanceToNextCell;
+        targetY = p_odometry.pose.pose.position.y + sin(theta) * distanceToNextCell;
     }
     
     bool StayInMidNavigator::reachedTarget(const nav_msgs::Odometry &p_odometry)
     {
         return sameFloat(targetX, p_odometry.pose.pose.position.x, POSITION_EPSILON) &&
-               sameFloat(targetX, p_odometry.pose.pose.position.x, POSITION_EPSILON);
+               sameFloat(targetY, p_odometry.pose.pose.position.y, POSITION_EPSILON);
     }
         
     /* No race condition between receivedOdometry() and receivedUltrasonicData()
@@ -89,8 +88,9 @@ namespace minotaur
     void StayInMidNavigator::setMinotaurVelocity(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
         // if we are at the right position, stop the movement
-        if(frontObstacle && obstacleIsCloseEnough(p_sensorData))
+        if(frontObstacle && obstacleIsCloseEnough(p_sensorData)) {
                 stopMovement();
+        }
         
         if(isFrontSensor(p_sensorData.sensorID))
             return;
@@ -158,6 +158,7 @@ namespace minotaur
     
     void StayInMidNavigator::stopMovement()
     {
+        controlNode->setVelocity(0,0);
         mode = WAITING;
         pthread_cond_signal(&condition);
     }
