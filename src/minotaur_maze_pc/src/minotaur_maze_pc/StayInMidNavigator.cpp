@@ -2,8 +2,8 @@
 #include <cmath>
 #include "minotaur_maze_pc/StayInMidNavigator.hpp"
 
-#define MAX_LIN_VELOCITY 0.2f
-#define MAX_ANG_VELOCITY 1.0f
+#define MAX_LIN_VELOCITY 0.15f
+#define MAX_ANG_VELOCITY 0.8f
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -123,6 +123,9 @@ namespace minotaur
         }
         if(distanceCount != 0)
             angVelFactor /= distanceCount;
+        
+        if(angVelFactor > 1)
+            angVelFactor = 1;
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
