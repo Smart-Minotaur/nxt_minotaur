@@ -173,7 +173,7 @@ namespace minotaur
     
     float StayInMidNavigator::getSensorDistanceThreshold()
     {
-        return MAX(map->getNodeHeight(), map->getNodeWidth()) * 1.5f;
+        return MAX(map->getNodeHeight(), map->getNodeWidth()) * 0.7f;
     }
     
     float StayInMidNavigator::getSensorOffset(int p_id)
