@@ -2,8 +2,8 @@
 #include <cmath>
 #include "minotaur_maze_pc/StayInMidNavigator.hpp"
 
-#define MAX_LIN_VELOCITY 0.3f
-#define MAX_ANG_VELOCITY 2.0f
+#define MAX_LIN_VELOCITY 0.2f
+#define MAX_ANG_VELOCITY 1.0f
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -22,6 +22,7 @@ namespace minotaur
     {
         if(mode == BEGIN_MOVE) {
             setMovementTarget(p_odometry);
+            ROS_INFO("Set Target to (%.2f/%.2f).", targetX, targetY);
             mode = MOVE;
         }
         
@@ -70,6 +71,7 @@ namespace minotaur
     {
         if(isFrontSensor(p_sensorData.sensorID)) {
             // only recognize if it is close enough
+            ROS_INFO("Detected front obstacle!");
             frontObstacle = p_sensorData.distance <= getSensorDistanceThreshold();
         }
     }
@@ -112,19 +114,21 @@ namespace minotaur
         float angVelFactor = 0;
         int distanceCount = 0;
         if(leftDistance <= distanceThreshold) {
-            angVelFactor += (leftDistance / distanceToHold - 1);
+            angVelFactor += ((leftDistance / distanceToHold) - 1);
             distanceCount++;
         }
         if(rightDistance <= distanceThreshold) {
-            angVelFactor += (1 - rightDistance / distanceToHold);
+            angVelFactor += (1 - (rightDistance / distanceToHold));
             distanceCount++;
         }
         if(distanceCount != 0)
             angVelFactor /= distanceCount;
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
-        float linVelocity = (1 - angVelFactor) * MAX_LIN_VELOCITY;
+        float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
         
+        ROS_INFO("Set w_factor=%.2f; w=%.2f; v=%.2f.", angVelFactor, angVelocity, linVelocity);
+                
         controlNode->setVelocity(linVelocity, angVelocity);
     }
     
@@ -158,6 +162,7 @@ namespace minotaur
     
     void StayInMidNavigator::stopMovement()
     {
+        ROS_INFO("Reached target. Stop robot.");
         controlNode->setVelocity(0,0);
         mode = WAITING;
         pthread_cond_signal(&condition);
