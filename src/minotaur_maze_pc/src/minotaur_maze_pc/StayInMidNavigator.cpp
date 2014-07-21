@@ -93,6 +93,7 @@ namespace minotaur
         // if we are at the right position, stop the movement
         if(frontObstacle && obstacleIsCloseEnough(p_sensorData)) {
                 stopMovement();
+                return;
         }
         
         if(isFrontSensor(p_sensorData.sensorID))
