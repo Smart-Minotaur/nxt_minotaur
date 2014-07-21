@@ -45,18 +45,18 @@ namespace minotaur
         return height;
     }
 
-    void MazeMap::setNodeDimension(unsigned int p_width, unsigned int p_height)
+    void MazeMap::setNodeDimension(float p_width, float p_height)
     {
         nodeWidth = p_width;
         nodeHeight = p_height;
     }
     
-    unsigned int MazeMap::getNodeWidth()
+    float MazeMap::getNodeWidth()
     {
         return nodeWidth;
     }
     
-    unsigned int MazeMap::getNodeHeight()
+    float MazeMap::getNodeHeight()
     {
         return nodeHeight;
     }

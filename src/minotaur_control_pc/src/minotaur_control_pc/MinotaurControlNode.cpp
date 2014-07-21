@@ -9,6 +9,7 @@
 #include "robot_control_beagle/SetPIDParameter.h"
 
 #define DEG_TO_RAD(deg) ((M_PI * deg) / 180)
+#define SPIN_RATE 100
 
 namespace minotaur
 {
@@ -88,8 +89,18 @@ namespace minotaur
         if(!connected)
             throw std::logic_error("MinotaurControlNode: not connected to ROS");
         
-        ros::spin();
-        listener->onROSShutdown();
+        keepRunning = true;
+        ros::Rate rate(SPIN_RATE);
+        
+        while(keepRunning) {
+            ros::spinOnce();
+            rate.sleep();
+        }
+    }
+    
+    void MinotaurControlNode::stop()
+    {
+        keepRunning = false;
     }
     
     void MinotaurControlNode::setMinotaurListener(IMinotaurListener *p_listener)

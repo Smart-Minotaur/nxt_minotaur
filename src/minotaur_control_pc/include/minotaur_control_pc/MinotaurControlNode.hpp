@@ -20,12 +20,13 @@ namespace minotaur
     public:
         void onReceiveOdometry(const nav_msgs::Odometry &p_odometry) { }
         void onReceiveUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) { }
-        void onROSShutdown() { }
     };
     
     class MinotaurControlNode
     {
     private:
+        volatile bool keepRunning;
+    
         ros::Subscriber odometrySubscriber;
         ros::Subscriber ultrasonicSubscriber;
         
@@ -53,7 +54,9 @@ namespace minotaur
         void setVelocity(const float p_linearVelocity, const float p_angularVelocity);
         void setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd);
         void setSimpleTarget(const float p_x, const float p_y, const float p_theta);
+        
         void spin();
+        void stop();
         
         void setMinotaurListener(IMinotaurListener *p_listener);
         

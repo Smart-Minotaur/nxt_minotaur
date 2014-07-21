@@ -10,8 +10,8 @@ namespace minotaur
     private:
         unsigned int width;
         unsigned int height;
-        unsigned int nodeWidth;
-        unsigned int nodeHeight;
+        float nodeWidth;
+        float nodeHeight;
         MazeNode **mazeGrid;
     
     public:
@@ -24,9 +24,9 @@ namespace minotaur
         unsigned int getWidth();
         unsigned int getHeight();
         
-        void setNodeDimension(unsigned int p_width, unsigned int p_height);
-        unsigned int getNodeWidth();
-        unsigned int getNodeHeight();
+        void setNodeDimension(float p_width, float p_height);
+        float getNodeWidth();
+        float getNodeHeight();
     };
 }
 
