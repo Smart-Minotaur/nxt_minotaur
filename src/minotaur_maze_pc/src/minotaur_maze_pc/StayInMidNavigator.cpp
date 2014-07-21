@@ -73,7 +73,7 @@ namespace minotaur
             // only recognize if it is close enough
             frontObstacle = CM_TO_M(p_sensorData.distance) <= getSensorDistanceThreshold();
             if(frontObstacle)
-                ROS_INFO("Detected front obstacle (%.2f)!");
+                ROS_INFO("Detected front obstacle (%.2f)!", CM_TO_M(p_sensorData.distance));
         }
     }
     
