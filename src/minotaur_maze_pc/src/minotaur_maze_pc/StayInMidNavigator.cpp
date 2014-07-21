@@ -71,8 +71,9 @@ namespace minotaur
     {
         if(isFrontSensor(p_sensorData.sensorID)) {
             // only recognize if it is close enough
-            ROS_INFO("Detected front obstacle!");
-            frontObstacle = p_sensorData.distance <= getSensorDistanceThreshold();
+            frontObstacle = CM_TO_M(p_sensorData.distance) <= getSensorDistanceThreshold();
+            if(frontObstacle)
+                ROS_INFO("Detected front obstacle (%.2f)!");
         }
     }
     
@@ -130,8 +131,6 @@ namespace minotaur
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
         
-        ROS_INFO("Set w_factor=%.2f; w=%.2f; v=%.2f.", angVelFactor, angVelocity, linVelocity);
-                
         controlNode->setVelocity(linVelocity, angVelocity);
     }
     
@@ -150,7 +149,7 @@ namespace minotaur
         else
             maxDistanceToObstalce = (map->getNodeWidth() / 2) - sensorOffset;
 
-        return p_sensorData.distance <= maxDistanceToObstalce;
+        return CM_TO_M(p_sensorData.distance) <= maxDistanceToObstalce;
     }
     
     bool StayInMidNavigator::isFrontSensor(int p_id)
