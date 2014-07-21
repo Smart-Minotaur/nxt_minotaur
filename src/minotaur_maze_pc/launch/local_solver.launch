@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find robot_control_beagle)/launch/control.launch" />
+    <node pkg="minotaur_maze_pc" type="moveInMaze" name="moveInMaze" output="screen" />
+</launch>

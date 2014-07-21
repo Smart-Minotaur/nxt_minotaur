@@ -4,47 +4,50 @@
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PoseStamped.h>
+#include "robot_control_beagle/RAIILock.hpp"
 #include "robot_control_beagle/Utils.hpp"
 #include "minotaur_control_pc/MinotaurControlNode.hpp"
 #include "robot_control_beagle/SetPIDParameter.h"
 
 #define DEG_TO_RAD(deg) ((M_PI * deg) / 180)
 #define SPIN_RATE 100
+#define ROS_MESSAGE_QUEUE_LENGTH 20
 
 namespace minotaur
 {
     void MinotaurControlNode::connectToROS(ros::NodeHandle &p_nodeHandle)
     {
+        if(!ros::master::check())
+            throw std::logic_error("MinotaurControlNode: ROS master is not running. Cannot connect to ROS");
+        
         ROS_INFO("Subscribing to topic \"%s\"...", ROS_ODOM_TOPIC);
         odometrySubscriber = p_nodeHandle.subscribe(ROS_ODOM_TOPIC,
-                                                      50,
+                                                      ROS_MESSAGE_QUEUE_LENGTH,
                                                       &MinotaurControlNode::processOdometryMsg,
                                                       this);
         ROS_INFO("Subscribing to topic \"%s\"...", NXT_ULTRA_SENSOR_TOPIC);
         ultrasonicSubscriber = p_nodeHandle.subscribe(NXT_ULTRA_SENSOR_TOPIC,
-                                                      50,
+                                                      ROS_MESSAGE_QUEUE_LENGTH,
                                                       &MinotaurControlNode::processSensorMsg,
                                                       this);
         
         ROS_INFO("Publishing on topic \"%s\"...", ROS_VEL_TOPIC);
-        robotVelocityPublisher = p_nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, 50);
+        robotVelocityPublisher = p_nodeHandle.advertise<geometry_msgs::Twist>(ROS_VEL_TOPIC, ROS_MESSAGE_QUEUE_LENGTH);
         ROS_INFO("Publishing on topic \"%s\"...", NXT_SET_PID_PARAMETER);
-        pidParamPublisher = p_nodeHandle.advertise<robot_control_beagle::SetPIDParameter>(NXT_SET_PID_PARAMETER, 50);
+        pidParamPublisher = p_nodeHandle.advertise<robot_control_beagle::SetPIDParameter>(NXT_SET_PID_PARAMETER, ROS_MESSAGE_QUEUE_LENGTH);
         ROS_INFO("Publishing on topic \"%s\"...", ROS_SIMPLE_GOAL);
-        targetPosPub = p_nodeHandle.advertise<geometry_msgs::PoseStamped>(ROS_SIMPLE_GOAL, 50);
+        targetPosPub = p_nodeHandle.advertise<geometry_msgs::PoseStamped>(ROS_SIMPLE_GOAL, ROS_MESSAGE_QUEUE_LENGTH);
         connected = true;
     }
         
     void MinotaurControlNode::setVelocity(const float p_linearVelocity, const float p_angularVelocity)
     {
         if(!connected)
-            throw std::logic_error("MinotaurControlNode: not connected to ROS");
+            throw std::logic_error("MinotaurControlNode: Not connected to ROS. Cannot call setVelocity()");
         
         geometry_msgs::Twist msg;
         
-        pthread_mutex_lock(&odomMutex);
-        double theta = tf::getYaw(lastOdometry.pose.pose.orientation);
-        pthread_mutex_unlock(&odomMutex);
+        double theta = getThetaFromLastOdom();
         
         msg.linear.x = cos(theta) * p_linearVelocity;
         msg.linear.y = sin(theta) * p_linearVelocity;
@@ -56,10 +59,16 @@ namespace minotaur
         robotVelocityPublisher.publish(msg);
     }
     
+    double MinotaurControlNode::getThetaFromLastOdom()
+    {
+        RAIILock lock(&odomMutex);
+        return tf::getYaw(lastOdometry.pose.pose.orientation);
+    }
+    
     void MinotaurControlNode::setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd)
     {
         if(!connected)
-            throw std::logic_error("MinotaurControlNode: not connected to ROS");
+            throw std::logic_error("MinotaurControlNode: Not connected to ROS. Cannot call setPIDParameter()");
         
         robot_control_beagle::SetPIDParameter msg;
         msg.Kp = p_Kp;
@@ -87,7 +96,7 @@ namespace minotaur
     void MinotaurControlNode::spin()
     {
         if(!connected)
-            throw std::logic_error("MinotaurControlNode: not connected to ROS");
+            throw std::logic_error("MinotaurControlNode: Not connected to ROS. Cannot call spin()");
         
         keepRunning = true;
         ros::Rate rate(SPIN_RATE);
@@ -110,10 +119,14 @@ namespace minotaur
     
     void MinotaurControlNode::processOdometryMsg(const nav_msgs::Odometry &p_msg)
     {
-        pthread_mutex_lock(&odomMutex);
-        lastOdometry = p_msg;
-        pthread_mutex_unlock(&odomMutex);
+        updateLastOdometry(p_msg);
         listener->onReceiveOdometry(p_msg);
+    }
+    
+    void MinotaurControlNode::updateLastOdometry(const nav_msgs::Odometry &p_msg)
+    {
+        RAIILock lock(&odomMutex);
+        lastOdometry = p_msg;
     }
     
     void MinotaurControlNode::processSensorMsg(const robot_control_beagle::UltrasonicData &p_msg)
@@ -123,13 +136,16 @@ namespace minotaur
     
     std::vector<SensorSetting> MinotaurControlNode::getSensorSettings()
     {
+        if(!ros::master::check())
+            throw std::logic_error("MinotaurControlNode: ROS master is not running. Cannot read sensor settings");
+        
         std::vector<SensorSetting> result;
         std::string model;
         
-        int i = 0;
         if(!ros::param::get(PARAM_CURRENT_MODEL(), model))
             throw std::logic_error("MinotaurControlNode: No current robot model available");
-        
+            
+        int i = 0;
         while(ros::param::has(PARAM_SENSOR(model, i)))
         {
             result.push_back(SensorSetting());

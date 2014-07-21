@@ -43,6 +43,8 @@ namespace minotaur
         bool connected;
         
         void processOdometryMsg(const nav_msgs::Odometry &p_msg);
+        void updateLastOdometry(const nav_msgs::Odometry &p_msg);
+        double getThetaFromLastOdom();
         void processSensorMsg(const robot_control_beagle::UltrasonicData &p_msg);
         
     public:

@@ -6,8 +6,9 @@
 #define NODE_NAME "MoveInMaze"
 #define MAP_WIDTH 50
 #define MAP_HEIGHT 50
-#define NODE_WIDTH 0.1f
-#define NODE_HEIGHT 0.1f
+#define NODE_WIDTH 0.41f
+#define NODE_HEIGHT 0.41f
+#define INITIAL_DIRECTION minotaur::EAST
 
 static minotaur::StayInMidNavigator navigator;
 static minotaur::MazeSolver *solver;
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
     config.mapHeight = MAP_HEIGHT;
     config.nodeWidth = NODE_WIDTH;
     config.nodeHeight = NODE_HEIGHT;
-    config.initialRobotDirection = minotaur::EAST;
+    config.initialRobotDirection = INITIAL_DIRECTION;
     
     minotaur::MazeSolver local_solver(config);
     solver = &local_solver;

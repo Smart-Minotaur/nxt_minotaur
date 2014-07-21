@@ -17,7 +17,7 @@ namespace minotaur
     }
     
     /* No race condition between receivedOdometry() and receivedUltrasonicData()
-     * because ros::spin() executes everything in the same thread. */
+     * because ros::spin() executes  in the same thread. */
     void StayInMidNavigator::receivedOdometry(const nav_msgs::Odometry &p_odometry)
     {
         if(mode == BEGIN_MOVE) {
@@ -112,15 +112,15 @@ namespace minotaur
         float angVelFactor = 0;
         int distanceCount = 0;
         if(leftDistance <= distanceThreshold) {
-            angVelFactor += (leftDistance - 1);
+            angVelFactor += (leftDistance / distanceToHold - 1);
             distanceCount++;
         }
         if(rightDistance <= distanceThreshold) {
-            angVelFactor += (1 - rightDistance);
+            angVelFactor += (1 - rightDistance / distanceToHold);
             distanceCount++;
         }
         if(distanceCount != 0)
-            angVelFactor /= (distanceCount * distanceToHold);
+            angVelFactor /= distanceCount;
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - angVelFactor) * MAX_LIN_VELOCITY;
