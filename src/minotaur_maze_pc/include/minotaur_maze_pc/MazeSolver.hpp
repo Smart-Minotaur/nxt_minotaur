@@ -2,6 +2,7 @@
 #define MINOTAUR_MAZE_SOLVER_HPP
 
 #include <pthread.h>
+#include <string>
 #include "minotaur_maze_pc/MazeNavigator.hpp"
 #include "minotaur_maze_pc/MazeMap.hpp"
 #include "minotaur_control_pc/MinotaurControlNode.hpp"
@@ -19,6 +20,9 @@ namespace minotaur
         float nodeWidth, nodeHeight;
         
         Direction initialRobotDirection;
+        
+        void loadFromParamServer(const std::string &p_name);
+        void loadCurrentFromParamServer();
     };
     
     class MazeRobot

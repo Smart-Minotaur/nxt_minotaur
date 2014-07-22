@@ -1,0 +1,9 @@
+minotaur:
+    mazes:
+        HTWGMaze:
+            map_width: 50
+            map_height: 50
+            node_width: 0.41
+            node_height: 0.41
+            init_direction: "EAST"
+        CurrentMaze: "HTWGMaze"

@@ -37,11 +37,7 @@ int main(int argc, char** argv)
     
     config.navigator = &navigator;
     config.handle = &handle;
-    config.mapWidth = MAP_WIDTH;
-    config.mapHeight = MAP_HEIGHT;
-    config.nodeWidth = NODE_WIDTH;
-    config.nodeHeight = NODE_HEIGHT;
-    config.initialRobotDirection = INITIAL_DIRECTION;
+    config.loadCurrentFromParamServer();
     
     minotaur::MazeSolver local_solver(config);
     solver = &local_solver;

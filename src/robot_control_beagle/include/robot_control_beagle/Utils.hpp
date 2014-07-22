@@ -2,8 +2,8 @@
  * Author: Fabian Meyer
  */
 
-#ifndef NXT_BEAGLE_CONFIG_HPP
-#define NXT_BEAGLE_CONFIG_HPP
+#ifndef MINOTAUR_ROBOT_CONTROL_BEAGLE_UTILS_HPP
+#define MINOTAUR_ROBOT_CONTROL_BEAGLE_UTILS_HPP
 
 #include <string>
 #include <sstream>
@@ -35,35 +35,35 @@
 #define MINOTAUR_ODOM_FRAME "odom"
 #define MINOTAUR_BASE_FRAME "base_link"
 
-inline std::string PARAM_NAME(const std::string& p_name)
-{ return (MINOTAUR_ROS_NS "/") + p_name; }
+inline std::string PARAM_MODEL(const std::string& p_name)
+{ return (MINOTAUR_ROS_NS "/models/") + p_name; }
 
 inline std::string PARAM_WHEEL_TRACK(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/wheel_track"; }
+{ return PARAM_MODEL(p_name) + "/wheel_track"; }
 
 inline std::string PARAM_WHEEL_CIRCUMFERENCE(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/wheel_circumference"; }
+{ return PARAM_MODEL(p_name) + "/wheel_circumference"; }
 
 inline std::string PARAM_KP(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/kp"; }
+{ return PARAM_MODEL(p_name) + "/kp"; }
 
 inline std::string PARAM_KI(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/ki"; }
+{ return PARAM_MODEL(p_name) + "/ki"; }
 
 inline std::string PARAM_KD(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/kd"; }
+{ return PARAM_MODEL(p_name) + "/kd"; }
 
 inline std::string PARAM_SAMPLING_INTERVAL(const std::string& p_name)
-{ return PARAM_NAME(p_name) + "/sampling_interval"; }
+{ return PARAM_MODEL(p_name) + "/sampling_interval"; }
 
 inline std::string PARAM_CURRENT_MODEL()
-{ return PARAM_NAME(CURRENT_MODEL_NAME);}
+{ return PARAM_MODEL(CURRENT_MODEL_NAME);}
 
 inline std::string PARAM_SENSOR(const std::string& p_name, const int p_id)
 {   
     std::stringstream ss;
     ss << "/sensor_" << p_id;
-    return PARAM_NAME(p_name) + ss.str();
+    return PARAM_MODEL(p_name) + ss.str();
 }
 
 inline std::string PARAM_SENSOR_DX(const std::string& p_name, const int p_id)
