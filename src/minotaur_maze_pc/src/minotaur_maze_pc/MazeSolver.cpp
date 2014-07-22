@@ -3,6 +3,7 @@
 #include <sstream>
 #include "minotaur_maze_pc/MazeSolver.hpp"
 #include "minotaur_maze_pc/Parameter.hpp"
+#include "robot_control_beagle/RAIILock.hpp"
 
 namespace minotaur
 {
@@ -120,18 +121,52 @@ namespace minotaur
         try {
             while(keepRunning)
             {
-                pthread_mutex_lock(&pauseMutex);
-                while(paused)                
-                    pthread_cond_wait(&pauseCond, &pauseMutex);
-                pthread_mutex_unlock(&pauseMutex);
+                checkPaused();
                 
                 if(!keepRunning)
                     break;
                 
+                ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
+                ROS_INFO("==REACHED TARGET==");
+                stepRobotPosition();
+                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                ROS_INFO("==TURNING ROBOT==");
+                ROS_INFO("Target Direction %s.", DirectionStrings[EAST]);
+                navigator->turnRobotTo(robot.direction, EAST);
+                robot.direction = EAST;
+                ROS_INFO("==REACHED DIRECTION==");
+                
+                keepRunning = false;
             }
         } catch (std::exception const &e) {
             ROS_ERROR("MazeSolver: exception during spin: %s.", e.what());
+        }
+    }
+    
+    void MazeSolver::checkPaused()
+    {
+        RAIILock lock(&pauseMutex);
+        while(paused)                
+            pthread_cond_wait(&pauseCond, &pauseMutex);
+    }
+    
+    void MazeSolver::stepRobotPosition()
+    {
+        switch(robot.direction) {
+            case EAST:
+                ++robot.x;
+                break;
+            case WEST:
+                --robot.x;
+                break;
+            case NORTH:
+                ++robot.y;
+                break;
+            case SOUTH:
+                --robot.y;
+                break;
         }
     }
     
@@ -148,28 +183,33 @@ namespace minotaur
     
     void MazeSolver::stop()
     {
+        ROS_INFO("MazeSolver: stop() called.");
         void *retVal;
         keepRunning = false;
         resume();
         
+        ROS_INFO("MazeSolver: joining maze thread.");
         pthread_join(mazeThread, &retVal);
         
+        ROS_INFO("MazeSolver: stopping minotaur node.");
         minotaurNode.stop();
     }
     
     void MazeSolver::pause()
     {
-        pthread_mutex_lock(&pauseMutex);
-        paused = true;
-        pthread_mutex_unlock(&pauseMutex);
+        setPaused(true);
     }
     
     void MazeSolver::resume()
     {
-        pthread_mutex_lock(&pauseMutex);
-        paused = false;
-        pthread_mutex_unlock(&pauseMutex);
+        setPaused(false);
         pthread_cond_signal(&pauseCond);
+    }
+    
+    void MazeSolver::setPaused(bool p_value)
+    {
+        RAIILock lock(&pauseMutex);
+        paused = p_value;
     }
     
     const MazeMap& MazeSolver::getMap() const

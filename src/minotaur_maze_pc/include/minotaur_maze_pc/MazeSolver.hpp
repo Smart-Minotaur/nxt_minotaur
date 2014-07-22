@@ -50,6 +50,9 @@ namespace minotaur
         MazeRobot robot;
         
         void runExceptionSave();
+        void checkPaused();
+        void stepRobotPosition();
+        void setPaused(bool p_value);
     public:
         MazeSolver(const MazeSolverConfig &p_config);
         ~MazeSolver();

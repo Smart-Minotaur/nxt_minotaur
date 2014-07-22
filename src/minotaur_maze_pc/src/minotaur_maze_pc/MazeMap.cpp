@@ -4,6 +4,8 @@
 
 namespace minotaur
 {
+    const char *DirectionStrings[] = {"EAST", "SOUTH", "WEST", "NORTH"};
+    
     MazeMap::MazeMap(unsigned int p_width, unsigned int p_height)
     :width(p_width), height(p_height)
     {

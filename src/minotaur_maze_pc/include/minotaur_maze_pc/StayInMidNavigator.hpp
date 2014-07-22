@@ -6,7 +6,7 @@
 
 namespace minotaur
 {
-    enum MovementMode { WAITING, BEGIN_MOVE, MOVE };
+    enum MovementMode { WAITING, BEGIN_MOVE, MOVE, BEGIN_TURN, TURN };
     
     class StayInMidNavigator : public MazeNavigator
     {
@@ -15,19 +15,28 @@ namespace minotaur
         pthread_cond_t condition;
         
         Direction currentDirection;
+        Direction targetDirection;
         
         volatile MovementMode mode;
         volatile bool frontObstacle;
         
         float targetX, targetY;
+        float targetTheta;
         float leftDistance, rightDistance;
         
-        void setMovementTarget(const nav_msgs::Odometry &p_odometry);
-        bool reachedTarget(const nav_msgs::Odometry &p_odometry);
+        void setTargetPosition(const nav_msgs::Odometry &p_odometry);
+        bool reachedTargetPosition(const nav_msgs::Odometry &p_odometry);
+        void setTargetTheta(const nav_msgs::Odometry &p_odometry);
+        bool reachedTargetTheta(const nav_msgs::Odometry &p_odometry);
+        
         void checkFrontObstacle(const robot_control_beagle::UltrasonicData &p_sensorData);
         void updateDistances(const robot_control_beagle::UltrasonicData &p_sensorData);
-        void setMinotaurVelocity(const robot_control_beagle::UltrasonicData &p_sensorData);
+        
+        void setMovementVelocity(const robot_control_beagle::UltrasonicData &p_sensorData);
         bool obstacleIsCloseEnough(const robot_control_beagle::UltrasonicData &p_sensorData);
+        
+        void setTurnVelocity(const robot_control_beagle::UltrasonicData &p_sensorData);
+        
         bool isFrontSensor(int p_id);
         bool isMovingVertically();
         float getSensorDistanceThreshold();

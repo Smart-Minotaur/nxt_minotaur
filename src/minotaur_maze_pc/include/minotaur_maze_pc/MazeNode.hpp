@@ -3,7 +3,9 @@
 
 namespace minotaur
 {
-    enum Direction {EAST, WEST, NORTH, SOUTH};
+    enum Direction {EAST, SOUTH, WEST, NORTH};
+    // look in "MazeMap.cpp" for declaration
+    extern const char *DirectionStrings[];
     
     class MazeNode
     {
