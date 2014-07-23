@@ -8,7 +8,7 @@
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
-#define POSITION_EPSILON 0.01f
+#define POSITION_EPSILON 0.05f
 #define DIRECTION_EPSILON 0.1f
 
 namespace minotaur
@@ -37,6 +37,7 @@ namespace minotaur
             mode = MOVE;
         }
         
+        ROS_INFO("Has front obstacle: %d.", frontObstacle);
         if(mode == MOVE && !frontObstacle) {
             if(reachedTargetPosition(p_odometry))
                 stopMovement();

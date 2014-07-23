@@ -5,5 +5,5 @@ minotaur:
             map_height: 50
             node_width: 0.41
             node_height: 0.41
-            init_direction: "EAST"
+            init_direction: "NORTH"
         CurrentMaze: "HTWGMaze"
