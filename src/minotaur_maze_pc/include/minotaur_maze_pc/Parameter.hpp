@@ -24,7 +24,7 @@ namespace minotaur
     { return PARAM_MAZE(p_name) + "/node_height"; }
 
     inline std::string PARAM_MAZE_INIT_DIRECTION(const std::string& p_name)
-    { return PARAM_MAZE(p_name) + "/node_height"; }
+    { return PARAM_MAZE(p_name) + "/init_direction"; }
 }
 
 #endif

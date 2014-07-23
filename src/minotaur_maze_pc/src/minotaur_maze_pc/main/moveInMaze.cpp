@@ -35,17 +35,18 @@ int main(int argc, char** argv)
     ros::NodeHandle handle;
     setSignalAction();
     
-    config.navigator = &navigator;
-    config.handle = &handle;
-    config.loadCurrentFromParamServer();
-    
-    minotaur::MazeSolver local_solver(config);
-    solver = &local_solver;
-    
+
     try {
+        config.navigator = &navigator;
+        config.handle = &handle;
+        config.loadCurrentFromParamServer();
+        minotaur::MazeSolver local_solver(config);
+        
+        solver = &local_solver;
         solver->start();
     } catch (std::exception &e) {
         ROS_ERROR("Exception occured: %s.", e.what());
+        return -1;
     }
     
     ros::shutdown();
