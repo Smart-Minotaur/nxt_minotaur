@@ -3,8 +3,8 @@
 #include "minotaur_maze_pc/StayInMidNavigator.hpp"
 #include "robot_control_beagle/RAIILock.hpp"
 
-#define MAX_LIN_VELOCITY 0.17f
-#define MAX_ANG_VELOCITY 1.7f
+#define MAX_LIN_VELOCITY 0.15f
+#define MAX_ANG_VELOCITY 1.2f
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)

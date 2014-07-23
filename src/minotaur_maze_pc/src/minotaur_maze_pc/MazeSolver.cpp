@@ -132,17 +132,23 @@ namespace minotaur
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
                 
+                usleep(1000000);
+                
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
                 
+                usleep(1000000);
+                
                 ROS_INFO("==TURNING ROBOT==");
                 ROS_INFO("Target Direction %s.", DirectionStrings[EAST]);
                 navigator->turnRobotTo(robot.direction, EAST);
                 robot.direction = EAST;
                 ROS_INFO("==REACHED DIRECTION==");
+                
+                usleep(1000000);
                 
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
