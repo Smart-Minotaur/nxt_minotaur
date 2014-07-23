@@ -52,6 +52,8 @@ namespace minotaur
         
         void moveToNextNode(Direction p_currentDirection);
         void turnRobotTo(Direction p_currentDirection, Direction p_newDirection);
+        
+        void shutdown();
     };
 }
 

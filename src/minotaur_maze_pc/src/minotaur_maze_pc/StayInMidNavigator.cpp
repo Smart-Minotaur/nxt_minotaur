@@ -37,8 +37,6 @@ namespace minotaur
             mode = MOVE;
         }
         
-        if(mode == MOVE)
-            ROS_INFO("Has front obstacle: %d.", frontObstacle);
         if(mode == MOVE && !frontObstacle) {
             if(reachedTargetPosition(p_odometry))
                 stopMovement();
@@ -243,4 +241,12 @@ namespace minotaur
         mode = BEGIN_TURN;
         pthread_cond_wait(&condition, &mutex);
     }
+    
+    void StayInMidNavigator::shutdown()
+    {
+        RAIILock lock(&mutex);
+        mode = WAITING;
+        pthread_cond_signal(&condition);
+    }
+        
 }
