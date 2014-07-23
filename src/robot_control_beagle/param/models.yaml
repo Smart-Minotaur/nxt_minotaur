@@ -17,14 +17,14 @@ minotaur:
             sensor_0:
                 direction: -90.0
                 dx: 0.03
-                dy: 0.065
+                dy: 0.03
             sensor_1:
                 direction: 90.0
                 dx: 0.03
-                dy: 0.065
+                dy: 0.03
             sensor_2:
                 direction: 0.0
-                dx: 0.06
+                dx: 0.03
                 dy: 0.0
         CurrentModel: "Theseus"
         
