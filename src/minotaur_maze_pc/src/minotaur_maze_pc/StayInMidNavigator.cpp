@@ -3,8 +3,8 @@
 #include "minotaur_maze_pc/StayInMidNavigator.hpp"
 #include "robot_control_beagle/RAIILock.hpp"
 
-#define MAX_LIN_VELOCITY 0.15f
-#define MAX_ANG_VELOCITY 0.8f
+#define MAX_LIN_VELOCITY 0.17f
+#define MAX_ANG_VELOCITY 1.7f
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -37,7 +37,8 @@ namespace minotaur
             mode = MOVE;
         }
         
-        ROS_INFO("Has front obstacle: %d.", frontObstacle);
+        if(mode == MOVE)
+            ROS_INFO("Has front obstacle: %d.", frontObstacle);
         if(mode == MOVE && !frontObstacle) {
             if(reachedTargetPosition(p_odometry))
                 stopMovement();
@@ -79,7 +80,7 @@ namespace minotaur
     void StayInMidNavigator::setTargetTheta(const nav_msgs::Odometry &p_odometry)
     {
         float theta = tf::getYaw(p_odometry.pose.pose.orientation);
-        int directionDiff = currentDirection - targetDirection;
+        int directionDiff = getDirectionDiff(currentDirection, targetDirection);
         
         targetTheta = theta + ((directionDiff * M_PI) / 2);
         targetTheta = normalizeAngle(targetTheta);
@@ -192,7 +193,7 @@ namespace minotaur
     
     void StayInMidNavigator::setTurnVelocity(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
-        int directionDiff = currentDirection - targetDirection;
+        int directionDiff = getDirectionDiff(currentDirection, targetDirection);
         
         float angVelocity = (directionDiff / abs(directionDiff)) * MAX_ANG_VELOCITY;
         

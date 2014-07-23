@@ -4,8 +4,12 @@
 namespace minotaur
 {
     enum Direction {EAST, SOUTH, WEST, NORTH};
-    // look in "MazeMap.cpp" for declaration
     extern const char *DirectionStrings[];
+    
+    /* Calculates the difference between 2 Directions and the shortest 
+     * turndirection.
+     * Negative result means turn right, positive turn left. */
+    int getDirectionDiff(const Direction p_dirA, const Direction p_dirB);
     
     class MazeNode
     {
