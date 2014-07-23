@@ -6,7 +6,7 @@
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
 
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
 #define POSITION_EPSILON 0.05f
 #define DIRECTION_EPSILON 0.1f
@@ -164,9 +164,15 @@ namespace minotaur
         
         if(angVelFactor > 1)
             angVelFactor = 1;
+        if(angVelFactor < -1)
+            angVelFactor = -1;
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
+        
+        ROS_INFO("AngVelFac: %.2f AngVel: %.2f LinVel: %.2f", angVelFactor, angVelocity, linVelocity);
+        ROS_INFO("DistToHold: %.2f Threshold: %.2f", distanceToHold, distanceThreshold);
+        ROS_INFO("Right: %.2f Left: %.2f Offset: %.2f\n", rightDistance, leftDistance, sensorOffset);
         
         controlNode->setVelocity(linVelocity, angVelocity);
     }
@@ -222,8 +228,7 @@ namespace minotaur
     
     float StayInMidNavigator::getSensorOffset(int p_id)
     {
-        return sqrt(sensorSettings[p_id].x * sensorSettings[p_id].x +
-                    sensorSettings[p_id].y * sensorSettings[p_id].y);
+        return fabs(sensorSettings[p_id].y);
     }
     
     void StayInMidNavigator::moveToNextNode(Direction p_currentDirection)
