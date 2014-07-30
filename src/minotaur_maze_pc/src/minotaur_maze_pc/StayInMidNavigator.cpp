@@ -8,7 +8,7 @@
 #define MEDIAN_SIZE 5
 
 #define THRESHOLD_FACTOR 0.8f
-#define PARABEL_FACTOR 156.25f
+#define PARABEL_FACTOR 69.44f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -49,6 +49,7 @@ namespace minotaur
      * because ros::spin() executes  in the same thread. */
     void StayInMidNavigator::receivedOdometry(const nav_msgs::Odometry &p_odometry)
     {
+        RAIILock lock(&mutex);
         if(mode == BEGIN_MOVE) {
             setTargetPosition(p_odometry);
             mode = MOVE;
@@ -116,6 +117,7 @@ namespace minotaur
      * because ros::spin() executes everything in the same thread. */
     void StayInMidNavigator::receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
+        RAIILock lock(&mutex);
         updateDistances(p_sensorData);
         // check if there is a front obstacle
         checkFrontObstacle(p_sensorData);
@@ -277,6 +279,7 @@ namespace minotaur
     {
         RAIILock lock(&mutex);
         mode = WAITING;
+        controlNode->setVelocity(0, 0);
         pthread_cond_signal(&condition);
     }
         

@@ -268,7 +268,7 @@ namespace minotaur
         pthread_join(mazeThread, &retVal);
         
         ROS_INFO("MazeSolver: stopping minotaur node.");
-        minotaurNode.setVelocity(0, 0);
+        
         minotaurNode.stop();
     }
     
