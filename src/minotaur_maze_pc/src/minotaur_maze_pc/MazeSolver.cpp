@@ -193,7 +193,7 @@ namespace minotaur
                 ROS_INFO("==TURNING ROBOT==");
                 ROS_INFO("Target Direction %s.", DirectionStrings[SOUTH]);
                 navigator->turnRobotTo(robot.direction, SOUTH);
-                robot.direction = EAST;
+                robot.direction = SOUTH;
                 ROS_INFO("==REACHED DIRECTION==");
                 
                 if(!keepRunning)

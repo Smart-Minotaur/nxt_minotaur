@@ -55,7 +55,7 @@ namespace minotaur
     void StayInMidNavigator::setTargetPosition(const nav_msgs::Odometry &p_odometry)
     {
         //determine the distance until the robot is in the next cell
-        float distanceToNextCell;
+        /*float distanceToNextCell;
         if(isMovingVertically())
             distanceToNextCell = map->getNodeHeight();
         else
@@ -66,29 +66,51 @@ namespace minotaur
         
         // determine target position
         targetX = p_odometry.pose.pose.position.x + cos(theta) * distanceToNextCell;
-        targetY = p_odometry.pose.pose.position.y + sin(theta) * distanceToNextCell;
+        targetY = p_odometry.pose.pose.position.y + sin(theta) * distanceToNextCell;*/
+        
+        startX = p_odometry.pose.pose.position.x;
+        startY = p_odometry.pose.pose.position.y;
     }
     
     bool StayInMidNavigator::reachedTargetPosition(const nav_msgs::Odometry &p_odometry)
     {
-        return sameFloat(targetX, p_odometry.pose.pose.position.x, POSITION_EPSILON) &&
-               sameFloat(targetY, p_odometry.pose.pose.position.y, POSITION_EPSILON);
+        float diffX = p_odometry.pose.pose.position.x - startX;
+        float diffY = p_odometry.pose.pose.position.y - startY;
+        float distanceSq = diffX * diffX + diffY * diffY;
+        float targetDistanceSq;
+        
+        if(isMovingVertically())
+            targetDistanceSq = map->getNodeHeight() * map->getNodeHeight();
+        else
+            targetDistanceSq = map->getNodeWidth() * map->getNodeWidth();
+            
+        return distanceSq >= targetDistanceSq;
+        
+        /*return sameFloat(targetX, p_odometry.pose.pose.position.x, POSITION_EPSILON) &&
+               sameFloat(targetY, p_odometry.pose.pose.position.y, POSITION_EPSILON);*/
     }
     
     void StayInMidNavigator::setTargetTheta(const nav_msgs::Odometry &p_odometry)
     {
-        float theta = tf::getYaw(p_odometry.pose.pose.orientation);
+        /*float theta = tf::getYaw(p_odometry.pose.pose.orientation);
         int directionDiff = getDirectionDiff(currentDirection, targetDirection);
         
         targetTheta = theta + ((directionDiff * M_PI) / 2);
-        targetTheta = normalizeAngle(targetTheta);
+        targetTheta = normalizeAngle(targetTheta);*/
+        
+        startTheta = normalizeAngle(tf::getYaw(p_odometry.pose.pose.orientation));
     }
     
     bool StayInMidNavigator::reachedTargetTheta(const nav_msgs::Odometry &p_odometry)
     {
         float theta = tf::getYaw(p_odometry.pose.pose.orientation);
         theta = normalizeAngle(theta);
-        return sameFloat(targetTheta, theta, DIRECTION_EPSILON);
+        
+        float diffTheta = normalizeAngle(theta - startTheta);
+        
+        
+        return diffTheta >= M_PI / 2;
+        //return sameFloat(targetTheta, theta, DIRECTION_EPSILON);
     }
         
     /* No race condition between receivedOdometry() and receivedUltrasonicData()

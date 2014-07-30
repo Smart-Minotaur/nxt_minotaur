@@ -24,6 +24,9 @@ namespace minotaur
         float targetTheta;
         float leftDistance, rightDistance;
         
+        float startX, startY;
+        float startTheta;
+        
         void setTargetPosition(const nav_msgs::Odometry &p_odometry);
         bool reachedTargetPosition(const nav_msgs::Odometry &p_odometry);
         void setTargetTheta(const nav_msgs::Odometry &p_odometry);
