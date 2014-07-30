@@ -103,13 +103,19 @@ namespace minotaur
     
     bool StayInMidNavigator::reachedTargetTheta(const nav_msgs::Odometry &p_odometry)
     {
-        float theta = tf::getYaw(p_odometry.pose.pose.orientation);
-        theta = normalizeAngle(theta);
+        float theta = normalizeAngle(tf::getYaw(p_odometry.pose.pose.orientation));
         
-        float diffTheta = normalizeAngle(theta - startTheta);
+        int directionDiff = getDirectionDiff(currentDirection, targetDirection);
         
-        
-        return diffTheta >= M_PI / 2;
+        if(directionDiff < 0)
+            while(startTheta < theta)
+                theta -= 2 * M_PI;
+                
+        if(directionDiff > 0)
+            while(startTheta > theta)
+                theta += 2 * M_PI;
+        float diffTheta = theta - startTheta;
+        return fabs(diffTheta) >= fabs(abs(directionDiff) * (M_PI / 2));
         //return sameFloat(targetTheta, theta, DIRECTION_EPSILON);
     }
         
