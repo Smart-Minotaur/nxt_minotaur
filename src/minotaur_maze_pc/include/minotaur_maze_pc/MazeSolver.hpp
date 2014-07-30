@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <string>
 #include "minotaur_maze_pc/MazeNavigator.hpp"
+#include "minotaur_maze_pc/MazeMapping.hpp"
 #include "minotaur_maze_pc/MazeMap.hpp"
 #include "minotaur_control_pc/MinotaurControlNode.hpp"
 #include "minotaur_control_pc/IMinotaurListener.hpp"
@@ -14,6 +15,7 @@ namespace minotaur
     {
     public:
         MazeNavigator *navigator;
+        MazeMapping *mapping;
         ros::NodeHandle *handle;
         
         unsigned int mapWidth, mapHeight;
@@ -44,6 +46,7 @@ namespace minotaur
         pthread_cond_t pauseCond;
         
         MazeNavigator *navigator;
+        MazeMapping *mapping;
         
         MinotaurControlNode minotaurNode;
         MazeMap map;

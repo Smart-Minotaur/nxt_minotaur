@@ -44,6 +44,7 @@ int main(int argc, char** argv)
         
         solver = &local_solver;
         solver->start();
+        solver->getMap().saveASCIIFile("/home/ubuntu/map.txt");
     } catch (std::exception &e) {
         ROS_ERROR("Exception occured: %s.", e.what());
         return -1;

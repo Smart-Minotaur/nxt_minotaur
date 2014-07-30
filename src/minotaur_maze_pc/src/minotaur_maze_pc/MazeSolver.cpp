@@ -78,6 +78,7 @@ namespace minotaur
     : map(p_config.mapWidth, p_config.mapHeight), keepRunning(false), paused(false)
     {
         navigator = p_config.navigator;
+        mapping = p_config.mapping;
         
         map.setNodeDimension(p_config.nodeWidth, p_config.nodeHeight);
         minotaurNode.setMinotaurListener(this);
@@ -92,6 +93,9 @@ namespace minotaur
         
         navigator->setMinotaurControlNode(&minotaurNode);
         navigator->setMazeMap(&map);
+        
+        mapping->setMinotaurControlNode(&minotaurNode);
+        mapping->setMazeMap(&map);
         
         minotaurNode.connectToROS(*p_config.handle);
     }
@@ -126,13 +130,8 @@ namespace minotaur
                 if(!keepRunning)
                     break;
                 
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                usleep(1000000);
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
                 
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
@@ -140,7 +139,17 @@ namespace minotaur
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
                 
-                usleep(1000000);
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
+                
+                ROS_INFO("==MOVE TO NEXT NODE==");
+                navigator->moveToNextNode(robot.direction);
+                ROS_INFO("==REACHED TARGET==");
+                stepRobotPosition();
+                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
                 
                 ROS_INFO("==TURNING ROBOT==");
                 ROS_INFO("Target Direction %s.", DirectionStrings[EAST]);
@@ -148,7 +157,14 @@ namespace minotaur
                 robot.direction = EAST;
                 ROS_INFO("==REACHED DIRECTION==");
                 
-                usleep(1000000);
+                ROS_INFO("==MOVE TO NEXT NODE==");
+                navigator->moveToNextNode(robot.direction);
+                ROS_INFO("==REACHED TARGET==");
+                stepRobotPosition();
+                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
                 
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
@@ -156,15 +172,8 @@ namespace minotaur
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
                 
-                usleep(1000000);
-                
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                usleep(1000000);
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
                 
                 ROS_INFO("==TURNING ROBOT==");
                 ROS_INFO("Target Direction %s.", DirectionStrings[SOUTH]);
@@ -172,13 +181,14 @@ namespace minotaur
                 robot.direction = EAST;
                 ROS_INFO("==REACHED DIRECTION==");
                 
-                usleep(1000000);
-                
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                ROS_INFO("==MAPPING==");
+                mapping->mapNode(robot.x, robot.y, robot.direction);
                 
                 keepRunning = false;
             }
@@ -270,5 +280,6 @@ namespace minotaur
     void MazeSolver::onReceivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
         navigator->receivedUltrasonicData(p_sensorData);
+        mapping->receivedUltrasonicData(p_sensorData);
     }
 }
