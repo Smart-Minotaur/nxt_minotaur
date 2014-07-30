@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 #include "minotaur_maze_pc/MazeNavigator.hpp"
+#include "minotaur_maze_pc/UltrasonicMedianFilter.hpp"
 
 namespace minotaur
 {
@@ -17,12 +18,13 @@ namespace minotaur
         Direction currentDirection;
         Direction targetDirection;
         
+        UltrasonicMedianFilter leftMedian, rightMedian, frontMedian;
+        
         volatile MovementMode mode;
         volatile bool frontObstacle;
         
         float targetX, targetY;
         float targetTheta;
-        float leftDistance, rightDistance;
         
         float startX, startY;
         float startTheta;
@@ -47,8 +49,8 @@ namespace minotaur
         
         void stopMovement();
     public:
-        StayInMidNavigator():mode(WAITING) { pthread_mutex_init(&mutex, NULL); pthread_cond_init(&condition, NULL); }
-        ~StayInMidNavigator() { pthread_mutex_destroy(&mutex); pthread_cond_destroy(&condition); }
+        StayInMidNavigator();
+        ~StayInMidNavigator();
     
         void receivedOdometry(const nav_msgs::Odometry &p_odometry);
         void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) ;
