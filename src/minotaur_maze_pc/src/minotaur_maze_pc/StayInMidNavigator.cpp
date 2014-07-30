@@ -180,11 +180,15 @@ namespace minotaur
         float angVelFactor = 0;
         int distanceCount = 0;
         if(leftDistance <= distanceThreshold) {
-            angVelFactor += ((leftDistance / distanceToHold) - 1);
+            float distDiff = leftDistance - distanceToHold;
+            distDiff *= distDiff;
+            angVelFactor += (distDiff / distanceToHold);
             distanceCount++;
         }
         if(rightDistance <= distanceThreshold) {
-            angVelFactor += (1 - (rightDistance / distanceToHold));
+            float distDiff = distanceToHold - rightDistance;
+            distDiff *= distDiff;
+            angVelFactor += (distDiff / distanceToHold);
             distanceCount++;
         }
         if(distanceCount != 0)
