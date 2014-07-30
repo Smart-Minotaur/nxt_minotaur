@@ -83,4 +83,56 @@ namespace minotaur
                 return 0;
         }
     }
+    
+    static Direction turnDirectionLeft(Direction p_direction)
+    {
+        switch(p_direction) {
+            case EAST:
+                return NORTH;
+            case WEST:
+                return SOUTH;
+            case NORTH:
+                return WEST;
+            case SOUTH:
+                return EAST;
+            default:
+                return p_direction;
+        }
+    }
+    
+    static Direction turnDirectionRight(Direction p_direction)
+    {
+        switch(p_direction) {
+            case EAST:
+                return SOUTH;
+            case WEST:
+                return NORTH;
+            case NORTH:
+                return EAST;
+            case SOUTH:
+                return WEST;
+            default:
+                return p_direction;
+        }
+    }
+    
+    Direction turnDirection(Direction p_direction, int p_turns)
+    {
+        Direction result = p_direction;
+        int turns = p_turns;
+        
+        while(turns < 0) {
+            result = turnDirectionRight(result);
+            ++turns;
+        }
+            
+        while(turns > 0) {
+            result = turnDirectionLeft(result);
+            ++turns;
+        }
+        
+        return result;
+    }
+    
+    
 }

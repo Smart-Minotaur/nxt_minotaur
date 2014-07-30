@@ -11,6 +11,8 @@ namespace minotaur
      * Negative result means turn right, positive turn left. */
     int getDirectionDiff(const Direction p_dirA, const Direction p_dirB);
     
+    Direction turnDirection(Direction p_direction, int p_turns);
+    
     class MazeNode
     {
     private:

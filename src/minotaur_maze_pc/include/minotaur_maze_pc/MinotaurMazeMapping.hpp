@@ -24,6 +24,7 @@ namespace minotaur
         void processSensorData(const robot_control_beagle::UltrasonicData &p_sensorData);
         bool hasEnoughMeasurements();
         void stopMapping();
+        void evaluateMeasurements();
         float getSensorDistanceThreshold();
     public:
         MinotaurMazeMapping();

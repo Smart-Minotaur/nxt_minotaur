@@ -62,8 +62,40 @@ namespace minotaur
     
     void MinotaurMazeMapping::stopMapping()
     {
+        evaluateMeasurements();
         measure = false;
         pthread_cond_signal(&condition);
+    }
+    
+    void MinotaurMazeMapping::evaluateMeasurements()
+    {
+        int blocked;
+        Direction direction;
+        
+        blocked = 0;
+        for(int i = 0; i < frontObstacle.size(); ++i)
+            if(frontObstacle[i])
+                ++blocked;
+        if(blocked > frontObstacle.size() / 2)
+            map->node(currentX, currentY).setBlocked(currentDirection, true);
+            
+        direction = turnDirection(currentDirection, 1);
+        blocked = 0;
+        
+        for(int i = 0; i < leftObstacle.size(); ++i)
+            if(leftObstacle[i])
+                ++blocked;
+        if(blocked > leftObstacle.size() / 2)
+            map->node(currentX, currentY).setBlocked(direction, true);
+            
+        direction = turnDirection(currentDirection, -1);
+        blocked = 0;
+        
+        for(int i = 0; i < rightObstacle.size(); ++i)
+            if(rightObstacle[i])
+                ++blocked;
+        if(blocked > rightObstacle.size() / 2)
+            map->node(currentX, currentY).setBlocked(direction, true);
     }
     
     float MinotaurMazeMapping::getSensorDistanceThreshold()
