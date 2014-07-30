@@ -128,7 +128,7 @@ namespace minotaur
             
         while(turns > 0) {
             result = turnDirectionLeft(result);
-            ++turns;
+            --turns;
         }
         
         return result;
