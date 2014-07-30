@@ -8,6 +8,7 @@
 #define MEDIAN_SIZE 5
 
 #define THRESHOLD_FACTOR 0.8f
+#define PARABEL_FACTOR 156.25f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -179,16 +180,16 @@ namespace minotaur
         
         if(leftDistance <= distanceThreshold) {
             float distDiff = leftDistance - distanceToHold;
-            distDiff = CM_TO_M((distDiff * 100) * fabs((distDiff * 100)));
-            angVelFactor += (distDiff / distanceToHold);
+            distDiff = PARABEL_FACTOR * (distDiff * fabs(distDiff));
+            angVelFactor += distDiff;
             distanceCount++;
         }
         
         
         if(rightDistance <= distanceThreshold) {
             float distDiff = distanceToHold - rightDistance;
-            distDiff = CM_TO_M((distDiff * 100) * fabs((distDiff * 100)));
-            angVelFactor += (distDiff / distanceToHold);
+            distDiff = PARABEL_FACTOR * (distDiff * fabs(distDiff));
+            angVelFactor += distDiff;
             distanceCount++;
         }
         if(distanceCount > 1)
