@@ -139,6 +139,9 @@ namespace minotaur
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
                 
+                if(!keepRunning)
+                    break;
+                
                 ROS_INFO("==MAPPING==");
                 mapping->mapNode(robot.x, robot.y, robot.direction);
                 
@@ -147,6 +150,9 @@ namespace minotaur
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                if(!keepRunning)
+                    break;
                 
                 ROS_INFO("==MAPPING==");
                 mapping->mapNode(robot.x, robot.y, robot.direction);
@@ -157,11 +163,17 @@ namespace minotaur
                 robot.direction = EAST;
                 ROS_INFO("==REACHED DIRECTION==");
                 
+                if(!keepRunning)
+                    break;
+                
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                if(!keepRunning)
+                    break;
                 
                 ROS_INFO("==MAPPING==");
                 mapping->mapNode(robot.x, robot.y, robot.direction);
@@ -171,6 +183,9 @@ namespace minotaur
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                if(!keepRunning)
+                    break;
                 
                 ROS_INFO("==MAPPING==");
                 mapping->mapNode(robot.x, robot.y, robot.direction);
@@ -181,11 +196,17 @@ namespace minotaur
                 robot.direction = EAST;
                 ROS_INFO("==REACHED DIRECTION==");
                 
+                if(!keepRunning)
+                    break;
+                
                 ROS_INFO("==MOVE TO NEXT NODE==");
                 navigator->moveToNextNode(robot.direction);
                 ROS_INFO("==REACHED TARGET==");
                 stepRobotPosition();
                 ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                
+                if(!keepRunning)
+                    break;
                 
                 ROS_INFO("==MAPPING==");
                 mapping->mapNode(robot.x, robot.y, robot.direction);
