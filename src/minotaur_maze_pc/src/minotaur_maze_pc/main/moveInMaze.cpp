@@ -2,6 +2,7 @@
 #include <signal.h>
 #include "minotaur_maze_pc/MazeSolver.hpp"
 #include "minotaur_maze_pc/StayInMidNavigator.hpp"
+#include "minotaur_maze_pc/MinotaurMazeMapping.hpp"
 
 #define NODE_NAME "MoveInMaze"
 #define MAP_WIDTH 50
@@ -11,6 +12,7 @@
 #define INITIAL_DIRECTION minotaur::EAST
 
 static minotaur::StayInMidNavigator navigator;
+static minotaur::MinotaurMazeMapping mapping;
 static minotaur::MazeSolver *solver;
 static struct sigaction sa;
 
@@ -37,12 +39,18 @@ int main(int argc, char** argv)
     
 
     try {
+        ROS_INFO("Getting Config.");
         config.navigator = &navigator;
+        config.mapping = &mapping;
         config.handle = &handle;
         config.loadCurrentFromParamServer();
+        
+        ROS_INFO("Creating MazeSolver.");
         minotaur::MazeSolver local_solver(config);
         
         solver = &local_solver;
+        
+        ROS_INFO("Start Solving.");
         solver->start();
         solver->getMap().saveASCIIFile("/home/ubuntu/map.txt");
     } catch (std::exception &e) {
