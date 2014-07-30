@@ -115,7 +115,7 @@ namespace minotaur
             while(startTheta > theta)
                 theta += 2 * M_PI;
         float diffTheta = theta - startTheta;
-        return fabs(diffTheta) >= fabs(abs(directionDiff) * (M_PI / 2));
+        return fabs(diffTheta) >= fabs(directionDiff * (M_PI / 2));
         //return sameFloat(targetTheta, theta, DIRECTION_EPSILON);
     }
         

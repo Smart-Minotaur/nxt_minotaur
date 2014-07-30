@@ -68,22 +68,23 @@ namespace minotaur
         std::ofstream file;
         file.open(p_file.c_str());
         
-        for(int y = height - 1; y >= 0; --y) {
-            for(int x = 0; x < width; ++x) {
+        for(int x = 0; x < width; ++x) {
+            file << ' ';
+            if(mazeGrid[x][height - 1].isBlocked(NORTH))
+                file << '_';
+            else
                 file << ' ';
-                if(mazeGrid[x][y].isBlocked(NORTH))
-                    file << '_';
-                else
-                    file << ' ';
-            }
-            file << '\n';
+        }
+        file << '\n';
+        
+        for(int y = height - 2; y >= 0; --y) {
             for(int x = 0; x < width; ++x) {
                 if(mazeGrid[x][y].isBlocked(WEST) || (x - 1 >= 0 && mazeGrid[x - 1][y].isBlocked(EAST)))
                     file << '|';
                 else
                     file << ' ';
                     
-                if(mazeGrid[x][y].isBlocked(SOUTH))
+                if(mazeGrid[x][y].isBlocked(SOUTH) || (y - 1 >= 0 && mazeGrid[x][y - 1].isBlocked(NORTH)))
                     file << '_';
                 else
                     file << ' ';
