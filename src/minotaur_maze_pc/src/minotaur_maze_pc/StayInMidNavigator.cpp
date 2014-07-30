@@ -9,7 +9,7 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
 #define POSITION_EPSILON 0.05f
-#define DIRECTION_EPSILON 0.1f
+#define DIRECTION_EPSILON 0.5f
 
 namespace minotaur
 {
