@@ -7,7 +7,7 @@
 #define MAX_ANG_VELOCITY 1.2f
 #define MEDIAN_SIZE 5
 
-#define THRESHOLD_FACTOR 0.6f
+#define THRESHOLD_FACTOR 0.8f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -155,6 +155,7 @@ namespace minotaur
             return;
         }
         
+        // it is no front sensor
         // sensors should be mirrored
         float sensorOffset = getSensorOffset(p_sensorData.sensorID);
         
@@ -167,26 +168,30 @@ namespace minotaur
             distanceToHold = map->getNodeWidth() / 2 - sensorOffset;
         else
             distanceToHold = map->getNodeHeight() / 2 - sensorOffset;
-            
+        
+        // get sensor distances
+        float leftDistance = leftMedian.value();
+        float rightDistance = rightMedian.value();
+        
         // set velocities depending on distance to obstacles left and right
         float angVelFactor = 0;
         int distanceCount = 0;
-        float leftDistance = leftMedian.value();
+        
         if(leftDistance <= distanceThreshold) {
             float distDiff = leftDistance - distanceToHold;
-            distDiff *= distDiff;
+            distDiff = CM_TO_M((distDiff * 100) * fabs((distDiff * 100)));
             angVelFactor += (distDiff / distanceToHold);
             distanceCount++;
         }
         
-        float rightDistance = rightMedian.value();
+        
         if(rightDistance <= distanceThreshold) {
             float distDiff = distanceToHold - rightDistance;
-            distDiff *= distDiff;
+            distDiff = CM_TO_M((distDiff * 100) * fabs((distDiff * 100)));
             angVelFactor += (distDiff / distanceToHold);
             distanceCount++;
         }
-        if(distanceCount != 0)
+        if(distanceCount > 1)
             angVelFactor /= distanceCount;
         
         if(angVelFactor > 1)
