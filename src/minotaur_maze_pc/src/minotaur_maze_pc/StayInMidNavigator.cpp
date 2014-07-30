@@ -8,7 +8,7 @@
 #define MEDIAN_SIZE 5
 
 #define THRESHOLD_FACTOR 0.8f
-#define PARABEL_FACTOR 69.44f
+#define PARABEL_FACTOR 25.0f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
@@ -186,7 +186,6 @@ namespace minotaur
             angVelFactor += distDiff;
             distanceCount++;
         }
-        
         
         if(rightDistance <= distanceThreshold) {
             float distDiff = distanceToHold - rightDistance;
