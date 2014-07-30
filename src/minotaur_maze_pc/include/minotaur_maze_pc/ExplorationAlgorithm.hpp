@@ -6,7 +6,7 @@
 namespace minotaur
 {
     
-    class IExplorationAlgorithm: public MazeMapUser
+    class ExplorationAlgorithm: public MazeMapUser
     {
     public:
         virtual Direction calculateMovementDirection(unsigned int p_x, unsigned int p_y, Direction p_direction) = 0;

@@ -6,7 +6,7 @@
 
 namespace minotaur
 {
-    class IMazeMapping : public MazeMapUser, public MinotaurControlNodeUser
+    class MazeMapping : public MazeMapUser, public MinotaurControlNodeUser
     {
     public:
         virtual void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) = 0;

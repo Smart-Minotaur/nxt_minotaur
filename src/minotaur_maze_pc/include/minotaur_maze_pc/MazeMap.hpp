@@ -1,6 +1,7 @@
 #ifndef MINOTAUR_MAZE_MAP_HPP
 #define MINOTAUR_MAZE_MAP_HPP
 
+#include <string>
 #include "minotaur_maze_pc/MazeNode.hpp"
 
 namespace minotaur
@@ -27,6 +28,8 @@ namespace minotaur
         void setNodeDimension(float p_width, float p_height);
         float getNodeWidth();
         float getNodeHeight();
+        
+        void saveASCIIFile(const std::string &p_file) const;
     };
 }
 

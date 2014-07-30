@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
+#include <fstream>
 #include "minotaur_maze_pc/MazeMap.hpp"
 
 namespace minotaur
@@ -59,5 +61,43 @@ namespace minotaur
     float MazeMap::getNodeHeight()
     {
         return nodeHeight;
+    }
+    
+    void MazeMap::saveASCIIFile(const std::string &p_file) const
+    {
+        std::ofstream file;
+        file.open(p_file.c_str());
+        
+        for(int y = 0; y < height; ++y) {
+            for(int x = 0; x < width; ++x) {
+                file << ' ';
+                if(mazeGrid[x][y].isBlocked(NORTH))
+                    file << '_';
+                else
+                    file << ' ';
+            }
+            file << '\n';
+            for(int x = 0; x < width; ++x) {
+                if(mazeGrid[x][y].isBlocked(WEST) || (x - 1 >= 0 && mazeGrid[x - 1][y].isBlocked(EAST)))
+                    file << '|';
+                else
+                    file << ' ';
+                    
+                if(mazeGrid[x][y].isBlocked(SOUTH))
+                    file << '_';
+                else
+                    file << ' ';
+                
+                if(x == (width - 1)) {
+                    if(mazeGrid[x][y].isBlocked(EAST))
+                        file << '|';
+                    else
+                        file << ' ';
+                }
+            }
+            file << '\n';
+        }
+        
+        file.close();
     }
 }

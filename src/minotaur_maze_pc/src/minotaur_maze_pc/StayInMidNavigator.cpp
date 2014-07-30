@@ -170,10 +170,6 @@ namespace minotaur
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
         
-        ROS_INFO("AngVelFac: %.2f AngVel: %.2f LinVel: %.2f", angVelFactor, angVelocity, linVelocity);
-        ROS_INFO("DistToHold: %.2f Threshold: %.2f", distanceToHold, distanceThreshold);
-        ROS_INFO("Right: %.2f Left: %.2f Offset: %.2f\n", rightDistance, leftDistance, sensorOffset);
-        
         controlNode->setVelocity(linVelocity, angVelocity);
     }
     

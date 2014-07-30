@@ -20,7 +20,7 @@ namespace minotaur
         MazeNode(): east(false), west(false), north(false), south(false) { }
         ~MazeNode() { }
         
-        bool blocked(Direction p_direction)
+        bool isBlocked(Direction p_direction)
         {
             switch(p_direction) {
             case EAST:
