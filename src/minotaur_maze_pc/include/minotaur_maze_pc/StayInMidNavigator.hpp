@@ -19,7 +19,6 @@ namespace minotaur
         Direction targetDirection;
         
         MedianFilter leftMedian, rightMedian, frontMedian;
-        MedianFilter angVelFactorMedian;
         float lastLeftDistance, lastRightDistance;
         
         volatile MovementMode mode;

@@ -6,7 +6,6 @@
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
 #define SENSOR_MEDIAN_SIZE 5
-#define ANG_VEL_FACTOR_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.8f
 #define PARABEL_FACTOR 25.0f
@@ -31,7 +30,7 @@ namespace minotaur
     }
     
     StayInMidNavigator::StayInMidNavigator()
-    :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), frontMedian(SENSOR_MEDIAN_SIZE), angVelFactorMedian(ANG_VEL_FACTOR_MEDIAN_SIZE)
+    :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), frontMedian(SENSOR_MEDIAN_SIZE)
     {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&condition, NULL);
@@ -182,11 +181,6 @@ namespace minotaur
         if(distanceCount > 1)
             angVelFactor /= distanceCount;
             
-        // use median filter to prevent robot from turning too much    
-        if(!angVelFactorMedian.isEmpty())
-            angVelFactor = angVelFactor - angVelFactorMedian.value();
-        angVelFactorMedian.add(angVelFactor);
-        
         if(angVelFactor > 1)
             angVelFactor = 1;
         if(angVelFactor < -1)
