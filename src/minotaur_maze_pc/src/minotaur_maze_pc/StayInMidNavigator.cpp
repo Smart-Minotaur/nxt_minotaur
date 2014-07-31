@@ -186,11 +186,9 @@ namespace minotaur
         if(angVelFactor < -1)
             angVelFactor = -1;
         
-        ROS_INFO("AngVelFactor: %.2f.", angVelFactor);
-        
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
-        
+        ROS_INFO("AngVelFactor: %.2f AngVel: %.2f.", angVelFactor, angVelocity);
         controlNode->setVelocity(linVelocity, angVelocity);
     }
     
