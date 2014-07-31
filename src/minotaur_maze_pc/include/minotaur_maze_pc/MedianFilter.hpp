@@ -9,7 +9,7 @@ namespace minotaur
     {
     private:
         int current;
-        int count;
+        int elementCount;
         bool sorted;
         
         std::vector<float> values;
@@ -23,6 +23,9 @@ namespace minotaur
         void add(const float p_value);
         float value();
         void clear();
+        int size() const;
+        int count() const;
+        bool isEmpty() const;
     };
 }
 

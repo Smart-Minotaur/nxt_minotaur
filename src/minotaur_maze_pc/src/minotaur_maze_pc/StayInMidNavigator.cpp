@@ -185,7 +185,8 @@ namespace minotaur
         // use median filter to prevent robot from turning too much    
         if(angVelFactor != 0)
             angVelFactorMedian.add(angVelFactor);
-        angVelFactor = angVelFactor - angVelFactorMedian.value();
+        if(!angVelFactorMedian.isEmpty())
+            angVelFactor = angVelFactor - angVelFactorMedian.value();
         
         if(angVelFactor > 1)
             angVelFactor = 1;
