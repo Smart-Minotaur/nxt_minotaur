@@ -18,8 +18,8 @@ namespace minotaur
         Direction currentDirection;
         Direction targetDirection;
         
-        MedianFilter leftMedian, rightMedian, frontMedian;
-        float lastLeftDistance, lastRightDistance;
+        MedianFilter leftMedian, rightMedian, angVelFactorMedian;
+        float frontDistance;
         
         volatile MovementMode mode;
         volatile bool frontObstacle;

@@ -6,6 +6,7 @@
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
 #define SENSOR_MEDIAN_SIZE 5
+#define ANG_VEL_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.8f
 #define PARABEL_FACTOR 25.0f
@@ -30,7 +31,7 @@ namespace minotaur
     }
     
     StayInMidNavigator::StayInMidNavigator()
-    :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), frontMedian(SENSOR_MEDIAN_SIZE)
+    :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), angVelFactorMedian(ANG_VEL_MEDIAN_SIZE)
     {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&condition, NULL);
@@ -123,23 +124,23 @@ namespace minotaur
             setTurnVelocity(p_sensorData);
     }
     
-    void StayInMidNavigator::checkFrontObstacle(const robot_control_beagle::UltrasonicData &p_sensorData)
-    {
-        if(IS_FRONT_SENSOR(p_sensorData.sensorID)) {
-            // only recognize if it is close enough
-            frontObstacle = CM_TO_M(p_sensorData.distance) <= getSensorDistanceThreshold();
-        }
-    }
-    
     void StayInMidNavigator::updateDistances(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
         // all data has to be in meter
         if(IS_FRONT_SENSOR(p_sensorData.sensorID))
-            frontMedian.add(CM_TO_M(p_sensorData.distance));
+            frontDistance = CM_TO_M(p_sensorData.distance);
         else if(IS_RIGHT_SENSOR(p_sensorData.sensorID))
             rightMedian.add(CM_TO_M(p_sensorData.distance));
         else if(IS_LEFT_SENSOR(p_sensorData.sensorID))
             leftMedian.add(CM_TO_M(p_sensorData.distance));
+    }
+    
+    void StayInMidNavigator::checkFrontObstacle(const robot_control_beagle::UltrasonicData &p_sensorData)
+    {
+        if(IS_FRONT_SENSOR(p_sensorData.sensorID)) {
+            // only recognize if it is close enough
+            frontObstacle = frontDistance <= getSensorDistanceThreshold();
+        }
     }
     
     void StayInMidNavigator::setMovementVelocity(const robot_control_beagle::UltrasonicData &p_sensorData)
@@ -180,6 +181,11 @@ namespace minotaur
         }
         if(distanceCount > 1)
             angVelFactor /= distanceCount;
+        
+        if(distanceCount != 0)
+            angVelFactorMedian.add(angVelFactor);
+        if(!angVelFactorMedian.isEmpty())
+            angVelFactor = angVelFactor - angVelFactorMedian.value();
             
         if(angVelFactor > 1)
             angVelFactor = 1;
@@ -204,7 +210,7 @@ namespace minotaur
         else
             maxDistanceToObstalce = (map->getNodeWidth() / 2) - sensorOffset;
 
-        return CM_TO_M(p_sensorData.distance) <= maxDistanceToObstalce;
+        return frontDistance <= maxDistanceToObstalce;
     }
     
     float StayInMidNavigator::calcAngularVelocityFactor(const float p_distanceDiff)
