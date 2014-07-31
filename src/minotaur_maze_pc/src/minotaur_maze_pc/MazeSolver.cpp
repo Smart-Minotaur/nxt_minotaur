@@ -111,7 +111,7 @@ namespace minotaur
         MazeSolver* solver = (MazeSolver*) arg;
         solver->run();
         
-        pthread_exit(NULL);
+        return NULL;
     }
     
     void MazeSolver::run()
@@ -213,8 +213,12 @@ namespace minotaur
                 
                 keepRunning = false;
             }
-        } catch (std::exception const &e) {
+        } catch (const std::exception &e) {
             ROS_ERROR("MazeSolver: exception during spin: %s.", e.what());
+        } catch (const std::string &s) {
+            ROS_ERROR("MazeSolver: catched string during spin: %s.", s.c_str());
+        } catch (...) {
+            ROS_ERROR("MazeSolver: catched unknown instance.");
         }
     }
     
@@ -249,7 +253,7 @@ namespace minotaur
         paused = false;
         
         if(pthread_create(&mazeThread, NULL, runThread, this) != 0)
-            throw std::logic_error("Failed to create Thread");
+            throw std::logic_error("Failed to create thread");
             
         minotaurNode.spin();
     }

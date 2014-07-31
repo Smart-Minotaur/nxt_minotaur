@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 #include "minotaur_maze_pc/MazeNavigator.hpp"
-#include "minotaur_maze_pc/UltrasonicMedianFilter.hpp"
+#include "minotaur_maze_pc/MedianFilter.hpp"
 
 namespace minotaur
 {
@@ -18,20 +18,19 @@ namespace minotaur
         Direction currentDirection;
         Direction targetDirection;
         
-        UltrasonicMedianFilter leftMedian, rightMedian, frontMedian;
+        MedianFilter leftMedian, rightMedian, frontMedian;
+        MedianFilter angVelFactorMedian;
+        float lastLeftDistance, lastRightDistance;
         
         volatile MovementMode mode;
         volatile bool frontObstacle;
         
-        float targetX, targetY;
-        float targetTheta;
-        
         float startX, startY;
         float startTheta;
         
-        void setTargetPosition(const nav_msgs::Odometry &p_odometry);
+        void initMovement(const nav_msgs::Odometry &p_odometry);
         bool reachedTargetPosition(const nav_msgs::Odometry &p_odometry);
-        void setTargetTheta(const nav_msgs::Odometry &p_odometry);
+        void initTurning(const nav_msgs::Odometry &p_odometry);
         bool reachedTargetTheta(const nav_msgs::Odometry &p_odometry);
         
         void checkFrontObstacle(const robot_control_beagle::UltrasonicData &p_sensorData);
@@ -39,13 +38,13 @@ namespace minotaur
         
         void setMovementVelocity(const robot_control_beagle::UltrasonicData &p_sensorData);
         bool obstacleIsCloseEnough(const robot_control_beagle::UltrasonicData &p_sensorData);
+        float calcAngularVelocityFactor(const float p_distanceDiff);
         
         void setTurnVelocity(const robot_control_beagle::UltrasonicData &p_sensorData);
         
-        bool isFrontSensor(int p_id);
         bool isMovingVertically();
         float getSensorDistanceThreshold();
-        float getSensorOffset(int p_id);
+        float getSensorOffset(const int p_id);
         
         void stopMovement();
     public:
@@ -55,8 +54,8 @@ namespace minotaur
         void receivedOdometry(const nav_msgs::Odometry &p_odometry);
         void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) ;
         
-        void moveToNextNode(Direction p_currentDirection);
-        void turnRobotTo(Direction p_currentDirection, Direction p_newDirection);
+        void moveToNextNode(const Direction p_currentDirection);
+        void turnRobotTo(const Direction p_currentDirection, const Direction p_newDirection);
         
         void shutdown();
     };

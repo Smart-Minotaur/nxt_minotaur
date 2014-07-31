@@ -31,7 +31,7 @@ namespace minotaur
         ~MinotaurMazeMapping();
         
         void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData);
-        void mapNode(unsigned int p_x, unsigned int p_y, Direction p_direction);
+        void mapNode(const unsigned int p_x, const unsigned int p_y, const Direction p_direction);
     };
 }
 

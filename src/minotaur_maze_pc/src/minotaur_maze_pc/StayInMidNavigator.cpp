@@ -5,15 +5,18 @@
 
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
-#define MEDIAN_SIZE 5
+#define SENSOR_MEDIAN_SIZE 5
+#define ANG_VEL_FACTOR_MEDIAN_SIZE 10
 
 #define THRESHOLD_FACTOR 0.8f
 #define PARABEL_FACTOR 25.0f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define CM_TO_M(cm) (((float) (cm)) / 100.0f)
-#define POSITION_EPSILON 0.05f
-#define DIRECTION_EPSILON 0.5f
+
+#define IS_FRONT_SENSOR(id) (sensorSettings[id].direction == 0)
+#define IS_LEFT_SENSOR(id) (sensorSettings[id].direction > 0)
+#define IS_RIGHT_SENSOR(id) (sensorSettings[id].direction < 0)
 
 namespace minotaur
 {
@@ -27,13 +30,8 @@ namespace minotaur
         return result;
     }
     
-    static bool sameFloat(float a, float b, float eps)
-    {
-        return fabs(a - b) < eps;
-    }
-    
     StayInMidNavigator::StayInMidNavigator()
-    :mode(WAITING), leftMedian(MEDIAN_SIZE), rightMedian(MEDIAN_SIZE), frontMedian(MEDIAN_SIZE)
+    :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), frontMedian(SENSOR_MEDIAN_SIZE), angVelFactorMedian(ANG_VEL_FACTOR_MEDIAN_SIZE)
     {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&condition, NULL);
@@ -50,30 +48,27 @@ namespace minotaur
     void StayInMidNavigator::receivedOdometry(const nav_msgs::Odometry &p_odometry)
     {
         RAIILock lock(&mutex);
-        if(mode == BEGIN_MOVE) {
-            setTargetPosition(p_odometry);
-            mode = MOVE;
-        }
+        if(mode == BEGIN_MOVE)
+            initMovement(p_odometry);
         
         if(mode == MOVE && !frontObstacle) {
             if(reachedTargetPosition(p_odometry))
                 stopMovement();
         }
         
-        if(mode == BEGIN_TURN) {
-            setTargetTheta(p_odometry);
-            mode = TURN;
-        }
+        if(mode == BEGIN_TURN)
+            initTurning(p_odometry);
         
         if(mode == TURN)
             if(reachedTargetTheta(p_odometry))
                 stopMovement();
     }
     
-    void StayInMidNavigator::setTargetPosition(const nav_msgs::Odometry &p_odometry)
+    void StayInMidNavigator::initMovement(const nav_msgs::Odometry &p_odometry)
     {
         startX = p_odometry.pose.pose.position.x;
         startY = p_odometry.pose.pose.position.y;
+        mode = MOVE;
     }
     
     bool StayInMidNavigator::reachedTargetPosition(const nav_msgs::Odometry &p_odometry)
@@ -91,9 +86,10 @@ namespace minotaur
         return distanceSq >= targetDistanceSq;
     }
     
-    void StayInMidNavigator::setTargetTheta(const nav_msgs::Odometry &p_odometry)
+    void StayInMidNavigator::initTurning(const nav_msgs::Odometry &p_odometry)
     {
         startTheta = normalizeAngle(tf::getYaw(p_odometry.pose.pose.orientation));
+        mode = TURN;
     }
     
     bool StayInMidNavigator::reachedTargetTheta(const nav_msgs::Odometry &p_odometry)
@@ -130,7 +126,7 @@ namespace minotaur
     
     void StayInMidNavigator::checkFrontObstacle(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
-        if(isFrontSensor(p_sensorData.sensorID)) {
+        if(IS_FRONT_SENSOR(p_sensorData.sensorID)) {
             // only recognize if it is close enough
             frontObstacle = frontMedian.value() <= getSensorDistanceThreshold();
         }
@@ -138,20 +134,18 @@ namespace minotaur
     
     void StayInMidNavigator::updateDistances(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
-        if(isFrontSensor(p_sensorData.sensorID)) {
+        // all data has to be in meter
+        if(IS_FRONT_SENSOR(p_sensorData.sensorID))
             frontMedian.add(CM_TO_M(p_sensorData.distance));
-        } else if(sensorSettings[p_sensorData.sensorID].direction < 0) {
-            // right sensor, we need data in meter
+        else if(IS_RIGHT_SENSOR(p_sensorData.sensorID))
             rightMedian.add(CM_TO_M(p_sensorData.distance));
-        } else if(sensorSettings[p_sensorData.sensorID].direction > 0) {
-            // left sensor, we need data in meter
+        else if(IS_LEFT_SENSOR(p_sensorData.sensorID))
             leftMedian.add(CM_TO_M(p_sensorData.distance));
-        }
     }
     
     void StayInMidNavigator::setMovementVelocity(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
-        if(isFrontSensor(p_sensorData.sensorID)) {
+        if(IS_FRONT_SENSOR(p_sensorData.sensorID)) {
             // if we are at the right position, stop the movement
             if(frontObstacle && obstacleIsCloseEnough(p_sensorData))
                 stopMovement();
@@ -161,17 +155,15 @@ namespace minotaur
         // it is no front sensor
         // sensors should be mirrored
         float sensorOffset = getSensorOffset(p_sensorData.sensorID);
-        
-        //calculate threshold for sensor distances
-        float distanceThreshold = getSensorDistanceThreshold();
-        
         // calculate distance that should be kept
         float distanceToHold;
         if(isMovingVertically())
             distanceToHold = map->getNodeWidth() / 2 - sensorOffset;
         else
             distanceToHold = map->getNodeHeight() / 2 - sensorOffset;
-        
+            
+        //calculate threshold for sensor distances
+        float distanceThreshold = getSensorDistanceThreshold();
         // get sensor distances
         float leftDistance = leftMedian.value();
         float rightDistance = rightMedian.value();
@@ -179,27 +171,26 @@ namespace minotaur
         // set velocities depending on distance to obstacles left and right
         float angVelFactor = 0;
         int distanceCount = 0;
-        
         if(leftDistance <= distanceThreshold) {
-            float distDiff = leftDistance - distanceToHold;
-            distDiff = PARABEL_FACTOR * (distDiff * fabs(distDiff));
-            angVelFactor += distDiff;
+            angVelFactor += calcAngularVelocityFactor(leftDistance - distanceToHold);
             distanceCount++;
         }
-        
         if(rightDistance <= distanceThreshold) {
-            float distDiff = distanceToHold - rightDistance;
-            distDiff = PARABEL_FACTOR * (distDiff * fabs(distDiff));
-            angVelFactor += distDiff;
+            angVelFactor += calcAngularVelocityFactor(distanceToHold - rightDistance);
             distanceCount++;
         }
         if(distanceCount > 1)
             angVelFactor /= distanceCount;
-        
+            
         if(angVelFactor > 1)
             angVelFactor = 1;
         if(angVelFactor < -1)
             angVelFactor = -1;
+        
+        // use median filter to prevent robot from turning too much    
+        if(angVelFactor != 0)
+            angVelFactorMedian.add(angVelFactor);
+        angVelFactor = angVelFactor - angVelFactorMedian.value();
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
@@ -222,6 +213,11 @@ namespace minotaur
         return frontMedian.value() <= maxDistanceToObstalce;
     }
     
+    float StayInMidNavigator::calcAngularVelocityFactor(const float p_distanceDiff)
+    {
+        return PARABEL_FACTOR * (p_distanceDiff * fabs(p_distanceDiff));
+    }
+    
     void StayInMidNavigator::setTurnVelocity(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
         int directionDiff = getDirectionDiff(currentDirection, targetDirection);
@@ -229,11 +225,6 @@ namespace minotaur
         float angVelocity = (directionDiff / abs(directionDiff)) * MAX_ANG_VELOCITY;
         
         controlNode->setVelocity(0, angVelocity);
-    }
-    
-    bool StayInMidNavigator::isFrontSensor(int p_id)
-    {
-        return sensorSettings[p_id].direction == 0;
     }
     
     bool StayInMidNavigator::isMovingVertically()
@@ -253,19 +244,19 @@ namespace minotaur
         return MAX(map->getNodeHeight(), map->getNodeWidth()) * THRESHOLD_FACTOR;
     }
     
-    float StayInMidNavigator::getSensorOffset(int p_id)
+    float StayInMidNavigator::getSensorOffset(const int p_id)
     {
         return fabs(sensorSettings[p_id].y);
     }
     
-    void StayInMidNavigator::moveToNextNode(Direction p_currentDirection)
+    void StayInMidNavigator::moveToNextNode(const Direction p_currentDirection)
     {
         RAIILock lock(&mutex);
         currentDirection = p_currentDirection;
         mode = BEGIN_MOVE;
         pthread_cond_wait(&condition, &mutex);
     }
-    void StayInMidNavigator::turnRobotTo(Direction p_currentDirection, Direction p_newDirection)
+    void StayInMidNavigator::turnRobotTo(const Direction p_currentDirection, const Direction p_newDirection)
     {
         RAIILock lock(&mutex);
         currentDirection = p_currentDirection;
@@ -278,7 +269,6 @@ namespace minotaur
     {
         RAIILock lock(&mutex);
         mode = WAITING;
-        controlNode->setVelocity(0, 0);
         pthread_cond_signal(&condition);
     }
         

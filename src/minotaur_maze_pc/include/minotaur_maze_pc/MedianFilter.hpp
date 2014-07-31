@@ -1,11 +1,11 @@
-#ifndef MINOTAUR_ULTRASONIC_MEDIAN_FILTER_HPP
-#define MINOTAUR_ULTRASONIC_MEDIAN_FILTER_HPP
+#ifndef MINOTAUR_MEDIAN_FILTER_HPP
+#define MINOTAUR_MEDIAN_FILTER_HPP
 
 #include <vector>
 
 namespace minotaur
 {
-    class UltrasonicMedianFilter
+    class MedianFilter
     {
     private:
         int current;
@@ -15,9 +15,9 @@ namespace minotaur
         std::vector<float> sortedValues;
         
     public:
-        UltrasonicMedianFilter();
-        UltrasonicMedianFilter(int p_size);
-        ~UltrasonicMedianFilter();
+        MedianFilter();
+        MedianFilter(const int p_size);
+        ~MedianFilter();
         
         void add(const float p_value);
         float value();

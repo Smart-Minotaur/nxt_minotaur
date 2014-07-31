@@ -17,8 +17,8 @@ namespace minotaur
         virtual void receivedOdometry(const nav_msgs::Odometry &p_odometry) = 0;
         virtual void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) = 0;
         
-        virtual void moveToNextNode(Direction p_currentDirection) = 0;
-        virtual void turnRobotTo(Direction p_currentDirection, Direction p_newDirection) = 0;
+        virtual void moveToNextNode(const Direction p_currentDirection) = 0;
+        virtual void turnRobotTo(const Direction p_currentDirection, const Direction p_newDirection) = 0;
         
         virtual void shutdown() = 0;
     };

@@ -11,7 +11,7 @@ namespace minotaur
     public:
         virtual void receivedUltrasonicData(const robot_control_beagle::UltrasonicData &p_sensorData) = 0;
         
-        virtual void mapNode(unsigned int p_x, unsigned int p_y, Direction p_direction) = 0;
+        virtual void mapNode(const unsigned int p_x, const unsigned int p_y, const Direction p_direction) = 0;
     };
 }
 
