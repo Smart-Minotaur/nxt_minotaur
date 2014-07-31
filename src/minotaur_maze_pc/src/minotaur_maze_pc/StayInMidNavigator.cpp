@@ -127,7 +127,7 @@ namespace minotaur
     {
         if(IS_FRONT_SENSOR(p_sensorData.sensorID)) {
             // only recognize if it is close enough
-            frontObstacle = frontMedian.value() <= getSensorDistanceThreshold();
+            frontObstacle = CM_TO_M(p_sensorData.distance) <= getSensorDistanceThreshold();
         }
     }
     
@@ -204,7 +204,7 @@ namespace minotaur
         else
             maxDistanceToObstalce = (map->getNodeWidth() / 2) - sensorOffset;
 
-        return frontMedian.value() <= maxDistanceToObstalce;
+        return CM_TO_M(p_sensorData.distance) <= maxDistanceToObstalce;
     }
     
     float StayInMidNavigator::calcAngularVelocityFactor(const float p_distanceDiff)
