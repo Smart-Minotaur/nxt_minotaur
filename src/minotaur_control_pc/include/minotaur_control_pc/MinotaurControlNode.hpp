@@ -6,12 +6,10 @@
 #define MINOTAUR_MINOTAUR_CONTROL_NODE_HPP
 
 #include <ros/ros.h>
-#include <vector>
 #include <pthread.h>
 #include <nav_msgs/Odometry.h>
 #include "robot_control_beagle/UltrasonicData.h"
 #include "minotaur_control_pc/IMinotaurListener.hpp"
-#include "minotaur_control_pc/SensorSetting.hpp"
 
 namespace minotaur
 {
@@ -61,8 +59,6 @@ namespace minotaur
         void stop();
         
         void setMinotaurListener(IMinotaurListener *p_listener);
-        
-        std::vector<SensorSetting> getSensorSettings();
     };
 }
 

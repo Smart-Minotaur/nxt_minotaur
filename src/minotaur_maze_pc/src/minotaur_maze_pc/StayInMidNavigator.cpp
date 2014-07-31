@@ -154,7 +154,7 @@ namespace minotaur
         
         // it is no front sensor
         // sensors should be mirrored
-        float sensorOffset = getSensorOffset(p_sensorData.sensorID);
+        float sensorOffset = getHorizontalSensorOffset(p_sensorData.sensorID);
         // calculate distance that should be kept
         float distanceToHold;
         if(isMovingVertically())
@@ -203,7 +203,7 @@ namespace minotaur
     bool StayInMidNavigator::obstacleIsCloseEnough(const robot_control_beagle::UltrasonicData &p_sensorData)
     {
         // calculate distance of sensor to robot center
-        float sensorOffset = getSensorOffset(p_sensorData.sensorID);
+        float sensorOffset = getVerticalSensorOffset(p_sensorData.sensorID);
         
         // calculate distance at which robot should stop
         float maxDistanceToObstalce;
@@ -246,9 +246,14 @@ namespace minotaur
         return MAX(map->getNodeHeight(), map->getNodeWidth()) * THRESHOLD_FACTOR;
     }
     
-    float StayInMidNavigator::getSensorOffset(const int p_id)
+    float StayInMidNavigator::getHorizontalSensorOffset(const int p_id)
     {
         return fabs(sensorSettings[p_id].y);
+    }
+    
+    float StayInMidNavigator::getVerticalSensorOffset(const int p_id)
+    {
+        return fabs(sensorSettings[p_id].x);
     }
     
     void StayInMidNavigator::moveToNextNode(const Direction p_currentDirection)

@@ -44,8 +44,9 @@ namespace minotaur
         
         bool isMovingVertically();
         float getSensorDistanceThreshold();
-        float getSensorOffset(const int p_id);
-        
+        float getHorizontalSensorOffset(const int p_id);
+        float getVerticalSensorOffset(const int p_id);
+     
         void stopMovement();
     public:
         StayInMidNavigator();
