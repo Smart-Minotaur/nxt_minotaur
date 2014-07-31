@@ -10,7 +10,7 @@ namespace minotaur
     { MedianFilter(DEF_SIZE); }
     
     MedianFilter::MedianFilter(int p_size)
-    :current(0), count(0), values(p_size)
+    :current(0), count(0), values(p_size), sorted(false)
     {
         for(int i = 0; i < p_size; ++i)
             values.push_back(0);
@@ -30,11 +30,15 @@ namespace minotaur
         for(int i = 0; i < count; ++i)
             sortedValues.push_back(values[i]);
             
-        std::sort(sortedValues.begin(), sortedValues.end());
+        sorted = false;
     }
     
     float MedianFilter::value()
     {
+        if(!sorted) {
+            std::sort(sortedValues.begin(), sortedValues.end());
+            sorted = true;
+        }
         return sortedValues[sortedValues.size() / 2];
     }
     
@@ -42,5 +46,6 @@ namespace minotaur
     {
         current = 0;
         count = 0;
+        sorted = false;
     }
 }

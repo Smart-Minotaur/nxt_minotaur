@@ -10,6 +10,7 @@ namespace minotaur
     private:
         int current;
         int count;
+        bool sorted;
         
         std::vector<float> values;
         std::vector<float> sortedValues;

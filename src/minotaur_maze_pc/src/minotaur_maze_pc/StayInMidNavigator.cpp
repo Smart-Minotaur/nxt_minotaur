@@ -6,7 +6,7 @@
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
 #define SENSOR_MEDIAN_SIZE 5
-#define ANG_VEL_FACTOR_MEDIAN_SIZE 10
+#define ANG_VEL_FACTOR_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.8f
 #define PARABEL_FACTOR 25.0f
@@ -182,15 +182,17 @@ namespace minotaur
         if(distanceCount > 1)
             angVelFactor /= distanceCount;
             
+        // use median filter to prevent robot from turning too much    
+        if(angVelFactor != 0)
+            angVelFactorMedian.add(angVelFactor);
+        angVelFactor = angVelFactor - angVelFactorMedian.value();
+        
         if(angVelFactor > 1)
             angVelFactor = 1;
         if(angVelFactor < -1)
             angVelFactor = -1;
         
-        // use median filter to prevent robot from turning too much    
-        if(angVelFactor != 0)
-            angVelFactorMedian.add(angVelFactor);
-        angVelFactor = angVelFactor - angVelFactorMedian.value();
+        ROS_INFO("AngVelFactor: %.2f.", angVelFactor);
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
