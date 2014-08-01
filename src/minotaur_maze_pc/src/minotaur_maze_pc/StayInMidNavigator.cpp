@@ -8,7 +8,7 @@
 #define SENSOR_MEDIAN_SIZE 5
 #define ANG_VEL_MEDIAN_SIZE 7
 
-#define THRESHOLD_FACTOR 0.8f
+#define THRESHOLD_FACTOR 0.7f
 #define PARABEL_FACTOR 25.0f
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
@@ -182,10 +182,10 @@ namespace minotaur
         if(distanceCount > 1)
             angVelFactor /= distanceCount;
         
-        if(distanceCount != 0)
+        /*if(distanceCount != 0)
             angVelFactorMedian.add(angVelFactor);
         if(!angVelFactorMedian.isEmpty())
-            angVelFactor = angVelFactor - angVelFactorMedian.value();
+            angVelFactor = angVelFactor - angVelFactorMedian.value();*/
             
         if(angVelFactor > 1)
             angVelFactor = 1;
@@ -273,8 +273,7 @@ namespace minotaur
     void StayInMidNavigator::shutdown()
     {
         RAIILock lock(&mutex);
-        mode = WAITING;
-        pthread_cond_signal(&condition);
+        stopMovement();
     }
         
 }
