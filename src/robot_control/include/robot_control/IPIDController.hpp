@@ -2,7 +2,7 @@
 #define ROBOT_CONTROL_IPID_CONTROLLER_HPP
 
 #include "minotaur_common/MotorVelocity.hpp"
-#include "minotaur_common/PIDParameter.hpp"
+#include "minotaur_common/PIDParameter.h"
 #include "nxt_control/Motor.hpp"
 
 namespace minotaur
@@ -20,7 +20,7 @@ namespace minotaur
             virtual void setRightMotor(nxtcon::Motor *p_rightMotor) = 0;
             
             virtual void setVelocity(const MotorVelocity& p_velocity) = 0;
-            virtual void setWheelCircumference(const float p_meter) = 0;
+            virtual void setWheelRadius(const float p_meter) = 0;
             virtual void setPIDParameter(const minotaur_common::PIDParameter& p_param) = 0;
             
             virtual const MotorVelocity& getVelocity() const = 0;

@@ -1,15 +1,11 @@
-/*
- * Author: Fabian Meyer 
- */
-
 #include <signal.h>
 #include <termios.h>
 #include <poll.h>
 #include "ros/ros.h"
-#include "robot_control_beagle/Utils.hpp"
 #include "nxt_control/Motor.hpp"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "minotaur_common/MinotaurTopics.hpp"
 
 #define LEFT_PORT PORT_A
 #define RIGHT_PORT PORT_B

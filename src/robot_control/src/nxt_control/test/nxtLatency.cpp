@@ -1,11 +1,7 @@
-/*
- * Author: Fabian Meyer 
- */
-
 #include <ros/ros.h>
-#include "robot_control_beagle/GetUltrasonic.h"
-#include "robot_control_beagle/AddUltrasonic.h"
-#include "robot_control_beagle/Utils.hpp"
+#include "minotaur_common/GetUltrasonic.h"
+#include "minotaur_common/AddUltrasonic.h"
+#include "minotaur_common/MinotaurTopics.hpp"
 
 #define TEST_COUNT 100
 
@@ -44,14 +40,14 @@ void initClients(ros::NodeHandle &p_handle)
     
     // to connect to certain services its name is needed
     // the templyte types are the message types used to communicate
-    ultrasonicClient = p_handle.serviceClient<robot_control_beagle::GetUltrasonic>(NXT_GET_ULTRASONIC_SRV);
-    addUltrasonicClient = p_handle.serviceClient<robot_control_beagle::AddUltrasonic>(NXT_ADD_ULTRASONIC_SRV);
+    ultrasonicClient = p_handle.serviceClient<minotaur_common::GetUltrasonic>(MINOTAUR_GET_ULTRASONIC_SRV);
+    addUltrasonicClient = p_handle.serviceClient<minotaur_common::AddUltrasonic>(MINOTAUR_ADD_ULTRASONIC_SRV);
 }
 
 void addUltrasonic()
 {
-    robot_control_beagle::AddUltrasonic srv;
-    srv.request.port = NXT_PORT1;
+    minotaur_common::AddUltrasonic srv;
+    srv.request.port = SENSOR_PORT1;
     
     ROS_INFO("Adding Ultrasonicsensor...");
     if(addUltrasonicClient.call(srv))
@@ -61,7 +57,7 @@ void addUltrasonic()
     }
     else
     {
-        ROS_ERROR("Could not add UltrasonicSensor on port %d.", NXT_PORT1);
+        ROS_ERROR("Could not add UltrasonicSensor on port %d.", SENSOR_PORT1);
     }
 }
 
@@ -71,7 +67,7 @@ void testUltrasonicLatency()
         return;
     
     ros::Time begin, end;
-    robot_control_beagle::GetUltrasonic srv;
+    minotaur_common::GetUltrasonic srv;
     srv.request.sensorID = ultrasonicID;
     
     ROS_INFO("Testing Ultrasonic Latency...");

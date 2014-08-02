@@ -18,9 +18,13 @@ namespace minotaur
 {
     PIDController::PIDController()
     :leftMotor(NULL), rightMotor(NULL), targetVelocity(),measuredVelocity(),
-    currentDiff(), lastDiff(), diffSum(), pidParameter(DEF_KP, DEF_KI, DEF_KD),
-    radius(DEF_WHEEL_RADIUS)
-    { }
+    currentDiff(), lastDiff(), diffSum(), pidParameter(),
+    wheelRadius(DEF_WHEEL_RADIUS)
+    {
+        pidParameter.Kp = DEF_KP;
+        pidParameter.Ki = DEF_KI;
+        pidParameter.Kd = DEF_KD;
+    }
 
     PIDController::~PIDController()
     { }
@@ -40,9 +44,9 @@ namespace minotaur
         targetVelocity = p_velocity;
     }
 
-    void PIDController::setWheelCircumference(const float p_meter)
+    void PIDController::setWheelRadius(const float p_meter)
     {
-        circumference = p_meter;
+        wheelRadius = p_meter;
     }
     
     void PIDController::setPIDParameter(const minotaur_common::PIDParameter& p_param)
@@ -60,9 +64,9 @@ namespace minotaur
         return measuredVelocity;
     }
 
-    float PIDController::getWheelCircumference() const
+    float PIDController::getWheelRadius() const
     {
-        return circumference;
+        return wheelRadius;
     }
     
      const minotaur_common::PIDParameter& PIDController::getPIDParameter() const
@@ -205,7 +209,7 @@ namespace minotaur
         ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Last Diff Vel:  left = %.2f mps; right = %.2f mps", lastDiff.leftMPS, lastDiff.rightMPS);
         ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Diff Sum:       left = %.2f mps; right = %.2f mps", diffSum.leftMPS, diffSum.rightMPS);
         ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Power:          left = %d; right = %d", powerLeft, powerRight);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Circumference = %.4f m", circumference);
+        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Radius = %.4f m", wheelRadius);
         ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
     }
 }

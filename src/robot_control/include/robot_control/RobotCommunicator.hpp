@@ -8,6 +8,7 @@
 #include "nxt_control/Motor.hpp"
 #include "robot_control/RobotController.hpp"
 #include "minotaur_common/PIDParameter.h"
+#include "minotaur_common/RobotSettings.hpp"
 
 namespace minotaur
 {
@@ -31,16 +32,14 @@ namespace minotaur
         void processPIDParamMsg(const minotaur_common::PIDParameter &p_msg);
     public:
         RobotCommunicator();
-        virtual ~RobotCommunicator() { }
+        ~RobotCommunicator();
         
         void init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick);
         void setTransformBroadcaster(tf::TransformBroadcaster *p_odomBroadcaster);
         
         void publish();
-        
-        pthread_mutex_t* mutex() { return &robotMutex; }
-        
-        RobotController& getRobotController();
+        void stepController(const int p_samplingIntervalMsec);
+        void applySettings(const RobotSettings &p_settings);
     };
 }
 

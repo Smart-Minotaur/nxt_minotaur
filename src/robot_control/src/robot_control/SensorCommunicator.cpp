@@ -10,8 +10,19 @@
 
 namespace minotaur
 {
+    SensorCommunicator::SensorCommunicator()
+    {
+        pthread_mutex_init(&sensorMutex, NULL);
+    }
+    
+    SensorCommunicator::~SensorCommunicator()
+    {
+        pthread_mutex_destroy(&sensorMutex);
+    }
+    
     void SensorCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
     {
+        RAIILock lock(&sensorMutex);
         ROS_INFO("Publishing on topic \"%s\"...", MINOTAUR_MEASURE_SENSOR_TOPIC);
         sensorDataPub = p_handle.advertise<minotaur_common::UltrasonicData>(MINOTAUR_MEASURE_SENSOR_TOPIC, ROS_MSG_QUEUE_LENGTH); 
         
@@ -29,6 +40,8 @@ namespace minotaur
     
     void SensorCommunicator::publish()
     {
+        RAIILock lock(&sensorMutex);
+        
         minotaur_common::UltrasonicData msg;
         ros::Rate sendRate(50);
         for(int i = 0; i < sensorController.count(); ++i) {
@@ -47,20 +60,45 @@ namespace minotaur
         }
     }
     
-    SensorController& SensorCommunicator::getSensorController()
+    void SensorCommunicator::applySettings(const std::vector<SensorSetting> p_settings)
     {
-        return sensorController;
+        RAIILock lock(&sensorMutex);
+        
+        sensorController.clearSensors();
+        for(int i = 0; i < p_settings.size(); ++i) {
+            uint8_t port;
+            switch(i) {
+                case SENSOR_PORT1:
+                    port = PORT_1;
+                    break;
+                case SENSOR_PORT2:
+                    port = PORT_2;
+                    break;
+                case SENSOR_PORT3:
+                    port = PORT_3;
+                    break;
+                case SENSOR_PORT4:
+                    port = PORT_4;
+                    break;
+                default:
+                    std::stringstream ss;
+                    ss << "Got invalid sensor port:" << i;
+                    throw std::logic_error(ss.str());
+                    break;
+            }
+            sensorController.addSensor(port);
+        }
     }
     
     /* callbacks */
-    void SensorCommunicator::processClearSensorMsg(const robot_control_beagle::ClearSensor &p_msg)
+    void SensorCommunicator::processClearSensorMsg(const minotaur_common::ClearSensor &p_msg)
     {
         RAIILock lock(&sensorMutex);
         sensorController.clearSensors();
     }
 
-    bool SensorCommunicator::processGetUltrasonicRqt(robot_control_beagle::GetUltrasonic::Request  &req,
-                                                     robot_control_beagle::GetUltrasonic::Response &res)
+    bool SensorCommunicator::processGetUltrasonicRqt(minotaur_common::GetUltrasonic::Request  &req,
+                                                     minotaur_common::GetUltrasonic::Response &res)
     {
         RAIILock lock(&sensorMutex);
         bool result = true;
@@ -79,8 +117,8 @@ namespace minotaur
         return result;
     }
 
-    bool SensorCommunicator::processAddUltrasonicRqt(robot_control_beagle::AddUltrasonic::Request  &req,
-                                                     robot_control_beagle::AddUltrasonic::Response &res)
+    bool SensorCommunicator::processAddUltrasonicRqt(minotaur_common::AddUltrasonic::Request  &req,
+                                                     minotaur_common::AddUltrasonic::Response &res)
     {
         bool result = true;
         uint8_t tmpPort;

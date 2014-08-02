@@ -1,16 +1,12 @@
-/*
- * Author: Fabian Meyer 
- */
-
 #include <pthread.h>
 #include <ros/ros.h>
 #include <termios.h>
 #include <signal.h>
 #include <exception>
-#include "robot_control_beagle/PIDController.hpp"
-#include "robot_control_beagle/Utils.hpp"
+#include "robot_control/PIDController.hpp"
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
+#include "minotaur_common/MinotaurTopics.hpp"
 
 #define SAMPLE_INTERVALL 100
 #define KEYCODE_R 0x43

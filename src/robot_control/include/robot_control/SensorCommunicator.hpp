@@ -7,6 +7,7 @@
 #include "minotaur_common/AddUltrasonic.h"
 #include "minotaur_common/GetUltrasonic.h"
 #include "minotaur_common/ClearSensor.h"
+#include "minotaur_common/SensorSettings.hpp"
 
 namespace minotaur
 {
@@ -31,16 +32,12 @@ namespace minotaur
         bool processAddUltrasonicRqt(minotaur_common::AddUltrasonic::Request  &req,
                                      minotaur_common::AddUltrasonic::Response &res);
     public:
-        SensorCommunicator() { }
-        virtual ~SensorCommunicator() { }
+        SensorCommunicator();
+        ~SensorCommunicator();
         
         void init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick);
-        
         void publish();
-        
-        pthread_mutex_t *mutex() { return &sensorMutex; }
-        
-        SensorController& getSensorController();
+        void applySettings(const std::vector<SensorSetting> p_settings);
     };
 }
 

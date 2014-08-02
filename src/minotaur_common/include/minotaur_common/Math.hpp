@@ -20,6 +20,8 @@
 #define SEC_TO_USEC(sec) ((int) (sec * USEC_PER_SEC))
 #define SEC_TO_MSEC(sec) ((int) (sec * MSEC_PER_SEC))
 
+#define MSEC_TO_HZ(msec) (((double) MSEC_PER_SEC) / ((double) msec))
+
 #define CM_PER_METER 100
 #define CM_TO_METER(cm) (((float) cm) / ((float) CM_PER_METER))
 #define METER_TO_CM(m) ((int) (m * CM_PER_METER))

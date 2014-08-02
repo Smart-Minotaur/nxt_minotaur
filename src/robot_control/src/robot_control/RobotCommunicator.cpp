@@ -17,8 +17,14 @@ namespace minotaur
         pthread_mutex_init(&robotMutex, NULL);
     }
     
+    RobotCommunicator::~RobotCommunicator()
+    {
+        pthread_mutex_destroy(&robotMutex);
+    }
+    
     void RobotCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
     {
+        RAIILock lock(&robotMutex);
         leftMotor.setBrick(p_brick);
         leftMotor.setPort(LEFT_PORT);
         rightMotor.setBrick(p_brick);
@@ -41,11 +47,13 @@ namespace minotaur
     
     void RobotCommunicator::setTransformBroadcaster(tf::TransformBroadcaster *p_odomBroadcaster)
     {
+        RAIILock lock(&robotMutex);
         odomBroadcaster = p_odomBroadcaster;
     }
         
     void RobotCommunicator::publish()
     {
+        RAIILock lock(&robotMutex);
         nav_msgs::Odometry odom = robotController.getOdometry();
         ros::Time currentTime = ros::Time::now();
         
@@ -70,9 +78,10 @@ namespace minotaur
         odometryPub.publish(odom);
     }
     
-    RobotController& RobotCommunicator::getRobotController()
+    void RobotCommunicator::stepController(const int p_samplingIntervalMsec)
     {
-        return robotController;
+        RAIILock lock(&robotMutex);
+        robotController.step(p_samplingIntervalMsec);
     }
     
     /* callbacks */
@@ -82,11 +91,19 @@ namespace minotaur
         robotController.setVelocity(p_msg);
     }
     
-    void RobotCommunicator::processPIDParamMsg(const robotMutex::PIDParameter& p_msg)
+    void RobotCommunicator::processPIDParamMsg(const minotaur_common::PIDParameter& p_msg)
     {
         ROS_INFO("Changing PIDParameter to: Kp = %.4f; Ki = %.4f; Kd = %.4f.",p_msg.Kp, p_msg.Ki, p_msg.Kd);  
         
-        RAIILock lock(&robotMutex)
+        RAIILock lock(&robotMutex);
         robotController.getPIDController().setPIDParameter(p_msg);
+    }
+    
+    void RobotCommunicator::applySettings(const RobotSettings &p_settings)
+    {
+        RAIILock lock(&robotMutex);
+        robotController.getPIDController().setPIDParameter(p_settings.pidParameter);
+        robotController.getPIDController().setWheelRadius(p_settings.wheelRadius);
+        robotController.setWheelTrack(p_settings.wheelTrack);
     }
 }
