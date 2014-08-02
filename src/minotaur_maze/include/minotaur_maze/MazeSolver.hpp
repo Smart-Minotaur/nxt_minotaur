@@ -71,7 +71,7 @@ namespace minotaur
         const MazeMap& getMap() const;
         
         void onReceiveOdometry(const nav_msgs::Odometry &p_odometry);
-        void onReceivedUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData);
+        void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData);
     };
 }
 

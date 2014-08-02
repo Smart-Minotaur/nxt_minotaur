@@ -5,9 +5,9 @@
 #include <QPoint>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
-#include "pid_monitor_pc/QSensorPainter.hpp"
 #include "ui_pid_window.h"
-#include "pid_monitor_pc/QMinotaurNavigateNode.hpp"
+#include "pid_monitor/QMinotaurNavigateNode.hpp"
+#include "pid_monitor/QSensorPainter.hpp"
 
 #define SAMPLE_RANGE 400
 

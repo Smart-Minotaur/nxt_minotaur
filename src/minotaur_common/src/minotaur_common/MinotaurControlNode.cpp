@@ -131,7 +131,7 @@ namespace minotaur
     
     void MinotaurControlNode::processSensorMsg(const minotaur_common::UltrasonicData &p_msg)
     {
-        listener->onReceivedUltrasonicData(p_msg);
+        listener->onReceiveUltrasonicData(p_msg);
     }
         
 }

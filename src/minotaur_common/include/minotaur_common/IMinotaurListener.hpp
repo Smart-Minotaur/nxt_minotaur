@@ -10,7 +10,7 @@ namespace minotaur
     {
     public:
         virtual void onReceiveOdometry(const nav_msgs::Odometry &p_odometry) = 0;
-        virtual void onReceivedUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) = 0;
+        virtual void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) = 0;
     };
 }
 

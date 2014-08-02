@@ -265,7 +265,7 @@ namespace minotaur
         navigator->receivedOdometry(p_odometry);
     }
     
-    void MazeSolver::onReceivedUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData)
+    void MazeSolver::onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData)
     {
         navigator->receivedUltrasonicData(p_sensorData);
         mapping->receivedUltrasonicData(p_sensorData);

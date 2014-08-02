@@ -17,7 +17,7 @@ namespace minotaur
     {
     public:
         void onReceiveOdometry(const nav_msgs::Odometry &p_odometry) { }
-        void onReceivedUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) { }
+        void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) { }
     };
     
     class MinotaurControlNode
