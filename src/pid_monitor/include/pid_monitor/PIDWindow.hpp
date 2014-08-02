@@ -1,13 +1,15 @@
 #ifndef PID_WINDOW_HPP_
 #define PID_WINDOW_HPP_
 
+#include <vector>
 #include <QtGui/QMainWindow>
 #include <QPoint>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_layout.h>
 #include "ui_pid_window.h"
-#include "pid_monitor/QMinotaurNavigateNode.hpp"
 #include "pid_monitor/QSensorPainter.hpp"
+#include "minotaur_common/SensorSettings.hpp"
+#include "minotaur_common_qt/QMinotaurControlNode.hpp"
 
 #define SAMPLE_RANGE 400
 
@@ -17,8 +19,9 @@ namespace minotaur {
     {
         Q_OBJECT
     private:
-        QMinotaurNavigateNode navNode;
+        QMinotaurControlNode controlNode;
         QSensorPainter *sensorPainter;
+        std::vector<SensorSetting> sensorSettings;
         
         int sampleCount;
         QwtPlotCurve linCurve, angCurve;
@@ -46,13 +49,13 @@ namespace minotaur {
         void updatePIDValues();
         void setVelocity();
         void updateVelocityValues();
-        void processMeasuredVelocity(const QOdometry p_velocity);
-        void processMeasuredSensor(const QUltraSensor p_sensor);
+        void processMeasuredVelocity(const QOdometry &p_velocity);
+        void processMeasuredSensor(const QUltrasonicData &p_sensor);
     public:
         PIDWindow(QWidget *parent = 0);
         ~PIDWindow();
         
-        QMinotaurNavigateNode& getNavigationNode();
+        QMinotaurControlNode& getControlNode();
     };
     
 }

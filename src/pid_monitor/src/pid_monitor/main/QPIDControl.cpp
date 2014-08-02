@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QApplication>
-#include "pid_monitor_pc/PIDWindow.hpp"
+#include "pid_monitor/PIDWindow.hpp"
+#include "minotaur_common_qt/MetaTypes.hpp"
 
 #define NODE_NAME "QPIDControl"
 #define INTERVAL 25
@@ -14,13 +15,13 @@ int main(int argc, char **argv)
         return -1;
     }
     
-    qRegisterMetaType<minotaur::QOdometry>("QOdometry");
-    qRegisterMetaType<minotaur::QUltraSensor>("QUltraSensor");
+    minotaur::registerMetatypes();
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
     
     w.show();
-    w.getNavigationNode().start();
+    //TODO Mmultithreading
+    //w.getControlNode().start();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();

@@ -2,6 +2,7 @@
 #define MINOTAUR_MATH_HPP
 
 #include <cmath>
+#include <nav_msgs/Odometry.h>
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -27,5 +28,19 @@
 #define METER_TO_CM(m) ((int) (m * CM_PER_METER))
 
 #define RADIUS_TO_CIRCUMFERENCE(rad) (rad * 2 * M_PI)
+
+namespace minotaur
+{
+    float normalizeRadian(const float p_radian);
+    float normalizeDegree(const float p_degree);
+    
+    float getTheta(const nav_msgs::Odometry &p_odometry);
+    float getNormalizedTheta(const nav_msgs::Odometry &p_odometry);
+    
+    float getLinearVelocity(const nav_msgs::Odometry &p_odometry);
+    float getAngularVelocity(const nav_msgs::Odometry &p_odometry);
+    void setLinearVelocity(nav_msgs::Odometry &p_odometry, const float p_linearVelocity);
+    void setAngularVelocity(nav_msgs::Odometry &p_odometry, const float p_angularVelocity);
+}
 
 #endif

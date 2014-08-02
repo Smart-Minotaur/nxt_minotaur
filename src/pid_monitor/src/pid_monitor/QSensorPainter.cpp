@@ -1,4 +1,4 @@
-#include "pid_monitor_pc/QSensorPainter.hpp"
+#include "pid_monitor/QSensorPainter.hpp"
 #include <QPainter>
 #include <cmath>
 

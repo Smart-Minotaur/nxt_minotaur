@@ -23,7 +23,10 @@ then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="robot_control_beagle;minotaur_pc;pid_monitor_pc;map_monitor_pc;minotaur_control_pc;minotaur_maze_pc"
 elif [ "$1" == "common" ]
 then
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;minotaur_maze"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;pid_monitor"
+elif [ "$1" == "maze" ]
+then
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze"
 elif [ "$1" == "clean" ]
 then
 	rm -rf devel/ build/

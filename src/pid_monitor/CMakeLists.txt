@@ -1,20 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(pid_monitor_pc)
+project(pid_monitor)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake-modules")
 
 find_package(catkin REQUIRED COMPONENTS
 	qt_build
 	roscpp
-	robot_control_beagle
+	minotaur_common
+    minotaur_common_qt
 )
 
 find_package(Qwt REQUIRED)
 
-catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES PIDMonitor
-)
+catkin_package()
 
 ###########
 ## Build ##
@@ -48,8 +46,8 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${QWT_INCLUDE_DIRS})
 
 add_library(PIDMonitor ${PID_MONITOR_PC_LIB_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 target_link_libraries(PIDMonitor ${QT_LIBRARIES} ${catkin_LIBRARIES} ${QWT_LIBRARIES})
-add_dependencies(PIDMonitor robot_control_beagle_generate_messages_cpp)
+add_dependencies(PIDMonitor minotaur_common_generate_messages_cpp)
 
 add_executable(${PROJECT_NAME} ${PID_MONITOR_PC_MAIN_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} ${QWT_LIBRARIES} PIDMonitor)
-add_dependencies(${PROJECT_NAME} robot_control_beagle_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} minotaur_common_generate_messages_cpp)

@@ -2,9 +2,13 @@
 #define MINOTAUR_META_TYPES_HPP
 
 #include <QMetaType>
+#include <nav_msgs/Odometry.h>
+#include "minotaur_common/UltrasonicData.h"
 
 namespace minotaur
 {
+    void registerMetatypes();
+    
     class QOdometry
     {
     public:

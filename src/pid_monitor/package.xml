@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>pid_monitor_pc</name>
+  <name>pid_monitor</name>
   <version>0.0.0</version>
   <description>The pid_monitor_pc package</description>
   <maintainer email="robolab@todo.todo">robolab</maintainer>
@@ -10,7 +10,9 @@
   <build_depend>qt_build</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>libqt4-dev</build_depend>
-  <build_depend>robot_control_beagle</build_depend>
+  <build_depend>minotaur_common</build_depend>
+   <build_depend>minotaur_common_qt</build_depend>
+  
   <run_depend>qt_build</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>libqt4-dev</run_depend>

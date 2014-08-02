@@ -1,9 +1,6 @@
-/*
- * Author: Fabian Meyer
- */
 #include <cstdio>
-#include "robot_control_beagle/Utils.hpp"
-#include "pid_monitor_pc/PIDWindow.hpp"
+#include "pid_monitor/PIDWindow.hpp"
+#include "minotaur_common/Math.hpp"
 
 #define MAX_LIN_VEL 0.5f
 #define MAX_ANG_VEL 2.0f
@@ -30,8 +27,8 @@ namespace minotaur
         centralwidget->layout()->addWidget(sensorPainter);
         sensorPainter->setMinimumSize(200, 400);
         
-        connect(&navNode, SIGNAL(odometryUpdated(const QOdometry)), this, SLOT(processMeasuredVelocity(const QOdometry)));
-        connect(&navNode, SIGNAL(measuredSensor(const QUltraSensor)), this, SLOT(processMeasuredSensor(const QUltraSensor)));
+        connect(&controlNode, SIGNAL(receivedOdometry(const QOdometry&)), this, SLOT(processMeasuredVelocity(const QOdometry&)));
+        connect(&controlNode, SIGNAL(receivedUltrasonicData(const QUltrasonicData&)), this, SLOT(processMeasuredSensor(const QUltrasonicData&)));
         
         connect(BrakeButton, SIGNAL(clicked()), this, SLOT(brake()));
         
@@ -46,6 +43,8 @@ namespace minotaur
         connect(KPSlider, SIGNAL(sliderReleased()), this, SLOT(setPID()));
         connect(KISlider, SIGNAL(sliderReleased()), this, SLOT(setPID()));
         connect(KDSlider, SIGNAL(sliderReleased()), this, SLOT(setPID()));
+        
+        sensorSettings = loadCurrentSensorSettings();
         
         initComponents();
     }
@@ -109,9 +108,9 @@ namespace minotaur
         MeasureAngPlot->setAxisTitle(QwtPlot::yLeft, "m/s");
     }
     
-    QMinotaurNavigateNode& PIDWindow::getNavigationNode()
+    QMinotaurControlNode& PIDWindow::getControlNode()
     {
-        return navNode;
+        return controlNode;
     }
     
     void PIDWindow::brake()
@@ -124,7 +123,7 @@ namespace minotaur
     void PIDWindow::setVelocity()
     {
         updateVelocityValues();
-        navNode.setRobotVelocity(getLinearVel(), getAngVel());
+        controlNode.setVelocity(getLinearVel(), getAngVel());
     }
     
     void PIDWindow::updateVelocityValues()
@@ -156,7 +155,7 @@ namespace minotaur
     void PIDWindow::setPID()
     {
         updatePIDValues();
-        navNode.setPIDParameter(getKP(), getKI(), getKD());
+        controlNode.setPIDParameter(getKP(), getKI(), getKD());
     }
     
     void PIDWindow::updatePIDValues()
@@ -181,11 +180,12 @@ namespace minotaur
         return ((float) (KDSlider->value()) / 100.0f) * MAX_KD;
     }
     
-    void PIDWindow::processMeasuredVelocity(const QOdometry p_odom)
+    void PIDWindow::processMeasuredVelocity(const QOdometry &p_odom)
     {
-        float linVel = p_odom.linVelX / cos(p_odom.theta);
-        updateMeasuredProgressBars(linVel, p_odom.angVel);
-        updateMeasuredPlot(linVel, p_odom.angVel);
+        float linVel = getLinearVelocity(p_odom.odometry);
+        float angVel = getAngularVelocity(p_odom.odometry);
+        updateMeasuredProgressBars(linVel, angVel);
+        updateMeasuredPlot(linVel, angVel);
     }
     
     void PIDWindow::updateMeasuredProgressBars(const float p_linVel, const float p_angVel)
@@ -226,15 +226,15 @@ namespace minotaur
             p_progressbar->setStyleSheet(p_progressbar->property("defaultStyleSheet").toString() + " QProgressBar::chunk { background: red; }");
     }
     
-    void PIDWindow::processMeasuredSensor(const QUltraSensor p_sensor)
+    void PIDWindow::processMeasuredSensor(const QUltrasonicData &p_sensor)
     {
-        int x = cos(-p_sensor.direction - M_PI / 2) * p_sensor.distance;
-        int y = sin(-p_sensor.direction - M_PI / 2) * p_sensor.distance;
+        int x = cos(-sensorSettings[p_sensor.data.sensorID].direction - M_PI / 2) * p_sensor.data.distance;
+        int y = sin(-sensorSettings[p_sensor.data.sensorID].direction - M_PI / 2) * p_sensor.data.distance;
         
-        while(p_sensor.id >= sensorPainter->getCount())
+        while(p_sensor.data.sensorID >= sensorPainter->getCount())
             sensorPainter->addMeasurement(QPoint());
         
-        sensorPainter->setMeasurement(p_sensor.id ,QPoint(x,y));
+        sensorPainter->setMeasurement(p_sensor.data.sensorID ,QPoint(x,y));
         sensorPainter->update();
     }
     

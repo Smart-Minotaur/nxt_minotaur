@@ -1,7 +1,7 @@
-#include <tf/transform_broadcaster.h>
 #include <cmath>
 #include "minotaur_maze/StayInMidNavigator.hpp"
 #include "minotaur_common/RAIILock.hpp"
+#include "minotaur_common/Math.hpp"
 
 #define MAX_LIN_VELOCITY 0.15f
 #define MAX_ANG_VELOCITY 1.2f
@@ -11,25 +11,12 @@
 #define THRESHOLD_FACTOR 0.7f
 #define PARABEL_FACTOR 25.0f
 
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
-#define CM_TO_M(cm) (((float) (cm)) / 100.0f)
-
 #define IS_FRONT_SENSOR(id) (sensorSettings[id].direction == 0)
-#define IS_LEFT_SENSOR(id) (sensorSettings[id].direction > 0)
-#define IS_RIGHT_SENSOR(id) (sensorSettings[id].direction < 0)
+#define IS_LEFT_SENSOR(id) (sensorSettings[id].direction > 0 && sensorSettings[id].direction < M_PI)
+#define IS_RIGHT_SENSOR(id) (sensorSettings[id].direction < RAD_PER_CIRCLE && sensorSettings[id].direction > M_PI)
 
 namespace minotaur
 {
-    static float normalizeAngle(const float p_angle)
-    {
-        float result = p_angle;
-        while(result < -(2 * M_PI))
-            result += (2 * M_PI);
-        while(result > (2 * M_PI))
-            result -= (2 * M_PI);
-        return result;
-    }
-    
     StayInMidNavigator::StayInMidNavigator()
     :mode(WAITING), leftMedian(SENSOR_MEDIAN_SIZE), rightMedian(SENSOR_MEDIAN_SIZE), angVelFactorMedian(ANG_VEL_MEDIAN_SIZE)
     {
@@ -88,13 +75,13 @@ namespace minotaur
     
     void StayInMidNavigator::initTurning(const nav_msgs::Odometry &p_odometry)
     {
-        startTheta = normalizeAngle(tf::getYaw(p_odometry.pose.pose.orientation));
+        startTheta = getNormalizedTheta(p_odometry);
         mode = TURN;
     }
     
     bool StayInMidNavigator::reachedTargetTheta(const nav_msgs::Odometry &p_odometry)
     {
-        float theta = normalizeAngle(tf::getYaw(p_odometry.pose.pose.orientation));
+        float theta = getNormalizedTheta(p_odometry);
         
         int directionDiff = getDirectionDiff(currentDirection, targetDirection);
         
@@ -128,11 +115,11 @@ namespace minotaur
     {
         // all data has to be in meter
         if(IS_FRONT_SENSOR(p_sensorData.sensorID))
-            frontDistance = CM_TO_M(p_sensorData.distance);
+            frontDistance = CM_TO_METER(p_sensorData.distance);
         else if(IS_RIGHT_SENSOR(p_sensorData.sensorID))
-            rightMedian.add(CM_TO_M(p_sensorData.distance));
+            rightMedian.add(CM_TO_METER(p_sensorData.distance));
         else if(IS_LEFT_SENSOR(p_sensorData.sensorID))
-            leftMedian.add(CM_TO_M(p_sensorData.distance));
+            leftMedian.add(CM_TO_METER(p_sensorData.distance));
     }
     
     void StayInMidNavigator::checkFrontObstacle(const minotaur_common::UltrasonicData &p_sensorData)

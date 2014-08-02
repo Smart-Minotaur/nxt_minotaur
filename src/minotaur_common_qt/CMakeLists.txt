@@ -5,8 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake-modu
 set(MINOTAUR_COMMON_QT_LIB_NAME ${PROJECT_NAME})
 
 find_package(catkin REQUIRED
-    qt_build
 	roscpp
+    qt_build
     minotaur_common
 )
 
