@@ -10,7 +10,7 @@ namespace minotaur
         odometry.pose.pose.position.x = 0;
         odometry.pose.pose.position.y = 0;
         odometry.pose.pose.position.z = 0;
-        odometry.pose.pose.orientation = tf::createQuaternionMsgFromYaw(0);
+        setTheta(odometry, 0);
         
         odometry.twist.twist.linear.x = 0;
         odometry.twist.twist.linear.y = 0;
@@ -59,7 +59,7 @@ namespace minotaur
         MotorVelocity targetVelocity;
         
         //to get the formula see kinematic of two wheeled robots
-        double theta = tf::getYaw(odometry.pose.pose.orientation);
+        double theta = getTheta(odometry);
         float linearVelocity = velocity.linear.x / cos(theta);
         targetVelocity.leftMPS = linearVelocity - (velocity.angular.z * wheelTrack) / 2;
         targetVelocity.rightMPS = linearVelocity + (velocity.angular.z * wheelTrack) / 2;
@@ -82,7 +82,7 @@ namespace minotaur
     {
         float intervalSec = MSEC_TO_SEC(p_samplingIntervallMsec);
         
-        double theta = tf::getYaw(odometry.pose.pose.orientation);
+        double theta = getTheta(odometry);
         
         // get measured Velocity from PID and transform to Twist
         geometry_msgs::Twist nextVelocity = getMeasuredVelocity(theta);

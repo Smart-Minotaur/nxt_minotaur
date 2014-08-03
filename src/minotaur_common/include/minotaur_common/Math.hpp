@@ -36,6 +36,7 @@ namespace minotaur
     
     float getTheta(const nav_msgs::Odometry &p_odometry);
     float getNormalizedTheta(const nav_msgs::Odometry &p_odometry);
+    void setTheta(nav_msgs::Odometry &p_odometry, const float p_theta);
     
     float getLinearVelocity(const nav_msgs::Odometry &p_odometry);
     float getAngularVelocity(const nav_msgs::Odometry &p_odometry);

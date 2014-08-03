@@ -8,8 +8,8 @@
 #include "minotaur_common/RAIILock.hpp"
 #include "minotaur_common/MinotaurControlNode.hpp"
 #include "minotaur_common/PIDParameter.h"
+#include "minotaur_common/Math.hpp"
 
-#define DEG_TO_RAD(deg) ((M_PI * deg) / 180)
 #define SPIN_RATE 100
 #define ROS_MESSAGE_QUEUE_LENGTH 20
 
@@ -62,7 +62,7 @@ namespace minotaur
     double MinotaurControlNode::getThetaFromLastOdom()
     {
         RAIILock lock(&odomMutex);
-        return tf::getYaw(lastOdometry.pose.pose.orientation);
+        return getTheta(lastOdometry);
     }
     
     void MinotaurControlNode::setPIDParameter(const float p_Kp, const float p_Ki, const float p_Kd)

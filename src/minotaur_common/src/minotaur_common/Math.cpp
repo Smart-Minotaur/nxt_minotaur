@@ -37,6 +37,11 @@ namespace minotaur
         return normalizeRadian(getTheta(p_odometry));
     }
     
+    void setTheta(nav_msgs::Odometry &p_odometry, const float p_theta)
+    {
+        p_odometry.pose.pose.orientation = tf::createQuaternionMsgFromYaw(p_theta);
+    }
+    
     float getLinearVelocity(const nav_msgs::Odometry &p_odometry)
     {
         return p_odometry.twist.twist.linear.x / cos(getTheta(p_odometry));

@@ -2,6 +2,7 @@
 #include <QApplication>
 #include "pid_monitor/PIDWindow.hpp"
 #include "minotaur_common_qt/MetaTypes.hpp"
+#include "minotaur_common_qt/QMinotaurControlThread.hpp"
 
 #define NODE_NAME "QPIDControl"
 #define INTERVAL 25
@@ -18,13 +19,14 @@ int main(int argc, char **argv)
     minotaur::registerMetatypes();
     QApplication app(argc, argv);
     minotaur::PIDWindow w;
-    
+    minotaur::QMinotaurControlThread thread(w.getControlNode());
     w.show();
-    //TODO Mmultithreading
-    //w.getControlNode().start();
+    thread.start();
     
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();
+    thread.stop();
+    thread.wait();
     ros::shutdown();
     return result;
 }

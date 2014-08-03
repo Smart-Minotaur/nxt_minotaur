@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find robot_control_beagle)/launch/control.launch" />
-    <node pkg="minotaur_maze_pc" type="moveInMaze" name="moveInMaze" output="screen" />
-    <rosparam command="load" file="$(find minotaur_maze_pc)/param/mazes.yaml"/>
+    <include file="$(find robot_control)/launch/control.launch" />
+    <node pkg="minotaur_maze" type="moveInMaze" name="moveInMaze" output="screen" />
+    <rosparam command="load" file="$(find minotaur_common)/param/mazes.yaml"/>
 </launch>
