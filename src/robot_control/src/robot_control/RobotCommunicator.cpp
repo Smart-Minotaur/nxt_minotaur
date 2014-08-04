@@ -30,18 +30,18 @@ namespace minotaur
         rightMotor.setBrick(p_brick);
         rightMotor.setPort(RIGHT_PORT);
         
-        ROS_INFO("Setting up RobotController...");
+        ROS_INFO("Setting up RobotController.");
         robotController.setWheelTrack(WHEEL_TRACK);
         robotController.getPIDController().setWheelRadius(WHEEL_RADIUS);
         robotController.getPIDController().setLeftMotor(&leftMotor);
         robotController.getPIDController().setRightMotor(&rightMotor);
         
-        ROS_INFO("Subscribing to topic \"%s\"...", MINOTAUR_SET_PID_PARAMETER_TOPIC);
+        ROS_INFO("Subscribing to topic \"%s\".", MINOTAUR_SET_PID_PARAMETER_TOPIC);
         setPIDParamSub = p_handle.subscribe(MINOTAUR_SET_PID_PARAMETER_TOPIC, ROS_MSG_QUEUE_LENGTH, &RobotCommunicator::processPIDParamMsg, this);
-        ROS_INFO("Subscribing to topic \"%s\"...", ROS_VEL_TOPIC);
+        ROS_INFO("Subscribing to topic \"%s\".", ROS_VEL_TOPIC);
         cmdVelSub = p_handle.subscribe(ROS_VEL_TOPIC, ROS_MSG_QUEUE_LENGTH, &RobotCommunicator::processSetVelocityMsg, this);
         
-        ROS_INFO("Publishing on topic \"%s\"...", ROS_ODOM_TOPIC);
+        ROS_INFO("Publishing on topic \"%s\".", ROS_ODOM_TOPIC);
         odometryPub = p_handle.advertise<nav_msgs::Odometry>(ROS_ODOM_TOPIC, ROS_MSG_QUEUE_LENGTH);
     }
     
