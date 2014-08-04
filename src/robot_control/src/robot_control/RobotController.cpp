@@ -90,7 +90,7 @@ namespace minotaur
         float angularVelocity = (motorVel.rightMPS - motorVel.leftMPS) / wheelTrack;
         
         initTwist(result);
-        setLinearVelocity(result, p_theta, linearVelocity)
+        setLinearVelocity(result, p_theta, linearVelocity);
         setAngularVelocity(result, angularVelocity);
         
         return result;

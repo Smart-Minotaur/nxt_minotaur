@@ -15,6 +15,7 @@ find_package(Qwt REQUIRED)
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${MINOTAUR_COMMON_QT_LIB_NAME}
+    CATKIN_DEPENDS message_runtime
 )
 
 #====================

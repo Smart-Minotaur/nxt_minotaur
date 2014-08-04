@@ -12,7 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Qwt REQUIRED)
 
-catkin_package()
+catkin_package(
+    CATKIN_DEPENDS message_runtime
+)
 
 ###########
 ## Build ##

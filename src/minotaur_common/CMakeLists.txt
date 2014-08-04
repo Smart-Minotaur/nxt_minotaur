@@ -44,3 +44,5 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 file( GLOB MINOTAUR_COMMON_SRC "src/minotaur_common/*.cpp" )
 add_library(${MINOTAUR_COMMON_LIB} ${MINOTAUR_COMMON_SRC})
 target_link_libraries(${MINOTAUR_COMMON_LIB} ${catkin_LIBRARIES})
+add_dependencies(${MINOTAUR_COMMON_LIB} ${PROJECT_NAME}_generate_messages_cpp)
+

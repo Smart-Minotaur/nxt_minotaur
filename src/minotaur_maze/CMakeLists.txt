@@ -12,7 +12,7 @@ find_package(catkin REQUIRED
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES minotaur_maze_pc
-#  CATKIN_DEPENDS other_catkin_pkg
+    CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 
