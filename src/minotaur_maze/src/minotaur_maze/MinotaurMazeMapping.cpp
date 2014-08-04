@@ -1,14 +1,12 @@
 #include "minotaur_maze/MinotaurMazeMapping.hpp"
 #include "minotaur_common/RAIILock.hpp"
+#include "minotaur_common/Math.hpp"
 
 #define MIN_MEASUREMENTS 10
 #define MAX_TIMEOUT 5
 #define IS_FRONT_SENSOR(dir) (dir == 0)
-#define IS_LEFT_SENSOR(dir) (dir > 0)
-#define IS_RIGHT_SENSOR(dir) (dir < 0)
-
-#define CM_TO_M(cm) (((float) (cm)) / 100.0f)
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define IS_LEFT_SENSOR(dir) (dir > 0 && dir < M_PI)
+#define IS_RIGHT_SENSOR(dir) (dir < RAD_PER_CIRCLE && dir > M_PI)
 
 namespace minotaur
 {
@@ -51,7 +49,7 @@ namespace minotaur
             timeout = 0;
         
         
-        float distance = CM_TO_M(p_sensorData.distance);
+        float distance = cmToMeter(p_sensorData.distance);
         obstacle->push_back(distance <= getSensorDistanceThreshold());
     }
     
