@@ -77,17 +77,19 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
         return false;
     }
     
+    ROS_INFO("Initializing USBConnection to Brick.");
     try {
-        ROS_INFO("Initialize USBConnection to Brick.");
         brick.find();
     } catch (const std::exception &e) {
         ROS_ERROR("Failed to initialize Brick: %s.", e.what());
         return false;
     }
     
-    try {       
+    try {
+        ROS_INFO("Initializing RobotCommunicator.");
         robotCommunicator.setTransformBroadcaster(p_broadcaster);
         robotCommunicator.init(p_handle, &brick);
+        ROS_INFO("Initializing SensorCommunicator.");
         sensorCommunicator.init(p_handle, &brick);
     } catch(const std::exception &e) {
         ROS_ERROR("Failed to initialize Communicator: %s.", e.what());
@@ -105,7 +107,7 @@ bool loadCurrentModel()
     minotaur::RobotSettings robotSettings;
     std::vector<minotaur::SensorSetting> sensorSettings;
     
-    ROS_INFO("Load current model.");
+    ROS_INFO("Loading current model.");
     try {
         robotSettings.loadCurrentFromParamServer();
         sensorSettings = minotaur::loadCurrentSensorSettings();

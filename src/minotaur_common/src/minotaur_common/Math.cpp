@@ -146,7 +146,7 @@ namespace minotaur
         double cosVal = cos(p_theta);
         float result;
         if(cosVal == 0)
-            result = p_twist.linear.x;
+            result = p_twist.linear.y;
         else
             result = p_twist.linear.x / cosVal;
             

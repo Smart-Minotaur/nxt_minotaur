@@ -23,19 +23,20 @@ namespace minotaur
     void SensorCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
     {
         RAIILock lock(&sensorMutex);
-        ROS_INFO("Publishing on topic \"%s\"...", MINOTAUR_MEASURE_SENSOR_TOPIC);
+        
+        ROS_INFO("-- Setting up SensorController.");
+        sensorController.setBrick(p_brick);
+        
+        ROS_INFO("-- Publishing on topic \"%s\".", MINOTAUR_MEASURE_SENSOR_TOPIC);
         sensorDataPub = p_handle.advertise<minotaur_common::UltrasonicData>(MINOTAUR_MEASURE_SENSOR_TOPIC, ROS_MSG_QUEUE_LENGTH); 
         
-        ROS_INFO("Subscribing to topic \"%s\"...", MINOTAUR_CLEAR_SENSOR_TOPIC);
+        ROS_INFO("-- Subscribing to topic \"%s\".", MINOTAUR_CLEAR_SENSOR_TOPIC);
         clearSensorSub = p_handle.subscribe(MINOTAUR_CLEAR_SENSOR_TOPIC, ROS_MSG_QUEUE_LENGTH, &SensorCommunicator::processClearSensorMsg, this);
         
-        ROS_INFO("Offering service \"%s\"...", MINOTAUR_GET_ULTRASONIC_SRV);
+        ROS_INFO("-- Offering service \"%s\".", MINOTAUR_GET_ULTRASONIC_SRV);
         getUltraSonicSrv = p_handle.advertiseService(MINOTAUR_GET_ULTRASONIC_SRV, &SensorCommunicator::processGetUltrasonicRqt, this);
-        ROS_INFO("Offering service \"%s\"...", MINOTAUR_ADD_ULTRASONIC_SRV);
+        ROS_INFO("--Offering service \"%s\".", MINOTAUR_ADD_ULTRASONIC_SRV);
         addUltraSonicSrv = p_handle.advertiseService(MINOTAUR_ADD_ULTRASONIC_SRV, &SensorCommunicator::processAddUltrasonicRqt, this);
-        
-        ROS_INFO("Setting up SensorController...");
-        sensorController.setBrick(p_brick);
     }
     
     void SensorCommunicator::publish()

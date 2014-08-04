@@ -45,7 +45,6 @@ namespace minotaur
         double theta = getTheta(odometry);
         float linearVelocity = getLinearVelocity(velocity, theta);
         float angularVelocity = getAngularVelocity(velocity);
-        ROS_INFO("Setting v=%.2f; w=%.2f; theta=%.2f", linearVelocity, angularVelocity, theta);
         targetVelocity.leftMPS = linearVelocity - (angularVelocity * wheelTrack) / 2;
         targetVelocity.rightMPS = linearVelocity + (angularVelocity * wheelTrack) / 2;
         
@@ -71,7 +70,6 @@ namespace minotaur
         
         // get measured Velocity from PID and transform to Twist
         geometry_msgs::Twist nextVelocity = getMeasuredVelocity(theta);
-        ROS_INFO("DeadReck: theta=%.2f; angVel=%.2f; nextAngVel=%.2f", theta, getAngularVelocity(odometry), getAngularVelocity(nextVelocity));
         //calculate new pose via deadReckoning
         odometry.pose.pose.position.x += ((odometry.twist.twist.linear.x + nextVelocity.linear.x) / 2) * intervalSec;
         odometry.pose.pose.position.y += ((odometry.twist.twist.linear.y + nextVelocity.linear.y) / 2) * intervalSec;
