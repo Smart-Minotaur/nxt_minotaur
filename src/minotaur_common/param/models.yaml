@@ -2,14 +2,14 @@ minotaur:
     models:
         Heracles:
             wheel_track: 0.11
-            wheel_circumference: 0.16
+            wheel_radius: 0.025
             kp: 0.5
             ki: 0.2
             kd: 0.1
             sampling_interval: 25
         Theseus:
             wheel_track: 0.12
-            wheel_circumference: 0.16
+            wheel_radius: 0.025
             kp: 0.5
             ki: 0.2
             kd: 0.1
