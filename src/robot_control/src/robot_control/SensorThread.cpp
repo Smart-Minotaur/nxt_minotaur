@@ -4,10 +4,12 @@
 #include "minotaur_common/Math.hpp"
 #include "minotaur_common/RAIILock.hpp"
 
+#define DEF_SAMPLING_INTERVAL 25
+
 namespace minotaur
 {
     SensorThread::SensorThread(SensorCommunicator &p_sensorCommunicator)
-    : keepRunning(false), sensorCommunicator(p_sensorCommunicator)
+    : keepRunning(false), sensorCommunicator(p_sensorCommunicator), samplingIntervalMsec(DEF_SAMPLING_INTERVAL)
     {
         pthread_mutex_init(&intervalMutex, NULL);
     }

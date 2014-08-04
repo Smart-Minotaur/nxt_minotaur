@@ -4,11 +4,13 @@
 #include "minotaur_common/Math.hpp"
 #include "nxt_control/NxtExceptions.hpp"
 
+#define DEF_SAMPLING_INTERVAL 25
+
 namespace minotaur
 {
     
     RobotThread::RobotThread(RobotCommunicator &p_robotCommunicator)
-    : keepRunning(false), robotCommunicator(p_robotCommunicator)
+    : keepRunning(false), robotCommunicator(p_robotCommunicator), samplingIntervalMsec(DEF_SAMPLING_INTERVAL)
     {
         pthread_mutex_init(&intervalMutex, NULL);
     }
