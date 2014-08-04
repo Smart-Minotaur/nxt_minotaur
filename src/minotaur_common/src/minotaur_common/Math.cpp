@@ -88,7 +88,14 @@ namespace minotaur
     
     float getLinearVelocity(const geometry_msgs::Twist &p_twist, const float p_theta)
     {
-        return p_twist.linear.x / cos(p_theta);
+        double cosVal =  cos(p_theta);
+        float result;
+        if(cosVal == 0)
+            result = p_twist.linear.x;
+        else
+            result = p_twist.linear.x / cosVal;
+            
+        return result;
     }
     
     void setLinearVelocity(nav_msgs::Odometry &p_odometry, const float p_linearVelocity)

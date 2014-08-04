@@ -23,7 +23,7 @@ namespace minotaur
         PIDController pidController;
         
         void calculateMotorVelocity();
-        geometry_msgs::Twist getMeasuredVelocity(const double p_theta);
+        geometry_msgs::Twist getMeasuredVelocity(const float p_theta);
         void deadReckoning(const int p_samplingIntervallMsec);
     public:
         RobotController();

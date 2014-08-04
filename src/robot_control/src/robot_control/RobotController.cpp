@@ -8,7 +8,6 @@ namespace minotaur
     : odometry(), velocity(), wheelTrack(0.0f), pidController()
     {
         initOdometry(odometry);
-        initTwist(velocity); 
     }
     
     IPIDController& RobotController::getPIDController()
@@ -46,7 +45,7 @@ namespace minotaur
         double theta = getTheta(odometry);
         float linearVelocity = getLinearVelocity(velocity, theta);
         float angularVelocity = getAngularVelocity(velocity);
-        ROS_INFO("Setting v=%.2f; w=%.2f", linearVelocity, angularVelocity);
+        ROS_INFO("Setting v=%.2f; w=%.2f; theta=%.2f", linearVelocity, angularVelocity, theta);
         targetVelocity.leftMPS = linearVelocity - (angularVelocity * wheelTrack) / 2;
         targetVelocity.rightMPS = linearVelocity + (angularVelocity * wheelTrack) / 2;
         
@@ -68,7 +67,7 @@ namespace minotaur
     {
         float intervalSec = MSEC_TO_SEC(p_samplingIntervallMsec);
         
-        double theta = getTheta(odometry);
+        float theta = getTheta(odometry);
         
         // get measured Velocity from PID and transform to Twist
         geometry_msgs::Twist nextVelocity = getMeasuredVelocity(theta);
@@ -82,7 +81,7 @@ namespace minotaur
         odometry.twist.twist = nextVelocity;
     }
     
-    geometry_msgs::Twist RobotController::getMeasuredVelocity(const double p_theta)
+    geometry_msgs::Twist RobotController::getMeasuredVelocity(const float p_theta)
     {
         geometry_msgs::Twist result;
         MotorVelocity motorVel = pidController.getMeasuredVelocity();
