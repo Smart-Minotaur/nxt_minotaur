@@ -87,7 +87,6 @@ namespace minotaur
     /* callbacks */
     void RobotCommunicator::processSetVelocityMsg(const geometry_msgs::Twist& p_msg)
     {
-        ROS_INFO("Received Velocity message.");
         RAIILock lock(&robotMutex);
         robotController.setVelocity(p_msg);
     }

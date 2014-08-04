@@ -10,6 +10,7 @@
 #define NODE_WIDTH 0.41f
 #define NODE_HEIGHT 0.41f
 #define INITIAL_DIRECTION minotaur::EAST
+#define MAP_SAVE_FILE "/home/ubuntu/map.txt"
 
 static minotaur::StayInMidNavigator navigator;
 static minotaur::MinotaurMazeMapping mapping;
@@ -39,11 +40,16 @@ int main(int argc, char** argv)
     
 
     try {
-        ROS_INFO("Getting Config.");
+        ROS_INFO("Loading current MazeSettings.");
         config.navigator = &navigator;
         config.mapping = &mapping;
         config.handle = &handle;
         config.loadCurrentFromParamServer();
+        
+        ROS_INFO("-- Found maze \"%s\".", config.settings.mazeName.c_str());
+        ROS_INFO("-- NodeWidth=%.3fm; NodeHeight=%.3fm.", config.settings.nodeWidth, config.settings.nodeHeight);
+        ROS_INFO("-- MapWidth=%d; MapHeight=%d.", config.settings.mapWidth, config.settings.mapHeight);
+        ROS_INFO("-- InitialRobotDirection=%s.", config.settings.initialRobotDirection.c_str());
         
         ROS_INFO("Creating MazeSolver.");
         minotaur::MazeSolver local_solver(config);
@@ -52,7 +58,9 @@ int main(int argc, char** argv)
         
         ROS_INFO("Start Solving.");
         solver->start();
-        solver->getMap().saveASCIIFile("/home/ubuntu/map.txt");
+        ROS_INFO("Saving Map.");
+        ROS_INFO("-- Target=\"%s\"",MAP_SAVE_FILE);
+        solver->getMap().saveASCIIFile(MAP_SAVE_FILE);
     } catch (std::exception &e) {
         ROS_ERROR("Exception occured: %s.", e.what());
         return -1;

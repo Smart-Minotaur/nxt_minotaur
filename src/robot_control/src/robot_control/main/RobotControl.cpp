@@ -120,10 +120,10 @@ bool loadCurrentModel()
     }
     
     ROS_INFO("-- Found model \"%s\".", robotSettings.modelName.c_str());
-    ROS_INFO("-- Kp=%.4f; Ki=%.4f; Kd=%.4f.", robotSettings.pidParameter.Kp, robotSettings.pidParameter.Ki, robotSettings.pidParameter.Kd);
-    ROS_INFO("-- wheelRadius=%.4f; wheelTrack=%.4f; interval=%dms.", robotSettings.wheelRadius, robotSettings.wheelTrack, robotSettings.samplingInterval);
+    ROS_INFO("-- Kp=%.3f; Ki=%.3f; Kd=%.3f.", robotSettings.pidParameter.Kp, robotSettings.pidParameter.Ki, robotSettings.pidParameter.Kd);
+    ROS_INFO("-- wheelRadius=%.3fm; wheelTrack=%.3fm; interval=%dms.", robotSettings.wheelRadius, robotSettings.wheelTrack, robotSettings.samplingInterval);
     for(int i = 0; i < sensorSettings.size(); ++i)
-        ROS_INFO("-- Sensor %d: id=%d; direction=%.2f; x=%.2f; y=%.2f.", i, sensorSettings[i].id, sensorSettings[i].direction, sensorSettings[i].x, sensorSettings[i].y);
+        ROS_INFO("-- Sensor %d: id=%d; direction=%.2frad; x=%.3fm; y=%.3fm.", i, sensorSettings[i].id, sensorSettings[i].direction, sensorSettings[i].x, sensorSettings[i].y);
     robotCommunicator.applySettings(robotSettings);
     sensorCommunicator.applySettings(sensorSettings);
     
