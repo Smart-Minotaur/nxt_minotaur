@@ -4,7 +4,8 @@
     <version>1.0.0</version>
     <description>The robot_control package</description>
     
-    <maintainer email="fabian@todo.todo">fabian</maintainer>
+    <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
+    
     <license>TODO</license>
     
     <buildtool_depend>catkin</buildtool_depend>

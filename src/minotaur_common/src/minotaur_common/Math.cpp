@@ -27,40 +27,98 @@ namespace minotaur
         return result;
     }
     
+    void initOdometry(nav_msgs::Odometry &p_odometry)
+    {
+        initPose(p_odometry.pose.pose);
+        initTwist(p_odometry.twist.twist);        
+    }
+    
+    void initTwist(geometry_msgs::Twist &p_twist)
+    {
+        p_twist.linear.x = 0;
+        p_twist.linear.y = 0;
+        p_twist.linear.z = 0;
+        p_twist.angular.x = 0;
+        p_twist.angular.y = 0;
+        p_twist.angular.z = 0;
+    }
+    
+    void initPose(geometry_msgs::Pose &p_pose)
+    {
+        p_pose.position.x = 0;
+        p_pose.position.y = 0;
+        p_pose.position.z = 0;
+        setTheta(p_pose, 0);
+    }
+    
     float getTheta(const nav_msgs::Odometry &p_odometry)
     {
-        return tf::getYaw(p_odometry.pose.pose.orientation);
+        return getTheta(p_odometry.pose.pose);
+    }
+    
+    float getTheta(const geometry_msgs::Pose &p_pose)
+    {
+        return tf::getYaw(p_pose.orientation);
     }
     
     float getNormalizedTheta(const nav_msgs::Odometry &p_odometry)
     {
-        return normalizeRadian(getTheta(p_odometry));
+        return getNormalizedTheta(p_odometry.pose.pose);
+    }
+    
+    float getNormalizedTheta(const geometry_msgs::Pose &p_pose)
+    {
+        return normalizeRadian(getTheta(p_pose));
     }
     
     void setTheta(nav_msgs::Odometry &p_odometry, const float p_theta)
     {
-        p_odometry.pose.pose.orientation = tf::createQuaternionMsgFromYaw(p_theta);
+        setTheta(p_odometry.pose.pose, p_theta);
+    }
+    
+    void setTheta(geometry_msgs::Pose &p_pose, const float p_theta)
+    {
+        p_pose.orientation = tf::createQuaternionMsgFromYaw(p_theta);
     }
     
     float getLinearVelocity(const nav_msgs::Odometry &p_odometry)
     {
-        return p_odometry.twist.twist.linear.x / cos(getTheta(p_odometry));
+        return getLinearVelocity(p_odometry.twist.twist, getTheta(p_odometry)); 
     }
     
-    float getAngularVelocity(const nav_msgs::Odometry &p_odometry)
+    float getLinearVelocity(const geometry_msgs::Twist &p_twist, const float p_theta)
     {
-        return p_odometry.twist.twist.angular.z;
+        return p_twist.linear.x / cos(p_theta);
     }
     
     void setLinearVelocity(nav_msgs::Odometry &p_odometry, const float p_linearVelocity)
     {
-        float theta = getTheta(p_odometry);
-        p_odometry.twist.twist.linear.x = cos(theta) * p_linearVelocity;
-        p_odometry.twist.twist.linear.y = sin(theta) * p_linearVelocity;
+        setLinearVelocity(p_odometry.twist.twist, getTheta(p_odometry), p_linearVelocity);
+    }
+    
+    void setLinearVelocity(geometry_msgs::Twist &p_twist, const float p_theta, const float p_linearVelocity)
+    {
+        p_twist.linear.x = cos(p_theta) * p_linearVelocity;
+        p_twist.linear.y = sin(p_theta) * p_linearVelocity;
+    }
+    
+    float getAngularVelocity(const nav_msgs::Odometry &p_odometry)
+    {
+        return getAngularVelocity(p_odometry.twist.twist);
+    }
+    
+    float getAngularVelocity(const geometry_msgs::Twist &p_twist)
+    {
+        return p_twist.angular.z;
     }
     
     void setAngularVelocity(nav_msgs::Odometry &p_odometry, const float p_angularVelocity)
     {
-        p_odometry.twist.twist.angular.z = p_angularVelocity;
+        setAngularVelocity(p_odometry.twist.twist, p_angularVelocity);
     }
+    
+    void setAngularVelocity(geometry_msgs::Twist &p_twist, const float p_angularVelocity)
+    {
+        p_twist.angular.z = p_angularVelocity;
+    }    
 }

@@ -7,24 +7,8 @@ namespace minotaur
     RobotController::RobotController()
     : odometry(), velocity(), wheelTrack(0.0f), pidController()
     {
-        odometry.pose.pose.position.x = 0;
-        odometry.pose.pose.position.y = 0;
-        odometry.pose.pose.position.z = 0;
-        setTheta(odometry, 0);
-        
-        odometry.twist.twist.linear.x = 0;
-        odometry.twist.twist.linear.y = 0;
-        odometry.twist.twist.linear.z = 0;
-        odometry.twist.twist.angular.x = 0;
-        odometry.twist.twist.angular.y = 0;
-        odometry.twist.twist.angular.z = 0;
-        
-        velocity.linear.x = 0;
-        velocity.linear.y = 0;
-        velocity.linear.z = 0;
-        velocity.angular.x = 0;
-        velocity.angular.y = 0;
-        velocity.angular.z = 0; 
+        initOdometry(odometry);
+        initTwist(velocity); 
     }
     
     IPIDController& RobotController::getPIDController()
@@ -60,9 +44,10 @@ namespace minotaur
         
         //to get the formula see kinematic of two wheeled robots
         double theta = getTheta(odometry);
-        float linearVelocity = velocity.linear.x / cos(theta);
-        targetVelocity.leftMPS = linearVelocity - (velocity.angular.z * wheelTrack) / 2;
-        targetVelocity.rightMPS = linearVelocity + (velocity.angular.z * wheelTrack) / 2;
+        float linearVelocity = getLinearVelocity(velocity, theta);
+        float angularVelocity = getAngularVelocity(velocity);
+        targetVelocity.leftMPS = linearVelocity - (angularVelocity * wheelTrack) / 2;
+        targetVelocity.rightMPS = linearVelocity + (angularVelocity * wheelTrack) / 2;
         
         pidController.setVelocity(targetVelocity);
     }
@@ -90,7 +75,7 @@ namespace minotaur
         //calculate new pose via deadReckoning
         odometry.pose.pose.position.x += ((odometry.twist.twist.linear.x + nextVelocity.linear.x) / 2) * intervalSec;
         odometry.pose.pose.position.y += ((odometry.twist.twist.linear.y + nextVelocity.linear.y) / 2) * intervalSec;
-        odometry.pose.pose.orientation = tf::createQuaternionMsgFromYaw(theta + ((odometry.twist.twist.angular.z + nextVelocity.angular.z) / 2 ) * intervalSec);
+        setTheta(odometry, theta + ((getAngularVelocity(odometry) + getAngularVelocity(nextVelocity)) / 2 ) * intervalSec);
         
         // set next measured velocity
         odometry.twist.twist = nextVelocity;
@@ -104,12 +89,9 @@ namespace minotaur
         float linearVelocity = (motorVel.rightMPS + motorVel.leftMPS) / 2;
         float angularVelocity = (motorVel.rightMPS - motorVel.leftMPS) / wheelTrack;
         
-        result.linear.x = cos(p_theta) * linearVelocity;
-        result.linear.y = sin(p_theta) * linearVelocity;
-        result.linear.z = 0;
-        result.angular.x = 0;
-        result.angular.y = 0;
-        result.angular.z = angularVelocity;
+        initTwist(result);
+        setLinearVelocity(result, p_theta, linearVelocity)
+        setAngularVelocity(result, angularVelocity);
         
         return result;
     }

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
     <name>mouse_monitor_beagle</name>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
     <description>The mouse_monitor_beagle package</description>
     
-    <maintainer email="fabian@todo.todo">fabian</maintainer>
+    <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
     
     <license>TODO</license>
     

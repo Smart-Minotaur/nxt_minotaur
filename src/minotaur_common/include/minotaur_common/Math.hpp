@@ -3,6 +3,8 @@
 
 #include <cmath>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -34,14 +36,26 @@ namespace minotaur
     float normalizeRadian(const float p_radian);
     float normalizeDegree(const float p_degree);
     
+    void initOdometry(nav_msgs::Odometry &p_odometry);
+    void initTwist(geometry_msgs::Twist &p_twist);
+    void initPose(geometry_msgs::Pose &p_pose);
+    
     float getTheta(const nav_msgs::Odometry &p_odometry);
+    float getTheta(const geometry_msgs::Pose &p_pose);
     float getNormalizedTheta(const nav_msgs::Odometry &p_odometry);
+    float getNormalizedTheta(const geometry_msgs::Pose &p_pose);
     void setTheta(nav_msgs::Odometry &p_odometry, const float p_theta);
+    void setTheta(geometry_msgs::Pose &p_pose, const float p_theta);
     
     float getLinearVelocity(const nav_msgs::Odometry &p_odometry);
-    float getAngularVelocity(const nav_msgs::Odometry &p_odometry);
+    float getLinearVelocity(const geometry_msgs::Twist &p_twist, const float p_theta);
     void setLinearVelocity(nav_msgs::Odometry &p_odometry, const float p_linearVelocity);
+    void setLinearVelocity(geometry_msgs::Twist &p_twist, const float p_theta, const float p_linearVelocity);
+    
+    float getAngularVelocity(const nav_msgs::Odometry &p_odometry);
+    float getAngularVelocity(const geometry_msgs::Twist &p_twist);
     void setAngularVelocity(nav_msgs::Odometry &p_odometry, const float p_angularVelocity);
+    void setAngularVelocity(geometry_msgs::Twist &p_twist, const float p_angularVelocity);
 }
 
 #endif

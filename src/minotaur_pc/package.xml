@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>minotaur_pc</name>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
     <description>Package that contains code that runs on a pc</description>
     
     <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>

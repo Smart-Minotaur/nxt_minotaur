@@ -2,7 +2,12 @@
 <package>
     <name>minotaur_common</name>
     <version>1.0.0</version>
-    <description>The minotaur_common package</description>
+    <description>
+        The minotaur_common package contains functions and structures
+        that are used across all minotaur packages. There are no
+        other dependencies in this than the standard ROS packages
+        and POSIX API.
+    </description>
     
     
     <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
