@@ -19,7 +19,12 @@ static struct sigaction sa;
 
 static void sighandler(int sig)
 {
+    ROS_INFO("Stopping MazeSolver.");
     solver->stop();
+    ROS_INFO("Joining MazeSolver.");
+    solver->join();
+    ROS_INFO("Stopping MinotaurControlNode.");
+    solver->getControlNode().stop();
 }
 
 static void setSignalAction()
@@ -58,6 +63,7 @@ int main(int argc, char** argv)
         
         ROS_INFO("Start Solving.");
         solver->start();
+        solver->getControlNode().spin();
         ROS_INFO("Saving Map.");
         ROS_INFO("-- Target=\"%s\"",MAP_SAVE_FILE);
         solver->getMap().saveASCIIFile(MAP_SAVE_FILE);

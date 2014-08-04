@@ -197,6 +197,11 @@ namespace minotaur
         return map;
     }
     
+    MinotaurControlNode& MazeSolver::getControlNode()
+    {
+        return minotaurNode;
+    }
+    
     void MazeSolver::onReceiveOdometry(const nav_msgs::Odometry &p_odometry)
     {
         navigator->receivedOdometry(p_odometry);
