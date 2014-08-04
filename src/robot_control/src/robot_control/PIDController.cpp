@@ -76,7 +76,7 @@ namespace minotaur
 
     void PIDController::step(const int p_samplingIntervallMSec)
     {
-        float samplingSec = MSEC_TO_SEC(p_samplingIntervallMSec);
+        float samplingSec = msecToSec(p_samplingIntervallMSec);
         measureCurrentVelocity(samplingSec);
         
         calculateDifference();
@@ -120,7 +120,7 @@ namespace minotaur
     float PIDController::ticksToMPS(const float p_ticksPS)
     {
         float result;
-        result = ((p_ticksPS * DEG_PER_TICK) / ((float) DEG_PER_CIRCLE)) * RADIUS_TO_CIRCUMFERENCE(wheelRadius);
+        result = ((p_ticksPS * DEG_PER_TICK) / ((float) DEG_PER_CIRCLE)) * radiusToCircumference(wheelRadius);
         return result;
     }
 

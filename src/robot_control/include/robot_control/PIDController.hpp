@@ -4,7 +4,6 @@
 #include "robot_control/IPIDController.hpp"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
-#define MS_TO_SEC(ms) (((float) ms) / 1000.0f)
 
 namespace minotaur
 {

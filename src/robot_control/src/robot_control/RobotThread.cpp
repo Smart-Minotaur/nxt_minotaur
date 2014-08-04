@@ -34,7 +34,7 @@ namespace minotaur
         
         while(keepRunning) {
             int samplingIntervalTMP = getSamplingInterval();
-            ros::Rate loopRate(MSEC_TO_HZ(samplingIntervalTMP));
+            ros::Rate loopRate(msecToHz(samplingIntervalTMP));
             
             stepRobotController(samplingIntervalTMP);
             

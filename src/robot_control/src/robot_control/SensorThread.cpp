@@ -32,7 +32,7 @@ namespace minotaur
         ROS_INFO("SensorThread: started.");
         
         while(keepRunning) {
-            ros::Rate loopRate(MSEC_TO_HZ(getSamplingInterval()));
+            ros::Rate loopRate(msecToHz(getSamplingInterval()));
             publishSensorData();
             loopRate.sleep();
         }

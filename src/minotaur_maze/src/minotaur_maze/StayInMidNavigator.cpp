@@ -115,11 +115,11 @@ namespace minotaur
     {
         // all data has to be in meter
         if(IS_FRONT_SENSOR(p_sensorData.sensorID))
-            frontDistance = CM_TO_METER(p_sensorData.distance);
+            frontDistance = cmToMeter(p_sensorData.distance);
         else if(IS_RIGHT_SENSOR(p_sensorData.sensorID))
-            rightMedian.add(CM_TO_METER(p_sensorData.distance));
+            rightMedian.add(cmToMeter(p_sensorData.distance));
         else if(IS_LEFT_SENSOR(p_sensorData.sensorID))
-            leftMedian.add(CM_TO_METER(p_sensorData.distance));
+            leftMedian.add(cmToMeter(p_sensorData.distance));
     }
     
     void StayInMidNavigator::checkFrontObstacle(const minotaur_common::UltrasonicData &p_sensorData)

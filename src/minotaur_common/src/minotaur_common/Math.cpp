@@ -3,6 +3,61 @@
 
 namespace minotaur
 {
+    float degreeToRadian(const float p_degree)
+    {
+        return (p_degree * M_PI) / 180.0f;
+    }
+    
+    float radianToDegree(const float p_radian)
+    {
+        return (p_radian * 180.0f) / M_PI;
+    }
+    
+    float usecToSec(const int p_usec)
+    {
+        return ((float) p_usec) / ((float) USEC_PER_SEC);
+    }
+    
+    float msecToSec(const int p_msec)
+    {
+        return ((float) p_msec) / ((float) MSEC_PER_SEC);
+    }
+    
+    int secToUsec(const float p_sec)
+    {
+        return (int) (p_sec * USEC_PER_SEC);
+    }
+    
+    int secToMsec(const float p_sec)
+    {
+        return (int) (p_sec * MSEC_PER_SEC);
+    }
+    
+    float msecToHz(const int p_msec)
+    {
+        return ((float) MSEC_PER_SEC) / ((float) p_msec);
+    }
+    
+    int meterToCm(const float p_meter)
+    {
+        return (int) (p_meter * CM_PER_METER);
+    }
+    
+    float cmToMeter(const int p_cm)
+    {
+        return ((float) p_cm) / ((float) CM_PER_METER);
+    }
+    
+    float radiusToCircumference(const float p_radius)
+    {
+        return p_radius * 2 * M_PI;
+    }
+    
+    float circumferenceToRadius(const float p_circumference)
+    {
+        return p_circumference / (2 * M_PI);
+    }
+    
     float normalizeRadian(const float p_radian)
     {
         float result = p_radian;
@@ -88,7 +143,7 @@ namespace minotaur
     
     float getLinearVelocity(const geometry_msgs::Twist &p_twist, const float p_theta)
     {
-        double cosVal =  cos(p_theta);
+        double cosVal = cos(p_theta);
         float result;
         if(cosVal == 0)
             result = p_twist.linear.x;
