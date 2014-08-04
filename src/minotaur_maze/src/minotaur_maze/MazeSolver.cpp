@@ -68,16 +68,22 @@ namespace minotaur
         pthread_mutex_destroy(&pauseMutex);
     }
     
-    static void* runThread(void* arg)
+    void MazeSolver::onStart()
     {
-        MazeSolver* solver = (MazeSolver*) arg;
-        solver->run();
-        
-        return NULL;
+        keepRunning = true;
+    }
+    
+    void MazeSolver::onStop()
+    {
+        keepRunning = false;
+        navigator->shutdown();
+        resume();
+        minotaurNode.stop();
     }
     
     void MazeSolver::run()
     {
+        currentStep = 0;
         while(keepRunning)
             runExceptionSave();
     }
@@ -88,97 +94,28 @@ namespace minotaur
             while(keepRunning)
             {
                 checkPaused();
-                
                 if(!keepRunning)
                     break;
                 
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
+                mapCurrentNode();
+                if(currentStep == 2)
+                    turnRobotTo(EAST);
+                else if(currentStep == 4)
+                    turnRobotTo(SOUTH);
+                else
+                    moveToNextNode();
                 
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
+                if(currentStep == 5)
+                    keepRunning = false;
                 
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
-                
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
-                
-                ROS_INFO("==TURNING ROBOT==");
-                ROS_INFO("Target Direction %s.", DirectionStrings[EAST]);
-                navigator->turnRobotTo(robot.direction, EAST);
-                robot.direction = EAST;
-                ROS_INFO("==REACHED DIRECTION==");
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
-                
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
-                
-                ROS_INFO("==TURNING ROBOT==");
-                ROS_INFO("Target Direction %s.", DirectionStrings[SOUTH]);
-                navigator->turnRobotTo(robot.direction, SOUTH);
-                robot.direction = SOUTH;
-                ROS_INFO("==REACHED DIRECTION==");
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MOVE TO NEXT NODE==");
-                navigator->moveToNextNode(robot.direction);
-                ROS_INFO("==REACHED TARGET==");
-                stepRobotPosition();
-                ROS_INFO("Robot (%d,%d) Direction %s.", robot.x, robot.y, DirectionStrings[robot.direction]);
-                
-                if(!keepRunning)
-                    break;
-                
-                ROS_INFO("==MAPPING==");
-                mapping->mapNode(robot.x, robot.y, robot.direction);
-                
-                keepRunning = false;
+                ROS_INFO("Finished step %d.", currentStep);
+                ROS_INFO("-- keepRunning=%d; paused=%d.", keepRunning, paused);
+                ++currentStep;
             }
         } catch (const std::exception &e) {
-            ROS_ERROR("MazeSolver: exception during spin: %s.", e.what());
+            ROS_ERROR("MazeSolver: catched exception during solving: %s.", e.what());
         } catch (const std::string &s) {
-            ROS_ERROR("MazeSolver: catched string during spin: %s.", s.c_str());
+            ROS_ERROR("MazeSolver: catched string during solving: %s.", s.c_str());
         } catch (...) {
             ROS_ERROR("MazeSolver: catched unknown instance.");
         }
@@ -187,8 +124,25 @@ namespace minotaur
     void MazeSolver::checkPaused()
     {
         RAIILock lock(&pauseMutex);
-        while(paused)                
+        while(keepRunning && paused)                
             pthread_cond_wait(&pauseCond, &pauseMutex);
+    }
+    
+    void MazeSolver::mapCurrentNode()
+    {
+        ROS_INFO("Mapping current node.");
+        ROS_INFO("-- Position: (%d,%d,%s).", robot.x, robot.y, DirectionStrings[robot.direction]);
+        mapping->mapNode(robot.x, robot.y, robot.direction);
+    }
+    
+    void MazeSolver::moveToNextNode()
+    {
+        ROS_INFO("Moving to next node.");
+        ROS_INFO("-- Current pose: (%d,%d,%s).", robot.x, robot.y, DirectionStrings[robot.direction]);
+        stepRobotPosition();
+        ROS_INFO("-- Target pose: (%d,%d,%s).", robot.x, robot.y, DirectionStrings[robot.direction]);
+        navigator->moveToNextNode(robot.direction);
+        ROS_INFO("-- Reached target.");
     }
     
     void MazeSolver::stepRobotPosition()
@@ -209,34 +163,17 @@ namespace minotaur
         }
     }
     
-    void MazeSolver::start()
+    void MazeSolver::turnRobotTo(const Direction p_direction)
     {
-        keepRunning = true;
-        paused = false;
-        
-        if(pthread_create(&mazeThread, NULL, runThread, this) != 0)
-            throw std::logic_error("Failed to create thread");
-            
-        minotaurNode.spin();
+        ROS_INFO("Turning Robot.");
+        ROS_INFO("-- Current pose: (%d,%d,%s).", robot.x, robot.y, DirectionStrings[robot.direction]);
+        ROS_INFO("-- Target pose: (%d,%d,%s).", robot.x, robot.y, DirectionStrings[p_direction]);
+        navigator->turnRobotTo(robot.direction, p_direction);
+        robot.direction = p_direction;
+        ROS_INFO("-- Reached Target.");
     }
     
-    void MazeSolver::stop()
-    {
-        ROS_INFO("MazeSolver: stop() called.");
-        void *retVal;
-        keepRunning = false;
-        
-        navigator->shutdown();
-        
-        resume();
-        
-        ROS_INFO("MazeSolver: joining maze thread.");
-        pthread_join(mazeThread, &retVal);
-        
-        ROS_INFO("MazeSolver: stopping minotaur node.");
-        
-        minotaurNode.stop();
-    }
+    
     
     void MazeSolver::pause()
     {

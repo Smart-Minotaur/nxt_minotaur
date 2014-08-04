@@ -9,6 +9,7 @@
 #include "minotaur_common/MinotaurControlNode.hpp"
 #include "minotaur_common/IMinotaurListener.hpp"
 #include "minotaur_common/MazeSettings.hpp"
+#include "minotaur_common/Thread.hpp"
 
 namespace minotaur
 {
@@ -37,11 +38,11 @@ namespace minotaur
         MazeRobot(): x(0), y(0), direction(EAST) { }
     };
     
-    class MazeSolver : public IMinotaurListener
+    class MazeSolver : public IMinotaurListener, public Thread
     {
     private:
-        pthread_t mazeThread;
         volatile bool keepRunning, paused;
+        int currentStep;
         
         pthread_mutex_t pauseMutex;
         pthread_cond_t pauseCond;
@@ -53,20 +54,24 @@ namespace minotaur
         MazeMap map;
         MazeRobot robot;
         
+        void mapCurrentNode();
+        void moveToNextNode();
+        void turnRobotTo(const Direction p_direction);
+        
         void runExceptionSave();
         void checkPaused();
         void stepRobotPosition();
         void setPaused(bool p_value);
+    protected:
+        void onStart();
+        void onStop();
     public:
         MazeSolver(const MazeSolverConfig &p_config);
         ~MazeSolver();
         
-        void start();
-        void stop();
+        void run();
         void pause();
         void resume();
-        
-        void run();
         
         const MazeMap& getMap() const;
         
