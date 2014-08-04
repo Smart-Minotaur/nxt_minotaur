@@ -46,6 +46,7 @@ namespace minotaur
         double theta = getTheta(odometry);
         float linearVelocity = getLinearVelocity(velocity, theta);
         float angularVelocity = getAngularVelocity(velocity);
+        ROS_INFO("Setting v=%.2f; w=%.2f", linearVelocity, angularVelocity);
         targetVelocity.leftMPS = linearVelocity - (angularVelocity * wheelTrack) / 2;
         targetVelocity.rightMPS = linearVelocity + (angularVelocity * wheelTrack) / 2;
         
