@@ -9,7 +9,7 @@
 #define ANG_VEL_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.7f
-#define PARABEL_FACTOR 25.0f
+#define PARABEL_FACTOR 30.86f
 
 #define IS_FRONT_SENSOR(id) (sensorSettings[id].direction == 0)
 #define IS_LEFT_SENSOR(id) (sensorSettings[id].direction > 0 && sensorSettings[id].direction < M_PI)
@@ -181,7 +181,7 @@ namespace minotaur
         
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
-        ROS_INFO("AngVelFactor: %.2f AngVel: %.2f.", angVelFactor, angVelocity);
+        //ROS_INFO("AngVelFactor: %.2f AngVel: %.2f.", angVelFactor, angVelocity);
         controlNode->setVelocity(linVelocity, angVelocity);
     }
     

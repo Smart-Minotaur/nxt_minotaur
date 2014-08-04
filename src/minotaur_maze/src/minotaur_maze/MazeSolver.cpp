@@ -83,9 +83,11 @@ namespace minotaur
     
     void MazeSolver::run()
     {
+        ROS_INFO("MazeSolver: started.");
         currentStep = 0;
         while(keepRunning)
             runExceptionSave();
+        ROS_INFO("MazeSolver: terminated.");
     }
     
     void MazeSolver::runExceptionSave()
@@ -100,12 +102,12 @@ namespace minotaur
                 mapCurrentNode();
                 if(currentStep == 2)
                     turnRobotTo(EAST);
-                else if(currentStep == 4)
+                else if(currentStep == 5)
                     turnRobotTo(SOUTH);
                 else
                     moveToNextNode();
                 
-                if(currentStep == 5)
+                if(currentStep == 7)
                     keepRunning = false;
                 
                 ROS_INFO("Finished step %d.", currentStep);
