@@ -25,6 +25,7 @@ namespace minotaur
         bool hasEnoughMeasurements();
         void stopMapping();
         void evaluateMeasurements();
+        void setBlocked(std::vector<bool> &p_hasObstacle, const Direction p_direction);
         float getSensorDistanceThreshold();
     public:
         MinotaurMazeMapping();

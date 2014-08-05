@@ -48,6 +48,7 @@ namespace minotaur
             sensorCommunicator.publish();
         } catch(const nxtcon::USBException &ue) {
             ROS_ERROR("SensorThread: %s.", ue.what());
+            stop();
         } catch(const std::exception &e) {
             ROS_WARN("SensorThread: %s.", e.what());
         } catch(...) {

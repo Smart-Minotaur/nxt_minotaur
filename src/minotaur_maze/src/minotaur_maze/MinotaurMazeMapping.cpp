@@ -67,33 +67,26 @@ namespace minotaur
     
     void MinotaurMazeMapping::evaluateMeasurements()
     {
-        int blocked;
-        Direction direction;
+        //front
+        setBlocked(frontObstacle, currentDirection);
+        //left
+        setBlocked(leftObstacle, turnDirection(currentDirection, 1));
+        // right
+        setBlocked(rightObstacle, turnDirection(currentDirection, -1));
+     }
         
-        blocked = 0;
-        for(int i = 0; i < frontObstacle.size(); ++i)
-            if(frontObstacle[i])
+    void MinotaurMazeMapping::setBlocked(std::vector<bool> &p_hasObstacle, const Direction p_direction)
+    {
+        int blocked = 0;
+        for(int i = 0; i < p_hasObstacle.size(); ++i) {
+            if(p_hasObstacle[i])
                 ++blocked;
-        if(blocked > frontObstacle.size() / 2)
-            map->node(currentX, currentY).setBlocked(currentDirection, true);
-            
-        direction = turnDirection(currentDirection, 1);
-        blocked = 0;
+        }
         
-        for(int i = 0; i < leftObstacle.size(); ++i)
-            if(leftObstacle[i])
-                ++blocked;
-        if(blocked > leftObstacle.size() / 2)
-            map->node(currentX, currentY).setBlocked(direction, true);
-            
-        direction = turnDirection(currentDirection, -1);
-        blocked = 0;
-        
-        for(int i = 0; i < rightObstacle.size(); ++i)
-            if(rightObstacle[i])
-                ++blocked;
-        if(blocked > rightObstacle.size() / 2)
-            map->node(currentX, currentY).setBlocked(direction, true);
+        if(blocked > p_hasObstacle.size() / 2)
+            map->node(currentX, currentY).setBlocked(p_direction, true);
+        else
+            map->node(currentX, currentY).setBlocked(p_direction, false);
     }
     
     float MinotaurMazeMapping::getSensorDistanceThreshold()

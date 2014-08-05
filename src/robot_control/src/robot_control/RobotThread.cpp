@@ -53,6 +53,7 @@ namespace minotaur
             robotCommunicator.publish();
         }  catch(const nxtcon::USBException &ue) {
             ROS_ERROR("RobotThread: %s.", ue.what());
+            stop();
         } catch(const std::exception &e) {
             ROS_WARN("RobotThread: %s.", e.what());
         } catch (...) {
