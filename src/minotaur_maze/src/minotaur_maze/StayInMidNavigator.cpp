@@ -3,9 +3,9 @@
 #include "minotaur_common/RAIILock.hpp"
 #include "minotaur_common/Math.hpp"
 
-#define MAX_LIN_VELOCITY 0.15f
+#define MAX_LIN_VELOCITY 0.12f
 #define MAX_ANG_VELOCITY 1.2f
-#define SENSOR_MEDIAN_SIZE 5
+#define SENSOR_MEDIAN_SIZE 3
 #define ANG_VEL_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.7f
@@ -154,6 +154,8 @@ namespace minotaur
         // get sensor distances
         float leftDistance = leftMedian.value();
         float rightDistance = rightMedian.value();
+        
+        ROS_INFO("Median: left=%.4fm right=%.4fm.", leftDistance, rightDistance);
         
         // set velocities depending on distance to obstacles left and right
         float angVelFactor = 0;
