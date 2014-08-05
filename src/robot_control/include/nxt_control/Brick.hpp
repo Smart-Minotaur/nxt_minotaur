@@ -28,6 +28,9 @@ namespace nxtcon
         
         void send(const Telegram &p_telegram);
         Telegram sendWithResponse(const Telegram &p_telegram);
+        
+        void playTone(const uint16_t p_frequency, const uint16_t p_durationMS);
+        uint16_t getBatteryLevel();
     };
     
 }

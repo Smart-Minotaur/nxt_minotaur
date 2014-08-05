@@ -15,9 +15,12 @@ namespace minotaur
     class RobotCommunicator
     {
     private:
+        nxtcon::Brick *brick;
         nxtcon::Motor leftMotor;
         nxtcon::Motor rightMotor;
         RobotController robotController;
+        
+        int statusMsec;
         
         ros::Publisher odometryPub;
         
@@ -30,6 +33,7 @@ namespace minotaur
         
         void processSetVelocityMsg(const geometry_msgs::Twist& p_msg);
         void processPIDParamMsg(const minotaur_common::PIDParameter &p_msg);
+        void checkBrickStatus(const int p_samplingIntervalMsec);
     public:
         RobotCommunicator();
         ~RobotCommunicator();

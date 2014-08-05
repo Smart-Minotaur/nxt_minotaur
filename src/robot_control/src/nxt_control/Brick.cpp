@@ -3,6 +3,7 @@
 #include "nxt_control/Brick.hpp"
 #include "nxt_control/NxtOpcodes.hpp"
 #include "nxt_control/Lock.hpp"
+#include "nxt_control/NxtTelegram.hpp"
 
 namespace nxtcon
 {
@@ -40,5 +41,22 @@ namespace nxtcon
         result = usbSocket.receive(USB_IN_ENDPOINT);
         
         return result;
+    }
+    
+    void Brick::playTone(const uint16_t p_frequency, const uint16_t p_durationMS)
+    {
+        Telegram toSend;
+        create_playTone(&toSend, p_frequency, p_durationMS);
+        send(toSend);
+    }
+    
+    uint16_t Brick::getBatteryLevel()
+    {
+        Telegram toSend, receive;
+        
+        create_getBatteryLevel(&toSend);
+        receive = sendWithResponse(toSend);
+        
+        return decode_batteryLevel(receive);
     }
 }

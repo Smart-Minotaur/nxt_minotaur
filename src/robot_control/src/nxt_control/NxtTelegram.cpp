@@ -5,6 +5,38 @@
 
 namespace nxtcon
 {
+    void create_playTone(Telegram *p_telegram, const uint16_t p_frequency, const uint16_t p_durationMS)
+    {
+        p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD_NO_REPLY);
+        //set command
+        p_telegram->add(CMD_PLAY_TONE);
+        
+        
+        uint16_t frequency, duration;
+        if(isLittleEndian()) {
+            frequency = p_frequency;
+            duration = p_durationMS;
+        } else {
+            unsigned char *ptr1, *ptr2;
+            ptr1 = (unsigned char*) &p_frequency;
+            ptr2 = (unsigned char*) &frequency;
+            ptr2[0] = ptr1[1];
+            ptr2[1] = ptr1[0];
+            
+            ptr1 = (unsigned char*) &p_durationMS;
+            ptr2 = (unsigned char*) &duration;
+            ptr2[0] = ptr1[1];
+            ptr2[1] = ptr1[0];
+        }
+        
+        //set tone frequency
+        p_telegram->add_uint16(frequency);
+        //set playback duration
+        p_telegram->add_uint16(duration);
+    }
+    
     void create_setMotor(Telegram *p_telegram, const uint8_t p_port, const uint8_t p_power)
     {
         p_telegram->clear();
@@ -70,7 +102,7 @@ namespace nxtcon
     
     void create_resetTacho(Telegram *p_telegram, const uint8_t p_port)
     {
-         p_telegram->clear();
+        p_telegram->clear();
         //set command type
         p_telegram->add(DIRECT_CMD_NO_REPLY);
         //set command
@@ -79,6 +111,15 @@ namespace nxtcon
         p_telegram->add_uint8(p_port);
         //set relative to last position (true) or absolute (false)
         p_telegram->add(0x01);
+    }
+    
+    void create_getBatteryLevel(Telegram *p_telegram)
+    {
+         p_telegram->clear();
+        //set command type
+        p_telegram->add(DIRECT_CMD);
+        //set command
+        p_telegram->add(CMD_GET_BATTERY_LEVEL);
     }
     
     void create_getInputValues(Telegram *p_telegram, const uint8_t p_port)
@@ -301,6 +342,30 @@ namespace nxtcon
             ptr[0] = data[15];
             ptr[1] = data[14];
         }
+    }
+    
+    uint16_t decode_batteryLevel(const Telegram &p_telegram)
+    {
+        unsigned char data[p_telegram.getLength()];
+        p_telegram.getData(data);
+        if(data[0] != REPLY_TELEGRAM)
+            throw std::logic_error("Cannot decode non-reply-telegram");
+        if(data[1] != CMD_GET_BATTERY_LEVEL)
+            throw std::logic_error("Telegram is not of type getBatteryLevel. Cannot decode batteryLevel");
+        if(data[2] != 0x00)
+            throw NXTCommunicationException("getBatteryLevel returned error. Cannot decode batteryLevel", (int) data[2]);
+            
+        uint16_t result;
+        unsigned char *ptr = (unsigned char*) &result;
+        if(isLittleEndian()) {
+            ptr[0] = data[3];
+            ptr[1] = data[4];
+        } else {
+            ptr[0] = data[4];
+            ptr[1] = data[3];
+        }
+        
+        return result;
     }
     
     bool isLittleEndian()
