@@ -155,8 +155,6 @@ namespace minotaur
         float leftDistance = leftMedian.value();
         float rightDistance = rightMedian.value();
         
-        ROS_INFO("Median: left=%.4fm right=%.4fm.", leftDistance, rightDistance);
-        
         // set velocities depending on distance to obstacles left and right
         float angVelFactor = 0;
         int distanceCount = 0;
@@ -179,11 +177,12 @@ namespace minotaur
             angVelFactor = 1;
         if(angVelFactor < -1)
             angVelFactor = -1;
-        
+            
         float angVelocity = angVelFactor * MAX_ANG_VELOCITY;
         float linVelocity = (1 - fabs(angVelFactor)) * MAX_LIN_VELOCITY;
-        //ROS_INFO("AngVelFactor: %.2f AngVel: %.2f.", angVelFactor, angVelocity);
         controlNode->setVelocity(linVelocity, angVelocity);
+        
+        ROS_INFO("Median: left=%.2fm right=%.2fm angVel=%.2f.", leftDistance, rightDistance, angVelocity);
     }
     
     bool StayInMidNavigator::obstacleIsCloseEnough(const minotaur_common::UltrasonicData &p_sensorData)
