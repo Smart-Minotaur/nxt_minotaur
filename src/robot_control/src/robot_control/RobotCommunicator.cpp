@@ -10,8 +10,8 @@
 #define RIGHT_PORT PORT_B
 
 #define CHECK_BRICK_INTERVAL (2 * MSEC_PER_SEC)
-#define TONE_FREQUENCY 600
-#define TONE_DURATION_MS 300
+#define TONE_FREQUENCY 1000
+#define TONE_DURATION_MS 1000
 #define MIN_VOLTAGE_MV 500 
 
 #define ROS_MSG_QUEUE_LENGTH 20
@@ -102,7 +102,7 @@ namespace minotaur
             uint16_t voltage = brick->getBatteryLevel();
             brick->playTone(TONE_FREQUENCY, TONE_DURATION_MS);
             
-            if(voltage < MIN_VOLTAGE_MV)
+            //if(voltage < MIN_VOLTAGE_MV)
                 ROS_WARN("Low Brick Battery: %d.", voltage);
         }
     }
