@@ -44,6 +44,8 @@ namespace minotaur
         void publish();
         void stepController(const int p_samplingIntervalMsec);
         void applySettings(const RobotSettings &p_settings);
+        
+        void shutdown();
     };
 }
 

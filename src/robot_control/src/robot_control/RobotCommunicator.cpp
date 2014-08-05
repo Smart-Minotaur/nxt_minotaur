@@ -129,4 +129,11 @@ namespace minotaur
         robotController.getPIDController().setWheelRadius(p_settings.wheelRadius);
         robotController.setWheelTrack(p_settings.wheelTrack);
     }
+    
+    void RobotCommunicator::shutdown()
+    {
+        geometry_msgs::Twist velocity;
+        initTwist(velocity);
+        robotController.setVelocity(velocity);
+    }
 }

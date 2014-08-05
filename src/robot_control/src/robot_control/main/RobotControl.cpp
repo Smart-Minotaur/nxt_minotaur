@@ -67,6 +67,8 @@ int main(int argc, char** argv)
     
     ros::spin();
     
+    robotCommunicator.shutdown();
+    
     return 0;
 }
 
