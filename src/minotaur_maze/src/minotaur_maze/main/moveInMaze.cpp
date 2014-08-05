@@ -3,6 +3,7 @@
 #include "minotaur_maze/MazeSolver.hpp"
 #include "minotaur_maze/StayInMidNavigator.hpp"
 #include "minotaur_maze/MinotaurMazeMapping.hpp"
+#include "minotaur_maze/MinotaurExplorationAlgorithm.hpp"
 
 #define NODE_NAME "MoveInMaze"
 #define MAP_WIDTH 50
@@ -14,6 +15,7 @@
 
 static minotaur::StayInMidNavigator navigator;
 static minotaur::MinotaurMazeMapping mapping;
+static minotaur::MinotaurExplorationAlgorithm explorationAlgorithm;
 static minotaur::MazeSolver *solver;
 static struct sigaction sa;
 
@@ -38,7 +40,7 @@ static void setSignalAction()
 
 int main(int argc, char** argv)
 {
-    minotaur::MazeSolverConfig config;
+    
     ros::init(argc, argv, NODE_NAME);
     ros::NodeHandle handle;
     setSignalAction();
@@ -46,8 +48,7 @@ int main(int argc, char** argv)
 
     try {
         ROS_INFO("Loading current MazeSettings.");
-        config.navigator = &navigator;
-        config.mapping = &mapping;
+        minotaur::MazeSolverConfig config(&navigator, &mapping, &explorationAlgorithm);
         config.handle = &handle;
         config.loadCurrentFromParamServer();
         

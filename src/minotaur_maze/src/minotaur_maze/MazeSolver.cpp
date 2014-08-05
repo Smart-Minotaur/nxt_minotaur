@@ -6,6 +6,17 @@
 
 namespace minotaur
 {
+    MazeSolverConfig::MazeSolverConfig(MazeNavigator *p_navigator,
+                                       MazeMapping *p_mapping,
+                                       ExplorationAlgorithm *p_explorationAlgorithm)
+    : navigator(p_navigator), mapping(p_mapping), explorationAlgorithm(p_explorationAlgorithm), handle(NULL)
+    {
+    }
+    
+    MazeSolverConfig::~MazeSolverConfig()
+    {
+    }
+    
     void MazeSolverConfig::loadFromParamServer(const std::string &p_mazeName)
     {
         settings.loadFromParamServer(p_mazeName);
@@ -41,6 +52,7 @@ namespace minotaur
     {
         navigator = p_config.navigator;
         mapping = p_config.mapping;
+        explorationAlgorithm = p_config.explorationAlgorithm;
         
         map.setNodeDimension(p_config.settings.nodeWidth, p_config.settings.nodeHeight);
         minotaurNode.setMinotaurListener(this);
@@ -58,6 +70,8 @@ namespace minotaur
         
         mapping->setMinotaurControlNode(&minotaurNode);
         mapping->setMazeMap(&map);
+        
+        explorationAlgorithm->setMazeMap(&map);
         
         minotaurNode.connectToROS(*p_config.handle);
     }
@@ -100,15 +114,11 @@ namespace minotaur
                     break;
                 
                 mapCurrentNode();
-                if(currentStep == 2)
-                    turnRobotTo(EAST);
-                else if(currentStep == 5)
-                    turnRobotTo(SOUTH);
-                else
+                Direction targetDirection = getNextTargetDirection();
+                if(targetDirection == robot.direction)
                     moveToNextNode();
-                
-                if(currentStep == 7)
-                    keepRunning = false;
+                else
+                    turnRobotTo(targetDirection);
                 
                 ROS_INFO("Finished step %d.", currentStep);
                 ROS_INFO("-- keepRunning=%d; paused=%d.", keepRunning, paused);
@@ -175,7 +185,15 @@ namespace minotaur
         ROS_INFO("-- Reached Target.");
     }
     
-    
+    Direction MazeSolver::getNextTargetDirection()
+    {
+        Direction result;
+        ROS_INFO("Calculating next Direction.");
+        ROS_INFO("-- Current direction: %s.", DirectionStrings[robot.direction]);
+        result = explorationAlgorithm->calculateMovementDirection(robot.x, robot.y, robot.direction);
+        ROS_INFO("-- Target direction: %s.", DirectionStrings[result]);
+        return result;
+    }
     
     void MazeSolver::pause()
     {

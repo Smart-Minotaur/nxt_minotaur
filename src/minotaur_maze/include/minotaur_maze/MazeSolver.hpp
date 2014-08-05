@@ -5,6 +5,7 @@
 #include <string>
 #include "minotaur_maze/MazeNavigator.hpp"
 #include "minotaur_maze/MazeMapping.hpp"
+#include "minotaur_maze/ExplorationAlgorithm.hpp"
 #include "minotaur_maze/MazeMap.hpp"
 #include "minotaur_common/MinotaurControlNode.hpp"
 #include "minotaur_common/IMinotaurListener.hpp"
@@ -20,7 +21,13 @@ namespace minotaur
     public:
         MazeNavigator *navigator;
         MazeMapping *mapping;
+        ExplorationAlgorithm *explorationAlgorithm;
         ros::NodeHandle *handle;
+        
+        MazeSolverConfig(MazeNavigator *p_navigator,
+                         MazeMapping *p_mapping,
+                         ExplorationAlgorithm *p_explorationAlgorithm);
+        ~MazeSolverConfig();
         
         MazeSettings settings;
         Direction initialRobotDirection;
@@ -49,6 +56,7 @@ namespace minotaur
         
         MazeNavigator *navigator;
         MazeMapping *mapping;
+        ExplorationAlgorithm *explorationAlgorithm;
         
         MinotaurControlNode minotaurNode;
         MazeMap map;
@@ -57,6 +65,7 @@ namespace minotaur
         void mapCurrentNode();
         void moveToNextNode();
         void turnRobotTo(const Direction p_direction);
+        Direction getNextTargetDirection();
         
         void runExceptionSave();
         void checkPaused();
