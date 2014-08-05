@@ -163,7 +163,8 @@ namespace minotaur
         if(leftDistance <= distanceThreshold) {
             angVelFactor += calcAngularVelocityFactor(leftDistance - distanceToHold);
             distanceCount++;
-        } else if(rightDistance <= distanceThreshold) {
+        }
+        if(rightDistance <= distanceThreshold) {
             angVelFactor += calcAngularVelocityFactor(distanceToHold - rightDistance);
             distanceCount++;
         }
