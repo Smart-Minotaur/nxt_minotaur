@@ -117,7 +117,8 @@ namespace minotaur
                 Direction targetDirection = getNextTargetDirection();
                 if(targetDirection != robot.direction)
                     turnRobotTo(targetDirection);
-                    
+                 if(!keepRunning)
+                        continue;
                 moveToNextNode();
                 
                 ROS_INFO("Finished step %d.", currentStep);

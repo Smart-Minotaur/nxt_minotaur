@@ -222,8 +222,8 @@ namespace minotaur
     
     void StayInMidNavigator::stopMovement()
     {
-        controlNode->setVelocity(0,0);
         mode = WAITING;
+        controlNode->setVelocity(0,0);
         pthread_cond_signal(&condition);
     }
     
