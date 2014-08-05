@@ -9,7 +9,9 @@
 #define ANG_VEL_MEDIAN_SIZE 7
 
 #define THRESHOLD_FACTOR 0.7f
-#define PARABEL_FACTOR 30.86f
+#define FUNCTION_FACTOR 5830.0f
+#define X_AXIS_DISPLACEMENT 0.005f
+#define Y_AXIS_DISPLACEMENT 0.0f
 
 #define IS_FRONT_SENSOR(id) (sensorSettings[id].direction == 0)
 #define IS_LEFT_SENSOR(id) (sensorSettings[id].direction > 0 && sensorSettings[id].direction < M_PI)
@@ -202,7 +204,8 @@ namespace minotaur
     
     float StayInMidNavigator::calcAngularVelocityFactor(const float p_distanceDiff)
     {
-        return PARABEL_FACTOR * (p_distanceDiff * fabs(p_distanceDiff));
+        float xVal = fabs(p_distanceDiff) - X_AXIS_DISPLACEMENT;
+        return ((p_distanceDiff / fabs(p_distanceDiff)) * FUNCTION_FACTOR * (xVal * xVal * xVal)) + Y_AXIS_DISPLACEMENT;
     }
     
     void StayInMidNavigator::setTurnVelocity(const minotaur_common::UltrasonicData &p_sensorData)
