@@ -115,10 +115,10 @@ namespace minotaur
                 
                 mapCurrentNode();
                 Direction targetDirection = getNextTargetDirection();
-                if(targetDirection == robot.direction)
-                    moveToNextNode();
-                else
+                if(targetDirection != robot.direction)
                     turnRobotTo(targetDirection);
+                    
+                moveToNextNode();
                 
                 ROS_INFO("Finished step %d.", currentStep);
                 ROS_INFO("-- keepRunning=%d; paused=%d.", keepRunning, paused);
