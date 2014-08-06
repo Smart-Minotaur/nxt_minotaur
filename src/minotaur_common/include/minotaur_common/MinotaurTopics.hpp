@@ -1,3 +1,8 @@
+/**
+ * \file MinotaurParam.hpp
+ * \brief Contains symbols for the ROS communication (topics, services).
+ */
+
 #ifndef MINOTAUR_TOPICS_HPP
 #define MINOTAUR_TOPICS_HPP
 

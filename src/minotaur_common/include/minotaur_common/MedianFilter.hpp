@@ -5,6 +5,14 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The MedianFilter class represents a simple MedianFilter
+     *        with fixed size.
+     * 
+     * The size is set in MedianFilter(const int p_size) and cannot be
+     * changed after construction. The default constructor generates a
+     * MedianFilter with a default size.
+     */
     class MedianFilter
     {
     private:

@@ -6,6 +6,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The BlockingQueue class implements a blocking queue with
+     *        dynamic size using the pthread API.
+     */
     template <typename T> class BlockingQueue
     {
     private:

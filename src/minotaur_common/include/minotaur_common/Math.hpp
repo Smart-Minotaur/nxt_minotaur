@@ -1,3 +1,15 @@
+/**
+ * \file Math.hpp
+ * \brief This file provides mathematical macros, symbols and functions 
+ *        for common operations.
+ * 
+ * Most functions are used to convert values into different measuring
+ * units.
+ * 
+ * There are also functions that provide a consistent usage of certain
+ * ROS messages.
+ */
+
 #ifndef MINOTAUR_MATH_HPP
 #define MINOTAUR_MATH_HPP
 

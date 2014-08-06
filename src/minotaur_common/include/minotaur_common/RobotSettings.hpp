@@ -6,6 +6,14 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The RobotSettings class contains all possible parameters
+     *        for a robot of the minotaur project.
+     * 
+     * It provides functions to load the parameters from the ROS
+     * Paramserver. Therefore loading the parameters manually is not
+     * needed anymore.
+     */
     class RobotSettings
     {
     public:

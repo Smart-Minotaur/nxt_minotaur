@@ -5,6 +5,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The RAIILock class implements an exception-safe locking
+     *        mechanism for pthread mutexes.
+     */
     class RAIILock
     {
     private:

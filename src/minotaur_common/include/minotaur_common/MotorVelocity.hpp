@@ -3,9 +3,13 @@
 
 namespace minotaur
 {
-    /* This Class is used as simple Container for the velocities of the left and right
-     * motor of a robot. The velocity ist stored as meter per second.
-     * Mathoperators provide a simpler usage of its values. */
+    /**
+     * \brief The MotorVelocity class stores the velocities of a robot with differential
+     *        drive for its left and right wheel.
+     * 
+     * The velocities are stored as meter per second. Mathematical
+     * operators provide a simpler usage of its values.
+     */
     class MotorVelocity
     {
     public:

@@ -6,6 +6,14 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The SensorSetting class contains all possible parameters
+     *        for an ultrasonic sensor of the minotaur project.
+     * 
+     * It provides functions to load the parameters from the ROS
+     * Paramserver. Therefore loading the parameters manually is not
+     * needed anymore.
+     */
     class SensorSetting
     {
     public:

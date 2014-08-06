@@ -1,3 +1,9 @@
+/**
+ * \file MinotaurParam.hpp
+ * \brief Contains symbols and functions (name generation) to access the
+ *        parameters on the ROS ParamServer.
+ */
+
 #ifndef MINOTAUR_PARAM_HPP
 #define MINOTAUR_PARAM_HPP
 
