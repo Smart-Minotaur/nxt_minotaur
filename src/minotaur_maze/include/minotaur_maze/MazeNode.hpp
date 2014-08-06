@@ -6,13 +6,31 @@ namespace minotaur
     enum Direction {EAST, SOUTH, WEST, NORTH};
     extern const char *DirectionStrings[];
     
-    /* Calculates the difference between 2 Directions and the shortest 
+    /**
+     * Calculates the difference between 2 Directions and the shortest 
      * turndirection.
-     * Negative result means turn right, positive turn left. */
+     * @param p_dirA direction A
+     * @param p_dirB direction B
+     * @return turns needed to get from A to B
+     * @retval negative means turn clockwise
+     * @retval positive means turn anti-clockwise
+     */
     int getDirectionDiff(const Direction p_dirA, const Direction p_dirB);
     
-    Direction turnDirection(Direction p_direction, int p_turns);
+    /**
+     * Turns the given direction p_turns times. Negative values mean
+     * turn clockwise, positive values mean turn anti-clockwise.
+     * @param p_direction direction to turn
+     * @param p_turns number of turns to do
+     * @return the resulting direction
+     */
+    Direction turnDirection(const Direction p_direction, const int p_turns);
     
+    /**
+     * \brief The MazeNode class represents a single node in a maze.
+     * 
+     * It can be blocked in EAST, SOUTH, WEST, NORTH direction.
+     */
     class MazeNode
     {
     private:

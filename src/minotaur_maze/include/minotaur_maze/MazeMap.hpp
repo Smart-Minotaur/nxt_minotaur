@@ -6,6 +6,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The MazeMap class manages MazeNodes in a 2D array and
+     *        contains various properties of the maze.
+     */
     class MazeMap
     {
     private:
@@ -17,18 +21,33 @@ namespace minotaur
     
     public:
         
-        MazeMap(unsigned int p_width, unsigned int p_height);
+        MazeMap(const unsigned int p_width, const unsigned int p_height);
         ~MazeMap();
         
-        MazeNode& node(unsigned int p_x, unsigned int p_y);
+        MazeNode& node(const unsigned int p_x, const unsigned int p_y);
         
         unsigned int getWidth();
         unsigned int getHeight();
         
-        void setNodeDimension(float p_width, float p_height);
+        /**
+         * Set the dimensions of a node in meter.
+         * @param p_width width of a node
+         * @param p_height height of a node
+         */
+        void setNodeDimension(const float p_width, const float p_height);
+        /**
+         * @return node width in meter
+         */
         float getNodeWidth();
+        /**
+         * @return node height in meter
+         */
         float getNodeHeight();
         
+        /**
+         * Saves the map and its blocked areas as ASCII art file.
+         * @param p_file target file
+         */
         void saveASCIIFile(const std::string &p_file) const;
     };
 }

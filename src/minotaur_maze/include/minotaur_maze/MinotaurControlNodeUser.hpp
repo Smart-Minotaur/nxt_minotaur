@@ -6,6 +6,12 @@
 
 namespace minotaur
 {
+     /**
+     * \brief The MazeMapUser class provides a MinotaurControlNode member
+     *        and setter methods.
+     * 
+     * Its purpose is to prevent code duplication.
+     */
     class MinotaurControlNodeUser
     {
     protected:

@@ -5,6 +5,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The MinotaurExplorationAlgorithm calculates the decisions
+     *        of the robot in the maze.
+     */
     class MinotaurExplorationAlgorithm: public ExplorationAlgorithm
     {
     public:

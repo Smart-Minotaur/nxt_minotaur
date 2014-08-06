@@ -14,6 +14,12 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The MazeSolverConfig class is a container for settings for
+     *        a MazeSolver object.
+     * 
+     * Its properties can be loaded form the ROS paramserver.
+     */
     class MazeSolverConfig
     {
     private:
@@ -45,6 +51,16 @@ namespace minotaur
         MazeRobot(): x(0), y(0), direction(EAST) { }
     };
     
+    /**
+     * \brief The MazeSolver class runs all logic for solving a maze.
+     * 
+     * Its can be changed by implementing the MazeNavigator, MazeMapping
+     * and ExplorationAlgorithm interfaces. These have to be set using
+     * a MazeSolverConfig object.
+     * The configuration of a MazeSolver object can only be set at
+     * construction. Afterwards the configuration is not changeable
+     * anymore.
+     */
     class MazeSolver : public IMinotaurListener, public Thread
     {
     private:
@@ -79,7 +95,14 @@ namespace minotaur
         ~MazeSolver();
         
         void run();
+        
+        /**
+         * Pauses the object from solving the maze.
+         */
         void pause();
+        /**
+         * Resumes the solving of the maze if it was pause.
+         */
         void resume();
         
         const MazeMap& getMap() const;
