@@ -21,8 +21,13 @@ namespace minotaur
         void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData);
     };
     
-    /* This class is a simple extension to the MinotaurControlNode class.
-     * It provides QSignals to listen for new incoming data. */ 
+    /**
+     * \brief The QMinotaurControlNode class is a QT extension of the
+     *        MinotaurControlNode class.
+     * 
+     * It wraps the callbacks of IMinotaurListener, so QSignals can be
+     * used to listen for new incoming messages.
+     */ 
     class QMinotaurControlNode : public QObject
     {
         Q_OBJECT
