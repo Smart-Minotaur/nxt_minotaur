@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>map_monitor_pc</name>
+  <name>map_monitor</name>
   <version>1.0.0</version>
-  <description>The map_monitor_pc package</description>
+  <description>The map_monitor package</description>
   <maintainer email="fameyer@htwg-konstanz.de">Fabian Meyer</maintainer>
   <license>TODO</license>
 
@@ -10,9 +10,9 @@
   <build_depend>qt_build</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>libqt4-dev</build_depend>
-  <build_depend>robot_control_beagle</build_depend>
-  <build_depend>minotaur_pc</build_depend>
-  <build_depend>pid_monitor_pc</build_depend>
+  <build_depend>minotaur_common</build_depend>
+  <build_depend>minotaur_common_qt</build_depend>
+  <build_depend>minotaur_map</build_depend>
   
   <run_depend>qt_build</run_depend>
   <run_depend>roscpp</run_depend>

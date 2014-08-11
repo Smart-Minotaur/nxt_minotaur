@@ -1,6 +1,0 @@
-<launch>
-    
-    <node pkg="map_monitor_pc" type="map_monitor_pc" name="map_monitor_pc" output="screen" />
-    <rosparam command="load" file="$(find robot_control_beagle)/param/models.yaml"/>
-
-</launch>

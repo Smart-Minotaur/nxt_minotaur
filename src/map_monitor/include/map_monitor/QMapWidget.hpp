@@ -1,13 +1,13 @@
 #ifndef NXT_QT_QMAP_WIDGET_HPP_
 #define NXT_QT_QMAP_WIDGET_HPP_
 
+#include <pthread.h>
 #include <QWidget>
-#include <QMutex>
 #include <QPainter>
 #include <QPoint>
 #include <QVector>
-#include "minotaur_pc/MapCreator.hpp"
-#include "minotaur_pc/RobotPosition.hpp"
+#include "minotaur_map/MapCreator.hpp"
+#include "minotaur_map/RobotPosition.hpp"
 
 namespace minotaur
 {
@@ -17,8 +17,8 @@ namespace minotaur
     private:
         MapCreator mapCreator;
         RobotPosition robotPos;
-        QMutex mapMutex;
-        QMutex positionMutex;
+        pthread_mutex_t mapMutex;
+        pthread_mutex_t positionMutex;
         QVector<QPoint> lastPositions;
         int positionCounter;
         
@@ -32,7 +32,7 @@ namespace minotaur
         
     public:
         QMapWidget(QWidget *parent);
-        virtual ~QMapWidget() { }
+        ~QMapWidget();
         
         void setPosition(const RobotPosition& p_robotPos);
         void step(const int p_id, const int p_distance);

@@ -3,8 +3,8 @@
 #include <QString>
 #include <stdexcept>
 #include <sstream>
-#include "map_monitor_pc/QMapWidget.hpp"
-#include "pid_monitor_pc/Lock.hpp"
+#include "map_monitor/QMapWidget.hpp"
+#include "minotaur_common/RAIILock.hpp"
 
 #define MAX_FIELD_VALUE 50
 #define MIN_FIELD_VALUE 0
@@ -14,11 +14,20 @@ namespace minotaur
     QMapWidget::QMapWidget(QWidget *parent)
     : QWidget(parent)
     {
+        pthread_mutex_init(&mapMutex, NULL);
+        pthread_mutex_init(&positionMutex, NULL);
+        
         positionCounter = 0;
         setBackgroundRole(QPalette::Base);
         setAutoFillBackground(true);
         
         setMinimumSize(QSize(mapCreator.getMap()->getWidth(), mapCreator.getMap()->getHeight()));
+    }
+    
+    QMapWidget::~QMapWidget()
+    {
+        pthread_mutex_destroy(&positionMutex);
+        pthread_mutex_destroy(&mapMutex);
     }
     
     void QMapWidget::paintEvent(QPaintEvent *event)
@@ -34,7 +43,7 @@ namespace minotaur
     
     void QMapWidget::paintMap(QPainter& p_painter)
     {
-        Lock lock(mapMutex);
+        RAIILock lock(&mapMutex);
         
         QPoint delta;
         delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
@@ -64,14 +73,14 @@ namespace minotaur
         
         p_painter.setOpacity(1.0);
         
-        Lock lock1(positionMutex);
+        RAIILock lock1(&positionMutex);
         
         if(positionCounter == 0)
             lastPositions.append(QPoint(robotPos.point.x * 100, robotPos.point.y * 100));
         positionCounter++;
         positionCounter %= 30;
         
-        Lock lock2(mapMutex);
+        RAIILock lock2(&mapMutex);
         
         QPoint delta;
         delta.setX((width() - mapCreator.getMap()->getWidth()) / 2);
@@ -108,19 +117,19 @@ namespace minotaur
     
     void QMapWidget::setRobotPosition(const RobotPosition& p_robotPos)
     {
-        Lock lock(positionMutex);
+        RAIILock lock(&positionMutex);
         robotPos = p_robotPos;
     }
     
     void QMapWidget::setMapCreatorPosition(const RobotPosition& p_robotPos)
     {
-        Lock lock(mapMutex);
+        RAIILock lock(&mapMutex);
         mapCreator.setPosition(p_robotPos);
     }
     
     void QMapWidget::step(const int p_id, const int p_distance)
     {
-        Lock lock(mapMutex);
+        RAIILock lock(&mapMutex);
         mapCreator.step(p_id, p_distance);
     }
 }

@@ -1,0 +1,6 @@
+<launch>
+    
+    <node pkg="map_monitor" type="map_monitor" name="map_monitor" output="screen" />
+    <rosparam command="load" file="$(find minotaur_common)/param/models.yaml"/>
+
+</launch>

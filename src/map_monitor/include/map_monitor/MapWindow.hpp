@@ -3,8 +3,9 @@
 
 #include <QtGui/QMainWindow>
 #include "ui_map_window.h"
-#include "pid_monitor_pc/QMinotaurNavigateNode.hpp"
-#include "map_monitor_pc/QMapWidget.hpp"
+#include "map_monitor/QMapWidget.hpp"
+#include "minotaur_common/SensorSettings.hpp"
+#include "minotaur_common_qt/QMinotaurControlNode.hpp"
 
 namespace minotaur {
     
@@ -12,7 +13,8 @@ namespace minotaur {
     {
         Q_OBJECT
     private:
-        QMinotaurNavigateNode navNode;
+        std::vector<SensorSetting> sensorSettings;
+        QMinotaurControlNode controlNode;
         QMapWidget *mapWidget;
 
         RobotPosition robotPosition;
@@ -22,13 +24,13 @@ namespace minotaur {
         
     private Q_SLOTS:
         void processOdometry(const QOdometry p_odom);
-        void processMeasuredSensor(const QUltraSensor p_sensor);
+        void processMeasuredSensor(const QUltrasonicData p_sensor);
         
     public:
         MapWindow(QWidget *parent = 0);
         ~MapWindow();
         
-        QMinotaurNavigateNode& getNavigationNode();
+        QMinotaurControlNode& getControlNode();
     };
     
 }

@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(map_monitor_pc)
+project(map_monitor)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake-modules")
 
 find_package(catkin REQUIRED COMPONENTS
 	qt_build
 	roscpp
-	robot_control_beagle
-	minotaur_pc
-	pid_monitor_pc
+	minotaur_common
+    minotaur_common_qt
+	minotaur_map
 )
 
 find_package(Qwt REQUIRED)
@@ -47,4 +47,4 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${QWT_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} ${MAP_MONITOR_PC_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES} ${QWT_LIBRARIES})
-add_dependencies(${PROJECT_NAME} robot_control_beagle_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} minotaur_common_generate_messages_cpp)
