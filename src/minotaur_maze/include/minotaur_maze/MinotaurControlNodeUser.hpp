@@ -7,8 +7,8 @@
 namespace minotaur
 {
      /**
-     * \brief The MazeMapUser class provides a MinotaurControlNode member
-     *        and setter methods.
+     * \brief The MinotaurControlNodeUser class provides a MinotaurControlNode member
+     *        and corresponding setter methods.
      * 
      * Its purpose is to prevent code duplication.
      */

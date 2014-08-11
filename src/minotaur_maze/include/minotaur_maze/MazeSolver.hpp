@@ -54,9 +54,10 @@ namespace minotaur
     /**
      * \brief The MazeSolver class runs all logic for solving a maze.
      * 
-     * Its can be changed by implementing the MazeNavigator, MazeMapping
-     * and ExplorationAlgorithm interfaces. These have to be set using
-     * a MazeSolverConfig object.
+     * Its behaviour can be changed by implementing the MazeNavigator,
+     * MazeMapping and ExplorationAlgorithm interfaces. These have to be
+     * set using a MazeSolverConfig object.
+     * 
      * The configuration of a MazeSolver object can only be set at
      * construction. Afterwards the configuration is not changeable
      * anymore.

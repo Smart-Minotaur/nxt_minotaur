@@ -7,8 +7,8 @@
 namespace minotaur
 {
     /**
-     * \brief The MazeMap class manages MazeNodes in a 2D array and
-     *        contains various properties of the maze.
+     * \brief The MazeMap class manages MazeNode objects in a 2D array
+     *        and contains various properties of the maze.
      */
     class MazeMap
     {
@@ -31,8 +31,8 @@ namespace minotaur
         
         /**
          * Set the dimensions of a node in meter.
-         * @param p_width width of a node
-         * @param p_height height of a node
+         * @param p_width node width in meter
+         * @param p_height node height in meter
          */
         void setNodeDimension(const float p_width, const float p_height);
         /**

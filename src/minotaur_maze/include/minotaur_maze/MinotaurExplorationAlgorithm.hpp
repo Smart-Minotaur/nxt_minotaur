@@ -6,8 +6,12 @@
 namespace minotaur
 {
     /**
-     * \brief The MinotaurExplorationAlgorithm calculates the decisions
-     *        of the robot in the maze.
+     * \brief The MinotaurExplorationAlgorithm class is an implementation of
+     *        the ExplorationAlgorithm interface.
+     * 
+     * It calculates the next direction to take using the current pose
+     * of the robot and the blocked properties of the MazeNode the robot
+     * currently is in.
      */
     class MinotaurExplorationAlgorithm: public ExplorationAlgorithm
     {

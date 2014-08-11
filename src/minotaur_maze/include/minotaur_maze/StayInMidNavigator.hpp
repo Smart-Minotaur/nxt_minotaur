@@ -9,6 +9,15 @@ namespace minotaur
 {
     enum MovementMode { WAITING, BEGIN_MOVE, MOVE, BEGIN_TURN, TURN };
     
+    /**
+     * \brief The StayInMidNavigator class is an implementation of
+     *        the MazeNavigator interface.
+     * 
+     * It processes incoming UltrasonicData and Odometry message.
+     * Depending on the results the robot tries to stay in the mid
+     * between the walls on the left and right when he moves to the next
+     * node.
+     */
     class StayInMidNavigator : public MazeNavigator
     {
     private:

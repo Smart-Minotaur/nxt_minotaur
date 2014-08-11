@@ -7,7 +7,9 @@ namespace minotaur
 {
     /**
      * \brief The ExplorationAlgorithm class provides an interface for
-     *        the exploration logic of a MazeSolver object.
+     *        the exploration logic of a MazeSolver object and
+     *        determines which route the robot should take to explore
+     *        the whole maze.
      */
     class ExplorationAlgorithm: public MazeMapUser
     {

@@ -8,10 +8,8 @@ namespace minotaur
 {
     /**
      * \brief The MazeMapping class provides an interface for the
-     *        mapping algorithm of a MazeSolver object.
-     * 
-     * It processes UltrasonicData messages and as a result it sets
-     * bolcked properties of the corresponding MazeNode object.
+     *        mapping of a MazeSolver object and determines in which
+     *        directions a MazeNode is blocked or not.
      */
     class MazeMapping : public MazeMapUser, public MinotaurControlNodeUser
     {
