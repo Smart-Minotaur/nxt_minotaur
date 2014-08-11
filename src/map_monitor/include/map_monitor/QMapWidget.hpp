@@ -11,6 +11,9 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Draws a live map of a histogram
+     */
     class QMapWidget : public QWidget
     {
         

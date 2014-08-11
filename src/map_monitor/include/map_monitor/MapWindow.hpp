@@ -7,8 +7,14 @@
 #include "minotaur_common/SensorSettings.hpp"
 #include "minotaur_common_qt/QMinotaurControlNode.hpp"
 
-namespace minotaur {
-    
+namespace minotaur
+{
+    /**
+     * \brief Displays a live map of the histogram
+     * 
+     * This class displays a visualization of a Map histogram. The robot
+     * can be controlled via keyboard.
+     */
     class MapWindow : public QMainWindow, public Ui::MapWindow
     {
         Q_OBJECT
