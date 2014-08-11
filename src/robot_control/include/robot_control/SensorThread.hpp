@@ -6,6 +6,10 @@
 
 namespace minotaur
 {
+     /**
+     * \brief Creates a Thread to get sensorvalues from the brick
+     * 
+     */
     class SensorThread: public Thread
     {
     private:
@@ -23,6 +27,9 @@ namespace minotaur
         SensorThread(SensorCommunicator &p_sensorCommunicator);
         ~SensorThread();
         
+	/**
+	 * Control-loop until onStop() is called
+	 */
         void run();
         
         void setSamplingInterval(const int p_samplingIntervalMsec);

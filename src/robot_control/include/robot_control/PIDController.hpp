@@ -11,13 +11,11 @@ namespace minotaur
      * \brief The PID-Controller regulates the velocity of the robot
      * 
      * The Controller gets measured values of the velocity, compares
-     * them with the desired values, and then calculates new velocities
-     * 
-     * TODO: kkk
+     * them with the desired values, and then calculates new velocities.
      * The motor-publisher is used to set the "power" of the robot motors.
      * The motor-client is used to read the current "tick count" of each motor.
-     * Communication is done via the ROS-network. Publisher, Client and the
-     * wheel-circumference have to be set manually before using the "step()" method.
+     * Publisher, Client and the wheel-circumference have to be set manually 
+     * before using the "step()" method.
      */
     class PIDController: public IPIDController
     {

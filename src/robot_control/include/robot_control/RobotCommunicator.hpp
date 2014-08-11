@@ -15,7 +15,6 @@ namespace minotaur
     /**
      * \brief Contains the communication of the Brick via ROS
      * 
-     * 
      */
     class RobotCommunicator
     {

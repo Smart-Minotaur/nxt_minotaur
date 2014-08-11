@@ -8,6 +8,7 @@ namespace minotaur
 {
     /**
      * \brief Creates a Thread to start the robot
+     * 
      */
     class RobotThread: public Thread
     {
@@ -20,14 +21,20 @@ namespace minotaur
         
         void stepRobotController(const int p_samplingInterval);
     protected:
+      /**
+       * Start the robot
+       */
         void onStart();
+	/**
+	 * Terminates the robot-thread
+	 */
         void onStop();
     public:
         RobotThread(RobotCommunicator &p_robotCommunicator);
         ~RobotThread();
         
 	/**
-	 * Control-loop for the Robot until onStop() is called
+	 * Control-loop for the robot until onStop() is called
 	 */
         void run();
         
