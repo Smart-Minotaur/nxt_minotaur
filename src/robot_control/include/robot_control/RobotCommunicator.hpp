@@ -13,7 +13,7 @@
 namespace minotaur
 {
     /**
-     * \brief Contains the communication of the Brick via ROS
+     * \brief Gathers and publish Odometry data
      * 
      */
     class RobotCommunicator

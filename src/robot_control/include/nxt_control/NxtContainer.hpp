@@ -3,6 +3,9 @@
     
 namespace nxtcon
 {
+    /**
+     * \brief Container-class for speed-information
+     */
     class TachoData
     {
     public:
@@ -24,6 +27,9 @@ namespace nxtcon
         {tachoCount = p_tachoCount; blockTachoCount = p_blocktachoCount; rotationCount = p_rotationCount;}
     };
     
+    /**
+     * \brief Container-class for Sensor-values
+     */
     class SensorData
     {
     public:

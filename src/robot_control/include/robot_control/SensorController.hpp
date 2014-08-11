@@ -10,6 +10,7 @@ namespace minotaur
     /**
      * \brief Gets distance-information from the sensors
      * 
+     * This class is used for the SensorCommunicator
      */
     class SensorController
     {
@@ -26,7 +27,7 @@ namespace minotaur
         void setBrick(nxtcon::Brick *p_brick);
         
 	/**
-	 * get the last measured distance from a sensor
+	 * get the last measured distance from a specific sensor
 	 * @param p_id id of the sensor
 	 * @retval getDistance measured distance
 	 */

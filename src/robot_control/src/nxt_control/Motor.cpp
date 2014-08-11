@@ -16,7 +16,6 @@ namespace nxtcon
     void Motor::setPower(const int8_t p_power)
     {
         Telegram telegram;
-        //TODO if not working try with pointer cast
         create_setMotor(&telegram, port, (uint8_t) p_power);
         brick->send(telegram);
     }

@@ -7,6 +7,13 @@
 
 namespace nxtcon
 {
+    /**
+     * \brief This class is used to communicate via USB
+     * 
+     * This class is used to find the Brick which has an USB-Port. 
+     * If connection is established you can send Telegrams to the 
+     * USB-Port to communicate with the Brick.
+     */
     class USBSocket
     {
     private:

@@ -10,6 +10,7 @@ namespace minotaur
     /**
      * \brief The PID-Controller regulates the velocity of the robot
      * 
+     * Implements IPIDController.
      * The Controller gets measured values of the velocity, compares
      * them with the desired values, and then calculates new velocities.
      * The motor-publisher is used to set the "power" of the robot motors.

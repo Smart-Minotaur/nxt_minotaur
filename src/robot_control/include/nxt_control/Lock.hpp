@@ -5,6 +5,11 @@
 
 namespace nxtcon
 {
+    /**
+     * \brief mutex for Brick-communication
+     * 
+     * Used in Brick
+     */
     class Lock
     {
     private:

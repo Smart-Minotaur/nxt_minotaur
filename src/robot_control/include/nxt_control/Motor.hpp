@@ -6,7 +6,11 @@
 
 namespace nxtcon
 {
-    
+    /**
+     * \brief This class can send motor-related messages to the brick 
+     * 
+     * Sends Telegrams that contain the desired power for the motor to the brick.
+     */
     class Motor
     {
     private:

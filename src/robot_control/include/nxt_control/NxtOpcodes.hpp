@@ -1,3 +1,9 @@
+/**
+ * @file NxtOpcodes.hpp
+ * \brief defines for nxt-control
+ * 
+ */
+
 #ifndef NXT_CONTROL_NXT_OPCODES_HPP_
 #define NXT_CONTROL_NXT_OPCODES_HPP_
 

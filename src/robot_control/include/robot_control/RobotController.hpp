@@ -11,6 +11,7 @@ namespace minotaur
     /**
      * \brief The RobotController calculates the correct velocity for each motor
      * 
+     * Implements IRobotController.
      * This class receives linear and angular velocity and calculates the velocity
      * for each motor. A PIDController is used to keep the correct velocity on each
      * motor.

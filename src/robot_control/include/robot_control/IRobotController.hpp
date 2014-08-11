@@ -10,7 +10,8 @@ namespace minotaur
 {
     /** \brief This class provides an Interface to control the Robot
      * 
-     * The robot is controlled by setting the linear- and angular velocity. 
+     * The robot is controlled by 
+     * setting the linear- and angular velocity. 
      */
     class IRobotController
     {

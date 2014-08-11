@@ -10,7 +10,7 @@ namespace minotaur
     /** 
      * \brief This class provides an Interface for a PID-controller.
      * 
-     * Interface for the PIDController that is used to regulate 
+     * The PIDController is used to regulate 
      * the velocity of the robot.
      */
     class IPIDController
