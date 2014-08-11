@@ -11,6 +11,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Stores a RobotPosition and a Movement object and grants
+     *        thread-safe access to them.
+     */
     class RobotOdometry
     {
     private:

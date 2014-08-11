@@ -3,6 +3,9 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Represents a 2D vector, which stores x and y coordinates.
+     */
     class Vec2
     {
     public:

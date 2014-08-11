@@ -5,6 +5,12 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Implements the bug 0 algorithm.
+     * 
+     * This class  is an implementation of MovementAlgorithmSensor and
+     * realizes a bug 0 behaviour.
+     */
     class BugZeroAlgorithm : public MovementAlgorithmSensor
     {
     private:

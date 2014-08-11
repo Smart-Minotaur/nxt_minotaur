@@ -7,6 +7,9 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Stores a robot's pose and its corresponding covariance.
+     */
     class RobotPosition
     {
     public:

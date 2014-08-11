@@ -5,6 +5,10 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Is a structure for storing the robot's linear and angular
+     *        velocity and its covariance.
+     */
     class Movement
     {
     public:

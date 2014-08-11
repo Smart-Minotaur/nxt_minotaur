@@ -8,6 +8,9 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Runs the sensor processing logic of the robot.
+     */
     class SensorThread : public Thread
     {
     private:

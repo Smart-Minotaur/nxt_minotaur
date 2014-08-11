@@ -5,6 +5,12 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Represents a histogramm field.
+     *
+     * This class is a histogramm field and provides getter and setter
+     * methods to access the individual points.
+     */
     class Map
     {
     private:

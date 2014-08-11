@@ -6,6 +6,11 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Stores the information about a sensor measurement.
+     * 
+     * This includes the measured distance and the source sensor id.
+     */
     class SensorMeasurement
     {
     public:

@@ -5,6 +5,12 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Implements the pledge algorithm.
+     *
+     * This class implements MovementAlgorithm and realizes a pledge
+     * algorithm behaviour to find way ot of a maze.
+     */
     class PledgeAlgorithm : public MovementAlgorithm
     {
     private:

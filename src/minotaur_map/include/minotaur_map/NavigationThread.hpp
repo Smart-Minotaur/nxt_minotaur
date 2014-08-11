@@ -8,6 +8,9 @@
 
 namespace minotaur
 {
+    /**
+     * \brief Runs the movement and navigation logic of the robot.
+     */
     class NavigationThread : public Thread
     {
     private:

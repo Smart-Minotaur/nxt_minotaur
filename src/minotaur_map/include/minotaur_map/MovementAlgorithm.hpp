@@ -9,6 +9,14 @@
 
 namespace minotaur
 {
+    /**
+     * \brief An abstract class for implmenting algorithms to explore a map.
+     * 
+     * This class is an abstract class for implementing algorithms to
+     * explore a map.
+     * The exploration algorithm works depending on a already finished
+     * Map object.
+     */
     class MovementAlgorithm
     {
     private:
@@ -18,6 +26,12 @@ namespace minotaur
         MovementAlgorithm(Map* pMap);
         virtual ~MovementAlgorithm(){}
         
+        /**
+         * Calculates the next target position, to which the robot should
+         * move.
+         * @param pos current position of the robot
+         * @return next target position of the robot
+         */
         virtual RobotPosition getNextPosition(const RobotPosition pos) = 0;
         bool checkObstacle(int x, int y, float theta);
         bool checkLeftSideObstacle(int x, int y, float theta);
