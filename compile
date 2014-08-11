@@ -6,6 +6,11 @@
 # mm = Mouse Monitor for pc
 # pc = All other pc packages
 
+START_DIR=$PWD
+BASEDIR=$(dirname $0)
+
+cd $BASEDIR
+
 if [ -z "$1" ]
 then
         echo "Give packages to compile."
@@ -27,8 +32,13 @@ then
 elif [ "$1" == "all" ]
 then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;robot_control;pid_monitor;minotaur_maze" -DUSE_MOUSE_SENSOR="TRUE" -DBUILD_TEST_FILES="TRUE"
+elif [ "$1" == "doxy" ]
+then
+	cd doc
+	doxygen Doxyfile
 elif [ "$1" == "clean" ]
 then
 	rm -rf devel/ build/
 fi
 
+cd $START_DIR
