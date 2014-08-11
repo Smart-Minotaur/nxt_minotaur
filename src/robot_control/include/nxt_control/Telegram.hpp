@@ -7,6 +7,12 @@
 
 namespace nxtcon
 {
+    /**
+     * \brief This class creates messages to communicate with the brick
+     * 
+     * Telegrams are Messages that are used to dcommunicate twith the brick.
+     * For detailed information about available Telegrams check NxtTelegram.hpp
+     */
     class Telegram
     {
     private:

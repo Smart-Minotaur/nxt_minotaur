@@ -8,6 +8,10 @@
 
 namespace nxtcon
 {
+    /**
+     * \brief This class represents an ultrasonic-sensor
+     * 
+     */
     class UltrasonicSensor
     {
     private:

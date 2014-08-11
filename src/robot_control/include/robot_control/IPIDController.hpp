@@ -7,9 +7,12 @@
 
 namespace minotaur
 {
-    /* This class provides an Interface for a PID-controller.
-     * Look up PID-controller for more information about PID-controller.
-     * The controller is used to regulate the velocity of the robot. */
+    /** 
+     * \brief This class provides an Interface for a PID-controller.
+     * 
+     * The PIDController is used to regulate 
+     * the velocity of the robot.
+     */
     class IPIDController
     {
         public:
@@ -28,7 +31,7 @@ namespace minotaur
             virtual float getWheelRadius() const = 0;
             virtual const minotaur_common::PIDParameter& getPIDParameter() const = 0;
             
-            virtual void step(const int p_samplingIntervallMSec) = 0;
+            virtual void step(const int p_samplingIntervalMSec) = 0;
     };
 }
 

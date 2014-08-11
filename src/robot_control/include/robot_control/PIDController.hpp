@@ -7,11 +7,17 @@
 
 namespace minotaur
 {
-    /* This class implements an PID-Controller.
+    /**
+     * \brief The PID-Controller regulates the velocity of the robot
+     * 
+     * Implements IPIDController.
+     * The Controller gets measured values of the velocity, compares
+     * them with the desired values, and then calculates new velocities.
      * The motor-publisher is used to set the "power" of the robot motors.
      * The motor-client is used to read the current "tick count" of each motor.
-     * Communication is done via the ROS-network. Publisher, Client and the
-     * wheel-circumference have to be set manually before using the "step()" method.*/
+     * Publisher, Client and the wheel-circumference have to be set manually 
+     * before using the "step()" method.
+     */
     class PIDController: public IPIDController
     {
     private:
@@ -31,17 +37,30 @@ namespace minotaur
         
         float wheelRadius;
         
-        void measureCurrentVelocity(const float p_samplingIntervallSecs);
-        MotorVelocity measureTickVelocity(const float p_samplingIntervallSecs);
-        MotorVelocity measureMouseVelocity(const float p_samplingIntervallSecs);
+        void measureCurrentVelocity(const float p_samplingIntervalSecs);
+        MotorVelocity measureTickVelocity(const float p_samplingIntervalSecs);
+        MotorVelocity measureMouseVelocity(const float p_samplingIntervalSecs);
         float ticksToMPS(const float p_ticksPS);
+	
+	/**
+	 * Calculates the defference between the desired value and the measurements
+	 */
         void calculateDifference();
-        void setMotorPower(const float p_samplingIntervallSecs);
+	
+	/**
+	 * Sets the new motor-power for both motors.
+	 */
+        void setMotorPower(const float p_samplingIntervalSecs);
+	
+	/**
+	 * Calculates the new power for a particular motor.
+	 * @retval pidMotorPower caluculated power for the motor
+	 */
         int pidMotorPower(const float p_currentDiff,
                                  const float p_lastDiff,
                                  const float p_diffSum,
                                  const int p_motorPercent,
-                                 const float p_samplingIntervallSecs);
+                                 const float p_samplingIntervalSecs);
        void printDebugInfoPerStep(); 
        
         
@@ -61,7 +80,11 @@ namespace minotaur
         float getWheelRadius() const;
         const minotaur_common::PIDParameter& getPIDParameter() const;
         
-        void step(const int p_samplingIntervallMSec);
+	/**
+	 * Sets new motor-powers after calculate them
+	 * @param p_samplingIntervalMSec duration of one samping-interval in Msec
+	 */
+        void step(const int p_samplingIntervalMSec);
     };
 
 }

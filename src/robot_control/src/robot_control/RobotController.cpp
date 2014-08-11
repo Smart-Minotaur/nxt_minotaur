@@ -56,15 +56,15 @@ namespace minotaur
         odometry.pose = p_pose;
     }
     
-    void RobotController::step(const int p_samplingIntervallMsec)
+    void RobotController::step(const int p_samplingIntervalMsec)
     {
-        pidController.step(p_samplingIntervallMsec);
-        deadReckoning(p_samplingIntervallMsec);
+        pidController.step(p_samplingIntervalMsec);
+        deadReckoning(p_samplingIntervalMsec);
     }
     
-    void RobotController::deadReckoning(const int p_samplingIntervallMsec)
+    void RobotController::deadReckoning(const int p_samplingIntervalMsec)
     {
-        float intervalSec = msecToSec(p_samplingIntervallMsec);
+        float intervalSec = msecToSec(p_samplingIntervalMsec);
         
         float theta = getTheta(odometry);
         

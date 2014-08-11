@@ -74,9 +74,9 @@ namespace minotaur
          return pidParameter;
      }
 
-    void PIDController::step(const int p_samplingIntervallMSec)
+    void PIDController::step(const int p_samplingIntervalMSec)
     {
-        float samplingSec = msecToSec(p_samplingIntervallMSec);
+        float samplingSec = msecToSec(p_samplingIntervalMSec);
         measureCurrentVelocity(samplingSec);
         
         calculateDifference();
@@ -86,11 +86,11 @@ namespace minotaur
         printDebugInfoPerStep();
     }
 
-    void PIDController::measureCurrentVelocity(const float p_samplingIntervallSecs)
+    void PIDController::measureCurrentVelocity(const float p_samplingIntervalSecs)
     {
         MotorVelocity tickVel, mouseVel;
         
-        tickVel = measureTickVelocity(p_samplingIntervallSecs);
+        tickVel = measureTickVelocity(p_samplingIntervalSecs);
         //TODO mouse velocity must be measured, currently only tickVel is used 
         //mouseVel = measureMouseVelocity();
         mouseVel = tickVel;
@@ -98,7 +98,7 @@ namespace minotaur
         measuredVelocity = (tickVel + mouseVel) / 2;
     }
 
-    MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervallSecs)
+    MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervalSecs)
     {
         MotorVelocity result;
         float ticksPSLeft, ticksPSRight;
@@ -106,8 +106,8 @@ namespace minotaur
         //calculate ticks per second
         //samplingIntervall is needed, provided by the caller of step()
         //if the time is really correct must ensured by the caller
-        ticksPSLeft =  ((float) leftMotor->getTachoData().blockTachoCount) / p_samplingIntervallSecs;
-        ticksPSRight =  ((float) rightMotor->getTachoData().blockTachoCount) / p_samplingIntervallSecs;
+        ticksPSLeft =  ((float) leftMotor->getTachoData().blockTachoCount) / p_samplingIntervalSecs;
+        ticksPSRight =  ((float) rightMotor->getTachoData().blockTachoCount) / p_samplingIntervalSecs;
         leftMotor->resetTacho();
         rightMotor->resetTacho();
         
@@ -124,7 +124,7 @@ namespace minotaur
         return result;
     }
 
-    MotorVelocity PIDController::measureMouseVelocity(const float p_samplingIntervallSecs)
+    MotorVelocity PIDController::measureMouseVelocity(const float p_samplingIntervalSecs)
     {
         MotorVelocity result;
         
@@ -151,7 +151,7 @@ namespace minotaur
             diffSum.rightMPS = MIN_DIFF_SUM_MPS;
     }
 
-    void PIDController::setMotorPower(const float p_samplingIntervallSecs)
+    void PIDController::setMotorPower(const float p_samplingIntervalSecs)
     {
         //if motor should stay still, no PID-Controller is needed
         //just put power to 0
@@ -160,7 +160,7 @@ namespace minotaur
                                     lastDiff.leftMPS,
                                     diffSum.leftMPS,
                                     powerLeft,
-                                    p_samplingIntervallSecs);
+                                    p_samplingIntervalSecs);
         else
             powerLeft = 0;
         
@@ -169,7 +169,7 @@ namespace minotaur
                                     lastDiff.rightMPS,
                                     diffSum.rightMPS,
                                     powerRight,
-                                    p_samplingIntervallSecs);
+                                    p_samplingIntervalSecs);
         else
             powerRight = 0;
         
@@ -181,13 +181,13 @@ namespace minotaur
                                     const float p_lastDiff,
                                     const float p_diffSum,
                                     const int p_motorPercent,
-                                    const float p_samplingIntervallSecs)
+                                    const float p_samplingIntervalSecs)
     {
         int tmp, result;
         float u_motor;
         
         //calculate power factor via PID-Controller
-        u_motor = pidParameter.Kp * p_currentDiff + pidParameter.Ki * p_samplingIntervallSecs * p_diffSum + pidParameter.Kd * (p_currentDiff - p_lastDiff) / p_samplingIntervallSecs;
+        u_motor = pidParameter.Kp * p_currentDiff + pidParameter.Ki * p_samplingIntervalSecs * p_diffSum + pidParameter.Kd * (p_currentDiff - p_lastDiff) / p_samplingIntervalSecs;
         tmp = u_motor * MAX_MOTOR_POWER;
 
         //limit motorpower
