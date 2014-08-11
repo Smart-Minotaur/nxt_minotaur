@@ -8,9 +8,10 @@
 
 namespace minotaur
 {
-    /* This class provides an Interface to control the Robot.
-     * The robot is controlled by setting the linear- and angular velocity.
-     * To keep the right velocity, a PID controller is used (see IPIDController.hpp). */
+    /** \brief This class provides an Interface to control the Robot
+     * 
+     * The robot is controlled by setting the linear- and angular velocity. 
+     */
     class IRobotController
     {
     public:
@@ -26,7 +27,7 @@ namespace minotaur
         
         virtual void setPose(const geometry_msgs::PoseWithCovariance& p_pose) = 0;
         
-        virtual void step(const int p_samplingIntervallMSec) = 0;
+        virtual void step(const int p_samplingIntervalMSec) = 0;
     };
 }
 

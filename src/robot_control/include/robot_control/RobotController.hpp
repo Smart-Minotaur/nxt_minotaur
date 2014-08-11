@@ -7,13 +7,14 @@
 
 namespace minotaur
 {
-    /* This class implments an Interface to control a robot.
-     * The class receives linear and angular velocity and calculates the
-     * velocity for each motor (left and right).
-     * A pid-controller is used to keep the correct velocity on each motor.
-     * The pid-controller has to be initialized before using the "step()"
-     * method (see "PIDController.hpp").
-     * The wheel-track must be set before using the "step()" method. */
+  
+    /**
+     * \brief The RobotController calculates the correct velocity for each motor
+     * 
+     * This class receives linear and angular velocity and calculates the velocity
+     * for each motor. A PIDController is used to keep the correct velocity on each
+     * motor.
+     */
     class RobotController: public IRobotController
     {
     private:
@@ -22,9 +23,17 @@ namespace minotaur
         float wheelTrack;
         PIDController pidController;
         
+	/**
+	 * Calculates the velocity for both motors
+	 */
         void calculateMotorVelocity();
         geometry_msgs::Twist getMeasuredVelocity(const float p_theta);
-        void deadReckoning(const int p_samplingIntervallMsec);
+	
+	/**
+	 * Calculates new position via deadReckoning
+	 * @param p_samplingIntervalMsec duration of one sampling interval in Msec
+	 */
+        void deadReckoning(const int p_samplingIntervalMsec);
     public:
         RobotController();
         
@@ -39,7 +48,11 @@ namespace minotaur
         
         void setPose(const geometry_msgs::PoseWithCovariance& p_pose);
         
-        void step(const int p_samplingIntervallMSec);
+	/**
+	 * Tells the PIDController to keep the correct velocity
+	 * @param p_samplingIntervalMSec duration of one sampling interval in MSec
+	 */
+        void step(const int p_samplingIntervalMSec);
     };
 }
 
