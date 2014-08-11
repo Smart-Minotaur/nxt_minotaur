@@ -7,6 +7,11 @@
 
 namespace minotaur
 {
+    /**
+     * \brief The QSensorPainter class is a simple QWdiget on which
+     *        obstacles can be drawn, which are recognized by the 
+     *        Ultrasonic sensors.
+     */
     class QSensorPainter : public QWidget
     {
     private:

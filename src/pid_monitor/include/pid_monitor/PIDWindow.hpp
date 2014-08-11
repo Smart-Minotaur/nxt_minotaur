@@ -15,6 +15,13 @@
 
 namespace minotaur {
     
+    /**
+     * \brief The PIDWindow class provides a visualization of the input
+     *        and output velocities of the robot.
+     * 
+     * Its purpose is to debug the PID controller, which is used to
+     * control the robot's velocity.
+     */
     class PIDWindow : public QMainWindow, public Ui::PIDControlWindow
     {
         Q_OBJECT
