@@ -33,21 +33,24 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
-if(${USE_MOUSE_SENSOR})
-    # get source files
-    file(GLOB MOUSE_MONITOR_SRC_DIR src/mouse_monitor)
-    file(GLOB MOUSE_MONITOR_SRC ${MOUSE_MONITOR_SRC_DIR}/*.cpp)
+get_filename_component(TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}" NAME)
 
-    # get dependencies to PLN library
-    set(PLN_MINOTAUR_SVN_DIRECTORY ../../../pln_minotaur)
-    file(GLOB PLN_MINOTAUR_LIB ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/build)
-    file(GLOB PLN_MINOTAUR_INCLUDE_DIRECTORY ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/src)
+if ("${TOOLCHAIN_FILE}" STREQUAL "toolchain-BeagleBoneBlack.cmake") // TODO OR use native
+	# get source files
+	file(GLOB MOUSE_MONITOR_SRC_DIR src/mouse_monitor)
+	file(GLOB MOUSE_MONITOR_SRC ${MOUSE_MONITOR_SRC_DIR}/*.cpp)
 
-    include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} include)
-    link_directories(${PLN_MINOTAUR_LIB})
+	# get dependencies to PLN library
+	set(PLN_MINOTAUR_SVN_DIRECTORY ../../../pln_minotaur)
+	file(GLOB PLN_MINOTAUR_LIB ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/build)
+	file(GLOB PLN_MINOTAUR_INCLUDE_DIRECTORY ${PLN_MINOTAUR_SVN_DIRECTORY}/trunk/src)
 
-    # compile excuteable
-    add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_SRC})
-    target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} pln_minotaur)
-    add_dependencies(${PROJECT_NAME} mouse_monitor_beagle_generate_messages_cpp)
-endif(${USE_MOUSE_SENSOR})
+	include_directories(include ${catkin_INCLUDE_DIRS} ${PLN_MINOTAUR_INCLUDE_DIRECTORY} include)
+	link_directories(${PLN_MINOTAUR_LIB})
+
+	# compile excuteable
+	add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_SRC})
+	target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} pln_minotaur)
+	add_dependencies(${PROJECT_NAME} mouse_monitor_beagle_generate_messages_cpp)
+endif ("${TOOLCHAIN_FILE}" STREQUAL "toolchain-BeagleBoneBlack.cmake")
+
