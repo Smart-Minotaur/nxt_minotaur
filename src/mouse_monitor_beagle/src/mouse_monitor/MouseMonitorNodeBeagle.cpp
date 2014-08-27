@@ -30,9 +30,9 @@ namespace minotaur
         mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res)
     {
         if (req.id == SENSOR1) {
-            res.data = getData(SENSOR1, sensor1);
+            res.data = getData(sensor1);
         } else if (req.id == SENSOR2) {
-            res.data = getData(SENSOR2, sensor2);
+            res.data = getData(sensor2);
         } else
             return false;
 
@@ -69,7 +69,6 @@ namespace minotaur
     }
 
     mouse_monitor_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
-        std::string id,
         pln_minotaur::IPLNTrackingDevice *sensor)
     {
         mouse_monitor_beagle::MouseMonitorSensorData data;
@@ -78,10 +77,9 @@ namespace minotaur
 
         // TODO: Here is a bug.
         pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
-        //data.id = sensor1->readPLNSettings().spiDevice;
 
         if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
-            data.id = id;
+            data.id = s.spiDevice;
             data.x_speed = xs;
             data.y_speed = ys;
             data.x_disp = xd;
