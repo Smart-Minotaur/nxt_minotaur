@@ -33,9 +33,7 @@ catkin_package(
     CATKIN_DEPENDS message_runtime
 )
 
-get_filename_component(TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}" NAME)
-
-if ("${TOOLCHAIN_FILE}" STREQUAL "toolchain-BeagleBoneBlack.cmake") // TODO OR use native
+if(${USE_MOUSE_SENSOR})
 	# get source files
 	file(GLOB MOUSE_MONITOR_SRC_DIR src/mouse_monitor)
 	file(GLOB MOUSE_MONITOR_SRC ${MOUSE_MONITOR_SRC_DIR}/*.cpp)
@@ -52,5 +50,4 @@ if ("${TOOLCHAIN_FILE}" STREQUAL "toolchain-BeagleBoneBlack.cmake") // TODO OR u
 	add_executable(${PROJECT_NAME} ${MOUSE_MONITOR_SRC})
 	target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} pln_minotaur)
 	add_dependencies(${PROJECT_NAME} mouse_monitor_beagle_generate_messages_cpp)
-endif ("${TOOLCHAIN_FILE}" STREQUAL "toolchain-BeagleBoneBlack.cmake")
-
+endif(${USE_MOUSE_SENSOR})

@@ -5,7 +5,6 @@
 # beagle = all packages for the beagle bone
 # mm_p = Mouse Monitor for pc
 # mm_b = Mouse Monitor for beagle bone
-# mm_b_cross = Cross compile Mouse Monitor for beagle bone
 # pc = All other pc packages
 
 START_DIR=$PWD
@@ -28,11 +27,7 @@ then
 elif [ "$1" == "mm_b" ]
 then
 	sudo ntpdate -b -s -u ntp.ubuntu.com pool.ntp.org
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle"
-elif [ "$1" == "mm_b_cross" ]
-then
-	TOOLCHAIN_PATH = "../toolchain-BeagleBoneBlack.cmake"
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle" -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_PATH
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle" -DUSE_MOUSE_SENSOR="TRUE"
 elif [ "$1" == "pc" ]
 then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;pid_monitor;minotaur_maze"
