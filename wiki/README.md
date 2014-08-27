@@ -1,10 +1,9 @@
-Smart Minotaur                        {#mainpage}
+Smart Minotaur {#mainpage}
 ============
 
-Overview
---------
+@page installation
 
-About
------
 
-The all knowing robot!
+
+
+
