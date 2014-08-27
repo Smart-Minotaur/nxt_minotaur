@@ -75,9 +75,11 @@ namespace minotaur
         double xs, ys; // Speed
         double xd, yd; // Displacement
 
-        pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
+		// TODO: Bug here
+		// TODO: Sleep
 
         if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
+			pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
             data.id = s.spiDevice;
             data.x_speed = xs;
             data.y_speed = ys;
