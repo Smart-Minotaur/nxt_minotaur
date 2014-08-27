@@ -35,7 +35,6 @@ namespace minotaur
                 pln_minotaur::IPLNTrackingDevice *sensor);
 
             mouse_monitor_beagle::MouseMonitorSensorData getData(
-                std::string id,
                 pln_minotaur::IPLNTrackingDevice *sensor);
 
         public:

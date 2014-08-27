@@ -75,7 +75,6 @@ namespace minotaur
         double xs, ys; // Speed
         double xd, yd; // Displacement
 
-        // TODO: Here is a bug.
         pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
 
         if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
