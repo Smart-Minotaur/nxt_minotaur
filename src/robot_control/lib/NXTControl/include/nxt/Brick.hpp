@@ -1,6 +1,7 @@
 #ifndef NXT_BRICK_HPP
 #define NXT_BRICK_HPP
 
+#include <pthread.h>
 #include "nxt/USBSocket.hpp"
 #include "nxt/TelegramFactory.hpp"
 #include "nxt/TelegramDecoder.hpp"
@@ -18,6 +19,10 @@ namespace nxt
 	{
 	private:
 		USBSocket socket;
+		
+		pthread_mutex_t receiveMutex;
+		pthread_mutex_t sendMutex;
+		
 		TelegramFactory telegramFactory;
 		TelegramDecoder telegramDecoder;
 		bool connected;

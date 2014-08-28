@@ -4,20 +4,43 @@
 
 namespace nxt
 {
+	
+	class Lock
+	{
+	private:
+		pthread_mutex_t *mutex;
+	public:
+		Lock(pthread_mutex_t *p_mutex)
+		:mutex(p_mutex)
+		{
+			pthread_mutex_lock(mutex);
+		}
+		
+		~Lock()
+		{
+			pthread_mutex_unlock(mutex);
+		}
+	};
 
 	Brick::Brick()
 	:connected(false)
 	{
+		pthread_mutex_init(&receiveMutex, NULL);
+		pthread_mutex_init(&sendMutex, NULL);
 	}
 
 	Brick::~Brick()
 	{
 		if(connected)
 			socket.close();
+			
+		pthread_mutex_destroy(&sendMutex);
+		pthread_mutex_destroy(&receiveMutex);
 	}
 	
 	void Brick::send(const Telegram &p_telegram)
 	{
+		Lock lock(&sendMutex);
 		if(!connected)
 			throw NXTException("Cannot send Telegram. Brick is not connected");
 		socket.send(p_telegram, NXT_USB_OUT_ENDPOINT);
@@ -25,6 +48,7 @@ namespace nxt
 	
 	Telegram Brick::receive()
 	{
+		Lock lock(&receiveMutex);
 		if(!connected)
 			throw NXTException("Cannot receive Telegram. Brick is not connected");
 		return socket.receive(NXT_USB_IN_ENDPOINT);
