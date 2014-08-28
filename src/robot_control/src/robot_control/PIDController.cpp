@@ -16,8 +16,8 @@
 
 namespace minotaur
 {
-    PIDController::PIDController()
-    :leftMotor(NULL), rightMotor(NULL), targetVelocity(),measuredVelocity(),
+    PIDController::PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor)
+    :leftMotor(p_leftMotor), rightMotor(p_rightMotor), targetVelocity(),measuredVelocity(),
     currentDiff(), lastDiff(), diffSum(), pidParameter(),
     wheelRadius(DEF_WHEEL_RADIUS)
     {
@@ -29,16 +29,6 @@ namespace minotaur
     PIDController::~PIDController()
     { }
     
-    void PIDController::setLeftMotor(nxtcon::Motor *p_leftMotor)
-    {
-        leftMotor = p_leftMotor;
-    }
-    
-    void PIDController::setRightMotor(nxtcon::Motor *p_rightMotor)
-    {
-        rightMotor = p_rightMotor;
-    }
-
     void PIDController::setVelocity(const MotorVelocity& p_velocity)
     {
         targetVelocity = p_velocity;
@@ -106,10 +96,10 @@ namespace minotaur
         //calculate ticks per second
         //samplingIntervall is needed, provided by the caller of step()
         //if the time is really correct must ensured by the caller
-        ticksPSLeft =  ((float) leftMotor->getTachoData().blockTachoCount) / p_samplingIntervalSecs;
-        ticksPSRight =  ((float) rightMotor->getTachoData().blockTachoCount) / p_samplingIntervalSecs;
-        leftMotor->resetTacho();
-        rightMotor->resetTacho();
+        ticksPSLeft =  ((float) leftMotor.getTachoInfo().blockTachoCount) / p_samplingIntervalSecs;
+        ticksPSRight =  ((float) rightMotor.getTachoInfo().blockTachoCount) / p_samplingIntervalSecs;
+        leftMotor.resetMotorPosition();
+        rightMotor.resetMotorPosition();
         
         //convert ticks per second to meter per second
         result.set(ticksToMPS(ticksPSLeft), ticksToMPS(ticksPSRight));
@@ -173,8 +163,8 @@ namespace minotaur
         else
             powerRight = 0;
         
-        leftMotor->setPower(powerLeft);
-        rightMotor->setPower(powerRight);
+        leftMotor.setPower(powerLeft);
+        rightMotor.setPower(powerRight);
     }
 
     int PIDController::pidMotorPower(const float p_currentDiff,

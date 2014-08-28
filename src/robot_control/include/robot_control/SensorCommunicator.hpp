@@ -36,14 +36,14 @@ namespace minotaur
 	 */
         void processClearSensorMsg(const minotaur_common::ClearSensor &p_msg);
 	/**
-	 * Request to Get an ultrasonic at a certain port
+	 * Request to get ultrasonic data at a certain port
 	 * @param req Request-message: contains the port-id
 	 * @param res Response-message
 	 */
         bool processGetUltrasonicRqt(minotaur_common::GetUltrasonic::Request  &req,
                                      minotaur_common::GetUltrasonic::Response &res);
 	/**
-	 * Request to add an ultrasonic
+	 * Request to add an ultrasonic sensor
 	 * @param req The request-message: contains the requested port-id
 	 * @param res The response-message
 	 * @retval processAddUltrasonicRqt true if sensor added successfully, else false
@@ -51,10 +51,10 @@ namespace minotaur
         bool processAddUltrasonicRqt(minotaur_common::AddUltrasonic::Request  &req,
                                      minotaur_common::AddUltrasonic::Response &res);
     public:
-        SensorCommunicator();
+        SensorCommunicator(nxt::Brick *p_brick);
         ~SensorCommunicator();
         
-        void init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick);
+        void init(ros::NodeHandle &p_handle);
 	/**
 	 * Reads the values from sensors and publishes them in UltrasonicData messages
 	 */

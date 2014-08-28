@@ -1,7 +1,9 @@
 #ifndef ROBOT_CONTROL_PID_CONTROLLER_HPP
 #define ROBOT_CONTROL_PID_CONTROLLER_HPP
 
-#include "robot_control/IPIDController.hpp"
+#include <nxt/NXTControl.hpp>
+#include "minotaur_common/MotorVelocity.hpp"
+#include "minotaur_common/PIDParameter.h"
 
 #define PID_CONTROLLER_DEBUG_NAME "PIDController_Debug"
 
@@ -10,7 +12,6 @@ namespace minotaur
     /**
      * \brief The PID-Controller regulates the velocity of the robot
      * 
-     * Implements IPIDController.
      * The Controller gets measured values of the velocity, compares
      * them with the desired values, and then calculates new velocities.
      * The motor-publisher is used to set the "power" of the robot motors.
@@ -18,11 +19,11 @@ namespace minotaur
      * Publisher, Client and the wheel-circumference have to be set manually 
      * before using the "step()" method.
      */
-    class PIDController: public IPIDController
+    class PIDController
     {
     private:
-        nxtcon::Motor *leftMotor;
-        nxtcon::Motor *rightMotor;
+        nxt::Motor &leftMotor;
+        nxt::Motor &rightMotor;
         
         MotorVelocity targetVelocity;
         MotorVelocity measuredVelocity;
@@ -65,11 +66,8 @@ namespace minotaur
        
         
     public:
-        PIDController();
-        virtual ~PIDController();
-        
-        void setLeftMotor(nxtcon::Motor *p_leftMotor);
-        void setRightMotor(nxtcon::Motor *p_rightMotor);
+        PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor);
+        ~PIDController();
         
         void setVelocity(const MotorVelocity& p_velocity);
         void setWheelRadius(const float p_meter);
