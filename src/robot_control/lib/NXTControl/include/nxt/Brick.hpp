@@ -28,7 +28,7 @@ namespace nxt
 		bool connected;
 		
 		void send(const Telegram &p_telegram);
-		Telegram receive();
+		Telegram sendAndReceive(const Telegram &p_telegram);
 	public:
 		Brick();
 		~Brick();

@@ -46,11 +46,12 @@ namespace nxt
 		socket.send(p_telegram, NXT_USB_OUT_ENDPOINT);
 	}
 	
-	Telegram Brick::receive()
+	Telegram Brick::sendAndReceive(const Telegram &p_telegram)
 	{
 		Lock lock(&receiveMutex);
 		if(!connected)
 			throw NXTException("Cannot receive Telegram. Brick is not connected");
+		send(p_telegram);
 		return socket.receive(NXT_USB_IN_ENDPOINT);
 	}
 	
@@ -151,52 +152,44 @@ namespace nxt
 	
 	OutputState Brick::getOutputState(const uint8_t p_port)
 	{
-		send(telegramFactory.getOutputStateMsg(p_port));
-		return telegramDecoder.decodeGetOutputStateMsg(receive());
+		return telegramDecoder.decodeGetOutputStateMsg(sendAndReceive(telegramFactory.getOutputStateMsg(p_port)));
 	}
 	
 	InputValues Brick::getInputValues(const uint8_t p_port)
 	{
-		send(telegramFactory.getInputValuesMsg(p_port));
-		return telegramDecoder.decodeGetInputValuesMsg(receive());
+		return telegramDecoder.decodeGetInputValuesMsg(sendAndReceive(telegramFactory.getInputValuesMsg(p_port)));
 	}
 	
 	BatteryLevel Brick::getBatteryLevel()
 	{
-		send(telegramFactory.getBatteryLevelMsg());
-		return telegramDecoder.decodeGetBatteryLevelMsg(receive());
+		return telegramDecoder.decodeGetBatteryLevelMsg(sendAndReceive(telegramFactory.getBatteryLevelMsg()));
 	}
 	
 	KeepAlive Brick::keepAlive()
 	{
-		send(telegramFactory.keepAliveMsg());
-		return telegramDecoder.decodeKeepAliveMsg(receive());
+		return telegramDecoder.decodeKeepAliveMsg(sendAndReceive(telegramFactory.keepAliveMsg()));
 	}
 	
 	LSStatus Brick::lsGetStatus(const uint8_t p_port)
 	{
-		send(telegramFactory.lsGetStatusMsg(p_port));
-		return telegramDecoder.decodeGetLSStatusMsg(receive());
+		return telegramDecoder.decodeGetLSStatusMsg(sendAndReceive(telegramFactory.lsGetStatusMsg(p_port)));
 	}
 	
 	LSRead Brick::lsRead(const uint8_t p_port)
 	{
-		send(telegramFactory.lsReadMsg(p_port));
-		return telegramDecoder.decodeLSReadMsg(receive());
+		return telegramDecoder.decodeLSReadMsg(sendAndReceive(telegramFactory.lsReadMsg(p_port)));
 	}
 	
 	ProgramName Brick::getCurrentProgramName()
 	{
-		send(telegramFactory.getCurrentProgramNameMsg());
-		return telegramDecoder.decodeGetCurrentProgramNameMsg(receive());
+		return telegramDecoder.decodeGetCurrentProgramNameMsg(sendAndReceive(telegramFactory.getCurrentProgramNameMsg()));
 	}
 	
 	MailboxMessage Brick::readMessage(const uint8_t p_remoteMailbox,
 								      const uint8_t p_localMailbox,
 								      const uint8_t p_removeMessage)
 	{
-		send(telegramFactory.messageReadMsg(p_remoteMailbox, p_localMailbox, p_removeMessage));
-		return telegramDecoder.decodeMessageReadMsg(receive());
+		return telegramDecoder.decodeMessageReadMsg(sendAndReceive(telegramFactory.messageReadMsg(p_remoteMailbox, p_localMailbox, p_removeMessage)));
 	}
 }
 
