@@ -1,5 +1,5 @@
+#include <nxt/NXTControl.hpp>
 #include "robot_control/RobotCommunicator.hpp"
-#include "nxt_control/NxtOpcodes.hpp"
 #include "minotaur_common/MinotaurTopics.hpp"
 #include "minotaur_common/RAIILock.hpp"
 #include "minotaur_common/Math.hpp"
@@ -18,8 +18,8 @@
 
 namespace minotaur
 {
-    RobotCommunicator::RobotCommunicator()
-    : statusMsec(0)
+    RobotCommunicator::RobotCommunicator(nxt::Brick *p_brick)
+    : statusMsec(0), brick(p_brick), leftMotor(brick, LEFT_PORT), rightMotor(brick, RIGHT_PORT), robotController(leftMotor, rightMotor)
     {
         pthread_mutex_init(&robotMutex, NULL);
     }
@@ -29,20 +29,13 @@ namespace minotaur
         pthread_mutex_destroy(&robotMutex);
     }
     
-    void RobotCommunicator::init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick)
+    void RobotCommunicator::init(ros::NodeHandle &p_handle)
     {
         RAIILock lock(&robotMutex);
-        brick = p_brick;
-        leftMotor.setBrick(p_brick);
-        leftMotor.setPort(LEFT_PORT);
-        rightMotor.setBrick(p_brick);
-        rightMotor.setPort(RIGHT_PORT);
         
         ROS_INFO("-- Setting up RobotController.");
         robotController.setWheelTrack(WHEEL_TRACK);
         robotController.getPIDController().setWheelRadius(WHEEL_RADIUS);
-        robotController.getPIDController().setLeftMotor(&leftMotor);
-        robotController.getPIDController().setRightMotor(&rightMotor);
         
         ROS_INFO("-- Subscribing to topic \"%s\".", MINOTAUR_SET_PID_PARAMETER_TOPIC);
         setPIDParamSub = p_handle.subscribe(MINOTAUR_SET_PID_PARAMETER_TOPIC, ROS_MSG_QUEUE_LENGTH, &RobotCommunicator::processPIDParamMsg, this);
@@ -99,7 +92,7 @@ namespace minotaur
         if(statusMsec >= CHECK_BRICK_INTERVAL) {
             statusMsec = 0;
             
-            uint16_t voltage = brick->getBatteryLevel();
+            uint16_t voltage = brick->getBatteryLevel().voltage;
             brick->playTone(TONE_FREQUENCY, TONE_DURATION_MS);
             
             if(voltage < MIN_VOLTAGE_MV)
