@@ -12,10 +12,12 @@ Ultraschallsensoren und Motoren zur Verfügung. Der Lego Roboter ist über
 USB wiederum an ein Beagle Bone Black (BBB) angeschlossen. Zur
 Verbesserung Odometrie des Roboters werden Mauslasersensoren verwendet.
 
-## Weiterführende Seiten
+## Übersicht
 
-@subpage installation
-
+1. @subpage installation
+2. @subpage basis
+3. @subpage projekt
+4. @subpage ausblick
 
 
 
