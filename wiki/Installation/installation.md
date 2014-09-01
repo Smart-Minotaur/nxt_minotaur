@@ -1,6 +1,8 @@
 Installation {#installation}
 ===
 
+\section Übersicht Übersicht
+
 Die Installation des Systems unterteilt sich in 2 Bereiche:
 
 @subpage installation-pc

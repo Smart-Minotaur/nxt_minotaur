@@ -1,4 +1,4 @@
-Graphen-Ansatz {#graphen}
+Graphen Ansatz {#graphen}
 ===
 
 \tableofcontents
