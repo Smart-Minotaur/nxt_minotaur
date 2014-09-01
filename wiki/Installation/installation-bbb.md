@@ -10,6 +10,8 @@ ARM-Prozessoren aufgesetzt. ROS wird in der der version __hydro__
 verwendet. Weiterhin wird zur Kommunikation über den USB-Bus die
 Bibliothek __libusb 1.0__ benötigt.
 
+---
+
 \section Installation Installation
 \subsection Ubuntu Ubuntu 12.04
 
@@ -59,6 +61,8 @@ source ~/.bashrc
 sudo apt-get install ros-hydro-move-base
 ~~~
 
+---
+
 \section Konfiguration Konfiguration
 \subsection Lego Lego NXT
 
@@ -70,12 +74,13 @@ möchten müssen Teil dieser Gruppe sein.
 ~~~
 sudo su
 groupadd lego
-usermod -a -G lego <username>
+usermod -a -G lego ubuntu
 touch /etc/udev/rules.d/70-lego.rules
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /etc/udev/rules.d/70-lego.rules
 ~~~
 
-Nun muss das BBB neugestartet werden.
+__<username>__ muss dabei durch den Benutzer ersetzt werden, der Teil
+Gruppe werden soll. Nun muss das BBB neugestartet werden.
 
 \subsection WLAN WLAN
 
