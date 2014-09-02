@@ -6,7 +6,7 @@ Installation PC {#installation-pc}
 \section Beschreibung Beschreibung
 
 Auf dem Entwicklungsrechner wird ebenso wie auf dem Beagle Bone Black
-Ubuntu in der Version 12.04 verwendet. Vorzugsweise sollte die 32bit
+__Ubuntu in der Version 12.04__ verwendet. Vorzugsweise sollte die 32bit
 Version benutzt werden, da ansonsten die benötigten 32bit Bibliotheken
 nachinstalliert werden müssen. Die Installation des Betriebssystem wird
 hier nicht weiter erklärt, da sich genügend Anleitungen und Tools für
@@ -24,7 +24,7 @@ sudo apt-get install libusb-1.0-0-dev
 ~~~
 
 \subsection GCC GCC 4.8
-Der GCC 4.8 implementiert mehr Features des C++11 Standards als der
+Der GCC 4.8 implementiert mehr Features des __C++11 Standards__ als der
 standardmäßige 4.6 Compiler unter Ubuntu 12.04. Um diesen zu
 installieren und als Standardcompiler festzulegen, müssen die folgenden
 Kommandos ausgeführt werden.
@@ -55,7 +55,7 @@ source ~/.bashrc
 
 \subsection QT4 QT4
 
-Für die grafischen Programme des Projekts werden QT4 und QWT
+Für die grafischen Programme des Projekts werden __QT4 und QWT__
 verwendet. Diese werden aus den Paketquellen installiert.
 
 ~~~
@@ -67,8 +67,8 @@ sudo apt-get install ros-hydro-qt* libqwt-dev
 \section Konfiguration Konfiguration
 \subsection Lego Lego NXT
 
-Damit der Lego NXT Brick als USB-Gerät erkannt wird und somit auch die
-Kommunikation zwischen Brick und BBB stattfinden kann, muss eine neue
+Damit der __Lego NXT Brick als USB-Gerät erkannt wird__ und somit auch die
+Kommunikation zwischen Brick und PC stattfinden kann, muss eine neue
 Benutzergruppe erzeugt werden. Die Benutzer, die den Brick nutzen
 möchten müssen Teil dieser Gruppe sein. Dieser Schritt ist nicht
 zwingend notwendig. Er wird nur benötigt, wenn der Brick zu Testzwecken
@@ -82,6 +82,27 @@ touch /etc/udev/rules.d/70-lego.rules
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /etc/udev/rules.d/70-lego.rules
 ~~~
 
-__<username>__ muss dabei durch den Benutzer ersetzt werden, der Teil
+\b <username> muss dabei durch den Benutzer ersetzt werden, der Teil
 Gruppe werden soll. Um die Einstellungen zu übernehmen, muss der
 Computer neugestartet werden.
+
+---
+
+\section Kompilierung Kompilierung
+
+In dem Repository des Projekts existiert die Datei __compile__. Diese 
+beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 
+das Projekt auf dem PC zu kompileren, muss __in das 
+Repositoryverzeichnis gewechselt__ und folgendes Kommando ausgeführt 
+werden:
+
+~~~
+./compile pc
+~~~
+
+Um einen kompletten Rebuild durchzuführen muss __vor dem oben genannten 
+Befehl__, folgender Befehl ausgeführt werden:
+
+~~~
+./compile clean
+~~~

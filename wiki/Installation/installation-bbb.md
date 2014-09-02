@@ -79,7 +79,7 @@ touch /etc/udev/rules.d/70-lego.rules
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /etc/udev/rules.d/70-lego.rules
 ~~~
 
-__<username>__ muss dabei durch den Benutzer ersetzt werden, der Teil
+\b <username> muss dabei durch den Benutzer ersetzt werden, der Teil
 Gruppe werden soll. Nun muss das BBB neugestartet werden.
 
 \subsection WLAN WLAN
@@ -140,4 +140,25 @@ optargs=quiet drm.debug=7 capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN 
 
 ~~~
 sudo reboot
+~~~
+
+---
+
+\section Kompilierung Kompilierung
+
+In dem Repository des Projekts existiert die Datei __compile__. Diese 
+beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 
+das Projekt auf dem Beagle Bone Black zu kompileren, muss __in das 
+Repositoryverzeichnis gewechselt__ und folgendes Kommando ausgeführt 
+werden:
+
+~~~
+./compile beagle
+~~~
+
+Um einen kompletten Rebuild durchzuführen muss __vor dem oben genannten 
+Befehl__, folgender Befehl ausgeführt werden:
+
+~~~
+./compile clean
 ~~~
