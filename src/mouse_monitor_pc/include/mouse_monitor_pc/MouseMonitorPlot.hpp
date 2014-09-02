@@ -9,33 +9,34 @@
 namespace minotaur
 {
 
-    class MouseMonitorPlot : public QwtPlot
-    {
-            Q_OBJECT
+	class MouseMonitorPlot : public QwtPlot
+	{
+			Q_OBJECT
 
-        private:
-            QwtPlotCurve curve;
+		private:
+			QwtPlotCurve curve;
 
-            QVector<double> xData;
-            QVector<double> yData;
+			QVector<double> xData;
+			QVector<double> yData;
 
-            int xStep;
-            int yStep;
-            int maxSize;
+			int xStep;
+			int yStep;
+			int maxSize;
 
-            std::string xAxisTitle;
-            std::string yAxisTitle;
+			std::string xAxisTitle;
+			std::string yAxisTitle;
 
-        public:
-            MouseMonitorPlot(QwtPlot *parent = 0) : QwtPlot(parent) {}
-            virtual ~MouseMonitorPlot() {}
+		public:
+			MouseMonitorPlot(QwtPlot *parent = 0) : QwtPlot(parent) {}
+			virtual ~MouseMonitorPlot() {}
 
-            void init(QColor color,
-                      std::string title,
-                      std::string xAxisTitle,
-                      std::string yAxisTitle);
-            void updatePlot(double data);
-    };
+			void init(QColor color,
+			          std::string title,
+			          std::string xAxisTitle,
+			          std::string yAxisTitle);
+			void updatePlot(double data);
+			void clear();
+	};
 
 }
 

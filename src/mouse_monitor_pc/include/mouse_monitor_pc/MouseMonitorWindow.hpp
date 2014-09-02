@@ -41,7 +41,7 @@ namespace minotaur
             QLineEdit *resolution2Edit;
 
             QTimer *timer;
-            int sampleRateMs;
+            int sampleRate;
 
             // Plot stuff
             MouseMonitorPlot *xDisp1Plot;
@@ -76,6 +76,8 @@ namespace minotaur
 
             void processMouseData(const MouseData data);
             void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
+			
+			int sampleRateToInterval(int sampleRate);
 
         private Q_SLOTS:
             void openAboutWindow();
@@ -87,6 +89,8 @@ namespace minotaur
             void trackPathResetBtnClicked();
             void getData1BtnClicked();
             void getData2BtnClicked();
+			void resetGraphsDispBtnClicked();
+			void resetGraphsSpeedBtnClicked();
 
             void detailDebuggingEnable(const int status);
 
