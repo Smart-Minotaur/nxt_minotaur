@@ -11,7 +11,7 @@
 # mbug_p = minotaur_pc buggyMinotaur
 # mb_b = robot_control_beagle: Move base
 
-BEAGLE_IP=141.37.31.128
+BEAGLE_IP=141.37.31.129
 PC_IP=141.37.31.80
 
 if [ -z "$1" ]
@@ -45,7 +45,7 @@ elif [ "$1" == "map_p" ]
 then
 	export ROS_IP=$PC_IP
 	export ROS_MASTER_URI=http://$PC_IP:11311
-	roslaunch map_monitor_pc mapteleop.launch
+	roslaunch map_monitor mapteleop.launch
 elif [ "$1" == "mtel_p" ]
 then
 	export ROS_IP=$PC_IP

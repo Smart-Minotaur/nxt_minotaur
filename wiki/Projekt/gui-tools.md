@@ -59,5 +59,11 @@ Hindernisse, die von den Sensoren registriert werden.
 
 \section map_monitor map_monitor
 
+\subsection BeschreibungMAP Beschreibung
+
+\subsection BedienungMAP Bedienung
+
+\image html map-monitor.png
+
 \section mouse_monitor_pc mouse_monitor_pc
 
