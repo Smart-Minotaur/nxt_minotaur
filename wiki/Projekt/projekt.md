@@ -34,7 +34,7 @@ Abschnitte und Wikiseiten herangezogen werden.
 In diesen ROS-Packages sind verschiedene ROS-Nodes enthalten, die alle 
 miteinander über das ROS-Kommunikationsystem kommunizieren. Die Art 
 und Richtung der Kommunikation wird in dem Abschnitt \ref Datenfluss 
-eräutert.
+erläutert.
 
 \subsection Packages Packages
 

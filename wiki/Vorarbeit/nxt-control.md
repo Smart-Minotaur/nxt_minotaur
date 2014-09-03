@@ -26,6 +26,24 @@ Folgende Erweiterungsmöglichkeiten wären für die Bibliothek denkbar:
 * Bluetooth-Kommunikation
 * Mehr Klassen für verschiedene Sensoren (momentan nur
 [Motor](@ref nxt::Motor) und [Ultraschallsensor](@ref nxt::UltrasonicSensor))
+* Platformunabhängigkeit
+
+\section Kompilieren Kompilieren
+
+Um NXTControl zu kompilieren muss ein Compiler verwendet werden, der 
+zumindest den __C++0x Standard__ implementiert hat. Außerdem muss 
+__liusb-1.0 dev__ installiert sein. Nun muss das Verzeichnis 
+__NXTControl__ ausgecheckt werden. In diesem Verzeichnis müssen nun 
+die folgenden Befehle ausgeführt werden:
+
+~~~
+mkdir build
+cd build
+cmake ..
+make
+~~~
+
+Nun steht die Bibiliothek im Verzeichnis __build__ zur Verfügung.
 
 \section Entwicklungshergang Entwicklungshergang
 
