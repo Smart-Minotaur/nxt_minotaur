@@ -91,9 +91,31 @@ __mouse_monitor_beagle__ TODO Jens
 
 __mouse_monitor_pc__ TODO Jens
 
+
+
 \subsection Datenfluss Datenfluss
 
-TODO Datenflussbild
+Das folgende Diagramm zeigt die Kommunikationsstruktur in diesem Projekt.
+
+\image html minotaur-dataflow.png
+
+Die zentrale ROS-Node __RobotControl__ wird in dem Abschnicht \ref 
+RobotControl genauer betrachtet. __Movebase__ ist eine ROS interne 
+Node. Sie ist zuständig für die grundlegende Kommunikation innerhalb 
+des ROS Navigation Stack. Daher wird sie auch nur von Applikationen 
+benötigt, die den ROS Navigation Stack benutzen, ansonsten muss diese 
+Node nicht gestartet werden. Auf dem Desktop Computer laufen sämtliche 
+GUI Aplikationen. Diese kommunizieren über das ROS 
+Kommunikationssystem mit der __RobotControl__ Node. Die Verbindung 
+zwischen BBB und PC findet per WLAN statt.
+
+Das Beagle Bone kommuniziert neben dem PC auch mit lokal vorhandenen 
+Geräten. Der __Lego NXT Brick__ ist über USB an das BBB angeschlossen. An 
+den Brick sind wiederum die Motoren und Ultraschallsensoren des 
+Roboters angeschlossen. Somit kann das Beagle Bone nur indirekt über 
+den Brick auf die __Aktoren und Sensoren__ des Roboters zugreifen. Neben 
+dem Brick nutzt das BBB einen SPI-Bus, um die angeschlossenen 
+__Maussensoren__ anzusteuern.
 
 ---
 
