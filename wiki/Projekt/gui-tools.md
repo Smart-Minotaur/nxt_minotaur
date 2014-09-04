@@ -25,7 +25,26 @@ die optimalen PID-Parameter ermittelt werden.
 
 \subsection BedienungPID Bedienung
 
-Die Bedienung soll anhand des folgenden Screenshots erläutert werden.
+Um __pid_monitor__ zu starten werden ein Beagle Bone Black und ein 
+Computer benötigt. Beide müssen sich im gleichen Netzwerk 
+befinden. Nun muss in das Wurzelverzeichnis des Repositorys gewechselt 
+werden. Dort muss nun die Datei __start__ mit einem beliebigen Editor
+geöffnet und die IP Variablen sowohl auf dem BBB als auch auf dem PC __mit 
+den entsprechenden IPs__ belegt werden. Zuerst muss die Anwendung auf dem PC 
+mit folgendem Befehl gestartet werden:
+
+~~~
+./start pm_p
+~~~
+
+Auf dem BBB nun folgenden Befehl ausführen:
+
+~~~
+./start rc_b
+~~~
+
+Die Bedienung des Programms soll anhand des folgenden Screenshots 
+erläutert werden.
 
 \image html pid-monitor.png
 
@@ -61,9 +80,55 @@ Hindernisse, die von den Sensoren registriert werden.
 
 \subsection BeschreibungMAP Beschreibung
 
+Die Anwendung __map_monitor__ dient der Beobachtung der Odometrie des 
+Roboters und der Aufzeichnung der Umgebungskarte. Mithilfe der 
+Odometrie und Sensordaten des Roboters werden seine Bewegungsroute und 
+Hindernisse in der Umgebung in eine grafische Oberfläche 
+eingezeichnet. Mithilfe dieser Anwendung konnte festgestellt werden, 
+wie schlecht die Odometrie des Roboters tatsächlich ist.
+
 \subsection BedienungMAP Bedienung
 
+Um __map_monitor__ zu starten werden ein Beagle Bone Black und ein 
+Computer benötigt. Beide müssen sich im gleichen Netzwerk 
+befinden. Nun muss in das Wurzelverzeichnis des Repositorys gewechselt 
+werden. Dort muss nun die Datei __start__ mit einem beliebigen Editor
+geöffnet und die IP Variablen sowohl auf dem BBB als auch auf dem PC __mit 
+den entsprechenden IPs__ belegt werden. Zuerst muss die Anwendung auf dem PC 
+mit folgendem Befehl gestartet werden:
+
+~~~
+./start map_p
+~~~
+
+Auf dem BBB nun folgenden Befehl ausführen:
+
+~~~
+./start rc_b
+~~~
+
+Die Bedienung des Programms soll anhand des folgenden Screenshots 
+erläutert werden.
+
 \image html map-monitor.png
+
+Die Anwendung zeigt im Hauptfenster die aufgezeichnete Karte. Die 
+roten Bereiche stellen hierbei die Hindernisse in der Umgebung dar. 
+Schwarze Quadrate sind ehemalige Positionen des Roboters. Das blaue 
+Quadrat ist die aktuelle Position des Roboters. Außerdem wird im 
+Kopfbereich der Anwendung die aktuelle Position des Roboters in Zahlen 
+dargestellt.
+
+Um den Roboter zusätzlich bewegen zu können, kann die Applikation 
+__pid_monitor__ verwendet werden. Dazu muss auf dem PC folgender 
+Befehl ausgeführt werden.
+
+~~~
+./start pm_p
+~~~
+
+Mehr Informationen zu __pid_monitor__ finden sich im Abschnitt \ref 
+pid_monitor.
 
 \section mouse_monitor_pc mouse_monitor_pc
 
