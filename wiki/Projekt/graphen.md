@@ -3,7 +3,7 @@ Graphen Ansatz {#graphen}
 
 \tableofcontents
 
-\section Beschreibung Beschreibung
+\section beschreibung-graphen Beschreibung
 
 Da der Histogramm-Ansatz ohne gute Odometrie nicht gut umsetzbar ist wurde ein zweiter Ansatz gestartet. 
 Das Labyrinth wurde in quadratische Zellen eingeteilt. Die Seitenlänge einer Zelle enspricht dabei
@@ -13,11 +13,11 @@ sich Wände befinden und in welche Richtungen er weiterfahren kann. Dies wird in
 und anschließend wird durch einen Algorithmus bestimmt welche benachbarte Zelle der Roboter als nächstes 
 ansteuert.
 
-\section Umsetzung Umsetzung
+\section umsetzung-graphen Umsetzung
 
 Die Soucedateien sind im package __minotaur_maze__ zu finden.
 
-\subsection Navigation Navigation
+\subsection navigation-graphen Navigation
 
 Bei einer Fahrt von Zelle zu Zelle kann der Roboter aufgrund von Ungenauigkeiten der Motoren sowie Durchdrehen eines Rades eine schlechte Ausrichtung und somit fehlerhaftes verhalten entwickeln.
 Da wir keine Maussensoren zum erkennen dieser Fehler zur Verfügung haben müssen wir dies anhand der Messwerte der Ultraschallsensoren ausgleichen. Hierbei werden die Werte der Sensoren rechts und 
@@ -29,19 +29,19 @@ Wenn ein Sensor keine nützlichen Messwerte liefern kann, da sich an seiner Seit
 Um einzelne Ausreisser in den Messwerten auszugleichen wurde ein Medianfilter angewendet der die letzten 5 bis 10 Werte eines Sensors besitzt.
 
 Wenn anhand der zurückgelegten Strecke davon ausgegangen wird dass man sich etwa in der Mitte der nächsten Zelle befindet wird ermittelt welche 
-Aktion als nächstes ausgeführt wird (Mehr dazu siehe \ref Algorithmus). Dabei gibt es zwei Möglichkeiten: 
+Aktion als nächstes ausgeführt wird (Mehr dazu siehe \ref algorithmus-graphen ). Dabei gibt es zwei Möglichkeiten: 
 
 * Rotation um 90°: Der Roboter dreht sich auf der Stelle in eine angegebene Richtung
 * Fahrt geradeaus: Der Roboter bewegt sich zur nächsten Zelle.
 
 
-\subsection Algorithmus Algorithmus
+\subsection algorithmus-graphen Algorithmus
 
 Es handelt sich hierbei um einen sehr simplen Algorithmus. Nachdem erkannt wurde in welche Richtung ein Weiterfahren möglich ist, wird der Roboter, 
 falls mehrere Möglichkeiten zu verfügung stehen, unbesuchte Zellen als Ziel bevorzugen. Wenn mehrere umbesuchte Zellen zur verfügung stehen wird bevorzugt geradeaus gefahren, 
-da bei Drehungen ab und an Fehler auftreten können. Daher versuchen wir so wenige Rotoationen wie möglich zu machen. Mehr dazu siehe: \ref ProblemeGraph
+da bei Drehungen ab und an Fehler auftreten können. Daher versuchen wir so wenige Rotoationen wie möglich zu machen. Mehr dazu siehe: \ref robleme-graphen
 
-\section ProblemeGraph Probleme
+\section probleme-graphen Probleme
 
 Auch in diesem Ansatz entstehen viele Probleme und Fehler aufgrund von ungenauen Sensorwerten und schlechter Odometrie.
 
@@ -55,7 +55,7 @@ Dieses Problem tritt zumeist aufgrund von unerklärlich schlechten Sensormesswer
 Wir haben versucht dieses Problem mittels eines Medianfilters zu beheben, jedoch ohne großen Erfolg:
 
 Das Problem des Medianfilters besteht darin dass die Ultraschallsensoren stets mehrere Fehlerhafte Werte in folge liefern und der Filter dadurch nutzlos wird. 
-Mehr dazu siehe: \ref Ultraschallsensoren
+Mehr dazu siehe: \ref Ultraschallsensoren.
 
 Ein weiteres Problem besteht im Aufbau des Labyrinths. Zwischen zwei Holzplatten entsteht stets eine kleine Rille da die Platten nicht exakt gleich groß sind. 
 An dieser Rille kann der Roboter, vor allem beim Rotieren, hängen bleiben.
