@@ -3,7 +3,7 @@ Installation PC {#installation-pc}
 
 \tableofcontents
 
-\section Beschreibung Beschreibung
+\section beschreibung-installation-pc Beschreibung
 
 Auf dem Entwicklungsrechner wird ebenso wie auf dem Beagle Bone Black
 __Ubuntu in der Version 12.04__ verwendet. Vorzugsweise sollte die 32bit
@@ -14,7 +14,7 @@ diesen Zweck im Internet finden.
 
 ---
 
-\section Installation Installation
+\section installation-installation-pc Installation
 \subsection Programme Grundlegende Programme
 
 Die folgenden Programme müssen installiert werden.
@@ -23,7 +23,7 @@ Die folgenden Programme müssen installiert werden.
 sudo apt-get install libusb-1.0-0-dev
 ~~~
 
-\subsection GCC GCC 4.8
+\subsection gcc-installation-pc GCC 4.8
 Der GCC 4.8 implementiert mehr Features des __C++11 Standards__ als der
 standardmäßige 4.6 Compiler unter Ubuntu 12.04. Um diesen zu
 installieren und als Standardcompiler festzulegen, müssen die folgenden
@@ -37,7 +37,7 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 ~~~
 
-\subsection ROS ROS
+\subsection ros-installation-pc ROS
 
 Die verwendete ROS Version ist __hydro__. Um ROS hydro auf dem Computer
 zu installieren, müssen folgende Befehle ausgeführt werden.
@@ -53,7 +53,7 @@ echo "source /opt/ros/hydro/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ~~~
 
-\subsection QT4 QT4
+\subsection qt4-installation-pc QT4
 
 Für die grafischen Programme des Projekts werden __QT4 und QWT__
 verwendet. Diese werden aus den Paketquellen installiert.
@@ -64,8 +64,8 @@ sudo apt-get install ros-hydro-qt* libqwt-dev
 
 ---
 
-\section Konfiguration Konfiguration
-\subsection Lego Lego NXT
+\section konfiguration-installation-pc Konfiguration
+\subsection lego-installation-pc Lego NXT
 
 Damit der __Lego NXT Brick als USB-Gerät erkannt wird__ und somit auch die
 Kommunikation zwischen Brick und PC stattfinden kann, muss eine neue
@@ -88,7 +88,7 @@ Computer neugestartet werden.
 
 ---
 
-\section Kompilierung Kompilierung
+\section kompilierung-installation-pc Kompilierung
 
 In dem Repository des Projekts existiert die Datei __compile__. Diese 
 beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 

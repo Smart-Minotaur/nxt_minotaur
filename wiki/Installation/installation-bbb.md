@@ -3,7 +3,7 @@ Installation Beagle Bone Black {#installation-bbb}
 
 \tableofcontents
 
-\section Beschreibung Beschreibung
+\section beschreibung-installation-bbb Beschreibung
 
 Auf dem Beagle Bone Black (BBB) wird ein Ubuntu in der Version 12.04 für
 ARM-Prozessoren aufgesetzt. ROS wird in der der Version __hydro__
@@ -12,8 +12,8 @@ Bibliothek __libusb 1.0__ benötigt.
 
 ---
 
-\section Installation Installation
-\subsection Ubuntu Ubuntu 12.04
+\section installation-installation-bbb Installation
+\subsection ubuntu-installation-bbb Ubuntu 12.04
 
 Um Ubuntu 12.04 auf dem BBB zu installieren, muss das Image auf die
 Micro-SD Karte entpackt werden.
@@ -33,7 +33,7 @@ Standard Benutzer und Passwort lauten wie folgt:
 * Benutzer: __ubuntu__
 * Passwort: __ubuntu__
 
-\subsection Programme Grundlegende Programme
+\subsection programme-installation-bbb Grundlegende Programme
 
 Die folgenden Programme müssen auf dem BBB installiert sein, um das
 Projekt zu kompilieren.
@@ -42,7 +42,7 @@ Projekt zu kompilieren.
 sudo apt-get install git subversion build-essential libusb-1.0-0-dev vim ntp
 ~~~
 
-\subsection ROS ROS
+\subsection ros-installation-bbb ROS
 
 Um ROS auf dem BBB zu installieren, müssen die folgenden Kommandos
 ausgeführt werden.
@@ -63,8 +63,8 @@ sudo apt-get install ros-hydro-move-base
 
 ---
 
-\section Konfiguration Konfiguration
-\subsection Lego Lego NXT
+\section konfiguration-installation-bbb Konfiguration
+\subsection lego-installation-bbb Lego NXT
 
 Damit der Lego NXT Brick als USB-Gerät erkannt wird und somit auch die
 Kommunikation zwischen Brick und BBB stattfinden kann, muss eine neue
@@ -82,7 +82,7 @@ echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /e
 \b <username> muss dabei durch den Benutzer ersetzt werden, der Teil
 Gruppe werden soll. Nun muss das BBB neugestartet werden.
 
-\subsection WLAN WLAN
+\subsection wlan-installation-bbb WLAN
 
 Folgendes muss in die Datei `/etc/network/interfaces` eingefügt und angepasst werden.
 Wenn dort bereits ein Adapter namens wlan0 existiert, sollte dieser
@@ -98,7 +98,7 @@ netmask 255.255.255.0
 gateway 192.168.11.1
 ~~~
 
-\subsection SPI SPI Device Tree
+\subsection spi-installation-bbb SPI Device Tree
 
 In diesem Abschnitt wird die Installation von SPI0 und SPI1 auf dem Beagle
 Bone Black mit dem Device Tree erläutert.
@@ -146,7 +146,7 @@ sudo reboot
 
 ---
 
-\section Kompilierung Kompilierung
+\section kompilierung-installation-bbb Kompilierung
 
 In dem Repository des Projekts existiert die Datei __compile__. Diese 
 beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 
