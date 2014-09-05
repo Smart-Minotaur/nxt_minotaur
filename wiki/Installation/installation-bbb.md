@@ -6,7 +6,7 @@ Installation Beagle Bone Black {#installation-bbb}
 \section Beschreibung Beschreibung
 
 Auf dem Beagle Bone Black (BBB) wird ein Ubuntu in der Version 12.04 für
-ARM-Prozessoren aufgesetzt. ROS wird in der der version __hydro__
+ARM-Prozessoren aufgesetzt. ROS wird in der der Version __hydro__
 verwendet. Weiterhin wird zur Kommunikation über den USB-Bus die
 Bibliothek __libusb 1.0__ benötigt.
 
@@ -84,7 +84,7 @@ Gruppe werden soll. Nun muss das BBB neugestartet werden.
 
 \subsection WLAN WLAN
 
-Folgendes muss in die Datei `/etc/network/interfaces` eingefügt werden.
+Folgendes muss in die Datei `/etc/network/interfaces` eingefügt und angepasst werden.
 Wenn dort bereits ein Adapter namens wlan0 existiert, sollte dieser
 überschrieben werden.
 
@@ -100,43 +100,45 @@ gateway 192.168.11.1
 
 \subsection SPI SPI Device Tree
 
-This page explains how to setup SPI0 and SPI1 on BBB with the device tree.
+In diesem Abschnitt wird die Installation von SPI0 und SPI1 auf dem Beagle
+Bone Black mit dem Device Tree erläutert.
 
 The script installs the overlay files for '''SPI0 (1 chip select)''' and '''SPI1 (2 chips selects)'''.
 
-'''Only for angstrom linux'''
-Warning! On the newest angstrom image there is no dtc in opkg available.
-A simple solution is to create the compiled dtbo file on a desktop ubuntu machine
-and copy it to the BBB.
-
-* Clone the bbb_setup repository
-* Install dtc (device tree compiler)
+> __Only for angstrom linux__
+>
+> Warning! On the newest angstrom image there is no dtc in opkg available.
+> A simple solution is to create the compiled dtbo file on a desktop ubuntu machine
+> and copy it to the BBB.
+>
+> * Clone the bbb_setup repository
+> * Install dtc (device tree compiler)
 
 ~~~
 sudo ./dtc.sh
 ~~~
 
-* Run the addOverlayToDeviceTree script (compiles and installs SPI0 and SPI1 overlay file)
+* Das addOverlayToDeviceTree Skript kompiliert und installiert das SPI0 und SPI1 Overlay File.
 
 ~~~
 sudo ./addOverlayToDeviceTree
 ~~~
 
-* To enable SPI1 on startup (and disable HDMI which uses SPI1 pins)
-* Mount boot partition
+* Aktivieren von SPI1 beim Start. (HDMI wird deaktiviert, da SPI1 diese Pins verwendet)
+* Boot Partition mounten.
 
 ~~~
 mkdir /mnt/boot
 mount /dev/mmcblk0p1 /mnt/boot
 ~~~
 
-* Edit uEnv.txt file on boot partition
+* Textdatei uEnv.txt auf der Boot Partition bearbeiten und folgendes einfügen.
 
 ~~~
 optargs=quiet drm.debug=7 capemgr.disable_partno=BB-BONELT-HDMI,BB-BONELT-HDMIN capemgr.enable_partno=MINOTAUR-SPI1
 ~~~
 
-* Reboot bbb
+* Das Beagle Bone Black neustarten.
 
 ~~~
 sudo reboot

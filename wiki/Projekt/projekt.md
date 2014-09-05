@@ -58,7 +58,7 @@ Das Package __robot_control__ umfasst die Implementierung des __PID-Reglers__ f�
 Motoren, das Auslesen der Ultraschallsensoren und das Verarbeiten von 
 ROS-Messages, um den Brick anzusteuern. Außerdem wird hier die 
 __ROS-Node RobotControl__ bereitgestellt, welche die 
-Kommunikatiosgrundlage aller anderen Packages darstellt. Mehr dazu in 
+Kommunikationsgrundlage aller anderen Packages darstellt. Mehr dazu in 
 dem Abschnitt \ref RobotControl.
 
 In dem Package __pid_monitor__ wird eine __GUI-Applikation__ realisiert, mit der sich 
@@ -166,8 +166,8 @@ der __Code Dokumentation__ entnommen werden.
 
 Eine weitere komfortable Funktion von RobotControl ist, dass __sämtliche 
 Einstellungen__ des PID-Reglers, Dimensionen des Roboters und 
-angeschlossene Sensoren __über den ROS-Param-Server geladen werden 
-können__. Diese Daten müssten ansonsten über ROS-Messages eingestellt 
+angeschlossene Sensoren über __den ROS-Param-Server geladen werden können__.
+Diese Daten müssten ansonsten über ROS-Messages eingestellt 
 werden. Dabei werden die Einstellungen auf dem ROS-Param-Server unter 
 dem Namespace __minotaur__ hinterlegt. Danach folgt der __Name der 
 Einstellungen__ und darunter die einzelnen Parameter. Die ganze Struktur 
@@ -249,7 +249,7 @@ größere Medianfilter filtert den Fehler entweder ganz weg oder der
 Fehler tritt nur einen kurzen Moment auf. Jedoch ist die __Reaktionszeit des 
 Roboter__ durch den großen Filter __extremst verlängert und zumeist 
 unzureichend__. Der Roboter kann dann nicht auf Umgebungsänderungen wie 
-das Auftauchen einer Wand reagieren. __Daselbe gilt auch für ein 
+das Auftauchen einer Wand reagieren. __Dasselbe gilt auch für ein 
 verlängertes Abtastintervall__. Es führt zu weniger Messungen mit 
 derselben Fehlmessung. Damit wird auch bestätigt, dass immer wieder 
 derselbe Messwert aus der gleichen Messungen geliefert wird. Die 
