@@ -29,7 +29,7 @@ namespace minotaur
 
         MouseData data;
 
-        if (serviceData.call(srv))
+		if (serviceData.call(srv))
             data = convertMouseDataMessage(srv.response.data);
         else {
             ROS_ERROR("Failed to call service getSensorData");

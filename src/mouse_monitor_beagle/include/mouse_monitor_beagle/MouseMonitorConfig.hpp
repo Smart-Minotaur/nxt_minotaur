@@ -16,6 +16,11 @@
 #define SENSOR1 "/dev/spidev1.0"
 #define SENSOR2 "/dev/spidev1.1"
 
+// TODO
+#define SENSOR1_Y_CORRECTION_FACTOR 3.6
+// TODO
+#define SENSOR2_Y_CORRECTION_FACTOR 0.7
+
 #define ROS_MOUSE_DATA_TOPIC "/mouseData"
 #define ROS_MOUSE_SETTINGS_TOPIC "/mouseSettings"
 

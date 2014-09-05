@@ -9,7 +9,7 @@
 
 #include "ros/ros.h"
 
-#define DEFAULT_SAMPLE_RATE 10 // Hz
+#define DEFAULT_SAMPLE_RATE 50 // Hz
 
 namespace minotaur
 {
@@ -25,6 +25,9 @@ namespace minotaur
 		initTimer();
 		initToolbar();
 		initDetail();
+		initMedianFilter();
+
+		logDialog = new MouseMonitorLogDialog;
 
 		connectSlots();
 
@@ -33,6 +36,14 @@ namespace minotaur
 
 	MouseMonitorWindow::~MouseMonitorWindow()
 	{
+		delete logDialog;
+
+		delete medianFilterDialog;
+		delete medianFilter_sensor1_yDisp;
+		delete medianFilter_sensor2_yDisp;
+		delete medianFilter_sensor1_xDisp;
+		delete medianFilter_sensor2_xDisp;
+
 		delete directionWidget1;
 		delete directionWidget2;
 		delete pathWidget;
@@ -67,6 +78,7 @@ namespace minotaur
 		// Menu bar
 		connect(actionAbout, SIGNAL(triggered()), this, SLOT(openAboutWindow()));
 		connect(actionExit, SIGNAL(triggered()), this, SLOT(close()));
+		connect(actionShow_log, SIGNAL(triggered()), this, SLOT(openLogDialog()));
 
 		// Sensor data tab
 		connect(getSensorSettingsBtn, SIGNAL(clicked()), this, SLOT(getSensorSettingsBtnClicked()));
@@ -78,6 +90,12 @@ namespace minotaur
 
 		connect(resetGraphsDispBtn, SIGNAL(clicked()), this, SLOT(resetGraphsDispBtnClicked()));
 		connect(resetGraphsSpeedBtn, SIGNAL(clicked()), this, SLOT(resetGraphsSpeedBtnClicked()));
+
+		// Settings dialog
+		connect(actionMedian_filter, SIGNAL(triggered()), this, SLOT(openMedianFilterSettingsDialog()));
+		connect(medianFilterDialog, SIGNAL(newMedianFilterSettings(MedianFilterSettings)),
+		        this, SLOT(newMedianFilterSettings(MedianFilterSettings)));
+		connect(medianFilterDialog->clearBtn, SIGNAL(clicked()), this, SLOT(clearMedianFilterClicked()));
 	}
 
 	void MouseMonitorWindow::initTimer()
@@ -224,26 +242,119 @@ namespace minotaur
 		detail2Box->layout()->addWidget(detail2Plot);
 	}
 
+	void MouseMonitorWindow::initMedianFilter()
+	{
+		medianFilterDialog = new MouseMonitorMedianFilterDialog(this);
+
+		MedianFilterSettings settings = medianFilterDialog->getSettings();
+
+		medianFilter_sensor1_yDisp = new MedianFilter(settings.s1Y_sampleNumbers);
+		medianFilter_sensor1_xDisp = new MedianFilter(settings.s1X_sampleNumbers);
+
+		medianFilter_sensor2_yDisp = new MedianFilter(settings.s2Y_sampleNumbers);
+		medianFilter_sensor2_xDisp = new MedianFilter(settings.s2X_sampleNumbers);
+	}
+
 	void MouseMonitorWindow::timerTimeout()
 	{
 		processMouseData(monitorNode.getMouseData(SENSOR1));
 		processMouseData(monitorNode.getMouseData(SENSOR2));
 	}
 
-	/**
-	 * This function is called to update all display widgets with the new
-	 * sensor data.
-	 */
 	void MouseMonitorWindow::processMouseData(const MouseData data)
 	{
-		updateData(data);
-		pathWidget->updateWidget(data);
-		updateDirectionWidgets(data);
-		updatePlot(data);
-		updateAbsValue(data);
+		if (data.id == "")
+			return;
+
+		MouseData processedData = correctMouseData(data);
+
+		// Log data
+		logDialog->logRaw(data);
+		logDialog->logFiltered(processedData);
+
+		// Display the data
+		updateDataDisplay(processedData);
+		pathWidget->updateWidget(processedData);
+		updateDirectionWidgets(processedData);
+		updatePlots(processedData);
+		updateAbsoluteValueDisplay(processedData);
 	}
 
-	void MouseMonitorWindow::updateAbsValue(MouseData data)
+	// TODO
+	MouseData MouseMonitorWindow::correctMouseData(MouseData data)
+	{
+		applyMedianFilter(data);
+
+		/*if (data.id == SENSOR1) {
+			//data.x_disp *= -1;
+			//data.y_disp *= -1;
+
+			//data.y_disp = (data.y_disp/100) * SENSOR1_Y_CORRECTION_FACTOR;
+
+			//data.y_disp -= 4.7;
+			//data.x_disp -= 4.0;
+		} else if (data.id == SENSOR2) {
+			//data.x_disp *= -1;
+			//data.y_disp *= -1;
+
+			//data.y_disp = (data.y_disp/100) * SENSOR2_Y_CORRECTION_FACTOR;
+
+			//data.y_disp -= 4.7;
+			//data.x_disp += 4.0;
+		}*/
+
+		return data;
+	}
+
+	/**
+	 * Only add the value to filter when != 0.
+	 */
+	void MouseMonitorWindow::applyMedianFilter(MouseData data)
+	{
+		if (data.id == SENSOR1) {
+			if (data.y_disp != 0) {
+				if (medianFilterDialog->s1Y_Enabled()) {
+					medianFilter_sensor1_yDisp->add(data.y_disp);
+					data.y_disp = medianFilter_sensor1_yDisp->value();
+				} else {
+					if (!medianFilter_sensor1_yDisp->isEmpty())
+						medianFilter_sensor1_yDisp->clear();
+				}
+			}
+
+			if (data.x_disp != 0) {
+				if (medianFilterDialog->s1X_Enabled()) {
+					medianFilter_sensor1_xDisp->add(data.x_disp);
+					data.x_disp = medianFilter_sensor1_xDisp->value();
+				} else {
+					if (!medianFilter_sensor1_xDisp->isEmpty())
+						medianFilter_sensor1_xDisp->clear();
+				}
+			}
+		} else if (data.id == SENSOR2) {
+			if (data.y_disp != 0) {
+				if (medianFilterDialog->s2Y_Enabled()) {
+					medianFilter_sensor2_yDisp->add(data.y_disp);
+					data.y_disp = medianFilter_sensor2_yDisp->value();
+				} else {
+					if (!medianFilter_sensor2_yDisp->isEmpty())
+						medianFilter_sensor2_yDisp->clear();
+				}
+			}
+
+			if (data.x_disp != 0) {
+				if (medianFilterDialog->s2X_Enabled()) {
+					medianFilter_sensor2_xDisp->add(data.x_disp);
+					data.x_disp = medianFilter_sensor2_xDisp->value();
+				} else {
+					if (!medianFilter_sensor2_xDisp->isEmpty())
+						medianFilter_sensor2_xDisp->clear();
+				}
+			}
+		}
+	}
+
+	void MouseMonitorWindow::updateAbsoluteValueDisplay(MouseData data)
 	{
 		QString txt;
 		double value;
@@ -271,7 +382,7 @@ namespace minotaur
 		}
 	}
 
-	void MouseMonitorWindow::updatePlot(MouseData data)
+	void MouseMonitorWindow::updatePlots(MouseData data)
 	{
 		if (data.id == SENSOR1) {
 			xDisp1Plot->updatePlot(data.x_disp);
@@ -295,7 +406,7 @@ namespace minotaur
 		}
 	}
 
-	void MouseMonitorWindow::updateData(MouseData data)
+	void MouseMonitorWindow::updateDataDisplay(MouseData data)
 	{
 		if (data.id == SENSOR1) {
 			name1->setText(QString::fromStdString(data.id));
@@ -312,9 +423,6 @@ namespace minotaur
 		}
 	}
 
-	/**
-	 * This function is used to update the table with the sensors settings.
-	 */
 	void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
 	{
 		if (settings.spiDevice == SENSOR1) {
@@ -353,14 +461,24 @@ namespace minotaur
 		return monitorNode;
 	}
 
-	// The event handlers for the widgets
+	// Slots ===================================================================
 
 	void MouseMonitorWindow::openAboutWindow()
 	{
 		QMessageBox::about(this, tr("About MouseMonitor"),
 		                   "This application allows to monitor two Philips PLN2033 Sensors.\n"
-						   "It is used for the Smart-Minotaur project\n\n."
-						   "Author: Jens Gansloser, HTWG Konstanz");
+		                   "It is used for the Smart-Minotaur project.\n\n"
+		                   "Author: Jens Gansloser, HTWG Konstanz");
+	}
+
+	void MouseMonitorWindow::openLogDialog()
+	{
+		logDialog->setVisible(true);
+	}
+
+	void MouseMonitorWindow::openMedianFilterSettingsDialog()
+	{
+		medianFilterDialog->setVisible(true);
 	}
 
 	void MouseMonitorWindow::sampleRateBtnClicked()
@@ -399,12 +517,17 @@ namespace minotaur
 
 	void MouseMonitorWindow::trackPathResetBtnClicked()
 	{
+		getSensorSettingsBtnClicked();
+
 		x_disp1_abs->setText("0");
 		y_disp1_abs->setText("0");
 		x_disp2_abs->setText("0");
 		y_disp2_abs->setText("0");
 
 		pathWidget->reset();
+
+		medianFilter_sensor1_yDisp->clear();
+		medianFilter_sensor2_yDisp->clear();
 	}
 
 	void MouseMonitorWindow::detailDebuggingEnable(const int status)
@@ -472,6 +595,30 @@ namespace minotaur
 		ySpeed1Plot->clear();
 		xSpeed2Plot->clear();
 		ySpeed2Plot->clear();
+	}
+
+	// From median filter settings dialog
+	void MouseMonitorWindow::clearMedianFilterClicked()
+	{
+		medianFilter_sensor1_yDisp->clear();
+		medianFilter_sensor1_xDisp->clear();
+		medianFilter_sensor2_yDisp->clear();
+		medianFilter_sensor2_xDisp->clear();
+	}
+
+	void MouseMonitorWindow::newMedianFilterSettings(MedianFilterSettings settings)
+	{
+		delete medianFilter_sensor1_yDisp;
+		delete medianFilter_sensor1_xDisp;
+
+		delete medianFilter_sensor2_yDisp;
+		delete medianFilter_sensor2_xDisp;
+
+		medianFilter_sensor1_yDisp = new MedianFilter(settings.s1Y_sampleNumbers);
+		medianFilter_sensor1_xDisp = new MedianFilter(settings.s1X_sampleNumbers);
+
+		medianFilter_sensor2_yDisp = new MedianFilter(settings.s2Y_sampleNumbers);
+		medianFilter_sensor2_xDisp = new MedianFilter(settings.s2X_sampleNumbers);
 	}
 
 	QString MouseMonitorWindow::uintToQString(uint data)

@@ -45,6 +45,8 @@ namespace minotaur
 	{
 		yData.clear();
 		xData.clear();
+		
+		curve.setSamples(xData, yData);
 
 		replot();
 	}

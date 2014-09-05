@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
 	qt_build
 	roscpp
 	mouse_monitor_beagle
+	minotaur_common
 )
 
 find_package(Qwt REQUIRED)

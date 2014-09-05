@@ -83,8 +83,13 @@ namespace minotaur
 			data.y_speed = ys;
 			data.x_disp = xd;
 			data.y_disp = yd;
-		} else
+		} else {
 			data.id = "";
+			data.x_speed = 0.0;
+			data.y_speed = 0.0;
+			data.x_disp = 0.0;
+			data.y_disp = 0.0;
+		}
 
 		return data;
 	}
@@ -98,12 +103,12 @@ namespace minotaur
 		settings = sensor->readPLNSettings();
 
 		settingsMsg.spiDevice = settings.spiDevice;
-		
+
 		settingsMsg.status_register = sensor->readPLNStatusRegister;
 		// Unused user registers
 		settingsMsg.delta_x_disp_register = 0; // Unused
 		settingsMsg.delta_y_disp_register = 0; // Unused
-		
+
 		settingsMsg.command_high_register = settings.command_high_register;
 		settingsMsg.command_low_register = settings.command_low_register;
 		settingsMsg.memory_pointer_register = settings.memory_pointer_register;
