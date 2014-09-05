@@ -1,7 +1,7 @@
 Installation {#installation}
 ===
 
-\section Übersicht Übersicht
+\section übersicht-installation Übersicht
 
 Die Installation des Systems unterteilt sich in 2 Bereiche:
 

@@ -3,7 +3,7 @@ NXTControl {#nxt-control}
 
 \tableofcontents
 
-\section Beschreibung Beschreibung
+\section beschreibung-nxt-control Beschreibung
 
 Die NXTControl Bibliothek bietet eine C++ Schnittstelle, um mit einem
 Lego NXT Brick zu kommunizieren. Hierbei wird das Direct Command
@@ -28,7 +28,7 @@ Folgende Erweiterungsmöglichkeiten wären für die Bibliothek denkbar:
 [Motor](@ref nxt::Motor) und [Ultraschallsensor](@ref nxt::UltrasonicSensor))
 * Platformunabhängigkeit
 
-\section Kompilieren Kompilieren
+\section kompilieren-nxt-control Kompilieren
 
 Um NXTControl zu kompilieren muss ein Compiler verwendet werden, der 
 zumindest den __C++0x Standard__ implementiert hat. Außerdem muss 
@@ -45,7 +45,7 @@ make
 
 Nun steht die Bibiliothek im Verzeichnis __build__ zur Verfügung.
 
-\section Entwicklungshergang Entwicklungshergang
+\section entwicklungshergang-nxt-control Entwicklungshergang
 
 Im Rahmen dieses Projekts war irgendeine Form der __Kommunikation mit dem
 Lego NXT Brick__ unverzichtbar. In ersten Ansätzen wurde eine
