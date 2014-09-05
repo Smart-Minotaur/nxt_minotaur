@@ -69,7 +69,7 @@ Geschwindigkeit und Winkelgeschwindigkeit über die Zeit auftragen. Die
 __Y-Achse__ stellt die gemessene Geschwindigkeit in m/s dar (bei 
 Winkelgeschwindigkeit Rad/s). Die X-Achse 
 zeigt die Nummer der Messung an. 3 bedeutet hierbei die 3. Messung. 
-Die Zeit zwischen 2 Messungen ist dabei vom eingestellten 
+Die Zeit zwischen zwei Messungen ist dabei vom eingestellten 
 Abtastintervall abhängig.
 
 Der dunkelblaue Bereich zeigt die Ultraschallsensormessungen. Der 
