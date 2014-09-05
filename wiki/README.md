@@ -1,10 +1,26 @@
-Smart Minotaur                        {#mainpage}
-============
+Smart Minotaur {#mainpage}
+===
 
-Overview
---------
+## Beschreibung
 
-About
------
+Smart Minotaur ist ein studentisches Projekt, bei dem ein Roboter
+entwickelt werden soll, der __ein Labyrinth kartografiert__. Dabei hat der
+Roboter bei Beginn keinerlei Anhaltspunkte über das Labyrinth.
 
-The all knowing robot!
+Als Hardware wird ein __Lego NXT Roboter__ verwendet. Dieser stellt 
+__Ultraschallsensoren und Motoren__ zur Verfügung. Der Lego Roboter ist über
+USB wiederum an ein __Beagle Bone Black__ (BBB) angeschlossen. Zur
+Verbesserung Odometrie des Roboters werden Mauslasersensoren verwendet.
+
+\image html roboter_front_horn.jpg "ROBOTER OVERLORD"
+
+## Übersicht
+
+1. @subpage installation
+2. @subpage vorarbeit
+3. @subpage projekt
+4. @subpage ausblick
+
+
+
+

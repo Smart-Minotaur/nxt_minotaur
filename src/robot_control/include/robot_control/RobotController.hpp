@@ -2,7 +2,8 @@
 #define ROBOT_CONTROL_ROBOT_CONTROLLER_HPP
 
 #include <tf/transform_broadcaster.h>
-#include "robot_control/IRobotController.hpp"
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Twist.h>
 #include "robot_control/PIDController.hpp"
 
 namespace minotaur
@@ -11,12 +12,11 @@ namespace minotaur
     /**
      * \brief The RobotController calculates the correct velocity for each motor
      * 
-     * Implements IRobotController.
      * This class receives linear and angular velocity and calculates the velocity
      * for each motor. A PIDController is used to keep the correct velocity on each
      * motor.
      */
-    class RobotController: public IRobotController
+    class RobotController
     {
     private:
         nav_msgs::Odometry odometry;
@@ -36,12 +36,12 @@ namespace minotaur
 	 */
         void deadReckoning(const int p_samplingIntervalMsec);
     public:
-        RobotController();
+        RobotController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor);
         
-        virtual ~RobotController() { }
+        ~RobotController();
         
         const nav_msgs::Odometry& getOdometry();
-        IPIDController& getPIDController();
+        PIDController& getPIDController();
         float getWheelTrack() const;
         
         void setVelocity(const geometry_msgs::Twist& p_velocity);

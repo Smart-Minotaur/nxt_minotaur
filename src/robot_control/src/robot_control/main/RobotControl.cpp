@@ -2,9 +2,7 @@
 #include <signal.h>
 #include <exception>
 #include <string>
-#include "nxt_control/Brick.hpp"
-#include "nxt_control/NxtOpcodes.hpp"
-#include "nxt_control/NxtExceptions.hpp"
+#include <nxt/NXTControl.hpp>
 #include "robot_control/RobotThread.hpp"
 #include "robot_control/SensorThread.hpp"
 #include "minotaur_common/RAIILock.hpp"
@@ -16,12 +14,10 @@
 #define WHEEL_TRACK 0.12f
 #define WHEEL_RADIUS 0.025f
 #define DEF_SAMPLING_INTERVAL 100
-#define LEFT_PORT PORT_A
-#define RIGHT_PORT PORT_B
 
-static nxtcon::Brick brick;
-static minotaur::RobotCommunicator robotCommunicator;
-static minotaur::SensorCommunicator sensorCommunicator;
+static nxt::Brick brick;
+static minotaur::RobotCommunicator robotCommunicator(&brick);
+static minotaur::SensorCommunicator sensorCommunicator(&brick);
 static minotaur::RobotThread robotThread(robotCommunicator);
 static minotaur::SensorThread sensorThread(sensorCommunicator);
 
@@ -81,7 +77,7 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
     
     ROS_INFO("Initializing USBConnection to Brick.");
     try {
-        brick.find();
+        brick.connect();
     } catch (const std::exception &e) {
         ROS_ERROR("Failed to initialize Brick: %s.", e.what());
         return false;
@@ -90,9 +86,9 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
     try {
         ROS_INFO("Initializing RobotCommunicator.");
         robotCommunicator.setTransformBroadcaster(p_broadcaster);
-        robotCommunicator.init(p_handle, &brick);
+        robotCommunicator.init(p_handle);
         ROS_INFO("Initializing SensorCommunicator.");
-        sensorCommunicator.init(p_handle, &brick);
+        sensorCommunicator.init(p_handle);
     } catch(const std::exception &e) {
         ROS_ERROR("Failed to initialize Communicator: %s.", e.what());
         return false;

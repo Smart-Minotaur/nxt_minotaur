@@ -125,7 +125,6 @@ namespace minotaur {
       int i;
 
       if (measuredDistance >= MAX_DISTANCE) {
-	ROS_INFO("MapCreator: The mesaured distance for sensor%d is too damn high: %dcm. Value ignored", sensor, measuredDistance);
 	return;
       }
       if (measuredDistance <= 0) {
@@ -160,8 +159,7 @@ namespace minotaur {
       angle = checkAngle(angle);
       generateCone(angle, realDistance, pos_x, pos_y);
       if (checkForInvalidValues(pos_x, pos_y)) {
-	ROS_INFO("----Value out of Area----");
-	return;
+        return;
       }
       
       for(i = 0; i < CONE_VALUES; i++){
@@ -169,7 +167,6 @@ namespace minotaur {
 	  incrementCells(pos_x[i], pos_y[i], i);
 	  if (i == 3) {
  	    // Debug-output
-	    ROS_INFO("MapCreator: Sensor%d: Inc cell [%d] [%d] to %d\n", sensor, pos_x[i], pos_y[i], map.getField()[pos_x[i]][pos_y[i]]);
 	  }
 	    
 	}

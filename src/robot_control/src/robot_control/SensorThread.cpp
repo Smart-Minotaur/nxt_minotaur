@@ -1,6 +1,6 @@
 #include <ros/ros.h>
+#include <nxt/NXTControl.hpp>
 #include "robot_control/SensorThread.hpp"
-#include "nxt_control/NxtExceptions.hpp"
 #include "minotaur_common/Math.hpp"
 #include "minotaur_common/RAIILock.hpp"
 
@@ -46,7 +46,7 @@ namespace minotaur
     {
         try {
             sensorCommunicator.publish();
-        } catch(const nxtcon::USBException &ue) {
+        } catch(const nxt::NXTException &ue) {
             ROS_ERROR("SensorThread: %s.", ue.what());
             stop();
         } catch(const std::exception &e) {

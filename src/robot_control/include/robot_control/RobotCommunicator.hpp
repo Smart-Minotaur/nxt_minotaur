@@ -5,7 +5,7 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <move_base_msgs/MoveBaseActionFeedback.h>
-#include "nxt_control/Motor.hpp"
+#include <nxt/NXTControl.hpp>
 #include "robot_control/RobotController.hpp"
 #include "minotaur_common/PIDParameter.h"
 #include "minotaur_common/RobotSettings.hpp"
@@ -19,9 +19,9 @@ namespace minotaur
     class RobotCommunicator
     {
     private:
-        nxtcon::Brick *brick;
-        nxtcon::Motor leftMotor;
-        nxtcon::Motor rightMotor;
+        nxt::Brick *brick;
+        nxt::Motor leftMotor;
+        nxt::Motor rightMotor;
         RobotController robotController;
         
         int statusMsec;
@@ -47,10 +47,10 @@ namespace minotaur
         void processPIDParamMsg(const minotaur_common::PIDParameter &p_msg);
         void checkBrickStatus(const int p_samplingIntervalMsec);
     public:
-        RobotCommunicator();
+        RobotCommunicator(nxt::Brick *p_brick);
         ~RobotCommunicator();
         
-        void init(ros::NodeHandle &p_handle, nxtcon::Brick *p_brick);
+        void init(ros::NodeHandle &p_handle);
         void setTransformBroadcaster(tf::TransformBroadcaster *p_odomBroadcaster);
         
 	/**

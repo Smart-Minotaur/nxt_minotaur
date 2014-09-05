@@ -45,6 +45,8 @@ namespace minotaur
             for(int i = 0; i < width; ++i)
             {
                 field[i] = new int[height];
+                for(int j = 0; j < height; ++j)
+                    field[i][j] = 0;
             }
         }
         
