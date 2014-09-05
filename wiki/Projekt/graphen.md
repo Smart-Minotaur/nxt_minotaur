@@ -54,7 +54,7 @@ Dieses Problem tritt zumeist aufgrund von unerklärlich schlechten Sensormesswer
 Wir haben versucht dieses Problem mittels eines Medianfilters zu beheben, jedoch ohne großen Erfolg.
 
 Das Problem des Medianfilters besteht darin, dass die Ultraschallsensoren stets mehrere fehlerhafte Werte in Folge liefern und der Filter dadurch nutzlos wird. 
-Mehr dazu siehe: \ref Ultraschallsensoren.
+Mehr dazu siehe: \ref ultraschallsensoren-projekt.
 
 Ein weiteres Problem besteht im Aufbau des Labyrinths. Zwischen zwei Holzplatten entsteht stets eine kleine Rille, da die Platten nicht exakt gleich groß sind. 
 An dieser Rille kann der Roboter, vor allem beim Rotieren, hängen bleiben.

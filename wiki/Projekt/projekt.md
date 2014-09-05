@@ -3,7 +3,7 @@ Projekt {#projekt}
 
 \tableofcontents
 
-\section Beschreibung Beschreibung
+\section beschreibung-projekt Beschreibung
 
 Die Aufgabe des Roboters war es __ein Labyrinth zu karthographieren__. 
 Als Roboter wurde ein __Lego NXT Brick__ verwendet. Der Roboter verfügt 
@@ -21,22 +21,22 @@ verbessern__.
 
 ---
 
-\section Struktur Struktur
+\section struktur-projekt Struktur
 
 Das Projekt ist in verschiedene __ROS-Packages__ unterteilt, sodass zu 
 jeder Zeit immer nur __die wirklich benötigten Packages kompiliert 
 werden können__. Dies ist vor allem in Hinblick auf die lange 
 Kompilierdauer auf dem Beagle Bone nützlich. Die einzelnen ROS-Packages 
-werden im folgenden Abschnitt \ref Packages kurz beschrieben. Für weitere 
+werden im folgenden Abschnitt \ref packages-projekt kurz beschrieben. Für weitere 
 Informationen können die __Code Dokumentation__ und die genannten 
 Abschnitte und Wikiseiten herangezogen werden.
 
 In diesen ROS-Packages sind verschiedene ROS-Nodes enthalten, die alle 
 miteinander über das ROS-Kommunikationsystem kommunizieren. Die Art 
-und Richtung der Kommunikation wird in dem Abschnitt \ref Datenfluss 
+und Richtung der Kommunikation wird in dem Abschnitt \ref datenfluss-projekt 
 erläutert.
 
-\subsection Packages Packages
+\subsection packages-projekt Packages
 
 Das Package __minotaur_common__ beinhaltet __grundlegende Strukturen und Funktionen__, die 
 __von allen anderen Packages verwendet__ werden. Darunter sind 
@@ -59,7 +59,7 @@ Motoren, das Auslesen der Ultraschallsensoren und das Verarbeiten von
 ROS-Messages, um den Brick anzusteuern. Außerdem wird hier die 
 __ROS-Node RobotControl__ bereitgestellt, welche die 
 Kommunikationsgrundlage aller anderen Packages darstellt. Mehr dazu in 
-dem Abschnitt \ref RobotControl.
+dem Abschnitt \ref robot-control-projekt.
 
 In dem Package __pid_monitor__ wird eine __GUI-Applikation__ realisiert, mit der sich 
 das Verhalten des PID-Reglers in Form von Graphen betrachten lässt. 
@@ -67,25 +67,25 @@ Der Roboter kann außerdem ferngesteuert werden. So können dessen
 Einschwing- und Ausgleichverhalten beobachtet werden.
 Neben den Motoren bietet die Applikation auch die Möglichkeit 
 Hindernisse mit den Ultraschallsensoren wahrzunehmen. Mehr dazu im 
-Abschnitt \ref GUI-Tools.
+Abschnitt \ref gui-tools-projekt.
 
 Das Package __minotaur_map__ realisiert den __ersten Ansatz__ dieses Projektes. Es 
 beinhaltet Funktionen und Strukturen um __Histogrammkarten__ zu 
 erzeugen und durch diese hindurch zu navigieren. Außerdem nutzt es 
 die __ROS Navigation Stack Schnittstelle__, um den Roboter anzusteuern. 
-Mehr Informationen dazu finden sich im Abschnitt \ref Ansätze.
+Mehr Informationen dazu finden sich im Abschnitt \ref ansätze-projekt.
 
 Bei __map_monitor__ handelt es sich um ein Package, das eine __GUI-Applikation__ für 
 die Histogrammkarte realisiert. Der Roboter kann angesteuert werden 
 während __eine Karte live mitgezeichnet__ wird. Mit diesem Tool kann 
 also die Qualität der Karte und auch das Verhalten des 
 Erstellungsalgorithmus beobachtet und bewertet werden. Mehr 
-Informationen finden sich im Abschnitt \ref GUI-Tools.
+Informationen finden sich im Abschnitt \ref gui-tools-projekt.
 
 In dem Package __minotaur_maze__ wird der __zweite Ansatz__ dieses Projektes 
 realisiert. Es enthält Strukturen und Funktionen, um den Roboter in 
 einem __graphenähnlichen Labyrinth__ zu bewegen und eine Karte dieses 
-Graphen zu erstellen. Mehr dazu im Abschnitt \ref Ansätze.
+Graphen zu erstellen. Mehr dazu im Abschnitt \ref ansätze-projekt.
 
 __mouse_monitor_beagle__ TODO Jens
 
@@ -93,14 +93,14 @@ __mouse_monitor_pc__ TODO Jens
 
 
 
-\subsection Datenfluss Datenfluss
+\subsection datenfluss-projekt Datenfluss
 
 Das folgende Diagramm zeigt die Kommunikationsstruktur in diesem Projekt.
 
 \image html minotaur-dataflow.png
 
 Die zentrale ROS-Node __RobotControl__ wird in dem Abschnicht \ref 
-RobotControl genauer betrachtet. __Movebase__ ist eine ROS interne 
+robot-control-projekt genauer betrachtet. __Movebase__ ist eine ROS interne 
 Node. Sie ist zuständig für die grundlegende Kommunikation innerhalb 
 des ROS Navigation Stack. Daher wird sie auch nur von Applikationen 
 benötigt, die den ROS Navigation Stack benutzen, ansonsten muss diese 
@@ -119,7 +119,7 @@ __Maussensoren__ anzusteuern.
 
 ---
 
-\section Implementierung Implementierung
+\section implementierung-projekt Implementierung
 
 Das Projekt umfasst viele einzelne __ROS-Nodes__ (Applikationen). Dabei 
 handelt es sich um __ineinandergreifende Anwendungen__, die über das 
@@ -129,10 +129,10 @@ Ihre __Funktionsweise__ und das korrekte __Starten dieser Anwendungen__
 (beispielsweise zur remote Steuerung des Roboters) wird 
 in den folgenden Abschnitten näher beleuchtet.
 
-\subsection RobotControl RobotControl
+\subsection robot-control-projekt RobotControl
 
 __RobotControl__ ist die zentrale ROS-Node des Projektes. Sie wird in 
-dem Package \ref robot_control realisiert.
+dem Package __robot_control__ realisiert.
 
 Die Node übernimmt das __Umrechnen von Geschwindigkeit und 
 Winkelgeschwindigkeit__ auf Geschwindigkeiten der einzelnen Motoren. 
@@ -182,7 +182,7 @@ dem Beagle Bone Black ausgeführt werden. Alle anderen Nodes können
 ebenfalls auf dem BBB oder aber auch auf einem anderen Computer im 
 selben Netzwerk ausgeführt werden.
 
-\subsection GUI-Tools GUI Tools
+\subsection gui-tools-projekt GUI Tools
 
 Während dieses Projektes wurde es notwendig __grafische Anwendungen__ zu 
 entwickeln, um bestimmte __Systemteile zu debuggen__ und deren Verhalten 
@@ -194,7 +194,7 @@ näher beschrieben:
 
 * @subpage gui-tools
 
-\subsection Maussensoren1 Maussensoren
+\subsection maussensoren1-projekt Maussensoren
 
 Da die Odometrie der Lego NXT Motoren nicht sehr gut ist und vor allem 
 bei Drehungen des Roboter oft Fehler verursachen, __da die Reifen 
@@ -205,7 +205,7 @@ auf der folgenden Seite.
 
 * @subpage maussensoren
 
-\subsection Ansätze Ansätze
+\subsection ansätze-projekt Ansätze
 
 Im Rahmen dieses Projektes wurden mehrere Lösungsansätze verfolgt.
 
@@ -221,12 +221,12 @@ wurde als __Graph__ betracht und in Zellen gleicher Größe unterteilt.
 
 ---
 
-\section Probleme Bleibende Probleme
+\section probleme-projekt Bleibende Probleme
 
 Im Verlauf des Projektes sind __mehrere Probleme__ aufgetreten, deren 
 Lösung bis zum derzeiten Zeitpunkt noch ausstehen.
 
-\subsection Ultraschallsensoren Ultraschallsensoren
+\subsection ultraschallsensoren-projekt Ultraschallsensoren
 
 Die Ultraschallsensoren des NXT registrieren __in scheinbar zufälligen 
 Abständen Fehlmessungen__, die jenseits einer Fehlertoleranz liegen. 
@@ -266,7 +266,7 @@ direkt, sondern nur über das Direct Command Interface ausgelesen werden.
 Aufgrund des großen Messfehlers und der wiederauftretenden Messwerte 
 ist __eine Navigation in einem Labyrinth für den Roboter kaum möglich__.
 
-\subsection Maussensoren2 Maussensoren
+\subsection maussensoren2-projekt Maussensoren
 
 TODO Jens
 

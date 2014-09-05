@@ -3,12 +3,12 @@ GUI Tools {#gui-tools}
 
 \tableofcontents
 
-\section pid_monitor pid_monitor
+\section pid_monitor-gui-tools pid_monitor
 
 Im folgenden soll die Anwendung __pid_monitor__ näher beschrieben 
 werden. Dabei wird auf ihren Nutzen und die Bedienung eingegangen.
 
-\subsection BeschreibungPID Beschreibung
+\subsection beschreibung-pid-gui-tools Beschreibung
 
 Die Anwendung __pid_monitor__, das sich im gleichnamigen Package befindet, 
 realisiert eine grafische Anwendung um den __PID-Regler der RobotControl 
@@ -23,7 +23,7 @@ PID-Regler__ beobachtet werden. Weiterhin können
 durch das [Ziegler–Nichols Verfahren](http://de.wikipedia.org/wiki/Faustformelverfahren_%28Automatisierungstechnik%29#Methode_von_Ziegler_und_Nichols)
 die optimalen PID-Parameter ermittelt werden.
 
-\subsection BedienungPID Bedienung
+\subsection bedienung-pid-gui-tools Bedienung
 
 Um __pid_monitor__ zu starten werden ein Beagle Bone Black und ein 
 Computer benötigt. Beide müssen sich im gleichen Netzwerk 
@@ -76,9 +76,9 @@ Der dunkelblaue Bereich zeigt die Ultraschallsensormessungen. Der
 __blaue Punkt__ stellt den Roboter dar und die __roten Punkte__ zeigen 
 Hindernisse, die von den Sensoren registriert werden.
 
-\section map_monitor map_monitor
+\section map_monitor-gui-tools map_monitor
 
-\subsection BeschreibungMAP Beschreibung
+\subsection beschreibung-map-gui-tools Beschreibung
 
 Die Anwendung __map_monitor__ dient der Beobachtung der Odometrie des 
 Roboters und der Aufzeichnung der Umgebungskarte. Mithilfe der 
@@ -87,7 +87,7 @@ Hindernisse in der Umgebung in eine grafische Oberfläche
 eingezeichnet. Mithilfe dieser Anwendung konnte festgestellt werden, 
 wie schlecht die Odometrie des Roboters tatsächlich ist.
 
-\subsection BedienungMAP Bedienung
+\subsection bedienung-map-gui-tools Bedienung
 
 Um __map_monitor__ zu starten werden ein Beagle Bone Black und ein 
 Computer benötigt. Beide müssen sich im gleichen Netzwerk 
@@ -128,7 +128,7 @@ Befehl ausgeführt werden.
 ~~~
 
 Mehr Informationen zu __pid_monitor__ finden sich im Abschnitt \ref 
-pid_monitor.
+pid_monitor-gui-tools.
 
-\section mouse_monitor_pc mouse_monitor_pc
+\section mouse_monitor_pc-gui-tools mouse_monitor_pc
 
