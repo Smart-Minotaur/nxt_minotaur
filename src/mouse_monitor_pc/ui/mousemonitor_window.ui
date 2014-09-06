@@ -839,7 +839,7 @@ QGroupBox::title {
      <x>0</x>
      <y>0</y>
      <width>981</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -859,6 +859,7 @@ QGroupBox::title {
      <string>Settings</string>
     </property>
     <addaction name="actionMedian_filter"/>
+    <addaction name="actionCalibrate_Sensors"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -889,6 +890,11 @@ QGroupBox::title {
   <action name="actionShow_log">
    <property name="text">
     <string>Show log</string>
+   </property>
+  </action>
+  <action name="actionCalibrate_Sensors">
+   <property name="text">
+    <string>Calibrate Sensors</string>
    </property>
   </action>
  </widget>
