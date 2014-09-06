@@ -9,13 +9,6 @@
 
 namespace minotaur
 {
-    class DefaultMinotaurListener : public IMinotaurListener
-    {
-    public:
-        void onReceiveOdometry(const nav_msgs::Odometry &p_odometry) { }
-        void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) { }
-    };
-    
     /**
      * \brief The MinotaurControlNode class is used to control the
      *        minotaur via ROS.
@@ -38,7 +31,6 @@ namespace minotaur
         nav_msgs::Odometry lastOdometry;
         pthread_mutex_t odomMutex;
         
-        DefaultMinotaurListener defaultListener;
         IMinotaurListener *listener;
         
         bool connected;
@@ -49,8 +41,8 @@ namespace minotaur
         void processSensorMsg(const minotaur_common::UltrasonicData &p_msg);
         
     public:
-        MinotaurControlNode(): connected(false), listener(&defaultListener) { pthread_mutex_init(&odomMutex, NULL); }
-        ~MinotaurControlNode() { pthread_mutex_destroy(&odomMutex); }
+        MinotaurControlNode();
+        ~MinotaurControlNode();
         
         /**
          * This method must be called before any other methods can be
