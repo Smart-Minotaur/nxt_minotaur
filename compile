@@ -23,7 +23,7 @@ then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze" -DUSE_MOUSE_SENSOR="TRUE"
 elif [ "$1" == "mm_p" ]
 then
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="mouse_monitor_beagle;mouse_monitor_pc"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle;mouse_monitor_pc"
 elif [ "$1" == "mm_b" ]
 then
 	sudo ntpdate -b -s -u ntp.ubuntu.com pool.ntp.org

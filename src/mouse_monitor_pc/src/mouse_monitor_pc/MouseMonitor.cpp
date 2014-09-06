@@ -19,6 +19,7 @@ int main(int argc, char **argv)
 
     qRegisterMetaType<minotaur::MouseData>("MouseData");
     qRegisterMetaType<pln_minotaur::PLN2033_Settings>("PLN2033_Settings");
+	qRegisterMetaType<minotaur::MedianFilterSettings>("MedianFilterSettings");
 
     QApplication app(argc, argv);
 
