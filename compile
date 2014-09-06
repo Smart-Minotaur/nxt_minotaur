@@ -36,7 +36,7 @@ then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze"
 elif [ "$1" == "all" ]
 then
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;robot_control;pid_monitor;minotaur_maze;minotaur_map;map_monitor" -DUSE_MOUSE_SENSOR="TRUE" -DBUILD_TEST_FILES="TRUE"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;robot_control;pid_monitor;minotaur_maze;minotaur_map;map_monitor;minotaur_teleop" -DUSE_MOUSE_SENSOR="TRUE" -DBUILD_TEST_FILES="TRUE"
 elif [ "$1" == "doxy" ]
 then
 	cd doc
