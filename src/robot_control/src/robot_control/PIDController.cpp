@@ -4,6 +4,7 @@
 
 #define DEG_PER_TICK 1.0f
 #define DEF_WHEEL_RADIUS 0.1f
+#define DEF_WHEEL_TRACK 0.1f
 
 #define DEF_KP 0.5f
 #define DEF_KI 0.3f
@@ -17,9 +18,9 @@
 namespace minotaur
 {
     PIDController::PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor)
-    :leftMotor(p_leftMotor), rightMotor(p_rightMotor), targetVelocity(),measuredVelocity(),
+    :leftMotor(p_leftMotor), rightMotor(p_rightMotor), targetVelocity(), measuredVelocity(),
     currentDiff(), lastDiff(), diffSum(), pidParameter(),
-    wheelRadius(DEF_WHEEL_RADIUS)
+    wheelRadius(DEF_WHEEL_RADIUS), wheelTrack(DEF_WHEEL_TRACK)
     {
         pidParameter.Kp = DEF_KP;
         pidParameter.Ki = DEF_KI;
@@ -29,35 +30,49 @@ namespace minotaur
     PIDController::~PIDController()
     { }
     
-    void PIDController::setVelocity(const MotorVelocity& p_velocity)
+    void PIDController::setVelocity(const float p_linearVelocity, const float p_angularVelocity)
     {
-        targetVelocity = p_velocity;
+		//to get the formula see kinematic of two wheeled robots
+        targetVelocity.leftMPS = p_linearVelocity - (p_angularVelocity * wheelTrack) / 2;
+		targetVelocity.rightMPS = p_linearVelocity + (p_angularVelocity * wheelTrack) / 2;
     }
 
     void PIDController::setWheelRadius(const float p_meter)
     {
         wheelRadius = p_meter;
     }
+	
+	void PIDController::setWheelTrack(const float p_meter)
+	{
+		wheelTrack = p_meter;
+	}
     
     void PIDController::setPIDParameter(const minotaur_common::PIDParameter& p_param)
     {
         pidParameter = p_param;
     }
 
-    const MotorVelocity& PIDController::getVelocity() const
-    {
-        return targetVelocity;
-    }
+    float PIDController::getLinearVelocity() const
+	{
+		//to get the formula see kinematic of two wheeled robots
+		return (measuredVelocity.rightMPS + measuredVelocity.leftMPS) / 2;
+	}
+	
+	float PIDController::getAngularVelocity() const
+	{
+		//to get the formula see kinematic of two wheeled robots
+		return (measuredVelocity.rightMPS - measuredVelocity.leftMPS) / wheelTrack;
+	}
     
-    const MotorVelocity& PIDController::getMeasuredVelocity() const
-    {
-        return measuredVelocity;
-    }
-
     float PIDController::getWheelRadius() const
     {
         return wheelRadius;
     }
+	
+	float PIDController::getWheelTrack() const
+	{
+		return wheelTrack;
+	}
     
      const minotaur_common::PIDParameter& PIDController::getPIDParameter() const
      {

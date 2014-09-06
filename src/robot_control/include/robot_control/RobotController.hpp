@@ -20,8 +20,6 @@ namespace minotaur
     {
     private:
         nav_msgs::Odometry odometry;
-        geometry_msgs::Twist velocity;
-        float wheelTrack;
         PIDController pidController;
         
 	/**
@@ -42,11 +40,8 @@ namespace minotaur
         
         const nav_msgs::Odometry& getOdometry();
         PIDController& getPIDController();
-        float getWheelTrack() const;
         
         void setVelocity(const geometry_msgs::Twist& p_velocity);
-        void setWheelTrack(const float p_wheelTrack);
-        
         void setPose(const geometry_msgs::PoseWithCovariance& p_pose);
         
 	/**

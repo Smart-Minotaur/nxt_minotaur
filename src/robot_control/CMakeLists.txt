@@ -1,27 +1,27 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robot_control)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x")
-
-add_subdirectory("lib/NXTControl")
-
-find_package(catkin REQUIRED COMPONENTS
-    std_msgs
-    roscpp
-    tf
-    message_generation
-    minotaur_common
-)
-
-# export info
-catkin_package(
-    INCLUDE_DIRS include
-    CATKIN_DEPENDS message_runtime
-)
-
-include_directories(include ${catkin_INCLUDE_DIRS} "lib/NXTControl/include")
-
 if(${USE_MOUSE_SENSOR})
+
+    set(CMAKE_CXX_FLAGS "-std=c++0x")
+
+    add_subdirectory("lib/NXTControl")
+
+    find_package(catkin REQUIRED COMPONENTS
+        std_msgs
+        roscpp
+        tf
+        message_generation
+        minotaur_common
+    )
+
+    # export info
+    catkin_package(
+        INCLUDE_DIRS include
+        CATKIN_DEPENDS message_runtime
+    )
+
+    include_directories(include ${catkin_INCLUDE_DIRS} "lib/NXTControl/include")
 
     set(ROBOT_CONTROL_DIR src/robot_control)
     file(GLOB ROBOT_CONTROL_LIB_SRC ${ROBOT_CONTROL_DIR}/*.cpp)

@@ -35,8 +35,9 @@ namespace minotaur
         
         int powerLeft;
         int powerRight;
-        
+		
         float wheelRadius;
+		float wheelTrack;
         
         void measureCurrentVelocity(const float p_samplingIntervalSecs);
         MotorVelocity measureTickVelocity(const float p_samplingIntervalSecs);
@@ -69,13 +70,15 @@ namespace minotaur
         PIDController(nxt::Motor &p_leftMotor, nxt::Motor &p_rightMotor);
         ~PIDController();
         
-        void setVelocity(const MotorVelocity& p_velocity);
+        void setVelocity(const float p_linearVelocity, const float p_angularVelocity);
         void setWheelRadius(const float p_meter);
+		void setWheelTrack(const float p_meter);
         void setPIDParameter(const minotaur_common::PIDParameter& p_param);
         
-        const MotorVelocity& getVelocity() const;
-        const MotorVelocity& getMeasuredVelocity() const;
+        float getLinearVelocity() const;
+		float getAngularVelocity() const;
         float getWheelRadius() const;
+		float getWheelTrack() const;
         const minotaur_common::PIDParameter& getPIDParameter() const;
         
 	/**

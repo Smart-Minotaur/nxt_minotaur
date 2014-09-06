@@ -33,8 +33,8 @@ namespace minotaur
     {
         RAIILock lock(&robotMutex);
         
-        ROS_INFO("-- Setting up RobotController.");
-        robotController.setWheelTrack(WHEEL_TRACK);
+        ROS_INFO("-- Setting up PIDController.");
+        robotController.getPIDController().setWheelTrack(WHEEL_TRACK);
         robotController.getPIDController().setWheelRadius(WHEEL_RADIUS);
         
         ROS_INFO("-- Subscribing to topic \"%s\".", MINOTAUR_SET_PID_PARAMETER_TOPIC);
@@ -120,7 +120,7 @@ namespace minotaur
         RAIILock lock(&robotMutex);
         robotController.getPIDController().setPIDParameter(p_settings.pidParameter);
         robotController.getPIDController().setWheelRadius(p_settings.wheelRadius);
-        robotController.setWheelTrack(p_settings.wheelTrack);
+        robotController.getPIDController().setWheelTrack(p_settings.wheelTrack);
     }
     
     void RobotCommunicator::shutdown()
