@@ -51,6 +51,7 @@ sudo rosdep init
 rosdep update
 echo "source /opt/ros/hydro/setup.bash" >> ~/.bashrc
 source ~/.bashrc
+sudo apt-get install ros-hydro-joy
 ~~~
 
 \subsection qt4-installation-pc QT4

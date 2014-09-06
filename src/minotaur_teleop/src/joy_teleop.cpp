@@ -28,8 +28,8 @@ namespace minotaur
 				controlNode.setVelocity(0,0);
 			}
 			else {
-				float linFactor = -p_joy->axes[VERTICAL_AXIS];
-				float angFactor = -p_joy->axes[HORIZONTAL_AXIS];
+				float linFactor = p_joy->axes[VERTICAL_AXIS];
+				float angFactor = p_joy->axes[HORIZONTAL_AXIS];
 				
 				ROS_INFO("Set Velocity: v=%.2f w=%.2f.",linFactor * MAX_LIN_VEL, angFactor * MAX_ANG_VEL);
 				controlNode.setVelocity(linFactor * MAX_LIN_VEL, angFactor * MAX_ANG_VEL);
