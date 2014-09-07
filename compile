@@ -30,7 +30,7 @@ then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle" -DUSE_MOUSE_SENSOR="TRUE"
 elif [ "$1" == "pc" ]
 then
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;pid_monitor;minotaur_maze"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;minotaur_common_qt;minotaur_map;minotaur_maze;minotaur_teleop;pid_monitor;map_monitor;"
 elif [ "$1" == "maze" ]
 then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze"

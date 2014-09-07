@@ -24,14 +24,12 @@ namespace minotaur
 		void joyCallback(const sensor_msgs::Joy::ConstPtr &p_joy)
 		{
 			if(p_joy->buttons[B_BUTTON]) {
-				ROS_INFO("Stop robot.");
 				controlNode.setVelocity(0,0);
 			}
 			else {
 				float linFactor = p_joy->axes[VERTICAL_AXIS];
 				float angFactor = p_joy->axes[HORIZONTAL_AXIS];
 				
-				ROS_INFO("Set Velocity: v=%.2f w=%.2f.",linFactor * MAX_LIN_VEL, angFactor * MAX_ANG_VEL);
 				controlNode.setVelocity(linFactor * MAX_LIN_VEL, angFactor * MAX_ANG_VEL);
 			}
 		}
@@ -52,6 +50,7 @@ namespace minotaur
 	
 		void run()
 		{
+			ROS_INFO("System up and ready.");
 			controlNode.spin();
 		}
 		
@@ -67,6 +66,7 @@ static struct sigaction sa;
 
 static void sighandler(int sig)
 {
+	ROS_INFO("Stop teleop.");
     teleop->stop();
 }
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	} catch(...) {
 		ROS_ERROR("Caught unknown.");
 	}
-	
+	ROS_INFO("Shutdown.");
 	ros::shutdown();
 	
 	return 0;
