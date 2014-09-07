@@ -6,16 +6,18 @@
 #include <QTimer>
 #include <QToolButton>
 
-#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
 #include "ui_mousemonitor_window.h"
-#include "mouse_monitor_pc/MouseMonitorNode.hpp"
 
+#include "mouse_monitor_beagle/MouseMonitorConfig.hpp"
+
+#include "mouse_monitor_pc/MouseMonitorNode.hpp"
 #include "mouse_monitor_pc/MouseMonitorDirectionWidget.hpp"
 #include "mouse_monitor_pc/MouseMonitorTrackPathWidget.hpp"
 #include "mouse_monitor_pc/MouseMonitorPlot.hpp"
 #include "mouse_monitor_pc/MouseMonitorMedianFilterDialog.hpp"
 #include "mouse_monitor_pc/MouseMonitorLogDialog.hpp"
 #include "mouse_monitor_pc/MouseMonitorCalibrationWizard.hpp"
+#include "mouse_monitor_pc/MouseMonitorCalibrationData.hpp"
 
 #include "minotaur_common/MedianFilter.hpp"
 
@@ -41,6 +43,7 @@ namespace minotaur
 
 			MouseMonitorLogDialog *logDialog;
 			MouseMonitorCalibrationWizard *calibrationWizard;
+			MouseMonitorCalibrationData calibrationData;
 
 			DirectionWidget *directionWidget1;
 			DirectionWidget *directionWidget2;
@@ -80,6 +83,7 @@ namespace minotaur
 			void initTimer();
 			void initDetail();
 			void initMedianFilter();
+			void initSensorCalibration();
 			void connectSlots();
 
 			/**
@@ -93,8 +97,9 @@ namespace minotaur
 			*/
 			void processMouseSettings(const pln_minotaur::PLN2033_Settings settings);
 
-			MouseData correctMouseData(const MouseData data);
-			void applyMedianFilter(MouseData data);
+			MouseData correctMouseData(MouseData data);
+			void applyMedianFilter(MouseData &data);
+			void calibrate(MouseData &data);
 
 			void updateDataDisplay(MouseData data);
 			void updateAbsoluteValueDisplay(MouseData data);
@@ -108,6 +113,7 @@ namespace minotaur
 			void openCalibrateSensorsWizard();
 			void openAboutWindow();
 			void openLogDialog();
+			void openMedianFilterSettingsDialog();
 
 			void sampleRateBtnClicked();
 			void resolution1BtnClicked();
@@ -120,9 +126,12 @@ namespace minotaur
 			void resetGraphsSpeedBtnClicked();
 
 			// Median filter settings dialog
-			void openMedianFilterSettingsDialog();
 			void newMedianFilterSettings(MedianFilterSettings settings);
 			void clearMedianFilterClicked();
+			
+			// Calibration wizard
+			void startCalibrateSensors(MouseMonitorCalibrationData data);
+			void stopCalibrateSensors();
 
 			void detailDebuggingEnable(const int status);
 
