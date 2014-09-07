@@ -9,28 +9,28 @@
 namespace minotaur
 {
 
-class MouseMonitorCalibrationWizard : public QWizard, public Ui::sensorCalibration
-{
-	Q_OBJECT
-	
-private:
-	MouseMonitorCalibrationData calibrationData;
-	
-public:
-	MouseMonitorCalibrationWizard(QWidget * parent = 0);
-	~MouseMonitorCalibrationWizard() { };
-	
-	void setMouseMonitorCalibrationData(MouseMonitorCalibrationData calibrationData);
-	MouseMonitorCalibrationData getMouseMonitorCalibrationData() const;
+	class MouseMonitorCalibrationWizard : public QWizard, public Ui::sensorCalibration
+	{
+			Q_OBJECT
 
-private Q_SLOTS:
-	void startBtnClicked();
-	void stopBtnClicked();
+		private:
+			MouseMonitorCalibrationData calibrationData;
 
-Q_SIGNALS:
-	void startCalibrateSensors(MouseMonitorCalibrationData data);
-	void stopCalibrateSensors();
-};
+		public:
+			MouseMonitorCalibrationWizard(QWidget * parent = 0);
+			~MouseMonitorCalibrationWizard() { };
+
+			void setMouseMonitorCalibrationData(MouseMonitorCalibrationData calibrationData);
+			MouseMonitorCalibrationData getMouseMonitorCalibrationData() const;
+
+		private Q_SLOTS:
+			void startBtnClicked();
+			void stopBtnClicked();
+
+		Q_SIGNALS:
+			void startCalibrateSensors(MouseMonitorCalibrationData data);
+			void stopCalibrateSensors();
+	};
 
 }
 

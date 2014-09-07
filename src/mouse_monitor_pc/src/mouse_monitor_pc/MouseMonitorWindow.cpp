@@ -18,6 +18,8 @@ namespace minotaur
 		QMainWindow(parent)
 	{
 		setupUi(this);
+		
+		logDialog = new MouseMonitorLogDialog;
 
 		initWidgets();
 		initTable();
@@ -26,10 +28,8 @@ namespace minotaur
 		initToolbar();
 		initDetail();
 		initMedianFilter();
+		initSensorCalibration();
 
-		logDialog = new MouseMonitorLogDialog;
-		calibrationWizard = new MouseMonitorCalibrationWizard;
-		
 		connectSlots();
 
 		timer->start(sampleRateToInterval(sampleRate));
@@ -92,16 +92,6 @@ namespace minotaur
 
 		connect(resetGraphsDispBtn, SIGNAL(clicked()), this, SLOT(resetGraphsDispBtnClicked()));
 		connect(resetGraphsSpeedBtn, SIGNAL(clicked()), this, SLOT(resetGraphsSpeedBtnClicked()));
-
-		// Settings dialog
-		connect(actionMedian_filter, SIGNAL(triggered()), this, SLOT(openMedianFilterSettingsDialog()));
-		connect(medianFilterDialog, SIGNAL(newMedianFilterSettings(MedianFilterSettings)),
-		        this, SLOT(newMedianFilterSettings(MedianFilterSettings)));
-		connect(medianFilterDialog->clearBtn, SIGNAL(clicked()), this, SLOT(clearMedianFilterClicked()));
-		
-		// Calibrate Sensors Wizard
-		connect(actionCalibrate_Sensors, SIGNAL(triggered()), this, SLOT(openCalibrateSensorsWizard()));
-		
 	}
 
 	void MouseMonitorWindow::initTimer()
@@ -259,6 +249,21 @@ namespace minotaur
 
 		medianFilter_sensor2_yDisp = new MedianFilter(settings.s2Y_sampleNumbers);
 		medianFilter_sensor2_xDisp = new MedianFilter(settings.s2X_sampleNumbers);
+
+		connect(actionMedian_filter, SIGNAL(triggered()), this, SLOT(openMedianFilterSettingsDialog()));
+		connect(medianFilterDialog, SIGNAL(newMedianFilterSettings(MedianFilterSettings)),
+		        this, SLOT(newMedianFilterSettings(MedianFilterSettings)));
+		connect(medianFilterDialog->clearBtn, SIGNAL(clicked()), this, SLOT(clearMedianFilterClicked()));
+	}
+
+	void MouseMonitorWindow::initSensorCalibration()
+	{
+		calibrationWizard = new MouseMonitorCalibrationWizard;
+		
+		connect(actionCalibrate_Sensors, SIGNAL(triggered()), this, SLOT(openCalibrateSensorsWizard()));
+		connect(calibrationWizard, SIGNAL(startCalibrateSensors(MouseMonitorCalibrationData)),
+		        this, SLOT(startCalibrateSensors(MouseMonitorCalibrationData)));
+		connect(calibrationWizard, SIGNAL(stopCalibrateSensors()), this, SLOT(stopCalibrateSensors()));
 	}
 
 	void MouseMonitorWindow::timerTimeout()
@@ -286,28 +291,10 @@ namespace minotaur
 		updateAbsoluteValueDisplay(processedData);
 	}
 
-	// TODO
 	MouseData MouseMonitorWindow::correctMouseData(MouseData data)
 	{
 		applyMedianFilter(data);
-
-		/*if (data.id == SENSOR1) {
-			//data.x_disp *= -1;
-			//data.y_disp *= -1;
-
-			//data.y_disp = (data.y_disp/100) * SENSOR1_Y_CORRECTION_FACTOR;
-
-			//data.y_disp -= 4.7;
-			//data.x_disp -= 4.0;
-		} else if (data.id == SENSOR2) {
-			//data.x_disp *= -1;
-			//data.y_disp *= -1;
-
-			//data.y_disp = (data.y_disp/100) * SENSOR2_Y_CORRECTION_FACTOR;
-
-			//data.y_disp -= 4.7;
-			//data.x_disp += 4.0;
-		}*/
+		calibrate(data);
 
 		return data;
 	}
@@ -315,7 +302,7 @@ namespace minotaur
 	/**
 	 * Only add the value to filter when != 0.
 	 */
-	void MouseMonitorWindow::applyMedianFilter(MouseData data)
+	void MouseMonitorWindow::applyMedianFilter(MouseData &data)
 	{
 		if (data.id == SENSOR1) {
 			if (data.y_disp != 0) {
@@ -356,6 +343,27 @@ namespace minotaur
 					if (!medianFilter_sensor2_xDisp->isEmpty())
 						medianFilter_sensor2_xDisp->clear();
 				}
+			}
+		}
+	}
+
+	void MouseMonitorWindow::calibrate(MouseData &data)
+	{
+		if (calibrationData.isCalibrating()) {
+			calibrationData.addData(data);
+			calibrationWizard->setMouseMonitorCalibrationData(calibrationData);
+		} else {
+			// TODO: Make that better
+			if (data.id == SENSOR1) {
+				double angle = calibrationData.getS1AngleOffset();
+				
+				data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
+				data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
+			} else if (data.id == SENSOR2) {
+				double angle = calibrationData.getS2AngleOffset();
+				
+				data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
+				data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 			}
 		}
 	}
@@ -490,6 +498,20 @@ namespace minotaur
 	void MouseMonitorWindow::openCalibrateSensorsWizard()
 	{
 		calibrationWizard->setVisible(true);
+	}
+
+	void MouseMonitorWindow::startCalibrateSensors(MouseMonitorCalibrationData data)
+	{
+		calibrationData = data;
+		calibrationData.startCalibrating();
+	}
+
+	void MouseMonitorWindow::stopCalibrateSensors()
+	{
+		calibrationData.stopCalibrating();
+		calibrationData.calibrate();
+
+		calibrationWizard->setMouseMonitorCalibrationData(calibrationData);
 	}
 
 	void MouseMonitorWindow::sampleRateBtnClicked()
@@ -643,4 +665,3 @@ namespace minotaur
 	}
 
 }
-
