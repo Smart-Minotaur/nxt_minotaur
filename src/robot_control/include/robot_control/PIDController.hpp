@@ -63,7 +63,6 @@ namespace minotaur
                                  const float p_diffSum,
                                  const int p_motorPercent,
                                  const float p_samplingIntervalSecs);
-       void printDebugInfoPerStep(); 
        
         
     public:

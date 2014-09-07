@@ -28,7 +28,8 @@ namespace minotaur
 		initMedianFilter();
 
 		logDialog = new MouseMonitorLogDialog;
-
+		calibrationWizard = new MouseMonitorCalibrationWizard;
+		
 		connectSlots();
 
 		timer->start(sampleRateToInterval(sampleRate));
@@ -37,6 +38,7 @@ namespace minotaur
 	MouseMonitorWindow::~MouseMonitorWindow()
 	{
 		delete logDialog;
+		delete calibrationWizard;
 
 		delete medianFilterDialog;
 		delete medianFilter_sensor1_yDisp;
@@ -96,6 +98,10 @@ namespace minotaur
 		connect(medianFilterDialog, SIGNAL(newMedianFilterSettings(MedianFilterSettings)),
 		        this, SLOT(newMedianFilterSettings(MedianFilterSettings)));
 		connect(medianFilterDialog->clearBtn, SIGNAL(clicked()), this, SLOT(clearMedianFilterClicked()));
+		
+		// Calibrate Sensors Wizard
+		connect(actionCalibrate_Sensors, SIGNAL(triggered()), this, SLOT(openCalibrateSensorsWizard()));
+		
 	}
 
 	void MouseMonitorWindow::initTimer()
@@ -481,6 +487,11 @@ namespace minotaur
 		medianFilterDialog->setVisible(true);
 	}
 
+	void MouseMonitorWindow::openCalibrateSensorsWizard()
+	{
+		calibrationWizard->setVisible(true);
+	}
+
 	void MouseMonitorWindow::sampleRateBtnClicked()
 	{
 		sampleRate = sampleRateEdit->text().toInt();
@@ -632,3 +643,4 @@ namespace minotaur
 	}
 
 }
+

@@ -15,6 +15,27 @@
 
 namespace minotaur
 {
+	class DefaultMinotaurListener : public IMinotaurListener
+    {
+    public:
+        void onReceiveOdometry(const nav_msgs::Odometry &p_odometry) { }
+        void onReceiveUltrasonicData(const minotaur_common::UltrasonicData &p_sensorData) { }
+    };
+	
+	static DefaultMinotaurListener defaultListener;
+	
+	MinotaurControlNode::MinotaurControlNode()
+	: connected(false), listener(&defaultListener)
+	{
+		initOdometry(lastOdometry);
+		pthread_mutex_init(&odomMutex, NULL);
+	}
+	
+	MinotaurControlNode::~MinotaurControlNode()
+	{
+		pthread_mutex_destroy(&odomMutex);
+	}
+	
     void MinotaurControlNode::connectToROS(ros::NodeHandle &p_nodeHandle)
     {
         if(!ros::master::check())

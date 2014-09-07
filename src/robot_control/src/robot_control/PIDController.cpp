@@ -88,7 +88,6 @@ namespace minotaur
         
         setMotorPower(samplingSec);
         
-        printDebugInfoPerStep();
     }
 
     void PIDController::measureCurrentVelocity(const float p_samplingIntervalSecs)
@@ -203,18 +202,5 @@ namespace minotaur
             result = MIN_MOTOR_POWER;
         
         return result;
-    }
-    
-    void PIDController::printDebugInfoPerStep()
-    {
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Target Vel:     left = %.2f mps; right = %.2f mps", targetVelocity.leftMPS, targetVelocity.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Measured Vel:   left = %.2f mps; right = %.2f mps", measuredVelocity.leftMPS, measuredVelocity.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Cur Diff Vel:   left = %.2f mps; right = %.2f mps", currentDiff.leftMPS, currentDiff.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Last Diff Vel:  left = %.2f mps; right = %.2f mps", lastDiff.leftMPS, lastDiff.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Diff Sum:       left = %.2f mps; right = %.2f mps", diffSum.leftMPS, diffSum.rightMPS);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Power:          left = %d; right = %d", powerLeft, powerRight);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "Radius = %.4f m", wheelRadius);
-        ROS_DEBUG_NAMED(PID_CONTROLLER_DEBUG_NAME, "=================================================");
     }
 }

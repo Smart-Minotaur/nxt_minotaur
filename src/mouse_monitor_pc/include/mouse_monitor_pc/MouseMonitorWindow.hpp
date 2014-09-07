@@ -15,6 +15,7 @@
 #include "mouse_monitor_pc/MouseMonitorPlot.hpp"
 #include "mouse_monitor_pc/MouseMonitorMedianFilterDialog.hpp"
 #include "mouse_monitor_pc/MouseMonitorLogDialog.hpp"
+#include "mouse_monitor_pc/MouseMonitorCalibrationWizard.hpp"
 
 #include "minotaur_common/MedianFilter.hpp"
 
@@ -39,6 +40,7 @@ namespace minotaur
 			MedianFilter *medianFilter_sensor2_xDisp;
 
 			MouseMonitorLogDialog *logDialog;
+			MouseMonitorCalibrationWizard *calibrationWizard;
 
 			DirectionWidget *directionWidget1;
 			DirectionWidget *directionWidget2;
@@ -103,6 +105,7 @@ namespace minotaur
 			int sampleRateToInterval(int sampleRate);
 
 		private Q_SLOTS:
+			void openCalibrateSensorsWizard();
 			void openAboutWindow();
 			void openLogDialog();
 
