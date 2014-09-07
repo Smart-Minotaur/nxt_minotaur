@@ -1,3 +1,8 @@
+# Koordinatensystem des Roboters:
+# X-Achse zeigt nach vorne
+# Y-Achse zeigt nach links
+# Winkel werden in Grad angegeben (positiv = gegen Uhrzeigersinn)
+# Abstände sind in Meter angegeben
 minotaur:
     models:
         Heracles:
@@ -17,7 +22,7 @@ minotaur:
             sensor_0:
                 direction: -90.0
                 dx: 0.03
-                dy: 0.03
+                dy: -0.03
             sensor_1:
                 direction: 90.0
                 dx: 0.03
@@ -26,5 +31,9 @@ minotaur:
                 direction: 0.0
                 dx: 0.03
                 dy: 0.0
+            mouse_0:
+                dx: -0.03
+                dy: 0.01
+                error_angle: 5.0
         CurrentModel: "Theseus"
         
