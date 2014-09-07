@@ -7,8 +7,6 @@ namespace minotaur
 
 	MouseMonitorCalibrationData::MouseMonitorCalibrationData()
 	{
-		distance = 0;
-
 		s1XDisplacement = 0.0;
 		s1YDisplacement = 0.0;
 		s2XDisplacement = 0.0;
@@ -47,11 +45,6 @@ namespace minotaur
 		this->s2AngleOffset = angleOffset;
 	}
 
-	void MouseMonitorCalibrationData::setDistance(int distance)
-	{
-		this->distance = distance;
-	}
-
 	void MouseMonitorCalibrationData::setS1RealDistance(double realDistance)
 	{
 		this->s1RealDistance = realDistance;
@@ -61,6 +54,7 @@ namespace minotaur
 	{
 		this->s2RealDistance = realDistance;
 	}
+
 	void MouseMonitorCalibrationData::setS1XDisplacement(double s1XDisplacement)
 	{
 		this->s1XDisplacement = s1XDisplacement;
@@ -91,14 +85,11 @@ namespace minotaur
 		return s2AngleOffset;
 	}
 
-	int MouseMonitorCalibrationData::getDistance() const
-	{
-		return distance;
-	}
 	double MouseMonitorCalibrationData::getS1RealDistance() const
 	{
 		return s1RealDistance;
 	}
+
 	double MouseMonitorCalibrationData::getS2RealDistance() const
 	{
 		return s2RealDistance;
@@ -151,8 +142,21 @@ namespace minotaur
 
 	void MouseMonitorCalibrationData::calibrate()
 	{
-		s1AngleOffset = std::atan2(distance, 0) - std::atan2(s1YDisplacement, s1XDisplacement);
-		s2AngleOffset = std::atan2(distance, 0) - std::atan2(s2YDisplacement, s2XDisplacement);
+		double atanRealDistance;
+
+		if (s1YDisplacement > 0)
+			atanRealDistance = M_PI/2;
+		else if (s1YDisplacement < 0)
+			atanRealDistance = -M_PI/2;
+
+		s1AngleOffset = atanRealDistance - std::atan2(s1YDisplacement, s1XDisplacement);
+
+		if (s2YDisplacement > 0)
+			atanRealDistance = M_PI/2;
+		else if (s2YDisplacement < 0)
+			atanRealDistance = -M_PI/2;
+
+		s2AngleOffset = atanRealDistance - std::atan2(s2YDisplacement, s2XDisplacement);
 
 		s1RealDistance = (std::sin(s1AngleOffset) * s1XDisplacement) + (std::cos(s1AngleOffset) * s1YDisplacement);
 		s2RealDistance = (std::sin(s2AngleOffset) * s2XDisplacement) + (std::cos(s2AngleOffset) * s2YDisplacement);

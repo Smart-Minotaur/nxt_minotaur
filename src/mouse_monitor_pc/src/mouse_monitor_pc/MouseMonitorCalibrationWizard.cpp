@@ -34,7 +34,6 @@ namespace minotaur
 
 	void MouseMonitorCalibrationWizard::startBtnClicked()
 	{
-		this->calibrationData.setDistance(distanceEdit->text().toInt());
 		Q_EMIT startCalibrateSensors(this->calibrationData);
 	}
 
