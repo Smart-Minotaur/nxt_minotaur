@@ -74,24 +74,29 @@ namespace minotaur
 	void TrackPathWidget::drawRobot(QPainter *painter)
 	{
 		// TODO: Add rotation
-		
-		painter->setPen(QPen(Qt::black, 1));
 
-		painter->drawLine(robot.xPos() - robot.getAttributes().distanceToWheel, robot.yPos(),
-		                  robot.xPos() + robot.getAttributes().distanceToWheel, robot.yPos());
+		double axisHeight = 1;
 
-		painter->setPen(QPen(Qt::green, 0.5));
-		painter->drawRect(robot.xPos() - robot.getAttributes().distanceToWheel - 0.25, robot.yPos() - 0.25,
-		                  1, 2);//, Qt::DiagCrossPattern);
-		painter->drawRect(robot.xPos() + robot.getAttributes().distanceToWheel - 0.25, robot.yPos() - 0.25,
-		                  1, 2);//, Qt::DiagCrossPattern);
+		painter->setPen(QPen(Qt::black, axisHeight));
+		QLineF axis(robot.xPos() - robot.getAttributes().distanceToWheel, robot.yPos(),
+		            robot.xPos() + robot.getAttributes().distanceToWheel, robot.yPos());
+		painter->drawLine(axis);
+
+		painter->setPen(QPen(Qt::green, axisHeight/2.0));
+		QRectF wheel1(robot.xPos() - robot.getAttributes().distanceToWheel - axisHeight/2.0,
+		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
+		QRectF wheel2(robot.xPos() + robot.getAttributes().distanceToWheel - axisHeight/2.0,
+		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
+
+		painter->drawRect(wheel1);
+		painter->drawRect(wheel2);
 
 		// Draw coordinate system
-		painter->setPen(QPen(Qt::red, 0.5));
+		/*painter->setPen(QPen(Qt::red, 0.5));
 		double len = 4;
 		painter->drawLine(robot.xPos() - 0.25, robot.yPos(),
 		                  robot.xPos() + (sin(robot.getDirection() * len)),
-		                  robot.yPos() + (cos(robot.getDirection() * len)));
+		                  robot.yPos() + (cos(robot.getDirection() * len)));*/
 	}
 
 	void TrackPathWidget::updateWidget(MouseData data)
