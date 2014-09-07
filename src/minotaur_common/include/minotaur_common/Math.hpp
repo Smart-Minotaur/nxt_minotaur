@@ -14,6 +14,7 @@
 #define MINOTAUR_MATH_HPP
 
 #include <cmath>
+#include <vector>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
@@ -69,6 +70,9 @@ namespace minotaur
     float getAngularVelocity(const geometry_msgs::Twist &p_twist);
     void setAngularVelocity(nav_msgs::Odometry &p_odometry, const float p_angularVelocity);
     void setAngularVelocity(geometry_msgs::Twist &p_twist, const float p_angularVelocity);
+	
+	std::vector<float> rotateVec(const std::vector<float> &p_vector, const float p_radian);
+	std::vector<float> rotateVec(const float x, const float y, const float p_radian);
 }
 
 #endif
