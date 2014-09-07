@@ -152,7 +152,11 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="s1XEdit"/>
+              <widget class="QLineEdit" name="s1XEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_11">
@@ -162,7 +166,11 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="s1YEdit_2"/>
+              <widget class="QLineEdit" name="s1YEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -200,10 +208,18 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="s2YEdit"/>
+              <widget class="QLineEdit" name="s2YEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="s2XEdit"/>
+              <widget class="QLineEdit" name="s2XEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -253,7 +269,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="s1AngleOffsetEdit"/>
+           <widget class="QLineEdit" name="s1AngleOffsetEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
@@ -263,7 +283,11 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="s1RealDistanceEdit"/>
+           <widget class="QLineEdit" name="s1RealDistanceEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -285,7 +309,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="s2AngleOffsetEdit"/>
+           <widget class="QLineEdit" name="s2AngleOffsetEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_7">
@@ -295,7 +323,11 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="s2RealDistanceEdit"/>
+           <widget class="QLineEdit" name="s2RealDistanceEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
