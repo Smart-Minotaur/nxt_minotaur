@@ -182,5 +182,21 @@ namespace minotaur
     void setAngularVelocity(geometry_msgs::Twist &p_twist, const float p_angularVelocity)
     {
         p_twist.angular.z = p_angularVelocity;
-    }    
+    }
+
+	std::vector<float> rotateVec(const std::vector<float> &p_vector, const float p_radian)
+	{
+		return rotateVec(p_vector[0], p_vector[1], p_radian);
+	}
+	
+	
+	std::vector<float> rotateVec(const float x, const float y, const float p_radian)
+	{
+		std::vector<float> result(2);
+		
+		result[0] = x * cos(p_radian) + (y * -sin(p_radian));
+		result[1] = x * sin(p_radian) + (y * cos(p_radian));
+		
+		return result;
+	}
 }
