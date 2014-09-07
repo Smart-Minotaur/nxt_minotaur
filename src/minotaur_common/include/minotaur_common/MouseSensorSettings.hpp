@@ -6,9 +6,11 @@ namespace minotaur
 	class MouseSetting
 	{
 	public:
-		float dx;
-		float dy;
+		int id;
+		std::string device;
+		float x, y;
 		float errorAngle;
+		int xResolution, yResolution;
 		
 		MouseSetting();
 		~MouseSetting();

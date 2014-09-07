@@ -122,6 +122,12 @@ namespace minotaur
         robotController.getPIDController().setWheelRadius(p_settings.wheelRadius);
         robotController.getPIDController().setWheelTrack(p_settings.wheelTrack);
     }
+	
+	void RobotCommunicator::applySettings(const MouseSensorSettings &p_settings)
+	{
+		RAIILock lock(&robotMutex);
+		robotController.getPIDController().setMouseSensorSettings(p_settings);
+	}
     
     void RobotCommunicator::shutdown()
     {
