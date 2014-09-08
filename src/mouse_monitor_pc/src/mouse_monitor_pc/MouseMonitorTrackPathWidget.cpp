@@ -36,7 +36,7 @@ namespace minotaur
 
 		drawGrid(painter);
 
-		//painter.setRenderHint(QPainter::Antialiasing);
+		painter.setRenderHint(QPainter::Antialiasing);
 		painter.translate(QPointF(translatex, translatey));
 		painter.scale((qreal) zoom, (qreal) zoom);
 

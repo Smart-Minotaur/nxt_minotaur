@@ -10,7 +10,7 @@
 #include "PLN2033_Settings.h"
 
 // Outputs debug messages if true
-#define DEBUG_ENABLE 1
+#define DEBUG_ENABLE 0
 
 namespace minotaur
 {
