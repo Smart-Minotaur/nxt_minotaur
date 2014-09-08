@@ -14,8 +14,8 @@ namespace minotaur
 
 	void TrackPathWidget::init(double posx, double posy)
 	{
-		startx = posx;
-		starty = posy;
+		startx = this->width() / 2.0; //posx;
+		starty = this->height() / 2.0; //posy;
 
 		sensor1_path.moveTo(QPointF(startx, starty));
 		sensor2_path.moveTo(QPointF(startx, starty));
@@ -34,7 +34,28 @@ namespace minotaur
 	{
 		QPainter painter(this);
 
-		// Draw grid
+		drawGrid(painter);
+
+		//painter.setRenderHint(QPainter::Antialiasing);
+		painter.translate(QPointF(translatex, translatey));
+		painter.scale((qreal) zoom, (qreal) zoom);
+
+		drawRobot(painter);
+
+		// Draw path
+		if (sensor1_enable) {
+			painter.setPen(Qt::blue);
+			painter.drawPath(sensor1_path);
+		}
+
+		if (sensor2_enable) {
+			painter.setPen(Qt::red);
+			painter.drawPath(sensor2_path);
+		}
+	}
+
+	void TrackPathWidget::drawGrid(QPainter &painter)
+	{
 		double gridWidth = this->width();
 		double gridHeight = this->height();
 
@@ -52,53 +73,37 @@ namespace minotaur
 			painter.drawLine(0, i * GRID_SCALE,
 			                 xSteps * GRID_SCALE, i * GRID_SCALE);
 		}
-
-		painter.setRenderHint(QPainter::Antialiasing);
-		painter.translate(QPointF(translatex, translatey));
-		painter.scale((qreal) zoom, (qreal) zoom);
-
-		drawRobot(&painter);
-
-		// Draw path
-		if (sensor1_enable) {
-			painter.setPen(Qt::blue);
-			painter.drawPath(sensor1_path);
-		}
-
-		if (sensor2_enable) {
-			painter.setPen(Qt::red);
-			painter.drawPath(sensor2_path);
-		}
 	}
 
-	void TrackPathWidget::drawRobot(QPainter *painter)
+	void TrackPathWidget::drawRobot(QPainter &painter)
 	{
 		// TODO: Add rotation
 
 		double axisHeight = 1;
 
-		painter->setPen(QPen(Qt::black, axisHeight));
+		painter.setPen(QPen(Qt::black, axisHeight));
 		QLineF axis(robot.xPos() - robot.getAttributes().distanceToWheel, robot.yPos(),
 		            robot.xPos() + robot.getAttributes().distanceToWheel, robot.yPos());
-		painter->drawLine(axis);
+		painter.drawLine(axis);
 
-		painter->setPen(QPen(Qt::green, axisHeight/2.0));
+		painter.setPen(QPen(Qt::green, axisHeight/2.0));
 		QRectF wheel1(robot.xPos() - robot.getAttributes().distanceToWheel - axisHeight/2.0,
 		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
 		QRectF wheel2(robot.xPos() + robot.getAttributes().distanceToWheel - axisHeight/2.0,
 		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
 
-		painter->drawRect(wheel1);
-		painter->drawRect(wheel2);
+		painter.drawRect(wheel1);
+		painter.drawRect(wheel2);
 
 		// Draw coordinate system
-		/*painter->setPen(QPen(Qt::red, 0.5));
+		/*painter.setPen(QPen(Qt::red, 0.5));
 		double len = 4;
-		painter->drawLine(robot.xPos() - 0.25, robot.yPos(),
+		painter.drawLine(robot.xPos() - 0.25, robot.yPos(),
 		                  robot.xPos() + (sin(robot.getDirection() * len)),
 		                  robot.yPos() + (cos(robot.getDirection() * len)));*/
 	}
 
+	// TODO: Remove that and make it in update robot
 	void TrackPathWidget::updateWidget(MouseData data)
 	{
 		if (data.id == "/dev/spidev1.0")

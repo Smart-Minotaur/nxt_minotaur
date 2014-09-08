@@ -7,7 +7,11 @@ namespace minotaur
 
 	MouseMonitorNodeBeagle::MouseMonitorNodeBeagle() :
 		sensor1(new pln_minotaur::PLN2033(SENSOR1)),
-		sensor2(new pln_minotaur::PLN2033(SENSOR2))
+		sensor2(new pln_minotaur::PLN2033(SENSOR2)),
+		sensor1Data(SENSOR1),
+		sensor2Data(SENSOR2),
+		sampleFrequency(SENSOR_SAMPLE_FREQUENCY),
+		debug(DEBUG_ENABLE) // TODO
 	{
 		serviceData = nodeHandle.advertiseService("getSensorData", &MouseMonitorNodeBeagle::sendData, this);
 		serviceSettings = nodeHandle.advertiseService("getSensorSettings", &MouseMonitorNodeBeagle::sendSettings, this);
@@ -22,7 +26,34 @@ namespace minotaur
 
 	void MouseMonitorNodeBeagle::run()
 	{
-		ros::spin();
+		ros::Rate r(sampleFrequency);
+
+		while (true) {
+			processSensorData(sensor1, &sensor1Data);
+			processSensorData(sensor2, &sensor2Data);
+
+			ros::spinOnce();
+			r.sleep();
+		}
+	}
+
+	void MouseMonitorNodeBeagle::processSensorData(
+	    pln_minotaur::IPLNTrackingDevice *sensor,
+	    ProcessedSensorData *data)
+	{
+		double xs, ys; // Speed
+		double xd, yd; // Displacement
+
+		// TODO: Check lift bit
+
+		if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
+			data->xDisplacement += xd;
+			data->yDisplacement += yd;
+			data->xSpeed = xs;
+			data->ySpeed = ys;
+		} else {
+
+		}
 	}
 
 	bool MouseMonitorNodeBeagle::sendData(
@@ -30,9 +61,9 @@ namespace minotaur
 	    mouse_monitor_beagle::MouseMonitorSensorGetData::Response &res)
 	{
 		if (req.id == SENSOR1) {
-			res.data = getData(sensor1);
+			res.data = getData(&sensor1Data);
 		} else if (req.id == SENSOR2) {
-			res.data = getData(sensor2);
+			res.data = getData(&sensor2Data);
 		} else
 			return false;
 
@@ -50,6 +81,10 @@ namespace minotaur
 		else
 			return false;
 
+		if (debug) {
+			// TODO: Output it.
+		}
+
 		return true;
 	}
 
@@ -64,34 +99,28 @@ namespace minotaur
 			sensor2->setYResolution(req.newResolution);
 		} else
 			return false;
+			
+		if (debug) {
+			// TODO: Output it.
+		}
 
 		return true;
 	}
 
 	mouse_monitor_beagle::MouseMonitorSensorData MouseMonitorNodeBeagle::getData(
-	    pln_minotaur::IPLNTrackingDevice *sensor)
+	    ProcessedSensorData *data)
 	{
-		mouse_monitor_beagle::MouseMonitorSensorData data;
-		double xs, ys; // Speed
-		double xd, yd; // Displacement
+		mouse_monitor_beagle::MouseMonitorSensorData dataMsg;
 
-		if (sensor->readStatusAndDisplacementAndSpeed(xs, ys, xd, yd)) {
-			pln_minotaur::PLN2033_Settings s = sensor->readPLNSettings();
+		dataMsg.id = data->spiDevice;
+		dataMsg.x_disp = data->xDisplacement;
+		dataMsg.y_disp = data->yDisplacement;
+		dataMsg.x_speed = data->xSpeed;
+		dataMsg.y_speed = data->ySpeed;
 
-			data.id = s.spiDevice;
-			data.x_speed = xs;
-			data.y_speed = ys;
-			data.x_disp = xd;
-			data.y_disp = yd;
-		} else {
-			data.id = "";
-			data.x_speed = 0.0;
-			data.y_speed = 0.0;
-			data.x_disp = 0.0;
-			data.y_disp = 0.0;
-		}
+		data->reset();
 
-		return data;
+		return dataMsg;
 	}
 
 	mouse_monitor_beagle::MouseMonitorSensorSettings MouseMonitorNodeBeagle::getSettings(

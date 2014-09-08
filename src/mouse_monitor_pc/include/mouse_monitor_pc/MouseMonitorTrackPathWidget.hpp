@@ -9,6 +9,10 @@
 
 namespace minotaur
 {
+	
+	struct coordinateSystem {
+		
+	};
 
     class TrackPathWidget : public QWidget
     {
@@ -32,7 +36,8 @@ namespace minotaur
 			
 			Robot robot;
 			
-			void drawRobot(QPainter *painter);
+			void drawGrid(QPainter &painter);
+			void drawRobot(QPainter &painter);
 
         protected:
             void paintEvent(QPaintEvent *event);
