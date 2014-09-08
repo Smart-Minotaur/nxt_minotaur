@@ -15,6 +15,7 @@ namespace minotaur
 
 		private:
 			MouseMonitorCalibrationData calibrationData;
+			bool calibrationFinished;
 
 		public:
 			MouseMonitorCalibrationWizard(QWidget * parent = 0);
@@ -26,7 +27,8 @@ namespace minotaur
 		private Q_SLOTS:
 			void startBtnClicked();
 			void stopBtnClicked();
-
+			virtual bool validateCurrentPage();
+			
 		Q_SIGNALS:
 			void startCalibrateSensors(MouseMonitorCalibrationData data);
 			void stopCalibrateSensors();
