@@ -184,18 +184,18 @@ namespace minotaur
         p_twist.angular.z = p_angularVelocity;
     }
 
-	std::vector<float> rotateVec(const std::vector<float> &p_vector, const float p_radian)
+	Vector2 rotateVec(const Vector2 &p_vector, const float p_radian)
 	{
-		return rotateVec(p_vector[0], p_vector[1], p_radian);
+		return rotateVec(p_vector.x, p_vector.y, p_radian);
 	}
 	
 	
-	std::vector<float> rotateVec(const float x, const float y, const float p_radian)
+	Vector2 rotateVec(const float x, const float y, const float p_radian)
 	{
-		std::vector<float> result(2);
+		Vector2 result;
 		
-		result[0] = x * cos(p_radian) + (y * -sin(p_radian));
-		result[1] = x * sin(p_radian) + (y * cos(p_radian));
+		result.x = x * cos(p_radian) + (y * -sin(p_radian));
+		result.y = x * sin(p_radian) + (y * cos(p_radian));
 		
 		return result;
 	}

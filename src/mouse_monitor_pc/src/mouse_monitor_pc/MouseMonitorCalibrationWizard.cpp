@@ -7,9 +7,10 @@ namespace minotaur
 		: QWizard(parent)
 	{
 		setupUi(this);
-
+		calibrationFinished = false;
 		connect(startBtn, SIGNAL(clicked()), this, SLOT(startBtnClicked()));
 		connect(stopBtn, SIGNAL(clicked()), this, SLOT(stopBtnClicked()));
+		//connect(sailing, SIGNAL(selectionChanged()), this, SIGNAL(completeChanged()));
 	}
 
 	void MouseMonitorCalibrationWizard::setMouseMonitorCalibrationData(MouseMonitorCalibrationData calibrationData)
@@ -34,12 +35,23 @@ namespace minotaur
 
 	void MouseMonitorCalibrationWizard::startBtnClicked()
 	{
+		calibrationFinished = false;
 		Q_EMIT startCalibrateSensors(this->calibrationData);
 	}
 
 	void MouseMonitorCalibrationWizard::stopBtnClicked()
 	{
+		calibrationFinished = true;
 		Q_EMIT stopCalibrateSensors();
+	}
+
+	bool MouseMonitorCalibrationWizard::validateCurrentPage()
+	{
+		if(calibrationFinished)
+		{
+			return true;
+		}
+		return false;
 	}
 
 }

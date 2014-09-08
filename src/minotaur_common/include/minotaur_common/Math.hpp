@@ -18,6 +18,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
+#include "minotaur_common/Vector2.hpp"
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -71,8 +72,8 @@ namespace minotaur
     void setAngularVelocity(nav_msgs::Odometry &p_odometry, const float p_angularVelocity);
     void setAngularVelocity(geometry_msgs::Twist &p_twist, const float p_angularVelocity);
 	
-	std::vector<float> rotateVec(const std::vector<float> &p_vector, const float p_radian);
-	std::vector<float> rotateVec(const float x, const float y, const float p_radian);
+	Vector2 rotateVec(const Vector2 &p_vector, const float p_radian);
+	Vector2 rotateVec(const float x, const float y, const float p_radian);
 }
 
 #endif

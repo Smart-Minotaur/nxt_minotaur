@@ -103,11 +103,13 @@ bool init(ros::NodeHandle& p_handle, tf::TransformBroadcaster *p_broadcaster)
 bool loadCurrentModel()
 {   
     minotaur::RobotSettings robotSettings;
+	minotaur::MouseSensorSettings mouseSettings;
     std::vector<minotaur::SensorSetting> sensorSettings;
     
     ROS_INFO("Loading current model.");
     try {
         robotSettings.loadCurrentFromParamServer();
+		mouseSettings.loadCurrentFromParamServer();
         sensorSettings = minotaur::loadCurrentSensorSettings();
     } catch (const std::exception &e) {
         ROS_ERROR("Failed to load current model: %s.", e.what());
@@ -120,9 +122,17 @@ bool loadCurrentModel()
     ROS_INFO("-- Found model \"%s\".", robotSettings.modelName.c_str());
     ROS_INFO("-- Kp=%.3f; Ki=%.3f; Kd=%.3f.", robotSettings.pidParameter.Kp, robotSettings.pidParameter.Ki, robotSettings.pidParameter.Kd);
     ROS_INFO("-- wheelRadius=%.3fm; wheelTrack=%.3fm; interval=%dms.", robotSettings.wheelRadius, robotSettings.wheelTrack, robotSettings.samplingInterval);
-    for(int i = 0; i < sensorSettings.size(); ++i)
-        ROS_INFO("-- Sensor %d: id=%d; direction=%.2frad; x=%.3fm; y=%.3fm.", i, sensorSettings[i].id, sensorSettings[i].direction, sensorSettings[i].x, sensorSettings[i].y);
+    for(int i = 0; i < sensorSettings.size(); ++i) {
+        ROS_INFO("-- Ultrasonicsensor %d: id=%d; direction=%.3frad; x=%.3fm; y=%.3fm.",
+		i, sensorSettings[i].id, sensorSettings[i].direction, sensorSettings[i].x, sensorSettings[i].y);
+	}
+	for(int i = 0; i < mouseSettings.size(); ++i) {
+		ROS_INFO("-- Mousesensor %d: id=%d; device=\"%s\"; errorAngle=%.3frad; x=%.3fm; y=%.3fm; xRes=%dcpi; yRes=%dcpi.",
+		i, mouseSettings[i].id, mouseSettings[i].device.c_str(), mouseSettings[i].errorAngle, mouseSettings[i].x, mouseSettings[i].y,
+		mouseSettings[i].xResolution, mouseSettings[i].yResolution);
+	}
     robotCommunicator.applySettings(robotSettings);
+	robotCommunicator.applySettings(mouseSettings);
     sensorCommunicator.applySettings(sensorSettings);
     
     robotThread.setSamplingInterval(robotSettings.samplingInterval);

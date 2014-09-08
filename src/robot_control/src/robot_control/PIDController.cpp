@@ -51,6 +51,17 @@ namespace minotaur
     {
         pidParameter = p_param;
     }
+	
+	void PIDController::setMouseSensorSettings(const MouseSensorSettings &p_mouseSettings)
+	{
+		mouseSettings = p_mouseSettings;
+		mouseSensors.clear();
+		for(int i = 0; i < mouseSettings.size(); ++i) {
+			mouseSensors.push_back(pln_minotaur::PLN2033(mouseSettings[i].device));
+			mouseSensors[i].setXResolution(mouseSettings[i].xResolution);
+			mouseSensors[i].setXResolution(mouseSettings[i].yResolution);
+		}
+	}
 
     float PIDController::getLinearVelocity() const
 	{
@@ -92,14 +103,15 @@ namespace minotaur
 
     void PIDController::measureCurrentVelocity(const float p_samplingIntervalSecs)
     {
-        MotorVelocity tickVel, mouseVel;
-        
-        tickVel = measureTickVelocity(p_samplingIntervalSecs);
+		// only use motors if no mouse sensors are available.
+		// reading motors has high latency due to slow
+		// ultrasonic sensors blocking the USB connection.
+		if(mouseSettings.size() != 0)
+			measuredVelocity = measureMouseVelocity(p_samplingIntervalSecs);
+		else
+			measuredVelocity = measureTickVelocity(p_samplingIntervalSecs);
         //TODO mouse velocity must be measured, currently only tickVel is used 
         //mouseVel = measureMouseVelocity();
-        mouseVel = tickVel;
-        
-        measuredVelocity = (tickVel + mouseVel) / 2;
     }
 
     MotorVelocity PIDController::measureTickVelocity(const float p_samplingIntervalSecs)
@@ -130,8 +142,36 @@ namespace minotaur
 
     MotorVelocity PIDController::measureMouseVelocity(const float p_samplingIntervalSecs)
     {
-        MotorVelocity result;
-        
+		 MotorVelocity result;
+		 result.leftMPS = 0;
+		 result.rightMPS = 0;
+		
+		for(int i = 0; i < mouseSensors.size(); ++i) {
+			double dx, dy;
+			if(!mouseSensors[i].readStatusAndDisplacement(dx, dy)) {
+				dx = 0;
+				dy = 0;
+			}
+			Vector2 measurement, angularVec;
+			
+			measurement.x = cmToMeter(dx);
+			measurement.y = cmToMeter(dy);
+			
+			measurement = rotateVec(measurement, mouseSettings[i].errorAngle);
+			
+			angularVec.x = (measurement.y * mouseSettings[i].y) / (2 * mouseSettings[i].x);
+			angularVec.y = measurement.y;
+			
+			float angularVelocity = angularVec.length();
+			float linearVelocity = measurement.x - angularVec.x;
+			
+			result.leftMPS += linearVelocity - (angularVelocity * wheelTrack) / 2;
+			result.rightMPS += linearVelocity + (angularVelocity * wheelTrack) / 2;
+		}
+		
+		result.leftMPS /= mouseSensors.size();
+		result.rightMPS /= mouseSensors.size();
+		
         return result;
     }
 

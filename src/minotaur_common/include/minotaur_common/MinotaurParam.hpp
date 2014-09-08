@@ -53,11 +53,11 @@ namespace minotaur
         return PARAM_MODEL(p_name) + ss.str();
     }
 
-    inline std::string PARAM_SENSOR_DX(const std::string& p_name, const int p_id)
-    { return PARAM_SENSOR(p_name, p_id) + "/dx"; }
+    inline std::string PARAM_SENSOR_X(const std::string& p_name, const int p_id)
+    { return PARAM_SENSOR(p_name, p_id) + "/x"; }
 
-    inline std::string PARAM_SENSOR_DY(const std::string& p_name, const int p_id)
-    { return PARAM_SENSOR(p_name, p_id) + "/dy"; }
+    inline std::string PARAM_SENSOR_Y(const std::string& p_name, const int p_id)
+    { return PARAM_SENSOR(p_name, p_id) + "/y"; }
 
     inline std::string PARAM_SENSOR_DIRECTION(const std::string& p_name, const int p_id)
     { return PARAM_SENSOR(p_name, p_id) + "/direction"; }
@@ -70,14 +70,23 @@ namespace minotaur
         return PARAM_MODEL(p_name) + ss.str();
     }
 	
-	inline std::string PARAM_MOUSE_DX(const std::string& p_name, const int p_id)
-    { return PARAM_MOUSE(p_name, p_id) + "/dx"; }
+	inline std::string PARAM_MOUSE_DEVICE(const std::string& p_name, const int p_id)
+    { return PARAM_MOUSE(p_name, p_id) + "/device"; }
 	
-	inline std::string PARAM_MOUSE_DY(const std::string& p_name, const int p_id)
-    { return PARAM_MOUSE(p_name, p_id) + "/dy"; }
+	inline std::string PARAM_MOUSE_X(const std::string& p_name, const int p_id)
+    { return PARAM_MOUSE(p_name, p_id) + "/x"; }
+	
+	inline std::string PARAM_MOUSE_Y(const std::string& p_name, const int p_id)
+    { return PARAM_MOUSE(p_name, p_id) + "/y"; }
 	
 	inline std::string PARAM_MOUSE_ERROR_ANGLE(const std::string& p_name, const int p_id)
     { return PARAM_MOUSE(p_name, p_id) + "/error_angle"; }
+	
+	inline std::string PARAM_MOUSE_X_RESOLUTION(const std::string& p_name, const int p_id)
+    { return PARAM_MOUSE(p_name, p_id) + "/x_resolution"; }
+	
+	inline std::string PARAM_MOUSE_Y_RESOLUTION(const std::string& p_name, const int p_id)
+    { return PARAM_MOUSE(p_name, p_id) + "/y_resolution"; }
     
     /* Maze Parameter */
     inline std::string PARAM_MAZE(const std::string& p_name)

@@ -6,7 +6,7 @@
 namespace minotaur
 {
 	MouseSetting::MouseSetting()
-	:dx(0), dy(0), errorAngle(0)
+	:id(-1), device("unkown"), x(0), y(0), errorAngle(0), xResolution(100), yResolution(100)
 	{
 		
 	}
@@ -51,16 +51,23 @@ namespace minotaur
 		for(int i = 0; ros::param::has(PARAM_MOUSE(p_modelName, i)); ++i ) {
 			
             settings.push_back(MouseSetting());
+			settings[i].id = i;
 			
-			if(!ros::param::get(PARAM_MOUSE_DX(p_modelName, i), settings[i].dx)) {
+			if(!ros::param::get(PARAM_MOUSE_DEVICE(p_modelName, i), settings[i].device)) {
 				std::stringstream ss;
-				ss << "No DX found (" << p_modelName << "). Cannot load MouseSensorSettings";
+				ss << "No device found (" << p_modelName << "). Cannot load MouseSensorSettings";
 				throw std::logic_error(ss.str());
 			}
 			
-			if(!ros::param::get(PARAM_MOUSE_DY(p_modelName, i), settings[i].dy)) {
+			if(!ros::param::get(PARAM_MOUSE_X(p_modelName, i), settings[i].x)) {
 				std::stringstream ss;
-				ss << "No DY found (" << p_modelName << "). Cannot load MouseSensorSettings";
+				ss << "No x-offset found (" << p_modelName << "). Cannot load MouseSensorSettings";
+				throw std::logic_error(ss.str());
+			}
+			
+			if(!ros::param::get(PARAM_MOUSE_Y(p_modelName, i), settings[i].y)) {
+				std::stringstream ss;
+				ss << "No y-offset found (" << p_modelName << "). Cannot load MouseSensorSettings";
 				throw std::logic_error(ss.str());
 			}
 			
@@ -71,6 +78,18 @@ namespace minotaur
 			}
 			
 			settings[i].errorAngle = normalizeRadian(degreeToRadian(settings[i].errorAngle));
+			
+			if(!ros::param::get(PARAM_MOUSE_X_RESOLUTION(p_modelName, i), settings[i].xResolution)) {
+				std::stringstream ss;
+				ss << "No X-Resolution found (" << p_modelName << "). Cannot load MouseSensorSettings";
+				throw std::logic_error(ss.str());
+			}
+			
+			if(!ros::param::get(PARAM_MOUSE_Y_RESOLUTION(p_modelName, i), settings[i].yResolution)) {
+				std::stringstream ss;
+				ss << "No Y-Resolution found (" << p_modelName << "). Cannot load MouseSensorSettings";
+				throw std::logic_error(ss.str());
+			}
         }
 	}
 	
