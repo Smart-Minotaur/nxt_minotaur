@@ -14,7 +14,7 @@
 HOSTNAME=$(hostname)
 
 BEAGLE_IP=141.37.31.128
-PC_IP=141.37.31.114
+PC_IP=141.37.31.115
 
 if [ -z "$1" ]
 then
