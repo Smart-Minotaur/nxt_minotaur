@@ -81,10 +81,6 @@ namespace minotaur
 		else
 			return false;
 
-		if (debug) {
-			// TODO: Output it.
-		}
-
 		return true;
 	}
 
@@ -100,9 +96,8 @@ namespace minotaur
 		} else
 			return false;
 			
-		if (debug) {
-			// TODO: Output it.
-		}
+		if (debug)
+			std::cout << req.id << " " << "resolution: " << req.newResolution << std::endl;
 
 		return true;
 	}
@@ -117,6 +112,9 @@ namespace minotaur
 		dataMsg.y_disp = data->yDisplacement;
 		dataMsg.x_speed = data->xSpeed;
 		dataMsg.y_speed = data->ySpeed;
+		
+		if (debug)
+			std::cout << dataMsg.id << " X disp: " << dataMsg.x_disp << ", " << dataMsg.y_disp << std::endl;
 
 		data->reset();
 
@@ -148,6 +146,9 @@ namespace minotaur
 		settingsMsg.system_control_register = settings.system_control_register;
 		settingsMsg.miscellaneous_register = settings.miscellaneous_register;
 		settingsMsg.interrupt_output_register = settings.interrupt_output_register;
+		
+		if (debug)
+			std::cout << settings.toSring();
 
 		return settingsMsg;
 	}
