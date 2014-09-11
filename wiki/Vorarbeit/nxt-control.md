@@ -47,7 +47,7 @@ Nun steht die Bibiliothek im Verzeichnis __build__ zur Verfügung.
 
 \section entwicklungshergang-nxt-control Entwicklungshergang
 
-Im Rahmen dieses Projekts war irgendeine Form der __Kommunikation mit dem
+Im Rahmen dieses Projekts war eine Form der __Kommunikation mit dem
 Lego NXT Brick__ unverzichtbar. In ersten Ansätzen wurde eine
 __Opensource-Pythonbibliothek__ verwendet
 ([nxt-python](https://code.google.com/p/nxt-python/)). Bei ersten
