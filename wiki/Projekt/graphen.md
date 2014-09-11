@@ -5,7 +5,7 @@ Graphen Ansatz {#graphen}
 
 \section beschreibung-graphen Beschreibung
 
-Da der Histogramm-Ansatz ohne gute Odometrie nicht gut umsetzbar ist wurde ein zweiter Ansatz gestartet. 
+Da der \ref histogramm ohne gute Odometrie nicht gut umsetzbar ist wurde ein zweiter Ansatz gestartet. 
 Das Labyrinth wurde in quadratische Zellen eingeteilt. Die Seitenlänge einer Zelle enspricht dabei
 der Länge einer Holzwand aus dem Labyrinth. Der Roboter bewegt sich dann stets __von Zelle zu Zelle__.
 Wenn der Roboter etwa in der Mitte einer Zelle angekommen ist prüft er zunächst in welchen Richtungen 
@@ -20,14 +20,14 @@ Die Soucedateien sind im package __minotaur_maze__ zu finden.
 \subsection navigation-graphen Navigation
 
 Bei einer Fahrt von Zelle zu Zelle kann der Roboter aufgrund von Ungenauigkeiten der Motoren sowie Durchdrehen eines Rades eine schlechte Ausrichtung und somit fehlerhaftes Verhalten entwickeln.
-Da keine Maussensoren zum erkennen dieser Fehler zur Verfügung stehen müssen wir dies anhand der Messwerte der __Ultraschallsensoren__ ausgleichen. Hierbei werden die Werte der Sensoren rechts und 
+Da keine Maussensoren zum erkennen dieser Fehler zur Verfügung stehen, müssen wir dies anhand der Messwerte der __Ultraschallsensoren__ ausgleichen. Hierbei werden die Werte der Sensoren rechts und 
 links verglichen und es wird eine Korrektur in die Wege geleitet, die versucht den Abstand beider Sensoren zur Wand gleich zu halten. 
 Je höher dabei der Unterschied der Sensorwerte, desto höher das Entgegenlenken durch die __Korrektur__. 
-Wenn ein Sensor keine nützlichen Messwerte liefern kann, da sich an seiner Seite keine Wand sondern eine Abzweigung befindet, werden nur die Daten des anderen Sensors mit dem Sollabstand verglichen. 
+Wenn ein Sensor keine nützlichen Messwerte liefern kann, da sich an seiner Seite keine Wand sondern eine Abzweigung befindet, werden nur die Daten des anderen Sensors mit einem __Sollabstand__ verglichen. 
 
-Um einzelne Ausreisser in den Messwerten auszugleichen wurde ein __Medianfilter__ angewendet der die letzten 5 bis 10 Werte eines Sensors besitzt.
+Um einzelne Ausreisser in den Messwerten auszugleichen wurde ein __Medianfilter__ angewendet der die letzten 5 bis 10 Werte eines Sensors nutzt.
 
-Wenn anhand der zurückgelegten Strecke davon ausgegangen wird, dass man sich etwa in der Mitte der nächsten Zelle befindet wird ermittelt welche 
+Beim Fahren entscheidet der Roboter anhand des zurückgelegten Weges, ob er in der nächsten Zelle angekommen ist. Daraufhin wird ermittelt welche 
 Aktion als nächstes ausgeführt wird (Mehr dazu siehe \ref algorithmus-graphen ). Der Roboter hat hier immer genau zwei Möglichkeiten: 
 
 * Rotation: Der Roboter dreht sich auf der Stelle in eine angegebene Richtung um 90° oder 180°.
@@ -39,7 +39,7 @@ Aktion als nächstes ausgeführt wird (Mehr dazu siehe \ref algorithmus-graphen 
 Es handelt sich hierbei um einen sehr simplen Algorithmus. Nachdem erkannt wurde in welche Richtung ein Weiterfahren möglich ist, wird der Roboter,
 falls mehrere Möglichkeiten zur Verfügung stehen, unbesuchte Zellen als Ziel bevorzugen. 
 Wenn mehrere unbesuchte Zellen zur Verfügung stehen wird momentan bevorzugt geradeaus gefahren, da bei Drehungen ab und an Fehler auftreten können. 
-Daher wird versucht, so wenige Rotoationen wie möglich zu machen. Mehr dazu siehe: \ref probleme-graphen
+Daher wird versucht, so wenige Rotoationen wie möglich zu machen. Mehr dazu siehe: \ref probleme-graphen.
 
 \section probleme-graphen Probleme
 
@@ -49,7 +49,7 @@ Besonders anfällig für Fehler sind die Rotationen. Es kann passieren, dass der
 Als Resultat dreht sich der Roboter zu weit oder zu wenig und fährt im schlechtesten Fall anschließend gegen eine Wand, da er nicht schnell genug gegenlenken kann. 
 Diese Probleme könnten eventuell beide durch funktionsfähige Maussensoren abgefangen und korrigiert werden, die uns jedoch nicht zur Verfügung stehen.
 
-Aber auch beim einfachen geradeausfahren können Fehler auftreten. So kann es vorkommen dass der Roboter einem von ihm erkannten Fehler gegensteuern will, 
+Aber auch beim einfachen geradeausfahren können Fehler auftreten. So kann es vorkommen, dass der Roboter einem von ihm erkannten Fehler gegensteuern will, 
 dies jedoch viel zu stark macht und er kann sich nicht mehr gerade in der Mitte halten und fährt entweder gegen eine Wand oder steht vor der nächsten Rotation enorm schief.
 Dieses Problem tritt zumeist aufgrund von unerklärlich schlechten Sensormesswerten auf. 
 Wir haben versucht dieses Problem mittels eines Medianfilters zu beheben, jedoch ohne großen Erfolg.

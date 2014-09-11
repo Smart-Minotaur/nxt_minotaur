@@ -91,7 +91,10 @@ __mouse_monitor_beagle__ TODO Jens
 
 __mouse_monitor_pc__ TODO Jens
 
-
+Das Package __minotaur_teleop__ enthält ROS-Nodes, um den Roboter 
+remote mit einem Gamepad zu steuern. Dies kann beispielsweise benutzt 
+werden, um den Roboter in Kombination mit dem GUI-Tool \ref 
+map_monitor-gui-tools 
 
 \subsection datenfluss-projekt Datenfluss
 
@@ -99,7 +102,7 @@ Das folgende Diagramm zeigt die Kommunikationsstruktur in diesem Projekt.
 
 \image html minotaur-dataflow.png
 
-Die zentrale ROS-Node __RobotControl__ wird in dem Abschnicht \ref 
+Die zentrale ROS-Node __RobotControl__ wird in dem Abschnitt \ref 
 robot-control-projekt genauer betrachtet. __Movebase__ ist eine ROS interne 
 Node. Sie ist zuständig für die grundlegende Kommunikation innerhalb 
 des ROS Navigation Stack. Daher wird sie auch nur von Applikationen 
