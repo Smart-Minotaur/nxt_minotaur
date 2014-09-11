@@ -144,7 +144,7 @@ Danach kann der Vorgang mit dem "Stop"-Button beendet werden. Im nächsten Fenst
 
 TODO Image...
 
-Dieser Winkel muss in der Datei __models.yaml__ bei Paramter ""error_angle:"" im Package __minotaur_common/param__ eingetragen werden,
+Dieser Winkel muss in der Datei __models.yaml__ bei Paramter "error_angle:" im Package __minotaur_common/param__ eingetragen werden,
 sodass dieser beim Start des Roboters zur Verfügung steht.
 
 Der Roboter wendet diesen Winkel auf die Rotationsmatrix an und multipliziert diesen mit dem aktuellen Positionsvektor.
