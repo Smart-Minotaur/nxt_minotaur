@@ -1,6 +1,7 @@
 #include "mouse_monitor_pc/Robot.hpp"
 
 #include <cmath>
+#include <iostream>
 
 namespace minotaur
 {
@@ -56,14 +57,16 @@ namespace minotaur
 
 		// From circular arc (Vdist_r)
 		double rotateAngle = Vdist_r / attributes.distanceToSensor_radius;
+		
+		std::cout << Vangle_r << std::endl;
 
-		if (Vangle_r <= M_PI)
+		if (Vx_r >= 0)
 			rotate(rotateAngle);
 		else
 			rotate(rotateAngle * -1);
 
 		double Vdist_f = dY - Vy_r;
-		forward(Vdist_f);
+		//forward(Vdist_f);
 	}
 
 	void Robot::reset()
