@@ -20,7 +20,7 @@ fi
 if [ "$1" == "beagle" ]
 then
 	sudo ntpdate -b -s -u ntp.ubuntu.com pool.ntp.org
-	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze" -DUSE_MOUSE_SENSOR="TRUE"
+	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;robot_control;minotaur_maze" -DUSE_MOUSE_SENSOR="TRUE" -DARM_ARCH="TRUE"
 elif [ "$1" == "mm_p" ]
 then
 	catkin_make -DCATKIN_WHITELIST_PACKAGES="minotaur_common;mouse_monitor_beagle;mouse_monitor_pc"

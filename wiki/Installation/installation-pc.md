@@ -5,7 +5,7 @@ Installation PC {#installation-pc}
 
 \section beschreibung-installation-pc Beschreibung
 
-Auf dem Entwicklungsrechner wird ebenso wie auf dem Beagle Bone Black
+Auf dem Entwicklungsrechner wird, ebenso wie auf dem Beagle Bone Black,
 __Ubuntu in der Version 12.04__ verwendet. Vorzugsweise sollte die 32bit
 Version benutzt werden, da ansonsten die benötigten 64bit Bibliotheken
 nachinstalliert werden müssen. Die Installation des Betriebssystem wird

@@ -8,14 +8,14 @@ Projekt {#projekt}
 Die Aufgabe des Roboters war es __ein Labyrinth zu karthographieren__. 
 Als Roboter wurde ein __Lego NXT Brick__ verwendet. Der Roboter verfügt 
 über einen __Differentialantrieb__ und kann seine Umgebung mithilfe von 
-__Ultraschallsensoren__ warnehmen.
+__Ultraschallsensoren__ wahrnehmen.
 
 Zusätzlich wurde auf dem Roboter ein __Beagle Bone Black__ montiert. 
 Dieses bietet __mehr Rechenleistung und eine flexiblere 
 Programmierung__ als der Brick, auf welchem lediglich in der 
 beschränkten Programmiersprache NXC gearbeitet werden kann. Außerdem 
 wird das BBB benötigt, um zusätzliche __Mauslasersensoren__ über 
-einen SPI-Bus anzusprechen. Diese Maussensoren werden verwendet um die 
+einen SPI-Bus anzusprechen. Diese Maussensoren werden verwendet, um die 
 Bewegung des Roboters zu messen und somit dessen __Odometrie zu 
 verbessern__.
 
@@ -91,7 +91,10 @@ __mouse_monitor_beagle__ TODO Jens
 
 __mouse_monitor_pc__ TODO Jens
 
-
+Das Package __minotaur_teleop__ enthält ROS-Nodes, um den Roboter 
+remote mit einem Gamepad zu steuern. Dies kann beispielsweise benutzt 
+werden, um den Roboter in Kombination mit dem GUI-Tool \ref 
+map_monitor-gui-tools 
 
 \subsection datenfluss-projekt Datenfluss
 
@@ -99,15 +102,21 @@ Das folgende Diagramm zeigt die Kommunikationsstruktur in diesem Projekt.
 
 \image html minotaur-dataflow.png
 
-Die zentrale ROS-Node __RobotControl__ wird in dem Abschnicht \ref 
+Die zentrale ROS-Node __RobotControl__ wird in dem Abschnitt \ref 
 robot-control-projekt genauer betrachtet. __Movebase__ ist eine ROS interne 
 Node. Sie ist zuständig für die grundlegende Kommunikation innerhalb 
 des ROS Navigation Stack. Daher wird sie auch nur von Applikationen 
 benötigt, die den ROS Navigation Stack benutzen, ansonsten muss diese 
-Node nicht gestartet werden. Auf dem Desktop Computer laufen sämtliche 
-GUI Aplikationen. Diese kommunizieren über das ROS 
-Kommunikationssystem mit der __RobotControl__ Node. Die Verbindung 
-zwischen BBB und PC findet per WLAN statt.
+Node nicht gestartet werden. __moveInMaze__ ist die ROS-Node, die den 
+\ref graphen realisiert. Um diese Node zu benutzen muss 
+__RobotControl__ gestartet sein.
+
+Auf dem Desktop Computer laufen sämtliche GUI Aplikationen. Diese 
+kommunizieren über das ROS Kommunikationssystem mit der 
+__RobotControl__ Node. Außerdem läuft dort auch die remote-control 
+Node __joy_teleop__. Mit dieser kann der Roboter mithilfe eines 
+Gamepads ferngeseteuert werden. Die Verbindung zwischen BBB und PC 
+findet per WLAN statt.
 
 Das Beagle Bone kommuniziert neben dem PC auch mit lokal vorhandenen 
 Geräten. Der __Lego NXT Brick__ ist über USB an das BBB angeschlossen. An 
