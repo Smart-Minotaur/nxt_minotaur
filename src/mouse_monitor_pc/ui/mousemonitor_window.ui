@@ -34,7 +34,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="SensorDataTab">
        <attribute name="title">
@@ -498,7 +498,13 @@ QGroupBox::title {
               <property name="maximum">
                <number>30</number>
               </property>
+              <property name="singleStep">
+               <number>2</number>
+              </property>
               <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="sliderPosition">
                <number>1</number>
               </property>
               <property name="orientation">
@@ -839,7 +845,7 @@ QGroupBox::title {
      <x>0</x>
      <y>0</y>
      <width>981</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

@@ -51,6 +51,8 @@ namespace minotaur
 
 			QTimer *timer;
 			int sampleRate;
+			
+			Robot robot;
 
 			// Toolbar
 			QToolButton *sampleRateBtn;

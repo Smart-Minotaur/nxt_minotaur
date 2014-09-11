@@ -9,7 +9,7 @@
 
 #include "ros/ros.h"
 
-#define DEFAULT_SAMPLE_RATE 50 // Hz
+#define DEFAULT_SAMPLE_RATE 15 // Hz
 
 namespace minotaur
 {
@@ -152,7 +152,7 @@ namespace minotaur
 
 		pathWidget = new TrackPathWidget(trackPathFrame);
 		trackPathFrame->layout()->addWidget(pathWidget);
-		pathWidget->init(20, 20);//trackPathFrame->width() / 2.0, trackPathFrame->height() / 2);
+		pathWidget->init();
 
 		x_disp1_abs->setText("0");
 		y_disp1_abs->setText("0");
@@ -278,14 +278,19 @@ namespace minotaur
 			return;
 
 		MouseData processedData = correctMouseData(data);
+		
+		// Move robot
+		if (data.id == SENSOR1)
+			robot.move(processedData.x_disp, processedData.y_disp);
 
 		// Log data
 		logDialog->logRaw(data);
 		logDialog->logFiltered(processedData);
 
 		// Display the data
-		updateDataDisplay(processedData);
 		pathWidget->updateWidget(processedData);
+		pathWidget->updateRobot(robot);
+		updateDataDisplay(processedData);
 		updateDirectionWidgets(processedData);
 		updatePlots(processedData);
 		updateAbsoluteValueDisplay(processedData);
@@ -558,6 +563,7 @@ namespace minotaur
 		y_disp2_abs->setText("0");
 
 		pathWidget->reset();
+		robot.reset();
 
 		medianFilter_sensor1_yDisp->clear();
 		medianFilter_sensor2_yDisp->clear();

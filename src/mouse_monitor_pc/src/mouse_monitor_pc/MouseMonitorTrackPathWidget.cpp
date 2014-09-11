@@ -7,18 +7,19 @@
 #include <math.h>
 
 // Direction grid params
-#define GRID_SCALE 20
+#define GRID_SCALE 10
+#define GLOBAL_COORD_DIRECTION_LEN 5
+#define ROBOT_COORD_DIRECTION_LEN 5
 
 namespace minotaur
 {
 
-	void TrackPathWidget::init(double posx, double posy)
+	void TrackPathWidget::init()
 	{
-		startx = this->width() / 2.0; //posx;
-		starty = this->height() / 2.0; //posy;
-
-		sensor1_path.moveTo(QPointF(startx, starty));
-		sensor2_path.moveTo(QPointF(startx, starty));
+		//startx = this->width() / 2.0; //posx;
+		//starty = this->height() / 2.0; //posy;
+		sensor1_path.moveTo(QPointF(globalCoordinateSystem.centerX, globalCoordinateSystem.centerY));
+		sensor2_path.moveTo(QPointF(globalCoordinateSystem.centerX, globalCoordinateSystem.centerY));
 
 		translatex = 0.0;
 		translatey = 0.0;
@@ -32,23 +33,25 @@ namespace minotaur
 
 	void TrackPathWidget::paintEvent(QPaintEvent *event)
 	{
+		globalCoordinateSystem.setCenter(width() / 2.0, height() / 2.0);
+
 		QPainter painter(this);
 
+		translateAndScale(painter);
+
 		drawGrid(painter);
-
-		painter.setRenderHint(QPainter::Antialiasing);
-		painter.translate(QPointF(translatex, translatey));
-		painter.scale((qreal) zoom, (qreal) zoom);
-
+		drawGlobalCoordinateSystem(painter);
 		drawRobot(painter);
 
 		// Draw path
 		if (sensor1_enable) {
+			sensor1_path.translate(QPointF(globalCoordinateSystem.centerX, globalCoordinateSystem.centerY));
 			painter.setPen(Qt::blue);
 			painter.drawPath(sensor1_path);
 		}
 
 		if (sensor2_enable) {
+			sensor1_path.translate(QPointF(globalCoordinateSystem.centerX, globalCoordinateSystem.centerY));
 			painter.setPen(Qt::red);
 			painter.drawPath(sensor2_path);
 		}
@@ -62,45 +65,89 @@ namespace minotaur
 		int xSteps = (int) (gridWidth / GRID_SCALE);
 		int ySteps = (int) (gridHeight / GRID_SCALE);
 
-		painter.setPen(QPen(Qt::gray, 1));
+		double fromX = globalCoordinateSystem.centerX - xSteps/2 * GRID_SCALE;
+		double fromY = globalCoordinateSystem.centerY - ySteps/2 * GRID_SCALE;
+
+		painter.setPen(QPen(Qt::gray, 0.5));
 
 		for (int i = 0; i <= xSteps; ++i) {
-			painter.drawLine(i * GRID_SCALE, 0,
-			                 i * GRID_SCALE, ySteps * GRID_SCALE);
+			QLineF line(fromX + i * GRID_SCALE, fromY,
+			            fromX + i * GRID_SCALE, fromY + ySteps * GRID_SCALE);
+			painter.drawLine(line);
 		}
 
 		for (int i = 0; i <= ySteps; ++i) {
-			painter.drawLine(0, i * GRID_SCALE,
-			                 xSteps * GRID_SCALE, i * GRID_SCALE);
+			QLineF line(fromX, fromY + i * GRID_SCALE,
+			            fromX + xSteps * GRID_SCALE, fromY + i * GRID_SCALE);
+			painter.drawLine(line);
 		}
 	}
 
 	void TrackPathWidget::drawRobot(QPainter &painter)
 	{
 		// TODO: Add rotation
+		double axisHeight = 0.5;
 
-		double axisHeight = 1;
+		double globalX = globalCoordinateSystem.right(robot.xPos());
+		double globalY = globalCoordinateSystem.up(robot.yPos());
 
-		painter.setPen(QPen(Qt::black, axisHeight));
-		QLineF axis(robot.xPos() - robot.getAttributes().distanceToWheel, robot.yPos(),
-		            robot.xPos() + robot.getAttributes().distanceToWheel, robot.yPos());
-		painter.drawLine(axis);
+		/*
+				painter.setPen(QPen(Qt::black, axisHeight));
+				QLineF axis(globalX - robot.getAttributes().distanceToWheel, globalY,
+				            globalX + robot.getAttributes().distanceToWheel, globalY);
+				painter.drawLine(axis);
 
-		painter.setPen(QPen(Qt::green, axisHeight/2.0));
-		QRectF wheel1(robot.xPos() - robot.getAttributes().distanceToWheel - axisHeight/2.0,
-		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
-		QRectF wheel2(robot.xPos() + robot.getAttributes().distanceToWheel - axisHeight/2.0,
-		              robot.yPos() - axisHeight, axisHeight, axisHeight*2);
+				painter.setPen(QPen(Qt::green, axisHeight/2.0));
+				QRectF wheel1(globalX - robot.getAttributes().distanceToWheel - axisHeight/2.0,
+				              globalY - axisHeight, axisHeight, axisHeight*2);
+				QRectF wheel2(globalX + robot.getAttributes().distanceToWheel - axisHeight/2.0,
+				              globalY - axisHeight, axisHeight, axisHeight*2);
 
-		painter.drawRect(wheel1);
-		painter.drawRect(wheel2);
+				painter.drawRect(wheel1);
+				painter.drawRect(wheel2);*/
 
 		// Draw coordinate system
-		/*painter.setPen(QPen(Qt::red, 0.5));
-		double len = 4;
-		painter.drawLine(robot.xPos() - 0.25, robot.yPos(),
-		                  robot.xPos() + (sin(robot.getDirection() * len)),
-		                  robot.yPos() + (cos(robot.getDirection() * len)));*/
+		double len = ROBOT_COORD_DIRECTION_LEN;
+
+		painter.setPen(QPen(Qt::red, 0.5));
+		QLineF lineY(globalX,
+		             globalY,
+		             coordinateSystem::rightFrom(globalX, cos(robot.dir()) * len),
+		             coordinateSystem::upFrom(globalY, sin(robot.dir()) * len));
+		painter.drawLine(lineY);
+		
+		painter.setPen(QPen(Qt::blue, 0.5));
+		QLineF lineX(globalX,
+		             globalY,
+		             coordinateSystem::rightFrom(globalX, cos((robot.dir() - M_PI/2.0)) * len),
+		             coordinateSystem::upFrom(globalY, sin((robot.dir() - M_PI/2.0)) * len));
+		painter.drawLine(lineX);
+	}
+
+	void TrackPathWidget::drawGlobalCoordinateSystem(QPainter &painter)
+	{
+		painter.setPen(QPen(Qt::red, 0.5));
+		QLineF lineY(globalCoordinateSystem.centerX,
+		             globalCoordinateSystem.centerY,
+		             globalCoordinateSystem.centerX,
+		             globalCoordinateSystem.up(GLOBAL_COORD_DIRECTION_LEN));
+		painter.drawLine(lineY);
+
+		QLineF lineX(globalCoordinateSystem.centerX,
+		             globalCoordinateSystem.centerY,
+		             globalCoordinateSystem.right(GLOBAL_COORD_DIRECTION_LEN),
+		             globalCoordinateSystem.centerY);
+		painter.setPen(QPen(Qt::blue, 0.5));
+		painter.drawLine(lineX);
+	}
+
+	void TrackPathWidget::translateAndScale(QPainter &painter)
+	{
+		painter.setRenderHint(QPainter::Antialiasing);
+		painter.translate(QPointF(translatex, translatey));
+
+		painter.scale((qreal) zoom, (qreal) zoom);
+		globalCoordinateSystem.scale(zoom);
 	}
 
 	// TODO: Remove that and make it in update robot
@@ -176,6 +223,8 @@ namespace minotaur
 		translatey = 0.0;
 		lastMousePos.setX(0.0);
 		lastMousePos.setY(0.0);
+		
+		robot.reset();
 
 		update();
 	}
@@ -183,6 +232,7 @@ namespace minotaur
 	void TrackPathWidget::updateRobot(Robot robot)
 	{
 		this->robot = robot;
+		update();
 	}
 
 }
