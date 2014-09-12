@@ -8,17 +8,26 @@ namespace minotaur
 
 	Robot::Robot() : attributes(RobotAttributes::getDefaultAttributes())
 	{
-		xPosition = 0.0;
-		yPosition = 0.0;
-		direction = M_PI/2.0;
+		init();
 	}
 
 	Robot::Robot(RobotAttributes attributes) : attributes(attributes)
 	{
+		init();
 	}
 
 	Robot::~Robot()
 	{
+	}
+
+	void Robot::init()
+	{
+		xPosition = 0.0;
+		yPosition = 0.0;
+		direction = M_PI/2.0;
+		
+		sensor1.set(attributes.distanceToSensor_x, attributes.distanceToSensor_y, attributes.sensorAngle);
+		sensor2.set(-attributes.distanceToSensor_x, attributes.distanceToSensor_y, -attributes.sensorAngle);
 	}
 
 	RobotAttributes Robot::getAttributes()
@@ -57,7 +66,7 @@ namespace minotaur
 
 		// From circular arc (Vdist_r)
 		double rotateAngle = Vdist_r / attributes.distanceToSensor_radius;
-		
+
 		std::cout << Vangle_r << std::endl;
 
 		if (Vx_r >= 0)
@@ -66,7 +75,7 @@ namespace minotaur
 			rotate(rotateAngle * -1);
 
 		double Vdist_f = dY - Vy_r;
-		//forward(Vdist_f);
+		forward(Vdist_f);
 	}
 
 	void Robot::reset()

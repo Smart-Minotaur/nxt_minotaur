@@ -11,7 +11,7 @@ namespace minotaur
 
 		double distanceToSensor_x; // cm
 		double distanceToSensor_y; // cm
-		
+
 		double distanceToSensor_radius; // cm
 		double distanceToWheel; // cm
 		double sensorAngle; // Radiants
@@ -23,11 +23,11 @@ namespace minotaur
 			axisLength(axis),
 			distanceToSensor_x(dx),
 			distanceToSensor_y(dy) {
-				
-			sensorAngle = (M_PI/180) * 45 ; // TODO
+
+			sensorAngle = (M_PI/2.0) - atan(distanceToSensor_y/distanceToSensor_x);
 			m = atan(sensorAngle);
-			
-			distanceToSensor_radius = sqrt(pow(distanceToSensor_x, 2) + pow(distanceToSensor_y, 2)); 
+
+			distanceToSensor_radius = sqrt(pow(distanceToSensor_x, 2) + pow(distanceToSensor_y, 2));
 			distanceToWheel = axisLength / 2.0;
 		}
 
@@ -35,6 +35,22 @@ namespace minotaur
 			RobotAttributes attributes(7.9, 3.95, 4.9);
 			return attributes;
 		}
+	};
+
+	class Sensor
+	{
+		public:
+			// Position in the robot coordinate system
+			double xPosition;
+			double yPosition;
+			
+			double direction;
+
+			void set(double dx, double dy, double dir) {
+				xPosition = dx;
+				yPosition = dy;
+				direction = dir;
+			}
 	};
 
 	class Robot
@@ -45,11 +61,17 @@ namespace minotaur
 			// Position in the global coordinate system
 			double xPosition;
 			double yPosition;
+
 			/**
 			 * The direction is the angle y-axis of the robot
 			 * in radiant.
 			 */
 			double direction;
+			
+			Sensor sensor1;
+			Sensor sensor2;
+			
+			void init();
 
 		public:
 			Robot();
