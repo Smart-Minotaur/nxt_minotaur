@@ -2,6 +2,7 @@
 #define ROBOT_HPP
 
 #include <cmath>
+#include <vector>
 
 namespace minotaur
 {
@@ -24,7 +25,6 @@ namespace minotaur
 			distanceToSensor_x(dx),
 			distanceToSensor_y(dy) {
 
-			// TODO: Get correct robot length data
 			sensorAngle = (M_PI/2.0) - atan(distanceToSensor_y/distanceToSensor_x);
 			m = tan(sensorAngle);
 
@@ -51,6 +51,15 @@ namespace minotaur
 				xPosition = dx;
 				yPosition = dy;
 				direction = dir;
+			}
+
+			void forward(double delta) {
+				xPosition += cos(direction) * delta;
+				yPosition += sin(direction) * delta;
+			}
+
+			void rotate(double angle) {
+				direction += angle;
 			}
 
 			double xPos() {
