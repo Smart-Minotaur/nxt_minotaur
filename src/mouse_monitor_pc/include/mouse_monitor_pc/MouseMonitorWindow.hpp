@@ -107,6 +107,7 @@ namespace minotaur
 			void updateAbsoluteValueDisplay(MouseData data);
 			void updatePlots(MouseData data);
 			void updateDirectionWidgets(MouseData data);
+			void updateRobot();
 
 			QString uintToQString(uint data);
 			int sampleRateToInterval(int sampleRate);

@@ -90,7 +90,7 @@ namespace minotaur
 			void drawGlobalCoordinateSystem(QPainter &painter);
 			void translateAndScale(QPainter &painter);
 			void drawCoordinateSystem(double x, double y, double dir,
-			                          QColor xColor, QColor yColor, double len,
+			                          QColor xColor, QColor yColor, double len, double width,
 			                          QPainter &painter);
 
 		protected:

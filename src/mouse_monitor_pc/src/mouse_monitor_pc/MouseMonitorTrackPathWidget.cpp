@@ -89,6 +89,12 @@ namespace minotaur
 
 		double globalX = globalCoordinateSystem.right(robot.xPos());
 		double globalY = globalCoordinateSystem.up(robot.yPos());
+		
+		double globalX_s1 = globalCoordinateSystem.right(robot.s1().xPos());
+		double globalY_s1 = globalCoordinateSystem.up(robot.s1().yPos());
+		
+		double globalX_s2 = globalCoordinateSystem.right(robot.s2().xPos());
+		double globalY_s2 = globalCoordinateSystem.up(robot.s2().yPos());
 
 		/*
 				painter.setPen(QPen(Qt::black, axisHeight));
@@ -105,46 +111,31 @@ namespace minotaur
 				painter.drawRect(wheel1);
 				painter.drawRect(wheel2);*/
 
-		// Draw coordinate system
-		/*double len = ROBOT_COORD_DIRECTION_LEN;
+		// Draw robot coordinate system
+		drawCoordinateSystem(globalX,
+		                     globalY,
+		                     robot.dir(), Qt::blue, Qt::red, ROBOT_COORD_DIRECTION_LEN, 0.3,
+		                     painter);
 
-		painter.setPen(QPen(Qt::red, 0.5));
-		QLineF lineY(globalX,
-		             globalY,
-		             coordinateSystem::rightFrom(globalX, cos(robot.dir()) * len),
-		             coordinateSystem::upFrom(globalY, sin(robot.dir()) * len));
-		painter.drawLine(lineY);
+		// Draw sensor 1 coordinate system
+		drawCoordinateSystem(globalX_s1,
+		                     globalY_s1,
+		                     robot.s1().dir(), Qt::magenta, Qt::cyan, ROBOT_COORD_DIRECTION_LEN, 0.1,
+		                     painter);
 
-		painter.setPen(QPen(Qt::blue, 0.5));
-		QLineF lineX(globalX,
-		             globalY,
-		             coordinateSystem::rightFrom(globalX, cos((robot.dir() - M_PI/2.0)) * len),
-		             coordinateSystem::upFrom(globalY, sin((robot.dir() - M_PI/2.0)) * len));
-		painter.drawLine(lineX);*/
-		
-		
+		// Draw sensor 2 coordinate system
+		drawCoordinateSystem(globalX_s2,
+		                     globalY_s2,
+		                     robot.s2().dir(), Qt::magenta, Qt::cyan, ROBOT_COORD_DIRECTION_LEN, 0.1,
+		                     painter);
 	}
 
 	void TrackPathWidget::drawGlobalCoordinateSystem(QPainter &painter)
 	{
 		drawCoordinateSystem(globalCoordinateSystem.centerX,
 		                     globalCoordinateSystem.centerY,
-		                     M_PI/2.0, Qt::blue, Qt::red, GLOBAL_COORD_DIRECTION_LEN,
-							 painter);
-
-		/*painter.setPen(QPen(Qt::red, 0.5));
-		QLineF lineY(globalCoordinateSystem.centerX,
-		             globalCoordinateSystem.centerY,
-		             globalCoordinateSystem.centerX,
-		             globalCoordinateSystem.up(GLOBAL_COORD_DIRECTION_LEN));
-		painter.drawLine(lineY);
-
-		QLineF lineX(globalCoordinateSystem.centerX,
-		             globalCoordinateSystem.centerY,
-		             globalCoordinateSystem.right(GLOBAL_COORD_DIRECTION_LEN),
-		             globalCoordinateSystem.centerY);
-		painter.setPen(QPen(Qt::blue, 0.5));
-		painter.drawLine(lineX);*/
+		                     M_PI/2.0, Qt::blue, Qt::red, GLOBAL_COORD_DIRECTION_LEN, 0.5,
+		                     painter);
 	}
 
 	void TrackPathWidget::translateAndScale(QPainter &painter)
@@ -162,21 +153,22 @@ namespace minotaur
 	    double dir,
 	    QColor xColor,
 	    QColor yColor,
-		double len,
+	    double len,
+		double width,
 	    QPainter &painter)
 	{
 		QLineF lineY(x,
 		             y,
 		             coordinateSystem::rightFrom(x, cos(dir) * len),
 		             coordinateSystem::upFrom(y, sin(dir) * len));
-		painter.setPen(QPen(yColor, 0.5));
+		painter.setPen(QPen(yColor, width));
 		painter.drawLine(lineY);
 
 		QLineF lineX(x,
 		             y,
 		             coordinateSystem::rightFrom(x, cos(dir - M_PI/2.0) * len),
 		             coordinateSystem::upFrom(y, sin(dir - M_PI/2.0) * len));
-		painter.setPen(QPen(xColor, 0.5));
+		painter.setPen(QPen(xColor, width));
 		painter.drawLine(lineX);
 	}
 

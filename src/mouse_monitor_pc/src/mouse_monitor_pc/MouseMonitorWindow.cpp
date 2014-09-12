@@ -288,6 +288,7 @@ namespace minotaur
 		logDialog->logFiltered(processedData);
 
 		// Display the data
+		updateRobot();
 		pathWidget->updateWidget(processedData);
 		pathWidget->updateRobot(robot);
 		updateDataDisplay(processedData);
@@ -441,6 +442,30 @@ namespace minotaur
 			y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
 		}
 	}
+	
+	void MouseMonitorWindow::updateRobot()
+	{
+		robotAxisEdit->setText(QString("%2").arg(robot.getAttributes().axisLength, 0, 'f', 4));
+		sXDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_x, 0, 'f', 4));
+		sYDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_y, 0, 'f', 4));
+		
+		robotAngleEdit->setText(QString("%2").arg(robot.getAttributes().sensorAngle, 0, 'f',  4));
+		robotMEdit->setText(QString("%2").arg(robot.getAttributes().m, 0, 'f',  4));
+		robotRadiusEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_radius, 0, 'f',  4));
+		robotWheelDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToWheel, 0, 'f',  4));
+		
+		robotXEdit->setText(QString("%2").arg(robot.xPos(), 0, 'f',  4));
+		robotYEdit->setText(QString("%2").arg(robot.yPos(), 0, 'f',  4));
+		robotDirEdit->setText(QString("%2").arg(robot.dir(), 0, 'f',  4));
+		
+		s1XEdit->setText(QString("%2").arg(robot.s1().xPos(), 0, 'f',  4));
+		s1YEdit->setText(QString("%2").arg(robot.s1().yPos(), 0, 'f',  4));
+		s1DirEdit->setText(QString("%2").arg(robot.s1().dir(), 0, 'f',  4));
+		
+		s2XEdit->setText(QString("%2").arg(robot.s2().xPos(), 0, 'f',  4));
+		s2YEdit->setText(QString("%2").arg(robot.s2().yPos(), 0, 'f',  4));
+		s2DirEdit->setText(QString("%2").arg(robot.s2().dir(), 0, 'f',  4));
+	}
 
 	void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
 	{
@@ -583,6 +608,8 @@ namespace minotaur
 	void MouseMonitorWindow::getData1BtnClicked()
 	{
 		MouseData data = monitorNode.getMouseData(SENSOR1);
+		
+		processMouseData(data);
 
 		QString xd = QString::number(data.x_disp);
 		QString yd = QString::number(data.y_disp);
@@ -603,6 +630,8 @@ namespace minotaur
 	void MouseMonitorWindow::getData2BtnClicked()
 	{
 		MouseData data = monitorNode.getMouseData(SENSOR2);
+		
+		processMouseData(data);
 
 		QString xd = QString::number(data.x_disp);
 		QString yd = QString::number(data.y_disp);
