@@ -5,19 +5,15 @@ Projekt {#projekt}
 
 \section beschreibung-projekt Beschreibung
 
-Die Aufgabe des Roboters war es __ein Labyrinth zu karthographieren__. 
-Als Roboter wurde ein __Lego NXT Brick__ verwendet. Der Roboter verfügt 
-über einen __Differentialantrieb__ und kann seine Umgebung mithilfe von 
-__Ultraschallsensoren__ wahrnehmen.
+Die Aufgabe des Roboters ist es __ein Labyrinth zu karthographieren__. Der Roboter verfügt über einen __Differentialantrieb__ und kann seine Umgebung mithilfe von __Ultraschallsensoren__ wahrnehmen. Sensoren und Antrieb werden über einen __Lego NXT Brick__ angesteuert. 
 
 Zusätzlich wurde auf dem Roboter ein __Beagle Bone Black__ montiert. 
 Dieses bietet __mehr Rechenleistung und eine flexiblere 
 Programmierung__ als der Brick, auf welchem lediglich in der 
 beschränkten Programmiersprache NXC gearbeitet werden kann. Außerdem 
-wird das BBB benötigt, um zusätzliche __Mauslasersensoren__ über 
-einen SPI-Bus anzusprechen. Diese Maussensoren werden verwendet, um die 
-Bewegung des Roboters zu messen und somit dessen __Odometrie zu 
-verbessern__.
+wird das BBB benötigt um zusätzliche die __Maussensoren__ über 
+den SPI-Bus anzusprechen. Diese Maussensoren werden verwendet, um die 
+zurückgelegte Strecke des Roboters zu messen und somit dessen __Odometrie zu verbessern__.
 
 ---
 
