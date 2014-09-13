@@ -100,19 +100,16 @@ gateway 192.168.11.1
 
 \subsection spi-installation-bbb SPI Device Tree
 
-In diesem Abschnitt wird die Installation von SPI0 und SPI1 auf dem Beagle
-Bone Black mit dem Device Tree erläutert.
+Um den SPI-Bus auf dem BBB zu verwenden, müssen die jeweiligen SPI-Ports über den Device-Tree aktiviert werden. In diesem Abschnitt wird die Installation von SPI0 und SPI1 auf dem Beagle Bone Black erläutert.
 
-The script installs the overlay files for '''SPI0 (1 chip select)''' and '''SPI1 (2 chips selects)'''.
+Das Script addOverlayToDeviceTree installiert die overlay Dateien für '''SPI0 (1 chip select)''' und '''SPI1 (2 chips selects)'''.
 
-> __Only for angstrom linux__
+> __Nur für angstrom linux__
 >
-> Warning! On the newest angstrom image there is no dtc in opkg available.
-> A simple solution is to create the compiled dtbo file on a desktop ubuntu machine
-> and copy it to the BBB.
->
-> * Clone the bbb_setup repository
-> * Install dtc (device tree compiler)
+> Achtung! Für das neuste angstrom image ist kein opkg dtc Paket verfügbar. Eine einfach Lösung dafür ist das kompilierte dtbo Dateui auf einem Ubuntu Desktop PC zu erzwugen und dann aufs BBB zu kpoeren.
+
+* Klonen des bbb_setup repository
+* Installation von dtc (device tree compiler)
 
 ~~~
 sudo ./dtc.sh
@@ -124,7 +121,7 @@ sudo ./dtc.sh
 sudo ./addOverlayToDeviceTree
 ~~~
 
-* Aktivieren von SPI1 beim Start. (HDMI wird deaktiviert, da SPI1 diese Pins verwendet)
+* Aktivieren von SPI1 beim Start (HDMI wird deaktiviert, da HDMI auch Pins die von SPI1 verwendet werden benutzt und das zu fehlerhafter Kommunikation führt)
 * Boot Partition mounten.
 
 ~~~

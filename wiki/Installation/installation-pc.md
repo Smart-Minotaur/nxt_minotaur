@@ -37,6 +37,9 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 ~~~
 
+\subsection cross-gcc-installation-pc GCC-ARM 4.8
+Zum cross-compilieren der pln_minotaur Bibliothek welche zum Ansteuern der Maussensoren verwendet wird wird eine Cross-Compile Toolchain verwedet. Dabei wird eine bereits kompilierte Toolchain für Linux von Linaro verwendet.
+
 \subsection ros-installation-pc ROS
 
 Die verwendete ROS Version ist __hydro__. Um ROS hydro auf dem Computer
