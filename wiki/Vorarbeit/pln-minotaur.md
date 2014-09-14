@@ -28,13 +28,15 @@ After one of these functions is called, the read command (required register data
 To get the status of the sensor, the pln_minotaur::IPLNTrackingDevice::readPLNSettings() function can be used. This class consists of the whole sensor configuration data and provides some functions to extract the most interesting data.
 ---
 
+ACHTUNG: Wichtig zu wissen ist, wann die internen Zähler/Register des sensors zurückgesetzt werden. Werdern displacement werde oder das status register gleesne, werden die dispalcement register auf 0 zurückgesetzt. Auch werden diese zurückgestezt, wenn das Lift-Bit aktiviert wird (also wenn der sensor zu weit von der oberfläche entfenrt wis).
+
 \subsection make Kompilierung
 Als make system wird cmake verwendet. Die pln_minotaur Bibliothek wird für das BBB cross-compiliert. Die installation eines cross compilers ist in TODO beschrieben. Eine toolchain file wird benötigt, um den verwendeten cross-compiler zu bestimmen. da zusätzlichj datenstrukturen der pln_minotaur bibliothek auf dem Desktop-PC verwnedet werden kann auch eine x86 version der bibliothek erstekll wer5den. im buiild verzeichnis finden sich beider versionen der bibliothek.
 
 \section example Beispiele
 Beispiele zur Benutzung der pln_minotaur Bibliotheke befinden sich auf folgender Seite: TODO
 
-\section mouse-monitor Mouse Monitor
+\section mouse-monitor Mouse Monitor (mouse_monitor_pc package)
 Mouse Monitor wurde ursprünglich zum testen der Philips pln2033 Maussensoren entwickelt. Die Anwendung verfügt üpber eine Vielzahl von Funktionen und ist in zwei teile untergliedert. Zur kommunikation über WLAN wird das ROS message systrem verwendet.
 
 TODO BIld
@@ -48,6 +50,8 @@ Die PC Node empfäng die Snesore daten, verarbeitet diese und dstellt sie grafis
 TODO
 
 TODO: Bild
+
+\section kalibrierung
 
 \section localization Berechnung der Position und Ausrichtung des Roboters
 Zum bestimmen der Position und der Ausrichtung des Roboters wird nur 1 Sensor benötigt. Die Berechnung der Roboter Porsition sowie Ausrichtung wird in deisem Abschnit beschrieben.
@@ -71,5 +75,36 @@ Zum testen sowie bei der endmmontierung auf dem Roboter wird Lego benutzt, was w
 \section improvement Verbesserungen
 
 \section api-implementation API sowie Implementierung
-Die API sowie details über die Implementierung sind auf folgenden Seiten verfügbar:
+
+\subsection array-converter Array-Converter
+Um den Philips pln2033 zu benutzen muss zuerst ein Patch code ins RAM des DSP geladen werden. Das kleine utility programm arrayConverter convertiert den vorhandenen Pacth code in eine korrektes Format (Hex darstellung) um diesen komfortabel beim start der bibliothek ins RAM laden zu können. Der Patch code wird im uint8 array format und in korrekte endian darstellung in einer datei sgespeichert.
+
+Um pln_minotaur zu vwernwenden wird nur das interace IPLNTrackingDevice benötigt.methoden zum auslesen von
+	 * Displacement in CPI (counts per inch)
+	 * Displacement in cm
+	 * Speed in cm/second
+sind vorhanden.
+
+Bei jedem Lesen der dISplacement werte, ird zusätzlich ein zeitstwemple mit agespeichert. Dadurch kann die geschwidigkeit des sebnsores berechent werden. Über das Interface kann zusätzlich die aie aktuellen sensor einstellungen ausgelesen werden.  Auch ist dsaqs setzten der X und y auflösung möglich.
+
+Im folgenden werden die Funktionen der verschiedenen klassen zusammengedfasst:
+
+PLN2033.h:
+Sensior register schreiben und lesen
+RAM schreiben und lesen
+RAM code laden
+RAM code überprüfen
+Snesor initalsieren (inital configuration procedur durchführen)
+power on
+poer down
+soft reset
+
+SPIDevice.h:
+Wrapper klasse für den Linux SPI trieber:
+Senden und empfangen von daten über SPI
+Settzen verschiedner SPI configtatuinenn
+
+Zusätzlich: SPIException und LN2033_Settings und PatchCode8
+
+Die API sowie details über die Implementierung/Vererbungshierachie sind auf folgenden Seiten verfügbar:
 TODO Link
