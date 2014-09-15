@@ -75,7 +75,7 @@ namespace minotaur
 		double rotateAngle = Vdist_r / attributes.distanceToSensor_radius;
 		
 		// Rotation direction
-		if (Vx_r >= 0)
+		if (dX >= 0)
 			rotate(rotateAngle);
 		else
 			rotate(rotateAngle * -1);
@@ -88,19 +88,7 @@ namespace minotaur
 			Vdist_f *= -1;
 
 		forward(Vdist_f);
-		
-		//updateSensors();
 	}
-	
-	/*void Robot::updateSensors() {
-		double s1_xNew = (std::cos(angle) * sensor1.xPos()) + (-std::sin(angle) * sensor1.yPos());
-		double s1_yNew = (std::sin(angle) * sensor1.xPos()) + (std::cos(angle) * sensor1.yPos());
-		sensor1.set(s1_xNew, s1_yNew, sensor1.dir());
-
-		double s2_xNew = (std::cos(angle) * sensor2.xPos()) + (-std::sin(angle) * sensor2.yPos());
-		double s2_yNew = (std::sin(angle) * sensor2.xPos()) + (std::cos(angle) * sensor2.yPos());
-		sensor2.set(s2_xNew, s2_yNew, sensor2.dir());
-	}*/
 
 	void Robot::reset()
 	{
@@ -110,6 +98,11 @@ namespace minotaur
 
 		sensor1.set(pos.xPosition + attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
 		sensor2.set(pos.xPosition + -attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
+		
+		Object::reset();
+
+		sensor1.reset();
+		sensor2.reset();
 	}
 
 	Sensor &Robot::s1()

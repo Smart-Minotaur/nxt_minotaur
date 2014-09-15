@@ -76,9 +76,6 @@ namespace minotaur
 			double translatex;
 			double translatey;
 
-			QPainterPath sensor1_path;
-			QPainterPath sensor2_path;
-
 			int zoom;
 			bool sensor1_enable;
 			bool sensor2_enable;
@@ -92,6 +89,10 @@ namespace minotaur
 			void drawCoordinateSystem(double x, double y, double dir,
 			                          QColor xColor, QColor yColor, double len, double width,
 			                          QPainter &painter);
+			void drawPath(std::vector<Position> &path, QColor color, QPainter &painter);
+			void drawSensorPath(std::vector<Position> &path, QColor color, QPainter &painter);
+			void drawRobotAxis(double globalX, double globalY, QPainter &painter);
+			void rotateObject(double &x, double &y, double angle);
 
 		protected:
 			void paintEvent(QPaintEvent *event);
@@ -103,7 +104,6 @@ namespace minotaur
 			virtual ~TrackPathWidget() {}
 
 			void init();
-			void updateWidget(MouseData data);
 			void reset();
 
 			void updateRobot(Robot robot);

@@ -289,7 +289,6 @@ namespace minotaur
 
 		// Display the data
 		updateRobot();
-		pathWidget->updateWidget(processedData);
 		pathWidget->updateRobot(robot);
 		updateDataDisplay(processedData);
 		updateDirectionWidgets(processedData);
