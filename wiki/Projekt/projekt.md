@@ -5,7 +5,10 @@ Projekt {#projekt}
 
 \section beschreibung-projekt Beschreibung
 
-Die Aufgabe des Roboters ist es __ein Labyrinth zu karthographieren__. Der Roboter verfügt über einen __Differentialantrieb__ und kann seine Umgebung mithilfe von __Ultraschallsensoren__ wahrnehmen. Sensoren und Antrieb werden über einen __Lego NXT Brick__ angesteuert. 
+Die Aufgabe des Roboters ist es __ein Labyrinth zu karthographieren__. 
+Der Roboter verfügt über einen __Differentialantrieb__ und kann seine 
+Umgebung mithilfe von __Ultraschallsensoren__ wahrnehmen. Sensoren und 
+Antrieb werden über einen __Lego NXT Brick__ angesteuert. 
 
 Zusätzlich wurde auf dem Roboter ein __Beagle Bone Black__ montiert. 
 Dieses bietet __mehr Rechenleistung und eine flexiblere 
@@ -14,6 +17,18 @@ beschränkten Programmiersprache NXC gearbeitet werden kann. Außerdem
 wird das BBB benötigt um zusätzliche die __Maussensoren__ über 
 den SPI-Bus anzusprechen. Diese Maussensoren werden verwendet, um die 
 zurückgelegte Strecke des Roboters zu messen und somit dessen __Odometrie zu verbessern__.
+
+Als Programmiersprache wird in dem kompletten Projekt \b C++ 
+verwendet. Außerdem wird das Framework __Robot Operative System 
+(ROS)__ in der Version __hydro__ verwendet. Mit diesem Framework wird 
+die Kommunikationen einzelner Komponenten und Programme in einem 
+verteilten System stark abstrahiert und dadurch vereinfacht. Außerdem 
+bietet es viele Funktionen und Programme zur Navigation und 
+Lokalisierung von Robotern. Die Hauptaufgabe von ROS in diesem Projekt 
+ist die __Interprozesskommunikation__ über das WLAN (siehe \ref 
+datenfluss-projekt). In einem der Ansätze wird außerdem auch der ROS
+Navigation Stack verwendet, um den Roboter zu navigieren (siehe \ref 
+histogramm).
 
 ---
 
@@ -34,63 +49,18 @@ erläutert.
 
 \subsection packages-projekt Packages
 
-Das Package __minotaur_common__ beinhaltet __grundlegende Strukturen und Funktionen__, die 
-__von allen anderen Packages verwendet__ werden. Darunter sind 
-verschiedene Funktionen zur Umrechnung von Maßeinheiten, Funtkionen 
-für das Auslesen von Parametern vom ROS-Param-Server, Funktionen zur 
-Kommunikation über ROS und Definitionen für ROS-Topics. Durch dieses 
-Package wird vor allem __Codeduplikationen__ vorgebeugt. Das Package 
-muss __immer__ im Zusammenhang mit jedem anderen Package kompiliert 
-werden.
-
-Auch bei __minotaur_common_qt__ handelt es sich um ein allgemeines Package, das 
-praktische Funktionen und Strukturen anbietet. Dabei ist dieses 
-Package speziell __für Aufgaben im Zusammenhang mit QT__ zuständig. Da 
-solche Funktionen beispielsweise __auf dem Beagle Bone nicht benötigt__ 
-werden, haben diese eine seperates Package erhalten. Die meisten QT 
-nutzenden Packages verwenden auch dieses Package.
-
-Das Package __robot_control__ umfasst die Implementierung des __PID-Reglers__ für die 
-Motoren, das Auslesen der Ultraschallsensoren und das Verarbeiten von 
-ROS-Messages, um den Brick anzusteuern. Außerdem wird hier die 
-__ROS-Node RobotControl__ bereitgestellt, welche die 
-Kommunikationsgrundlage aller anderen Packages darstellt. Mehr dazu in 
-dem Abschnitt \ref robot-control-projekt.
-
-In dem Package __pid_monitor__ wird eine __GUI-Applikation__ realisiert, mit der sich 
-das Verhalten des PID-Reglers in Form von Graphen betrachten lässt. 
-Der Roboter kann außerdem ferngesteuert werden. So können dessen 
-Einschwing- und Ausgleichverhalten beobachtet werden.
-Neben den Motoren bietet die Applikation auch die Möglichkeit 
-Hindernisse mit den Ultraschallsensoren wahrzunehmen. Mehr dazu im 
-Abschnitt \ref gui-tools-projekt.
-
-Das Package __minotaur_map__ realisiert den __ersten Ansatz__ dieses Projektes. Es 
-beinhaltet Funktionen und Strukturen um __Histogrammkarten__ zu 
-erzeugen und durch diese hindurch zu navigieren. Außerdem nutzt es 
-die __ROS Navigation Stack Schnittstelle__, um den Roboter anzusteuern. 
-Mehr Informationen dazu finden sich im Abschnitt \ref ansätze-projekt.
-
-Bei __map_monitor__ handelt es sich um ein Package, das eine __GUI-Applikation__ für 
-die Histogrammkarte realisiert. Der Roboter kann angesteuert werden 
-während __eine Karte live mitgezeichnet__ wird. Mit diesem Tool kann 
-also die Qualität der Karte und auch das Verhalten des 
-Erstellungsalgorithmus beobachtet und bewertet werden. Mehr 
-Informationen finden sich im Abschnitt \ref gui-tools-projekt.
-
-In dem Package __minotaur_maze__ wird der __zweite Ansatz__ dieses Projektes 
-realisiert. Es enthält Strukturen und Funktionen, um den Roboter in 
-einem __graphenähnlichen Labyrinth__ zu bewegen und eine Karte dieses 
-Graphen zu erstellen. Mehr dazu im Abschnitt \ref ansätze-projekt.
-
-__mouse_monitor_beagle__ TODO Jens
-
-__mouse_monitor_pc__ TODO Jens
-
-Das Package __minotaur_teleop__ enthält ROS-Nodes, um den Roboter 
-remote mit einem Gamepad zu steuern. Dies kann beispielsweise benutzt 
-werden, um den Roboter in Kombination mit dem GUI-Tool \ref 
-map_monitor-gui-tools 
+| Packagename              | Beschreibung|
+|:-------------------------|:------------|
+| __minotaur_common__      |Dieses Package beinhaltet __grundlegende Strukturen und Funktionen__, die __von allen anderen Packages verwendet__ werden. Darunter sind verschiedene Funktionen zur Umrechnung von Maßeinheiten, Funtkionen für das Auslesen vonn Parametern vom ROS-Param-Server, Funktionen zur Kommunikation über ROS und Definitionen für ROS-Topics. Durch dieses Package wird vor allem __Codeduplikationen__ vorgebeugt. Das Package muss __immer__ im Zusammenhang mit jedem anderen Package kompiliert werden. |
+| __minotaur_common_qt__   |Auch bei diesem Package handelt es sich um ein allgemeines Package, das praktische Funktionen und Strukturen anbietet. Dabei ist dieses Package speziell __für Aufgaben im Zusammenhang mit QT__ zuständig. Da solche Funktionen beispielsweise __auf dem Beagle Bone nicht benötigt__ werden, haben diese eine seperates Package erhalten. Die meisten QT nutzenden Packages verwenden auch dieses Package. |
+| __robot_control__        |Dieses Package umfasst die Implementierung des __PID-Reglers__ für die Motoren, das Auslesen der Ultraschallsensoren und das Verarbeiten von ROS-Messages, um den Brick anzusteuern. Außerdem wird hier die __ROS-Node RobotControl__ bereitgestellt, welche die Kommunikationsgrundlage aller anderen Packages darstellt. Mehr dazu in dem Abschnitt \ref robot-control-projekt. |
+| __pid_monitor__          |In diesem Package wird eine __GUI-Applikation__ realisiert, mit der sich das Verhalten des PID-Reglers in Form von Graphen betrachten lässt. Der Roboter kann außerdem ferngesteuert werden. So können dessen Einschwing- und Ausgleichverhalten beobachtet werden. Neben den Motoren bietet die Applikation auch die Möglichkeit Hindernisse mit den Ultraschallsensoren wahrzunehmen. Mehr dazu im Abschnitt \ref gui-tools-projekt.|
+| __minotaur_map__         |Das Package __minotaur_map__ realisiert den __ersten Ansatz__ dieses Projektes. Es beinhaltet Funktionen und Strukturen um __Histogrammkarten__ zu erzeugen und durch diese hindurch zu navigieren. Außerdem nutzt es die __ROS Navigation Stack Schnittstelle__, um den Roboter anzusteuern. Mehr Informationen dazu finden sich im Abschnitt \ref ansätze-projekt. |
+| __map_monitor__          |Bei __map_monitor__ handelt es sich um ein Package, das eine __GUI-Applikation__ für die Histogrammkarte realisiert. Der Roboter kann angesteuert werden während __eine Karte live mitgezeichnet__ wird. Mit diesem Tool kann also die Qualität der Karte und auch das Verhalten des Erstellungsalgorithmus beobachtet und bewertet werden. Mehr Informationen finden sich im Abschnitt \ref gui-tools-projekt. |
+| __minotaur_maze__        |In dem Package __minotaur_maze__ wird der __zweite Ansatz__ dieses Projektes realisiert. Es enthält Strukturen und Funktionen, um den Roboter in einem __graphenähnlichen Labyrinth__ zu bewegen und eine Karte dieses Graphen zu erstellen. Mehr dazu im Abschnitt \ref ansätze-projekt. |
+| __mouse_monitor_pc__     |TODO |
+| __mouse_monitor_beagle__ |TODO |
+| __minotaur_teleop__      |Das Package __minotaur_teleop__ enthält ROS-Nodes, um den Roboter remote mit einem Gamepad zu steuern. Dies kann beispielsweise benutzt werden, um den Roboter in Kombination mit dem GUI-Tool \ref map_monitor-gui-tools. |
 
 \subsection datenfluss-projekt Datenfluss
 
@@ -271,7 +241,12 @@ direkt, sondern nur über das Direct Command Interface ausgelesen werden.
 Aufgrund des großen Messfehlers und der wiederauftretenden Messwerte 
 ist __eine Navigation in einem Labyrinth für den Roboter kaum möglich__.
 
-\subsection maussensoren2-projekt Maussensoren
+\subsection navigation-projekt Navigation
 
-TODO Jens
-
+Dadruch, dass sämtliche Fehler bei der Arbeit mit den Maussensoren 
+erst __gegen Ende des Projekts__ gelöst wurden, konnten diese nicht mehr 
+an den Roboter montiert und die entsprechende Software implementiert 
+werden. Daher bleibt weiterhin das Problem bestehen, dass die 
+Navigation und Lokalisierung des Roboters unzureichend ist. Die 
+Auswirkung der Maussensoren auf die Odometrie des Roboters konnte im 
+Rahmen dieses Projekts nicht mehr festgestellt werden.
