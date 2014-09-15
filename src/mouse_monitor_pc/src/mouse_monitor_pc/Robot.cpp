@@ -22,12 +22,12 @@ namespace minotaur
 
 	void Robot::init()
 	{
-		xPosition = 0.0;
-		yPosition = 0.0;
+		pos.xPosition = 0.0;
+		pos.yPosition = 0.0;
 		direction = M_PI/2.0;
 
-		sensor1.set(xPosition + attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
-		sensor2.set(xPosition + -attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
+		sensor1.set(pos.xPosition + attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
+		sensor2.set(pos.xPosition + -attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
 	}
 
 	RobotAttributes Robot::getAttributes()
@@ -91,12 +91,12 @@ namespace minotaur
 
 	void Robot::reset()
 	{
-		xPosition = 0.0;
-		yPosition = 0.0;
+		pos.xPosition = 0.0;
+		pos.yPosition = 0.0;
 		direction = M_PI/2.0;
 
-		sensor1.set(xPosition + attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
-		sensor2.set(xPosition + -attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
+		sensor1.set(pos.xPosition + attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
+		sensor2.set(pos.xPosition + -attributes.distanceToSensor_x, pos.yPosition + attributes.distanceToSensor_y, direction);
 	}
 
 	Sensor &Robot::s1()

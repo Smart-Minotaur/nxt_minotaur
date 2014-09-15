@@ -37,29 +37,42 @@ namespace minotaur
 			return attributes;
 		}
 	};
+	
+	struct Position {
+		double xPosition;
+		double yPosition;
+	};
 
 	class Object
 	{
 		protected:
-			double xPosition;
-			double yPosition;
+			Position pos;
 			
 			/**
 			 * The direction is the angle y-axis of the object
 			 * in radiant.
 			 */
 			double direction;
+			
+			/**
+			 * For path tracking.
+			 */
+			 std::vector<Position> path;
 
 		public:
 			virtual void set(double dx, double dy, double dir) {
-				xPosition = dx;
-				yPosition = dy;
+				pos.xPosition = dx;
+				pos.yPosition = dy;
 				direction = dir;
+				
+				path.push_back(pos);
 			}
 
 			virtual void forward(double delta) {
-				xPosition += cos(direction) * delta;
-				yPosition += sin(direction) * delta;
+				pos.xPosition += cos(direction) * delta;
+				pos.yPosition += sin(direction) * delta;
+				
+				path.push_back(pos);
 			}
 
 			virtual void rotate(double angle) {
@@ -67,15 +80,23 @@ namespace minotaur
 			}
 
 			virtual double xPos() {
-				return xPosition;
+				return pos.xPosition;
 			}
 
 			virtual double yPos() {
-				return yPosition;
+				return pos.yPosition;
 			}
 
 			virtual double dir() {
 				return direction;
+			}
+			
+			virtual void reset() {
+				path.clear();
+			}
+			
+			virtual std::vector<Position> &getPath() {
+				return path;
 			}
 	};
 
