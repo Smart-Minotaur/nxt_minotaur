@@ -40,16 +40,9 @@ namespace minotaur
 		this->attributes = attributes;
 	}
 
-	void Robot::setPosition(double x, double y)
-	{
-		xPosition = x;
-		yPosition = y;
-	}
-
 	void Robot::forward(double delta)
 	{
-		xPosition += cos(direction) * delta;
-		yPosition += sin(direction) * delta;
+		Object::forward(delta);
 		
 		sensor1.forward(delta);
 		sensor2.forward(delta);
@@ -57,7 +50,7 @@ namespace minotaur
 
 	void Robot::rotate(double angle)
 	{
-		direction += angle;
+		Object::rotate(angle);
 		
 		sensor1.rotate(angle);
 		sensor2.rotate(angle);
@@ -104,21 +97,6 @@ namespace minotaur
 
 		sensor1.set(xPosition + attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
 		sensor2.set(xPosition + -attributes.distanceToSensor_x, yPosition + attributes.distanceToSensor_y, direction);
-	}
-
-	double Robot::xPos()
-	{
-		return xPosition;
-	}
-
-	double Robot::yPos()
-	{
-		return yPosition;
-	}
-
-	double Robot::dir()
-	{
-		return direction;
 	}
 
 	Sensor &Robot::s1()

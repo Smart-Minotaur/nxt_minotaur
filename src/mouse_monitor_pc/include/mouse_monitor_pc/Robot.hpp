@@ -38,60 +38,56 @@ namespace minotaur
 		}
 	};
 
-	class Sensor
+	class Object
 	{
-		public:
-			// Position in the robot coordinate system
+		protected:
 			double xPosition;
 			double yPosition;
-
+			
+			/**
+			 * The direction is the angle y-axis of the object
+			 * in radiant.
+			 */
 			double direction;
 
-			void set(double dx, double dy, double dir) {
+		public:
+			virtual void set(double dx, double dy, double dir) {
 				xPosition = dx;
 				yPosition = dy;
 				direction = dir;
 			}
 
-			void forward(double delta) {
+			virtual void forward(double delta) {
 				xPosition += cos(direction) * delta;
 				yPosition += sin(direction) * delta;
 			}
 
-			void rotate(double angle) {
+			virtual void rotate(double angle) {
 				direction += angle;
 			}
 
-			double xPos() {
+			virtual double xPos() {
 				return xPosition;
 			}
 
-			double yPos() {
+			virtual double yPos() {
 				return yPosition;
 			}
 
-			double dir() {
+			virtual double dir() {
 				return direction;
 			}
 	};
 
-	class Robot
+	typedef Object Sensor;
+
+	class Robot : public Object
 	{
 		private:
 			RobotAttributes attributes;
 
-			// Position in the global coordinate system
-			double xPosition;
-			double yPosition;
-
-			/**
-			 * The direction is the angle y-axis of the robot
-			 * in radiant.
-			 */
-			double direction;
-
-			Sensor sensor1;
-			Sensor sensor2;
+			Sensor sensor1; // Position relative to robot coordinate system
+			Sensor sensor2; // Position relative to robot coordinate system
 
 			void init();
 
@@ -103,18 +99,14 @@ namespace minotaur
 			void setAttributes(RobotAttributes attributes);
 			RobotAttributes getAttributes();
 
-			void setPosition(double x, double y);
 			void forward(double delta);
 			void rotate(double angle);
+			
 			void move(double dX, double dY);
 			void reset();
 
 			Sensor &s1();
 			Sensor &s2();
-
-			double xPos();
-			double yPos();
-			double dir();
 	};
 
 }
