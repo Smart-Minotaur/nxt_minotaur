@@ -167,22 +167,11 @@ Analysieren von Daten vereinfacht wird. Alle in diesem Projekt
 entwickelten grafischen Anwendungen werden auf der folgenden Seite 
 näher beschrieben:
 
-* @subpage gui-tools
-
-\subsection maussensoren1-projekt Maussensoren
-
-Da die Odometrie der Lego NXT Motoren nicht sehr gut ist und vor allem 
-bei Drehungen des Roboter oft Fehler verursachen, __da die Reifen 
-durchdrehen__, sollten __Maussensoren__ genutzt werden, um die Odometrie zu 
-verbessern. Genauere Informationen zur Implementierung, dem 
-Entwicklungshergang und gelösten wie ungelösten Problemen finden sich 
-auf der folgenden Seite.
-
 * @subpage maussensoren
 
 \subsection ansätze-projekt Ansätze
 
-Im Rahmen dieses Projektes wurden mehrere Lösungsansätze verfolgt.
+Im Rahmen dieses Projektes wurden mehrere Lösungsansätze zum Lösen des Labyrinths verfolgt.
 
 1. @subpage histogramm
 2. @subpage graphen
@@ -193,6 +182,17 @@ durch das Labyrinth bewegen.
 
 Im __zweiten Ansatz__ wurde der Roboter direkt angesteuert. Das Labyrinth 
 wurde als __Graph__ betracht und in Zellen gleicher Größe unterteilt.
+
+* @subpage gui-tools
+
+\subsection maussensoren1-projekt Maussensoren
+
+Da die Odometrie der Lego NXT Motoren nicht sehr gut ist und vor allem 
+bei Drehungen des Roboter oft Fehler verursachen, __da die Reifen 
+durchdrehen__, sollten __Maussensoren__ genutzt werden, um die Odometrie zu 
+verbessern. Genauere Informationen zur Implementierung, dem 
+Entwicklungshergang und gelösten wie ungelösten Problemen finden sich 
+auf der folgenden Seite.
 
 ---
 
