@@ -50,11 +50,25 @@ namespace minotaur
 	{
 		xPosition += cos(direction) * delta;
 		yPosition += sin(direction) * delta;
+		
+		sensor1.forward(delta);
+		sensor2.forward(delta);
 	}
 
 	void Robot::rotate(double angle)
 	{
 		direction += angle;
+		
+		sensor1.rotate(angle);
+		sensor2.rotate(angle);
+		
+		double s1_xNew = (std::cos(angle) * sensor1.xPos()) + (-std::sin(angle) * sensor1.yPos());
+		double s1_yNew = (std::sin(angle) * sensor1.xPos()) + (std::cos(angle) * sensor1.yPos());
+		sensor1.set(s1_xNew, s1_yNew, sensor1.dir());
+		
+		double s2_xNew = (std::cos(angle) * sensor2.xPos()) + (-std::sin(angle) * sensor2.yPos());
+		double s2_yNew = (std::sin(angle) * sensor2.xPos()) + (std::cos(angle) * sensor2.yPos());
+		sensor2.set(s2_xNew, s2_yNew, sensor2.dir());
 	}
 
 	void Robot::move(double dX, double dY)
@@ -76,6 +90,8 @@ namespace minotaur
 			rotate(rotateAngle * -1);
 
 		double Vdist_f = sqrt(pow(dX, 2) + pow(dY, 2)) - Vdist_r;
+		
+		std::cout << "Forward:" << Vdist_f << std::endl;
 
 		forward(Vdist_f);
 	}

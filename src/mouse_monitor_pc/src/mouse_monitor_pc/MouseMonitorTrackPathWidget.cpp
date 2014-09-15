@@ -90,11 +90,11 @@ namespace minotaur
 		double globalX = globalCoordinateSystem.right(robot.xPos());
 		double globalY = globalCoordinateSystem.up(robot.yPos());
 		
-		double globalX_s1 = globalCoordinateSystem.right(robot.s1().xPos());
-		double globalY_s1 = globalCoordinateSystem.up(robot.s1().yPos());
+		double globalX_s1 = globalCoordinateSystem.right(robot.xPos() + robot.s1().xPos());
+		double globalY_s1 = globalCoordinateSystem.up(robot.yPos() + robot.s1().yPos());
 		
-		double globalX_s2 = globalCoordinateSystem.right(robot.s2().xPos());
-		double globalY_s2 = globalCoordinateSystem.up(robot.s2().yPos());
+		double globalX_s2 = globalCoordinateSystem.right(robot.xPos() + robot.s2().xPos());
+		double globalY_s2 = globalCoordinateSystem.up(robot.yPos() + robot.s2().yPos());
 
 		/*
 				painter.setPen(QPen(Qt::black, axisHeight));
