@@ -179,15 +179,9 @@ namespace minotaur
 	{
 		painter.setPen(QPen(color, 0.5));
 
-		// Because sensor path is relative to robot path.
-		std::vector<Position> &robotPath = robot.getPath();
-
-		if (robotPath.size() != path.size())
-			return;
-
 		for (int i = 0; i < path.size(); ++i) {
-			QPointF point(globalCoordinateSystem.right(robotPath[i].xPosition + path[i].xPosition),
-			              globalCoordinateSystem.up(robotPath[i].yPosition + path[i].yPosition));
+			QPointF point(globalCoordinateSystem.right(path[i].xPosition),
+			              globalCoordinateSystem.up(path[i].yPosition));
 			painter.drawPoint(point);
 		}
 	}

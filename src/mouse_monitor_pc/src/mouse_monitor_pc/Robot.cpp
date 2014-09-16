@@ -40,12 +40,41 @@ namespace minotaur
 		this->attributes = attributes;
 	}
 
+	void Robot::forward(double delta)
+	{
+		Object::forward(delta);
+		
+		path.push_back(pos);
+		
+		Position tmpPos;
+		tmpPos.xPosition = pos.xPosition + sensor1.xPos();
+		tmpPos.yPosition = pos.yPosition + sensor1.yPos();
+
+		sensor1.addPath(tmpPos);
+		
+		tmpPos.xPosition = pos.xPosition + sensor2.xPos();
+		tmpPos.yPosition = pos.yPosition + sensor2.yPos();
+
+		sensor2.addPath(tmpPos);
+	}
+
 	void Robot::rotate(double angle)
 	{
 		Object::rotate(angle);
 
 		sensor1.rotate(angle);
 		sensor2.rotate(angle);
+		
+		Position tmpPos;
+		tmpPos.xPosition = pos.xPosition + sensor1.xPos();
+		tmpPos.yPosition = pos.yPosition + sensor1.yPos();
+
+		sensor1.addPath(tmpPos);
+		
+		tmpPos.xPosition = pos.xPosition + sensor2.xPos();
+		tmpPos.yPosition = pos.yPosition + sensor2.yPos();
+
+		sensor2.addPath(tmpPos);
 	}
 
 	void Robot::move(double dX, double dY)

@@ -33,15 +33,11 @@ namespace minotaur
 				pos.xPosition = dx;
 				pos.yPosition = dy;
 				direction = dir;
-
-				//path.push_back(pos);
 			}
 
 			virtual void forward(double delta) {
 				pos.xPosition += cos(direction) * delta;
 				pos.yPosition += sin(direction) * delta;
-
-				path.push_back(pos);
 			}
 
 			virtual void rotate(double angle) {
@@ -66,6 +62,10 @@ namespace minotaur
 
 			virtual std::vector<Position> &getPath() {
 				return path;
+			}
+
+			virtual void addPath(Position pos) {
+				path.push_back(pos);
 			}
 	};
 
@@ -132,6 +132,7 @@ namespace minotaur
 			void setAttributes(RobotAttributes attributes);
 			RobotAttributes getAttributes();
 
+			virtual void forward(double delta);
 			virtual void rotate(double angle);
 
 			void move(double dX, double dY);
