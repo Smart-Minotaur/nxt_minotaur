@@ -68,4 +68,9 @@ then
 	export ROS_IP=$PC_IP
         export ROS_MASTER_URI=http://$PC_IP:11311
 	roslaunch minotaur_teleop joy_teleop.launch
+elif [ "$1" == "keyboard_p" ]
+then
+	export ROS_IP=$PC_IP
+        export ROS_MASTER_URI=http://$PC_IP:11311
+        roslaunch minotaur_teleop keyboard_teleop.launch
 fi
