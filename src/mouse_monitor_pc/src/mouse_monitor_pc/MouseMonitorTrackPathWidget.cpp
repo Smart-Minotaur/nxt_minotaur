@@ -10,6 +10,7 @@
 #define GRID_SCALE 10
 #define GLOBAL_COORD_DIRECTION_LEN 5
 #define ROBOT_COORD_DIRECTION_LEN 5
+#define SENSOR_COORD_DIRECTION_LEN 2
 
 namespace minotaur
 {
@@ -38,11 +39,11 @@ namespace minotaur
 		drawGrid(painter);
 		drawGlobalCoordinateSystem(painter);
 		drawRobot(painter);
-		drawPath(robot.getPath(), Qt::darkRed, painter);
+		drawPath(robot.getPath(), Qt::black, painter);
 		if (sensor1_enable)
-			drawSensorPath(robot.s1().getPath(), Qt::darkGreen, painter);
+			drawSensorPath(robot.s1().getPath(), Qt::cyan, painter);
 		if (sensor2_enable)
-			drawSensorPath(robot.s2().getPath(), Qt::darkBlue, painter);
+			drawSensorPath(robot.s2().getPath(), Qt::magenta, painter);
 	}
 
 	void TrackPathWidget::drawGrid(QPainter &painter)
@@ -82,24 +83,24 @@ namespace minotaur
 		double globalX_s2 = globalCoordinateSystem.right(robot.xPos() + robot.s2().xPos());
 		double globalY_s2 = globalCoordinateSystem.up(robot.yPos() + robot.s2().yPos());
 
-		// TODO: drawRobotAxis(globalX, globalY, painter);
+		drawRobotAxis(globalX, globalY, painter);
 
 		// Draw robot coordinate system
 		drawCoordinateSystem(globalX,
 		                     globalY,
-		                     robot.dir(), Qt::blue, Qt::red, ROBOT_COORD_DIRECTION_LEN, 0.3,
+		                     robot.dir(), Qt::blue, Qt::red, ROBOT_COORD_DIRECTION_LEN, 0.5,
 		                     painter);
 
 		// Draw sensor 1 coordinate system
 		drawCoordinateSystem(globalX_s1,
 		                     globalY_s1,
-		                     robot.s1().dir(), Qt::magenta, Qt::cyan, ROBOT_COORD_DIRECTION_LEN, 0.1,
+		                     robot.s1().dir(), Qt::magenta, Qt::cyan, SENSOR_COORD_DIRECTION_LEN, 0.5,
 		                     painter);
 
 		// Draw sensor 2 coordinate system
 		drawCoordinateSystem(globalX_s2,
 		                     globalY_s2,
-		                     robot.s2().dir(), Qt::magenta, Qt::cyan, ROBOT_COORD_DIRECTION_LEN, 0.1,
+		                     robot.s2().dir(), Qt::magenta, Qt::cyan, SENSOR_COORD_DIRECTION_LEN, 0.5,
 		                     painter);
 	}
 
@@ -111,33 +112,37 @@ namespace minotaur
 
 	void TrackPathWidget::drawRobotAxis(double globalX, double globalY, QPainter &painter)
 	{
-		double axisHeight = 0.5;
+		double axisHeight = 1.0;
 		double x1, y1, x2, y2;
+
+		painter.save();
+		painter.translate(globalX, globalY);
+		painter.rotate((180/M_PI) * (robot.dir()*-1 - M_PI/2.0));
 
 		painter.setPen(QPen(Qt::black, axisHeight));
 
-		x1 = globalX - robot.getAttributes().distanceToWheel;
-		y1 = globalY;
+		x1 = -robot.getAttributes().distanceToWheel;
+		y1 = 0;
 
-		x2 = globalX + robot.getAttributes().distanceToWheel;
-		y2 = globalY;
+		x2 = robot.getAttributes().distanceToWheel;
+		y2 = 0;
 
 		QLineF axis(x1, y1, x2, y2);
-		axis.setAngle((180/M_PI) * (robot.dir() - M_PI/2.0));
+		//axis.setAngle((180/M_PI) * (robot.dir() - M_PI/2.0));
 		painter.drawLine(axis);
 
-		painter.setPen(QPen(Qt::green, axisHeight/2.0));
+		painter.setPen(QPen(Qt::green, axisHeight));
 
-		x1 = globalX - robot.getAttributes().distanceToWheel - axisHeight/2.0;
-		y1 = globalY - axisHeight;
-		x2 = axisHeight;
+		x1 = -robot.getAttributes().distanceToWheel - axisHeight;
+		y1 = -axisHeight;
+		x2 = axisHeight*2;
 		y2 = axisHeight*2;
 
 		QRectF wheel1(x1, y1, x2, y2);
 
-		x1 = globalX + robot.getAttributes().distanceToWheel - axisHeight/2.0;
-		y1 = globalY - axisHeight;
-		x2 = axisHeight;
+		x1 = robot.getAttributes().distanceToWheel - axisHeight;
+		y1 = -axisHeight;
+		x2 = axisHeight*2;
 		y2 = axisHeight*2;
 
 		QRectF wheel2(x1, y1, x2, y2);
@@ -146,10 +151,10 @@ namespace minotaur
 
 		//painter.rotate((180/M_PI) * (robot.dir() - M_PI/2.0));
 
-		//painter.drawRect(wheel1);
-		//painter.drawRect(wheel2);
+		painter.fillRect(wheel1, Qt::darkGreen);
+		painter.fillRect(wheel2, Qt::darkGreen);
 
-		//painter.rotate(0);
+		painter.restore();
 	}
 
 	void TrackPathWidget::drawGlobalCoordinateSystem(QPainter &painter)
@@ -174,9 +179,15 @@ namespace minotaur
 	{
 		painter.setPen(QPen(color, 0.5));
 
-		for (std::vector<Position>::iterator i = path.begin(); i != path.end(); ++i) {
-			QPointF point(globalCoordinateSystem.right(robot.xPos() + i->xPosition),
-			              globalCoordinateSystem.up(robot.yPos() + i->yPosition));
+		// Because sensor path is relative to robot path.
+		std::vector<Position> &robotPath = robot.getPath();
+
+		if (robotPath.size() != path.size())
+			return;
+
+		for (int i = 0; i < path.size(); ++i) {
+			QPointF point(globalCoordinateSystem.right(robotPath[i].xPosition + path[i].xPosition),
+			              globalCoordinateSystem.up(robotPath[i].yPosition + path[i].yPosition));
 			painter.drawPoint(point);
 		}
 	}

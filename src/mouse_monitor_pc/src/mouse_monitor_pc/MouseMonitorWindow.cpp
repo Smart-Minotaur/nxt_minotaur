@@ -18,7 +18,7 @@ namespace minotaur
 		QMainWindow(parent)
 	{
 		setupUi(this);
-		
+
 		logDialog = new MouseMonitorLogDialog;
 
 		initWidgets();
@@ -259,7 +259,7 @@ namespace minotaur
 	void MouseMonitorWindow::initSensorCalibration()
 	{
 		calibrationWizard = new MouseMonitorCalibrationWizard;
-		
+
 		connect(actionCalibrate_Sensors, SIGNAL(triggered()), this, SLOT(openCalibrateSensorsWizard()));
 		connect(calibrationWizard, SIGNAL(startCalibrateSensors(MouseMonitorCalibrationData)),
 		        this, SLOT(startCalibrateSensors(MouseMonitorCalibrationData)));
@@ -278,7 +278,7 @@ namespace minotaur
 			return;
 
 		MouseData processedData = correctMouseData(data);
-		
+
 		// Move robot
 		if (data.id == SENSOR1)
 			robot.move(processedData.x_disp, processedData.y_disp);
@@ -361,12 +361,12 @@ namespace minotaur
 			// TODO: Make that better
 			if (data.id == SENSOR1) {
 				double angle = calibrationData.getS1AngleOffset();
-				
+
 				data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
 				data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 			} else if (data.id == SENSOR2) {
 				double angle = calibrationData.getS2AngleOffset();
-				
+
 				data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
 				data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 			}
@@ -441,29 +441,29 @@ namespace minotaur
 			y_speed2->setText(QString("%1").arg(data.y_speed, 0, 'f', 8));
 		}
 	}
-	
+
 	void MouseMonitorWindow::updateRobot()
 	{
-		robotAxisEdit->setText(QString("%2").arg(robot.getAttributes().axisLength, 0, 'f', 4));
-		sXDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_x, 0, 'f', 4));
-		sYDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_y, 0, 'f', 4));
-		
-		robotAngleEdit->setText(QString("%2").arg(robot.getAttributes().sensorAngle, 0, 'f',  4));
-		robotMEdit->setText(QString("%2").arg(robot.getAttributes().m, 0, 'f',  4));
-		robotRadiusEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_radius, 0, 'f',  4));
-		robotWheelDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToWheel, 0, 'f',  4));
-		
-		robotXEdit->setText(QString("%2").arg(robot.xPos(), 0, 'f',  4));
-		robotYEdit->setText(QString("%2").arg(robot.yPos(), 0, 'f',  4));
-		robotDirEdit->setText(QString("%2").arg(robot.dir(), 0, 'f',  4));
-		
-		s1XEdit->setText(QString("%2").arg(robot.s1().xPos(), 0, 'f',  4));
-		s1YEdit->setText(QString("%2").arg(robot.s1().yPos(), 0, 'f',  4));
-		s1DirEdit->setText(QString("%2").arg(robot.s1().dir(), 0, 'f',  4));
-		
-		s2XEdit->setText(QString("%2").arg(robot.s2().xPos(), 0, 'f',  4));
-		s2YEdit->setText(QString("%2").arg(robot.s2().yPos(), 0, 'f',  4));
-		s2DirEdit->setText(QString("%2").arg(robot.s2().dir(), 0, 'f',  4));
+		robotAxisEdit->setText(QString("%2").arg(robot.getAttributes().axisLength, 0, 'f', 2));
+		sXDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_x, 0, 'f', 2));
+		sYDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_y, 0, 'f', 2));
+
+		robotAngleEdit->setText(QString("%2").arg(robot.getAttributes().sensorAngle, 0, 'f',  2));
+		robotMEdit->setText(QString("%2").arg(robot.getAttributes().m, 0, 'f',  2));
+		robotRadiusEdit->setText(QString("%2").arg(robot.getAttributes().distanceToSensor_radius, 0, 'f',  2));
+		robotWheelDistEdit->setText(QString("%2").arg(robot.getAttributes().distanceToWheel, 0, 'f',  2));
+
+		robotXEdit->setText(QString("%2").arg(robot.xPos(), 0, 'f',  2));
+		robotYEdit->setText(QString("%2").arg(robot.yPos(), 0, 'f',  2));
+		robotDirEdit->setText(QString("%2").arg(robot.dir(), 0, 'f',  2));
+
+		s1XEdit->setText(QString("%2").arg(robot.s1().xPos(), 0, 'f',  2));
+		s1YEdit->setText(QString("%2").arg(robot.s1().yPos(), 0, 'f',  2));
+		s1DirEdit->setText(QString("%2").arg(robot.s1().dir(), 0, 'f',  2));
+
+		s2XEdit->setText(QString("%2").arg(robot.s2().xPos(), 0, 'f',  2));
+		s2YEdit->setText(QString("%2").arg(robot.s2().yPos(), 0, 'f',  2));
+		s2DirEdit->setText(QString("%2").arg(robot.s2().dir(), 0, 'f',  2));
 	}
 
 	void MouseMonitorWindow::processMouseSettings(const pln_minotaur::PLN2033_Settings settings)
@@ -607,7 +607,7 @@ namespace minotaur
 	void MouseMonitorWindow::getData1BtnClicked()
 	{
 		MouseData data = monitorNode.getMouseData(SENSOR1);
-		
+
 		processMouseData(data);
 
 		QString xd = QString::number(data.x_disp);
@@ -629,7 +629,7 @@ namespace minotaur
 	void MouseMonitorWindow::getData2BtnClicked()
 	{
 		MouseData data = monitorNode.getMouseData(SENSOR2);
-		
+
 		processMouseData(data);
 
 		QString xd = QString::number(data.x_disp);
@@ -696,6 +696,37 @@ namespace minotaur
 	int MouseMonitorWindow::sampleRateToInterval(int sampleRate)
 	{
 		return (int) ((1.0/sampleRate) * 1000.0);
+	}
+
+	void MouseMonitorWindow::keyPressEvent(QKeyEvent *event)
+	{
+		QWidget::keyPressEvent(event);
+
+		if (manualControlBox->checkState()) {
+			if (event->key() == Qt::Key_W) {
+				robot.forward(1.0);
+				updateRobot();
+				pathWidget->updateRobot(robot);
+			}
+			
+			if (event->key() == Qt::Key_S) {
+				robot.forward(-1.0);
+				updateRobot();
+				pathWidget->updateRobot(robot);
+			}
+			
+			if (event->key() == Qt::Key_D) {
+				robot.rotate(M_PI/8.0);
+				updateRobot();
+				pathWidget->updateRobot(robot);
+			}
+			
+			if (event->key() == Qt::Key_A) {
+				robot.rotate(-M_PI/8.0);
+				updateRobot();
+				pathWidget->updateRobot(robot);
+			}
+		}
 	}
 
 }
