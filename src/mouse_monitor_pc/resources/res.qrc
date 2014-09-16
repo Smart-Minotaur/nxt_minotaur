@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>jega.png</file>
     <file>logo.jpg</file>
     <file>logo_small.jpg</file>
   </qresource>

@@ -111,6 +111,8 @@ namespace minotaur
 
 			QString uintToQString(uint data);
 			int sampleRateToInterval(int sampleRate);
+			
+			void keyPressEvent(QKeyEvent *event);
 
 		private Q_SLOTS:
 			void openCalibrateSensorsWizard();

@@ -7,6 +7,82 @@
 namespace minotaur
 {
 
+	struct Position {
+		double xPosition;
+		double yPosition;
+	};
+
+	class Object
+	{
+		protected:
+			Position pos;
+
+			/**
+			 * The direction is the angle y-axis of the object
+			 * in radiant.
+			 */
+			double direction;
+
+			/**
+			 * For path tracking (in global coordinate system).
+			 */
+			std::vector<Position> path;
+
+		public:
+			virtual void set(double dx, double dy, double dir) {
+				pos.xPosition = dx;
+				pos.yPosition = dy;
+				direction = dir;
+			}
+
+			virtual void forward(double delta) {
+				pos.xPosition += cos(direction) * delta;
+				pos.yPosition += sin(direction) * delta;
+			}
+
+			virtual void rotate(double angle) {
+				direction += angle;
+			}
+
+			virtual double xPos() {
+				return pos.xPosition;
+			}
+
+			virtual double yPos() {
+				return pos.yPosition;
+			}
+
+			virtual double dir() {
+				return direction;
+			}
+
+			virtual void reset() {
+				path.clear();
+			}
+
+			virtual std::vector<Position> &getPath() {
+				return path;
+			}
+
+			virtual void addPath(Position pos) {
+				path.push_back(pos);
+			}
+	};
+
+	class Sensor : public Object
+	{
+		public:
+			virtual void rotate(double angle) {
+				Object::rotate(angle);
+
+				double xNew = (std::cos(angle) * pos.xPosition) + (-std::sin(angle) * pos.yPosition);
+				double yNew = (std::sin(angle) * pos.xPosition) + (std::cos(angle) * pos.yPosition);
+
+				pos.xPosition = xNew;
+				pos.yPosition = yNew;
+			}
+	};
+
 	struct RobotAttributes {
 		double axisLength; // cm
 
@@ -38,70 +114,6 @@ namespace minotaur
 		}
 	};
 
-	struct Position {
-		double xPosition;
-		double yPosition;
-	};
-
-	class Object
-	{
-		protected:
-			Position pos;
-
-			/**
-			 * The direction is the angle y-axis of the object
-			 * in radiant.
-			 */
-			double direction;
-
-			/**
-			 * For path tracking.
-			 */
-			std::vector<Position> path;
-
-		public:
-			virtual void set(double dx, double dy, double dir) {
-				pos.xPosition = dx;
-				pos.yPosition = dy;
-				direction = dir;
-
-				path.push_back(pos);
-			}
-
-			virtual void forward(double delta) {
-				pos.xPosition += cos(direction) * delta;
-				pos.yPosition += sin(direction) * delta;
-
-				path.push_back(pos);
-			}
-
-			virtual void rotate(double angle) {
-				direction += angle;
-			}
-
-			virtual double xPos() {
-				return pos.xPosition;
-			}
-
-			virtual double yPos() {
-				return pos.yPosition;
-			}
-
-			virtual double dir() {
-				return direction;
-			}
-
-			virtual void reset() {
-				path.clear();
-			}
-
-			virtual std::vector<Position> &getPath() {
-				return path;
-			}
-	};
-
-	typedef Object Sensor;
-
 	class Robot : public Object
 	{
 		private:
@@ -120,8 +132,8 @@ namespace minotaur
 			void setAttributes(RobotAttributes attributes);
 			RobotAttributes getAttributes();
 
-			void forward(double delta);
-			void rotate(double angle);
+			virtual void forward(double delta);
+			virtual void rotate(double angle);
 
 			void move(double dX, double dY);
 			void reset();

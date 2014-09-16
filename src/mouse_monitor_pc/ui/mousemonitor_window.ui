@@ -584,6 +584,12 @@ QGroupBox::title {
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>200</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>200</width>
@@ -598,8 +604,8 @@ QGroupBox::title {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>200</width>
-                       <height>358</height>
+                       <width>185</width>
+                       <height>340</height>
                       </rect>
                      </property>
                      <attribute name="label">
@@ -869,8 +875,8 @@ QGroupBox::title {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>200</width>
-                       <height>358</height>
+                       <width>111</width>
+                       <height>105</height>
                       </rect>
                      </property>
                      <attribute name="label">
@@ -940,6 +946,14 @@ QGroupBox::title {
                      </layout>
                     </widget>
                     <widget class="QWidget" name="page_3">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>111</width>
+                       <height>105</height>
+                      </rect>
+                     </property>
                      <attribute name="label">
                       <string>Sensor 2</string>
                      </attribute>
@@ -1001,6 +1015,57 @@ QGroupBox::title {
                         </property>
                         <property name="readOnly">
                          <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="page_4">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>200</width>
+                       <height>329</height>
+                      </rect>
+                     </property>
+                     <attribute name="label">
+                      <string>Information</string>
+                     </attribute>
+                     <layout class="QVBoxLayout" name="verticalLayout_19">
+                      <item>
+                       <widget class="QLabel" name="label_32">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Coordinate systems:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Red (Y) and blue (X):&lt;br/&gt;Global and robot&lt;br/&gt;&lt;br/&gt;Cyan (Y) and magenta (X):&lt;br/&gt;Sensor 1 and sensor 2&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Path:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Black: Robot path&lt;br/&gt;Cyan: Sensor 1 path&lt;br/&gt;Magenta: Sensor 2 path&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Grid:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;One square in the grid are 10*10cm.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                        </property>
+                        <property name="wordWrap">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="manualControlBox">
+                        <property name="text">
+                         <string/>
+                        </property>
+                        <property name="icon">
+                         <iconset resource="../resources/res.qrc">
+                          <normaloff>:/jega.png</normaloff>:/jega.png</iconset>
                         </property>
                        </widget>
                       </item>
