@@ -1,85 +1,48 @@
 pln_minotaur {#pln-minotaur}
 ===
 
-Bisher wird für die Odometrie des Roboters lediglich die Motoren verwendet. Diese bieten jedoch eine sehr geringe Genauigkeit und Zuverlässigkeit. Zusätzlich kann sich dies je nach Fahrfläche verschlimmern (Räder drehen durch). Um die Odometrie zu verbessern werden im Smart-Minotaur zusätzlich Maussensoren von herkömmlichen Gaming-Computermäusen verwendet. Die in diesem Projekt verwendete Sensoren sind die Philips pln2033 twin-eye laser sensoren. Diese verfügen über eine sehr hohe Präzision (bis zu 6400 CPI - Counts Per Inch) beim Messen der zurückgelegten X- und Y-Distanzwerte.
+\section description Beschreibung
 
-\section pln2033 PLN2033 Sensor
-In diesem Abschnitt werden die wichtigsren Funktionen des pln2033 Sensors erläutert. Weitere Informationen befinden sich im Datenblatt: TODO.
+pln_minotaur ist eine C++ Bibliothek zum Ansteuern der pln2033 Maussensoren. Dadurch wird vom Benutzer keine genaue Kenntnis über das Linux SPI interface sowie den pln2033 Sensor benötigt. Das pln_minotaur::IPLNTrackingDevice Interface stellt Funktionen zum Abfragen der Entfernungs-Werte sowie Geschwindigkeits-Werte zu verfügung. Zusätzlich können die Sensor Einstellungen abgefragt sowie die Auflösung der Sensoren gesetzt werden. Durch die hohe Flexibilität und Skalierbarkeit der Bibliothek können eine beliebige Anzahl von Sensoren angeschlossen werden. Der Benutzer benötigt lediglich den name des spidev device files.
 
-Der pln2033 besitzt unterschiedliche 16-Bit Register mit welchen dieser gesteuert werden kann. Es werden zwei Laser verwendet, um die X und Y positions änderungen zu messen. Intern verarbeitet ein DSP die gemessen Daten. Die Auflösung kann von 100 bis 6400 CPI eingestellt werden. Die Ansteuerung des Sensors erflgt über SPI und kann mit bis zu 8Mhz betrieben werden. Der pln2033 benötigt 3.3V.
+pln_2033 bietet folgende Features:
+* Viele verschiedene Funktionen zum Abfragen der Sensor Daten für verschiedene Anwendungsfälle
+* Abfrage von Displacement sowie Speed Werte (interner Zeitstempel) des Sensors
+* Sehr abstrahiert vom Linux SPI interface
+* Einfache objektorientierte Benutzung
+* Keine externen Bibliotheken werden benötigt (benutzt Linux spidev Treiber)
+* Funktioniert für ARM sowie x86
 
-\section hardware-setup Hardware Setup
+Die API sowie Details über die Implementierung/Vererbungshierachie sind auf den Doxygen Seiten der pln_2033 Bibliothek verfügbar.
+Die erklärung der Konfiguration des SPI interfaces befindet sich auf der Maussensoren Seite.
 
-Gelötete Platine Bild
+\section compile Kompilieren
 
-TODO: Bild mit SPI
+Als Buildtool wird CMake verwendet. Die pln_minotaur Bibliothek wird für das BBB cross-compiliert. Zum kompilieren wird ein C++11 fähiger Compiler benötigt. Der bei der Erstellung der Bibliothek verwendete Compiler ist der GCC 4.8. Die Bibliothek kann für ARM sowie x86 Architekturen kompiliert werden. Im Projektverzeichnis ist jeweils eine statisch kompilierte ARM sowie x86 Version der Bibiothek verfügbar. Um pln_2033 selbst zu kompilieren müssen für die Architektur passende toolchain files verwendet werden. Folgende Befehle werden ausgeführt um die bibliotheken sowie ein Beispiel zu erstellen. Die erzeugten Dateien befinden sich im Ordner build.
 
-\section spi-device-tree Linux SPI treiber und Device Tree
-Zum Ansteuern des pln2033 wird der SPI-Bus verwendet. Für das Smart-Minotaur Projekt wurden zwei Sensoren an den Roboter montiert (Nur einer wird benötigt, um Position und Ausrichtung zu bestimmen). Da zum Ansteuern von zwei Slaves auf dem SPI Bus zwei Chip sleects benötigt werden wird der SPI1 Port des Beagle Bones verwendet. Um daten zu senden und Emopfangen wird der linux spidev treiber verwendet, welcher rudimentöre Funktionen anbietet. Um SPI1  Port benutzzen zu können muss dieser erst im Device Tree registreirt werden. Dafür wird eine device teree source file benötigt, welche die korrekten Pins, register und funktionaklittäten des SPUI Gerätes spezifiert. Diese Datei wird kompiliert und im Linux kernel aktiviert. Wichtig ist, HDMI des BBB auszuschalten, da dieses auch SPI1 Ports verwendet und die kommukiation stören wütrde. Nach erfolgreicher aktivierung kann auf die slaves über gerätedateien zugegriffen werden:
+\subsection arm ARM
 
-/dev/spidev1.0 CS0
-/dev/spidev1.1 CS1
+~~~
+mkdir build
+cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-BeagleBoneBlack.cmake ..
+make
+~~~
 
-\section pln_minotaur pln_minotaur library
-Die pln_minotaur Bibliothek wird zum ansteuern der pln2033 Maussensoren verwendet. Dadurch wird vom Benutzer keine genaue Kenntnis über das Linux SPI interface sowie den pln2033 Sensor benötigt. Das pln_minotaur::IPLNTrackingDevice interface stellt functionen zum Abfragen der Entfernungs-Werte sowie Geschwindigkeits-Werte zu verfügung.
+\subsection x86 x86
 
----
-After one of these functions is called, the read command (required register data) is sent to the sensor. Every read command is internally marked with a timestamp. After each read, the displacement values are set to 0.
-To get the status of the sensor, the pln_minotaur::IPLNTrackingDevice::readPLNSettings() function can be used. This class consists of the whole sensor configuration data and provides some functions to extract the most interesting data.
----
-
-ACHTUNG: Wichtig zu wissen ist, wann die internen Zähler/Register des sensors zurückgesetzt werden. Werdern displacement werde oder das status register gleesne, werden die dispalcement register auf 0 zurückgesetzt. Auch werden diese zurückgestezt, wenn das Lift-Bit aktiviert wird (also wenn der sensor zu weit von der oberfläche entfenrt wis).
-
-\subsection make Kompilierung
-Als make system wird cmake verwendet. Die pln_minotaur Bibliothek wird für das BBB cross-compiliert. Die installation eines cross compilers ist in TODO beschrieben. Eine toolchain file wird benötigt, um den verwendeten cross-compiler zu bestimmen. da zusätzlichj datenstrukturen der pln_minotaur bibliothek auf dem Desktop-PC verwnedet werden kann auch eine x86 version der bibliothek erstekll wer5den. im buiild verzeichnis finden sich beider versionen der bibliothek.
-
-\section example Beispiele
-Beispiele zur Benutzung der pln_minotaur Bibliotheke befinden sich auf folgender Seite: TODO
-
-\section mouse-monitor Mouse Monitor (mouse_monitor_pc package)
-Mouse Monitor wurde ursprünglich zum testen der Philips pln2033 Maussensoren entwickelt. Die Anwendung verfügt üpber eine Vielzahl von Funktionen und ist in zwei teile untergliedert. Zur kommunikation über WLAN wird das ROS message systrem verwendet.
-
-TODO BIld
-
-Beagle Bone Node
-Diese Anwendung ist für das Auslesen der Maussdnesopr displacement und speed daten zustäöndig und verwendet dafür die pln_minotaur bibliothek. Daten werden mit einer 1kHz freqwuenz ausgelesne und aufsummiert. Auf anfrage der PC Node sendet die Aplikation die geasmmeltebn daten zur PC Node. Zusätlich bietet diese funktionen um von extern die auflösung (CPI) der sensoren zu setzen sowie zum abgragen des sattus der sensoren.
-
-PC Node
-Die PC Node empfäng die Snesore daten, verarbeitet diese und dstellt sie grafisch dar. Über diese Anwendung kann die CPI auflösung der sneoren eingestellt werden. zusätzlich kann eine variable sampel rate der GUI konfiguuirtioert werden (meist 15-100Hz). Im folgenden werden einige Features Der Anwendugn erklärt:
-
-TODO
-
-TODO: Bild
-
-\section kalibrierung
-
-\section localization Berechnung der Position und Ausrichtung des Roboters
-Zum bestimmen der Position und der Ausrichtung des Roboters wird nur 1 Sensor benötigt. Die Berechnung der Roboter Porsition sowie Ausrichtung wird in deisem Abschnit beschrieben.
-
-\section problems Probleme
-Während der Durchführung des Projektes traten einige Probleme bezüglcih der pln2033 Sensore auf. Diese werden in diesem Abschnitt erläutert.
-
-* Schwierige Fehlersuche sowie Validierung der Funktionalität aufgrund schlechter Testumgebung und schlechtem hardware-Aufbau.
-
-Der pln2033 ist ein hochprezisieser lasersensor. Um korrkete Aussagen über seine Funktionsweise zu machen, ist ein professioneller Prüfstand erforderlich welcher in diesem Projetkl nicht vorhanden war. Die tests mussten per hand (Lego-Wagen per Hand schieben, drehen ...) durchgeführt werrden, was genaues meessen unmöglich machte. Eine exakte geradweausfahrt, dreghung, .. konnte damit nicht erreicht werden.
-
-Zum testen sowie bei der endmmontierung auf dem Roboter wird Lego benutzt, was wiederrum einige Probleme mit sich fühert:
-* Wackelnde montage: Bei Bewegung des Roboters wackeln die sensoren.
-* Sensoren sins sehr empfindlich. Mit Lego können diese nicht in einer exakten höhe montiert erden (was das Lift-Bit auslöst, dazu später mehr).
-* Eine geraqde Montierung der sensoren ist nicht möglich.
-
-* Lift-Bit problem
-* Median Filter problerm
-* WLAN Latenz
-
-\section improvement Verbesserungen
+~~~
+mkdir build
+cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-x86-BeagleBoneBlack.cmake ..
+make
+~~~
 
 \section api-implementation API sowie Implementierung
 
-\subsection array-converter Array-Converter
-Um den Philips pln2033 zu benutzen muss zuerst ein Patch code ins RAM des DSP geladen werden. Das kleine utility programm arrayConverter convertiert den vorhandenen Pacth code in eine korrektes Format (Hex darstellung) um diesen komfortabel beim start der bibliothek ins RAM laden zu können. Der Patch code wird im uint8 array format und in korrekte endian darstellung in einer datei sgespeichert.
+\subsection classes Klassen
 
-Um pln_minotaur zu vwernwenden wird nur das interace IPLNTrackingDevice benötigt.methoden zum auslesen von
+Um pln_minotaur zu verwenden wird nur das Interface IPLNTrackingDevice benötigt. Methoden zum Auslesen von
 	 * Displacement in CPI (counts per inch)
 	 * Displacement in cm
 	 * Speed in cm/second
@@ -87,24 +50,51 @@ sind vorhanden.
 
 Bei jedem Lesen der dISplacement werte, ird zusätzlich ein zeitstwemple mit agespeichert. Dadurch kann die geschwidigkeit des sebnsores berechent werden. Über das Interface kann zusätzlich die aie aktuellen sensor einstellungen ausgelesen werden.  Auch ist dsaqs setzten der X und y auflösung möglich.
 
-Im folgenden werden die Funktionen der verschiedenen klassen zusammengedfasst:
+Hauptbestandteil sind die Klassen PLN2033 sowie SPIDevice. Im folgenden werden die Funktionen der verschiedenen klassen zusammengedfasst:
 
-PLN2033.h:
-Sensior register schreiben und lesen
-RAM schreiben und lesen
-RAM code laden
-RAM code überprüfen
-Snesor initalsieren (inital configuration procedur durchführen)
-power on
-poer down
-soft reset
+\image html pln2033_interface.png "pln_2033 interfaces"
 
-SPIDevice.h:
+\subsubsection spidevice SPIDevice.h
+
 Wrapper klasse für den Linux SPI trieber:
-Senden und empfangen von daten über SPI
-Settzen verschiedner SPI configtatuinenn
+* Senden und empfangen von daten über SPI
+* Settzen verschiedner SPI configtatuinenn
+* Pseudo-multiplex transfers
 
-Zusätzlich: SPIException und LN2033_Settings und PatchCode8
+\subsubsection pln2033 PLN2033.h
 
-Die API sowie details über die Implementierung/Vererbungshierachie sind auf folgenden Seiten verfügbar:
-TODO Link
+Implementiert das SPI Bus Protokoll des pln2033 Sensors.
+* Sensior register schreiben und lesen
+* RAM schreiben und lesen
+* RAM code laden
+* RAM code überprüfen
+* Snesor initalsieren (inital configuration procedur durchführen)
+* power on
+* poer down
+* soft reset
+
+\subsection config Optimale Enstellungen
+
+SPI:
+~~~
+const int SPIDevice::DEFAULT_SPI_MODE = 1;
+const int SPIDevice::DEFAULT_SPI_SB = 0;
+const int SPIDevice::DEFAULT_SPI_BITS = 8;
+const int SPIDevice::DEFAULT_SPI_SPEED = 3000000;
+~~~
+
+Sample Rate zum Abfragen der displacement Register: 1kHz (1ms interval).
+
+\subsection API API
+
+Nach dem Aufruf einer read* Funktion wird das Read Register Kommando über SPI an den Sensor gesendet. Jedes read displacement Kommando wird intern mit einem Zeitstempel versehen. Nach jedem Lesen werden die displacement Register (x und y) auf 0 zurückgesetzt. Um die Sensor Einstellungen abzufragen wird pln_minotaur::IPLNTrackingDevice::readPLNSettings() verwendet. Diese Funktion liefert ein Objekt der Klasse PLNSettings zurück und beschreibt die gesamte Sensor Konfiguration. Zum Abfragen des Statuus Registers steht die Gunktion pln_minotaur::IPLNTrackingDevice::readPLNStatusRegister() zu verfügung. Achtung: Beim Auslesen des Status registers werden ebenfalls die displacement register zurück gesetzt.
+
+ACHTUNG: Wichtig zu wissen ist, wann die internen Zähler/Register des sensors zurückgesetzt werden. Werdern displacement werde oder das status register gleesne, werden die dispalcement register auf 0 zurückgesetzt. Auch werden diese zurückgestezt, wenn das Lift-Bit aktiviert wird (also wenn der sensor zu weit von der oberfläche entfenrt wis).
+
+\subsection array-converter Array-Converter
+Um den Philips pln2033 zu benutzen muss zuerst ein Patch code ins RAM des DSP geladen werden. Das kleine utility programm arrayConverter convertiert den vorhandenen Pacth code in eine korrektes Format (Hex darstellung) um diesen komfortabel beim start der bibliothek ins RAM laden zu können. Der Patch code wird im uint8 array format und in korrekte endian darstellung in einer datei sgespeichert.
+
+\section improve Verbesserungen
+
+pln_2033 unterstützt nicht alle Funktionen des PLN2033. Eine Verbesserung der Bibiothek wäre das Hinzufügen von Möglichkeiten zum konfigurieren verschiedener Sleep-states des Sensors. Auch kann eine Interruptgesteuuerte Funktion implementiert werden.
+

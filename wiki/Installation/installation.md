@@ -9,6 +9,8 @@ Die Installation des Systems unterteilt sich in 2 Bereiche:
 
 @subpage installation-bbb
 
+@subpage zusatz
+
 Im ersten Teil wird erklärt wie man einen Entwicklungsrechner mit allen
 benötigten Tools zur erfolgreichen Kompilierung aufsetzt.
 Der zweite Teil erklärt wie das Beagle Bone Black aufzusetzen ist,

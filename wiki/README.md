@@ -1,9 +1,9 @@
 Smart Minotaur {#mainpage}
 ===
 
-## Beschreibung
-
 \image html htwg-logo-small.jpg
+
+## Beschreibung
 
 Smart Minotaur ist ein studentisches Projekt welches im Roboter-Labor 
 der HTWG Konstanz durchgeführt wurde. Ziel war es einen Roboter zu 
@@ -27,7 +27,7 @@ Computer-Mäusen verwendet.
 
 ## Der Roboter
 
-\image html roboter_front.jpg "ROBOTER OVERLORD"
+\image html roboter_front_5.jpg "ROBOTER OVERLORD"
 
 
 

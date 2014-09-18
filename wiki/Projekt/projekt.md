@@ -30,6 +30,8 @@ datenfluss-projekt). In einem der Ansätze wird außerdem auch der ROS
 Navigation Stack verwendet, um den Roboter zu navigieren (siehe \ref 
 histogramm).
 
+\image html labyrinth_1.jpg "Labyrinth mit Roboter"
+
 ---
 
 \section struktur-projekt Struktur
