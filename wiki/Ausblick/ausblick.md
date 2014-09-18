@@ -28,7 +28,7 @@ größer machen, was sich wiederrum negativ auf die Reaktionszeit des
 Roboters auswirkt. Durch diese Messfehler fängt der Roboter an seine 
 Position falsch zu korrigieren. Die Ursache für diese Fehler sind 
 unbekannt und liegen wahrscheinlich tief in der Firmware des Lego 
-Bricks verwurzelt ist. Mehr dazu siehe: \ref Ultraschallsensoren.
+Bricks verwurzelt ist. Mehr dazu siehe: \ref ultraschallsensoren-projekt.
 
 \section ausblick-ausblick Ausblick
 
