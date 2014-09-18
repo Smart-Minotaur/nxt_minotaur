@@ -13,8 +13,8 @@
 
 HOSTNAME=$(hostname)
 
-BEAGLE_IP=141.37.31.128
-PC_IP=141.37.31.114
+BEAGLE_IP=141.37.31.129
+PC_IP=141.37.31.80
 
 if [ -z "$1" ]
 then
@@ -68,4 +68,9 @@ then
 	export ROS_IP=$PC_IP
         export ROS_MASTER_URI=http://$PC_IP:11311
 	roslaunch minotaur_teleop joy_teleop.launch
+elif [ "$1" == "keyboard_p" ]
+then
+	export ROS_IP=$PC_IP
+        export ROS_MASTER_URI=http://$PC_IP:11311
+        roslaunch minotaur_teleop keyboard_teleop.launch
 fi

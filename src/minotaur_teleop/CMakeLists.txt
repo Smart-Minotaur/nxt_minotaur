@@ -14,7 +14,12 @@ catkin_package(
 
 include_directories(${catkin_INCLUDE_DIRS} include)
 file( GLOB JOY_TELEOP_SRC src/joy_teleop.cpp)
+file( GLOB KEYBOARD_TELEOP_SRC src/keyboard_teleop.cpp)
 
 add_executable(joy_teleop ${JOY_TELEOP_SRC})
 target_link_libraries(joy_teleop ${catkin_LIBRARIES})
 add_dependencies(joy_teleop minotaur_common_generate_messages_cpp)
+
+add_executable(keyboard_teleop ${KEYBOARD_TELEOP_SRC})
+target_link_libraries(keyboard_teleop ${catkin_LIBRARIES})
+add_dependencies(keyboard_teleop minotaur_common_generate_messages_cpp)

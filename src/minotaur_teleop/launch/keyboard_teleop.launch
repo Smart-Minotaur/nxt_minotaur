@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="minotaur_teleop" type="keyboard_teleop" name="keyboard_teleop" output="screen" />
+    <rosparam command="load" file="$(find minotaur_common)/param/models.yaml"/>
+</launch>
