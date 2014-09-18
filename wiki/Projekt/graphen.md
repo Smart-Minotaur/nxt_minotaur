@@ -27,7 +27,7 @@ Wenn ein Sensor keine nützlichen Messwerte liefern kann, da sich an seiner Seit
 
 Um einzelne Ausreisser in den Messwerten auszugleichen wurde ein __Medianfilter__ angewendet der die letzten 5 bis 10 Werte eines Sensors nutzt.
 
-Beim Fahren entscheidet der Roboter anhand des zurückgelegten Weges, ob er in der nächsten Zelle angekommen ist. Daraufhin wird ermittelt welche 
+Beim Fahren bestimmt der Roboter anhand des zurückgelegten Weges, wann er in der nächsten Zelle angekommen ist. Daraufhin wird ermittelt welche 
 Aktion als nächstes ausgeführt wird (Mehr dazu siehe \ref algorithmus-graphen). Der Roboter hat hier immer genau zwei Möglichkeiten: 
 
 * Rotation: Der Roboter dreht sich auf der Stelle in eine angegebene Richtung um 90° oder 180°.
