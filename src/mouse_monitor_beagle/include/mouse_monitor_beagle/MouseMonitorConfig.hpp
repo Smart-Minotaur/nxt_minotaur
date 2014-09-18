@@ -24,6 +24,4 @@
 #define NODE_NAME_QT "MouseMonitor"
 #define NODE_NAME_BEAGLE "MouseMonitorBeagle"
 
-// TODO topics nach minotaur_common/MinotaurTopics.hpp verschieben
-
 #endif

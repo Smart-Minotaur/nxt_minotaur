@@ -13,8 +13,8 @@
 
 HOSTNAME=$(hostname)
 
-BEAGLE_IP=141.37.31.129
-PC_IP=141.37.31.80
+BEAGLE_IP=141.37.31.128
+PC_IP=141.37.31.114
 
 if [ -z "$1" ]
 then

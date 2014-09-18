@@ -161,6 +161,8 @@ selben Netzwerk ausgeführt werden.
 
 \subsection gui-tools-projekt GUI Tools
 
+* @subpage gui-tools
+
 Während dieses Projektes wurde es notwendig __grafische Anwendungen__ zu 
 entwickeln, um bestimmte __Systemteile zu debuggen__ und deren Verhalten 
 zu beobachten. Alle Anwendungen wurden mit QT4 und der Erweiterung QWT 
@@ -168,8 +170,6 @@ geschrieben. QWT bietet grafische Komponenten wie Graphen, wodurch das
 Analysieren von Daten vereinfacht wird. Alle in diesem Projekt 
 entwickelten grafischen Anwendungen werden auf der folgenden Seite 
 näher beschrieben:
-
-* @subpage maussensoren
 
 \subsection ansätze-projekt Ansätze
 
@@ -184,8 +184,6 @@ durch das Labyrinth bewegen.
 
 Im __zweiten Ansatz__ wurde der Roboter direkt angesteuert. Das Labyrinth 
 wurde als __Graph__ betracht und in Zellen gleicher Größe unterteilt.
-
-* @subpage gui-tools
 
 \subsection maussensoren1-projekt Maussensoren
 

@@ -73,7 +73,6 @@ namespace minotaur
 			MouseMonitorPlot *xSpeed2Plot;
 			MouseMonitorPlot *ySpeed2Plot;
 
-			// TODO
 			MouseMonitorPlot *detail1Plot;
 			MouseMonitorPlot *detail2Plot;
 

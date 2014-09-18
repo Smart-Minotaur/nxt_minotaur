@@ -94,6 +94,9 @@ ACHTUNG: Wichtig zu wissen ist, wann die internen Zähler/Register des sensors z
 \subsection array-converter Array-Converter
 Um den Philips pln2033 zu benutzen muss zuerst ein Patch code ins RAM des DSP geladen werden. Das kleine utility programm arrayConverter convertiert den vorhandenen Pacth code in eine korrektes Format (Hex darstellung) um diesen komfortabel beim start der bibliothek ins RAM laden zu können. Der Patch code wird im uint8 array format und in korrekte endian darstellung in einer datei sgespeichert.
 
+\section example Beispiele
+Beispiele zur Benutzung der pln_minotaur Bibliotheke befinden sich auf folgender Seite: TODO
+
 \section improve Verbesserungen
 
 pln_2033 unterstützt nicht alle Funktionen des PLN2033. Eine Verbesserung der Bibiothek wäre das Hinzufügen von Möglichkeiten zum konfigurieren verschiedener Sleep-states des Sensors. Auch kann eine Interruptgesteuuerte Funktion implementiert werden.

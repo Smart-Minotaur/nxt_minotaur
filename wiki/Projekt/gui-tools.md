@@ -130,27 +130,3 @@ Befehl ausgeführt werden.
 Mehr Informationen zu __pid_monitor__ finden sich im Abschnitt \ref 
 pid_monitor-gui-tools.
 
-\section mouse_monitor_pc-gui-tools mouse_monitor_pc
-
-\subsection mouse_monitor_pc-gui-tools_calibration-wizard Sensor Calibration Wizard
-
-Mit diesem Tool kann die fehlerhafte Rotation bei der Montage des Sensors bestimmt werden.
-
-\image html MM_CalibrationWizard.png
-
-Dazu muss in der GUI der "Start"-Button betätigt werden. Anschließend muss man den Roboter 
-möglichst geradeaus schieben, dass der Winkel berechnet werden kann. Während der Fahrt werden die Displacements der Sensoren angezeigt.
-Danach kann der Vorgang mit dem "Stop"-Button beendet werden. Im nächsten Fenster kann dann der Verschiebungswinkel abgelesen werden.
-
-TODO Image...
-
-Dieser Winkel muss in der Datei __models.yaml__ bei Paramter "error_angle:" im Package __minotaur_common/param__ eingetragen werden,
-sodass dieser beim Start des Roboters zur Verfügung steht.
-
-Der Roboter wendet diesen Winkel auf die Rotationsmatrix an und multipliziert diesen mit dem aktuellen Positionsvektor.
-Dadurch kann der neue Positionsvektor' bestimmt und die Rotation der Sensoren korrigiert werden.
-
-\image html rotationmatrix.png
-
-
-
