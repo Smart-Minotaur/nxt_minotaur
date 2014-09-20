@@ -155,7 +155,9 @@ data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 
 section comm Kommunikation
 
-Für die kommunikation existiern jeweuls ein rOS Node
+Für die WLAN Kommunikation zwischen Beagle Bone und PC existiert jeweils eine
+ROS Node. Dabei werden ROS Services verwendet. Mouse Monitor PC kann in
+konfigurierbaren Intervallen die Sensor Daten abgragen.
 
 TODO: Bild
 
@@ -185,6 +187,17 @@ Zusätzlich sind folgende parameter des Roboers Bekannt.
 
 subsection ber Berechnung
 
+Da die Sensoren nicht im rechtee Winkel mit der Kreistangente montiert sind, muss das verhältnis von x und y_disp
+änderungen aus den Empangenen Sensorwärten herausgerechnet werden. Die zurückgelegte strecke für geradeausfahrt
+sowei bei iener kurve muss ausgerechnet werden. Das verhältnis von x und y werten
+bei einer drehung ist bekannt. Da die Maße des roboters bekannt sind kann dies bestimmt werden:
+
+Dabei muss lediglich der winkel der y achse des sensors egenüber der kreistangente bestimt werden.
+Mit diesem wissen kann der y anteil bei iener drehung bestimmt werden. Da die zurückgelegte disatz
+bei einer drehung bekannt ist, kann mithilfe der kreisbogeformel der drehweinkel bestimmt werden.
+Die geamse zurückgeegte distanz minus die kurvendistanz ergbt die zurüclkgekegte strecke bei geradeasu oder
+rückwertsfahrt.
+
 subsection impl Implementierung
 
 Die Berechung wird bisher zu Debugging zwecken auf einem PC ausgeführt.
@@ -203,6 +216,14 @@ Sensor
 * Ausrichtung im robot Koords
 
 Zus#tzlich wird bei allen der Zurükgelegte Pfad abgespeichert.
+
+TODO: Vererbung object und sensor / robot
+
+Die Klsse Object besitt die mehoen forward und rotate() um den roboter/Sensoren zu bewegen.
+Die Methode move() wird verwendet um den Roboter aufgrund der X und Y Displacementwerte zu bewegene.
+
+Dabei wird die oben erklärten berechngen ausgeführt, welche als ergebnis die zurückgelegte distanzen bei
+gerausfahrt und drehung ergeben. Je nach richtung werden die forward() und rotate() methoden ausgeführt.
 
 \section problems Probleme
 Während der Durchführung des Projektes traten einige Probleme bezüglich der pln2033 Sensore auf. Diese werden in diesem Abschnitt erläutert.
