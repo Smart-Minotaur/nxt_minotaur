@@ -137,6 +137,8 @@ wird die gesamtdistanz einer gefahrenen geradeausfahrt gemessen und der Winkel g
 der idealen geradeaus fahrt bestimmt. Alle folgenden Messdaten (Vektoren) werden
 mithilfe einer Rotationsmatrix um diesne winkel gedreht.
 
+\image html rotationmatrix.png
+
 ~~~
 if (s1YDisplacement > 0)
 			atanRealDistance = M_PI/2;
@@ -157,7 +159,13 @@ section comm Kommunikation
 
 Für die WLAN Kommunikation zwischen Beagle Bone und PC existiert jeweils eine
 ROS Node. Dabei werden ROS Services verwendet. Mouse Monitor PC kann in
-konfigurierbaren Intervallen die Sensor Daten abgragen.
+konfigurierbaren Intervallen die Sensor Daten abfragen.
+
+Beim Abfragen der Sensor Daten schickt die Beagle Bonde Node folgende ROS
+Message:
+
+Zusätzlich existieren Messages/Services zum setzen der Sensor Auflösung sowie
+zum Abfragen der Sensor koniguration.
 
 TODO: Bild
 
@@ -167,43 +175,78 @@ Zum bestimmen der Position und der Ausrichtung des Roboters wird nur 1 Sensor
 benötigt. Die Berechnung der Roboter Porsition sowie Ausrichtung wird in deisem
 Abschnit beschrieben.
 
-Ist der Sensor in einer rechtwinkligen position zum kreistangente montiert vereinfacht sich
-die Berechnung sehr. In diesem Abschnitt wird die Lösung bei einer variablen montierung beschrieben,
-da dies allgemeiner ist. Obwohl am Roboter 2 Sensoren montiert sind, wird nur einer zum besimmen der position
-verwendet.
+Ist der Sensor in einer rechtwinkligen position zur kreistangente des Kreises
+den der Sensor um die Achse desRoboter bildet montiert vereinfacht sich
+die Berechnung sehr. In diesem Abschnitt wird die Lösung bei einer variablen
+montierung beschrieben, da dies allgemeiner ist. Obwohl am Roboter 2 Sensoren
+montiert sind, wird nur einer zum besimmen der position verwendet.
 
 subsection ausgang ausgangssituation:
 
-Mit der Annahme, dass der Sensor kalibirtiert wurde kann von folgender situatin ausgegangen werden.
+Mit der Annahme, dass der Sensor kalibirtiert wurde kann von folgender
+situatin ausgegangen werden.
 
 Todo: Bild
 
 Bei einer geradeausfahrt ändert sich nur die y koordiante.
 
-Zusätzlich sind folgende parameter des Roboers Bekannt.
-*(settingss struct)
-*
-*
+Zusätzlich sind folgende Parameter des Roboters bekannt:
+~~~
+double axisLength; // cm
+
+double distanceToSensor_x; // cm
+double distanceToSensor_y; // cm
+
+double distanceToSensor_radius; // cm
+double distanceToWheel; // cm
+double sensorAngle; // Radiants
+double m;
+~~~
 
 subsection ber Berechnung
 
-Da die Sensoren nicht im rechtee Winkel mit der Kreistangente montiert sind, muss das verhältnis von x und y_disp
-änderungen aus den Empangenen Sensorwärten herausgerechnet werden. Die zurückgelegte strecke für geradeausfahrt
-sowei bei iener kurve muss ausgerechnet werden. Das verhältnis von x und y werten
-bei einer drehung ist bekannt. Da die Maße des roboters bekannt sind kann dies bestimmt werden:
+Da die Sensoren nicht im rechten Winkel mit der Kreistangente montiert sind
+ändern sich bei einer Drehung des Roboters X- sowie Y-Koordinaten des Sensors.
+Bei einer geradeaus Fahrt ändern sich nur die Y-Koordinaten. Werden die
+empfangenen Sensor Daten direkt dargestellt ergibt sich aufgrund der rotierten
+Montierung des Sensors eine gerade mit fester Steigung:
 
-Dabei muss lediglich der winkel der y achse des sensors egenüber der kreistangente bestimt werden.
-Mit diesem wissen kann der y anteil bei iener drehung bestimmt werden. Da die zurückgelegte disatz
-bei einer drehung bekannt ist, kann mithilfe der kreisbogeformel der drehweinkel bestimmt werden.
-Die geamse zurückgeegte distanz minus die kurvendistanz ergbt die zurüclkgekegte strecke bei geradeasu oder
-rückwertsfahrt.
+TODO: Bild
+
+Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen
+muss aus diesen Daten die jeweilige zurückgelegte Distanz bei einer Drehung
+sowie bei einer geradeaus Fahrt bestimmt werden. Die Werte müssen in Drehung und
+geradeaus Fahrt unterteilt werden. Dafür wird das Verhältnis der Änderung der X-
+und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten heraus
+gerechnet werden. Das Verhältnis von X- und Y-Werten bei einer Drehung ist
+bekannt. Das Verhältnis entspricht genau dem im folgenden Bild dargestellten
+Winkel.
+
+TODO: Bild mit Winkel
+
+Da die Maße des Roboters bekannt sind kann dieser Winkel sowie die Steigung
+bestimmt werden:
+
+~~~
+sensorAngle = (M_PI/2.0) - atan(distanceToSensor_y/distanceToSensor_x);
+m = tan(sensorAngle);
+~~~
+
+Dabei muss lediglich der Winkel der Y-Achse des Sensors gegenüber dem Radius
+bestimmt werden. Mit diesem Wissen kann der Y-Anteil bei einer Drehung bestimmt
+werden. Mithilfe des Satz des Pythagoras kann die zurückgelegte Distanz bei
+Drehung sowie geradeaus Fahrt bestimmt werden. Da die zurückgelegte Distanz bei
+einer Drehung bekannt ist, kann mithilfe der Kreisbogenformel der Drehwinkel
+bestimmt werden. Die gesamte zurückgelegte dDstanz minus die Kurvendistanz
+ergibt die zurückgelegte Strecke bei geradeaus Fahrt (bzw. rückwärts Fahrt)..
 
 subsection impl Implementierung
 
-Die Berechung wird bisher zu Debugging zwecken auf einem PC ausgeführt.
-Die wichtigsten Klassen befinden ich inder datei Robot.h.
-
-Roboter und Sneoren werden als Objekte der Superklasse Object erzeugt
+Die Berechnung wird bisher zu Debugging Zwecken auf einem PC ausgeführt. Die
+wichtigsten Klassen befinden sich in der Datei Robot.h. Roboter und Sensoren
+werden als Objekte der Superklasse Object erzeugt, welche als 
+Hauptfunktion die Methoden forward() sowie rotate() zum bewegen der Objekte
+bietet.
 
 Robot:
 * X Position im globalen Koord
@@ -215,76 +258,159 @@ Sensor
 * Y im Roboter Kords
 * Ausrichtung im robot Koords
 
-Zus#tzlich wird bei allen der Zurükgelegte Pfad abgespeichert.
+Zusätzlich wird bei allen Objekten der zurückgelegte Pfad (im globalen 
+Koordinatensystem) abgespeichert.
 
 TODO: Vererbung object und sensor / robot
 
-Die Klsse Object besitt die mehoen forward und rotate() um den roboter/Sensoren zu bewegen.
-Die Methode move() wird verwendet um den Roboter aufgrund der X und Y Displacementwerte zu bewegene.
+Die Methode move() des Roboters wird verwendet um den Roboter aufgrund der X-
+und Y-Displacement Werte eines Sensors zu bewegen. Dabei werden die oben
+erklärten Berechnungen ausgeführt, welche als Ergebnis den Drehwinkel sowie die
+zurückgelegte Distanz bei geradeaus Fahrt liefern. Je nach Richtung werden die
+forward() und rotate() Methoden ausgeführt.
 
-Dabei wird die oben erklärten berechngen ausgeführt, welche als ergebnis die zurückgelegte distanzen bei
-gerausfahrt und drehung ergeben. Je nach richtung werden die forward() und rotate() methoden ausgeführt.
+~~~
+// V_r = Vector for rotation
+// V_f = Vector for forward/backward
+// V_rd = Vector for rotation and forward/backward
+
+double Vx_r = dX;
+double Vy_r = dX * attributes.m;
+
+double Vdist_r = sqrt(pow(Vx_r, 2) + pow(Vy_r, 2));
+
+double Vm_r = Vy_r/Vx_r;
+double Vangle_r = atan(Vm_r);
+
+// From circular arc (Vdist_r)
+double rotateAngle = Vdist_r / attributes.distanceToSensor_radius;
+
+// Rotation direction
+if (dX >= 0)
+	rotate(rotateAngle);
+else
+	rotate(rotateAngle * -1);
+
+double Vdist_rf = sqrt(pow(dX, 2) + pow(dY, 2));
+double Vdist_f = Vdist_rf - Vdist_r;
+
+// Forward or backward
+if (dY < 0)
+	Vdist_f *= -1;
+
+forward(Vdist_f);
+~~~
 
 \section problems Probleme
-Während der Durchführung des Projektes traten einige Probleme bezüglich der pln2033 Sensore auf. Diese werden in diesem Abschnitt erläutert.
+Während der Durchführung des Projektes traten einige Probleme bezüglich der
+pln2033 Sensoren auf. Diese werden in diesem Abschnitt erläutert.
 
-* Schwierige Fehlersuche sowie Validierung der Funktionalität aufgrund schlechter Testumgebung und schlechtem hardware-Aufbau.
+* Schwierige Fehlersuche
 
-Der pln2033 ist ein hochprezisieser lasersensor. Um korrkete Aussagen über seine Funktionsweise zu machen, ist ein professioneller Prüfstand erforderlich welcher in diesem Projetkl nicht vorhanden war. Die tests mussten per hand (Lego-Wagen per Hand schieben, drehen ...) durchgeführt werrden, was genaues meessen unmöglich machte. Eine exakte geradweausfahrt, dreghung, .. konnte damit nicht erreicht werden.
+Aufgrund der schlechten Testumgebung und schlechtem Hardware-Aufbau war die
+Fehlersuche sowie Validierung der Sensor-Funktionalität sehr schwierig. Der
+pln2033 ist ein hoch präziser Lasersensor. Um korrekte Aussagen über seine
+Funktionsweise zu machen, ist ein professioneller Prüfstand erforderlich welcher
+in diesem Projekt nicht vorhanden war. Die Tests mussten per Hand (Lego-Wagen
+per Hand schieben, drehen ...) durchgeführt werden, was genaues Messen
+unmöglich machte. Eine exakte geradeaus Fahrt, Drehung, ... konnte damit nicht
+erreicht werden.
 
-Zum testen sowie bei der endmmontierung auf dem Roboter wird Lego benutzt, was wiederrum einige Probleme mit sich fühert:
-* Wackelnde montage: Bei Bewegung des Roboters wackeln die sensoren.
-* Sensoren sins sehr empfindlich. Mit Lego können diese nicht in einer exakten höhe montiert erden (was das Lift-Bit auslöst, dazu später mehr).
-* Eine geraqde Montierung der sensoren ist nicht möglich.
-* Damit die Snesoren immer einen gleichen Abstand zum Boden haben setzen die Sensoren auf dem Boden auf, dadruch können diese sich verkanten.
+* Zum Testen sowie bei der Endmontierung auf dem Roboter wird Lego benutzt, was
+wiederum einige Probleme mit sich führt
 
-Unabhängig
+** Wackelnde Montage: Bei Bewegung des Roboters wackeln die Sensoren. Trotz
+Kalibrierung kann dadurch keine exakte Messung gemacht werden, da die Lage der
+Sensoren sich bei einer Fahrt immer ändert.
+** Die Sensoren sind sehr empfindlich. Mit Lego können diese nicht in einer
+exakten Höhe montiert werden (was das Lift-Bit auslöst, dazu später mehr).
+** Eine gerade Montierung der Sensoren ist nicht möglich.
+** Damit die Sensoren immer einen gleichen Abstand zum Boden haben setzen die
+Sensoren auf dem Boden auf, dadurch können diese sich verkanten, die Messungen
+werden ungenau.
 
-* Lift-Bit problem
--> Testart: start - move. getdata. -> Sehr kleine Werte
+* Lift-Bit Problem
+
+Zum Testen der Grundfunktionalität der Sensoren wurde folgender Test auf dem
+Beagle Bone gemacht:
+
+Teststart:
+Reset der internen Register.
+
+Der Roboter wird eine festgelegte Strecke (10cm) per Hand vorwärts bewegt.
+Dabei zählen die internen X- und Y-Register hoch. Es wurde mit einer festgeleten
+Auflösung sichergestellt, dass kein Überlauf bei der 10cm Strecke auftreten
+kann.
+
+Testende:
+Die Register Werte des Sensors werden ausgelesen. Nun sollten die Y-Werte
+(geradeaus) immer 10cm betragen.
+
+Beobachtung:
+Bei mehreren Test wurde festgestellt das bei einigen Testfahrten die Y-Werte
+sehr kleine Werte annehmen. Dies passierte ungefähr in 10%-20% der Fälle.
+
+Nach langem Debuggen wurde festgestellt, dass die Sensoren sehr empfindlich
+auf anheben reagieren. Da bei Bewegungen von Hand die Sensoren sehr wackeln,
+wurde beim anhalten des Roboters (nach 10cm) in einigen Fällen das Lift-Bit
+des Sensors gesetzt. Dieses Lift-Bit wird gesetzt, wenn der Sensor zu weit von
+seiner kalibrierten Höhe angehoben wird. Passiert dies, werden alle internen
+Zähler zurückgesetzt, die Werte sind verloren.
+
+Eine Lösung für dieses Problem ist es, die Sensor Werte mit einer sehr hohen
+Abtastrate (1kHz) abzufragen, um den Fehler sehr gering zu halten. Zusätzlich
+können bei Aktivierung des Lift-Bits interpolierte werte als Ersatz in die
+Messdaten integriert werden.
+
 TODO: Sollte noch auf das Prüfen
-* Median Filter problerm
-* WLAN Latenz
 
-SPI device tree 2 Chip-Selects für PI1 und Ubuntu
+* Median Filter Problem und WLAN Latenz
+
+Ursprünglich wurden die Messdaten mit einer sehr geringen Frequenz abgefragt.
+Dadurch entstand der oben genannte Fehler. Um diese kleinen Messwerte
+herauszufiltern wurde ein Median-Filter auf der PC-Seite eingesetzt.
+Allerdings verschlimmerte dieser die Messergebnisse. Da die Kommunikation über
+WLAN erfolgt entstehen Latenzen bei der Übertragung der Messdaten. Bei der
+Abfrage der MEssdaten wird erst auf eine Antwort der aktuellen anfrage an das
+BBB gewartet. Erst wenn diese eingetroffen ist wird nach dem nächsten Paket
+gefragt. Die übertragenen Daten bleiben zwar korrekt, allerdings kann die
+Übertragung von Paketen länger dauern. Dadurch hat der Sensor mehr Zeit
+Messdaten zu sammeln. Langsamere Pakete enthalten dadurch höhere
+Displacement-Werte. Da der Median diese als Ausreißer weg-filtert obwohl
+diese korrekt sind, verschlimmert dieser die Messergebnisse.
+
+Durch das Speichern der Messwerte mit einer hohen sample-rate auf dem BBB
+entsteht dieser Fehler nicht mehr.
+
+* SPI Device Tree
+Das konfigurieren des Device Trees für SPI1 mit 2 Chip-Selects unter Ubuntu
+brachte einige Probleme mit sich. Das Device Tree File musste mit den richtigen
+GPIO Pins erweitert werden. Zusätzlich musste HDMI deaktiviert werden.
 
 \section fazit Fazit und Erkenntnisse
 
-Mit einer hohen sample rate ist der Lift-Bit fehler sehr gering. Bei 1kHz kann dieser vernachlässigt werden.
-Der Sensort arbeitet auf 1-2cm auf 100cm genau. Unabhängig davon driften die gemessenen Werte ab ca. 1m etwas ab.
-Dies ist aufgrund der Lego monitierung welche sich immer wieder verschiebt. Trotz kalibrieren sind die messwerte nicht optimal.
+Mit einer hohen sample rate ist der Lift-Bit Fehler sehr gering. Mit einem
+geeignetem Filter könnte der Fehler noch weiter verringert werden. Bei 1kHz kann
+dieser vernachlässigt werden. Zusätzlich könnten anstatt aufsummieren der Daten
+auf dem BBB diese auch als Schritte abgespeichert werden. Allerdings reichen die
+Abfrage-Intervalle der GUI vollkommen aus um schnelle Kurven zu erkennen. Auch
+die WLAN Latenzen stören das Messergebnis nicht. Der Sensor arbeitet auf 1-2cm
+auf 100cm genau. Unabhängig davon driften die gemessenen Werte ab ca. 1m etwas
+ab. Dies ist aufgrund der Lego-Montierung welche sich immer wieder verschiebt.
+Trotz kalibrieren sind die Messwerte nicht optimal.
 
-TODO: BIld mit drift
+TODO: Bild mit Drift
 
-Nur 1Sensor wird zum bestimmen der Position und Ausrichtung benötigt.
+Nur ein Sensor wird zum Bestimmen der Position und Ausrichtung benötigt.
 
 \section improvement Verbesserungen
 
-* Filter beim Lift bit einführen
+* Filter beim Lift-Bit einführen
 * Mehr teile vom PC zum BBB verlagern
+* Einzelne Schritte abspeichern anstatt aufsummieren
 * Bessere Hardware zum Montieren verwenden
+* ROS Topics anstatt Services verwenden (optional)
 ** die nicht wackelt
-** Gleicher abstand der Sensoren zum Biden ohne schleifen
+** Gleicher Abstand der Sensoren zum Boden ohne schleifen
 
 \image html sensor_test_car.jpg "Testfahrzeug mit 2 PLN2033"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Der Roboter wendet diesen Winkel auf die Rotationsmatrix an und multipliziert diesen mit dem aktuellen Positionsvektor.
-Dadurch kann der neue Positionsvektor' bestimmt und die Rotation der Sensoren korrigiert werden.
-
-\image html rotationmatrix.png
