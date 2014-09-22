@@ -29,25 +29,32 @@ und [Pledge-Algorithmus](http://de.wikipedia.org/wiki/L%C3%B6sungsalgorithmen_f%
 vorhanden. Der grundlegende Gedanke war, dass der Roboter sich mithilfe 
 der __Karte__ und des __ROS Navigation Stack__ durch das Labyrinth navigiert.
 
+Das folgende Diagramm zeigt die interne Funktionsweise des Histogramm 
+Ansatz. Diese Funktionsweise wird in den darauffolgenden Abschnitten 
+näher erläutert.
+
+\image html histogramm-diagramm.png
+
 \subsection kartografierung-histogramm Kartografierung
 
 In einem eigenen Thread wird die Histogrammkarte __parallel__ zur 
 Navigation aufgezeichnet. Dabei wird jedesmal, sobald eine neue 
 Messung eintrifft, anhand der aktuellen Position ein Eintrag in der 
-Histogrammkarte gemacht. Über ein internes ID Mapping wird 
-unterschieden, zu welchem Sensor die eingehende Messung gehört. Über 
-die aktuelle Position des Roboters und mithilfe der Ausrichtung des Sensors 
-wird ermittelt, in welcher Zelle der Histogrammkarte der Wert erhöht 
+Histogrammkarte gemacht (Zellenwert erhöht). Über ein internes ID Mapping wird 
+unterschieden, zu welchem Sensor die eingehende Messung gehört, sodass 
+auch dessen Ausrichtung berücksichtigt werden kann. Über die aktuelle 
+Position des Roboters und mithilfe der Ausrichtung des Sensors wird 
+ermittelt, in welcher Zelle der Histogrammkarte der Wert erhöht 
 werden muss. Zusätzlich wird den Messungen noch ein Fächer 
 hinzugefügt, sodass der Wert aller Zellen erhöht wird, die auf der 
 Kreisbahn des entsprechenden Kreisabschnitts liegen.
 
 \subsection navigation-histogramm Navigation
 
-In einem seperaten Thread findet die Navigation statt. Anhand der
+In einem seperaten Thread findet die __Navigation__ statt. Anhand der
 aufgezeichneten Karte legt ein Navigationsalgorithmus die __nächste 
 Zielkoordinate__ fest, an die sich der Roboter bewegen soll. Diese 
-Koordinate wird an den ROS Navigation Stack übergeben, sodass dieser 
+Koordinate wird an den ROS Navigation Stack (__MoveBase__) übergeben, sodass dieser 
 den Roboter dorthin navigiert. Da die Histogrammkarte nicht in den ROS 
 Navigation Stack integriert ist, werden Hindernisse in der 
 Histogrammkarte von dem ROS Navigation Stack nicht berücksichtigt.
@@ -63,4 +70,3 @@ bereits nach kurzer Fahrt komplett die Orientierung verloren hat. Zur
 Verbesserung der Odometrie sollten eigentlich die Maussensoren genutzt 
 werden. Zu diesem Teil des Projektes finden sich mehr Informationen 
 auf der Seite \ref maussensoren.
-

@@ -20,11 +20,10 @@ Computer-Mäusen verwendet.
 
 ## Übersicht
 
-1. \ref maussensoren
-2. \ref installation
-3. \ref vorarbeit
-4. \ref projekt
-5. \ref ausblick
+1. \ref installation
+2. \ref maussensoren
+3. \ref roboter
+4. \ref ausblick
 
 ## Der Roboter
 

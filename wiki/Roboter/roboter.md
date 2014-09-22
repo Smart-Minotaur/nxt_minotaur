@@ -1,9 +1,9 @@
-Projekt {#projekt}
+Roboter {#roboter}
 ===
 
 \tableofcontents
 
-\section beschreibung-projekt Beschreibung
+\section beschreibung-roboter Beschreibung
 
 Die Aufgabe des Roboters ist es __ein Labyrinth zu karthographieren__. 
 Der Roboter verfügt über einen __Differentialantrieb__ und kann seine 
@@ -16,7 +16,8 @@ Programmierung__ als der Brick, auf welchem lediglich in der
 beschränkten Programmiersprache NXC gearbeitet werden kann. Außerdem 
 wird das BBB benötigt um zusätzliche die __Maussensoren__ über 
 den SPI-Bus anzusprechen. Diese Maussensoren werden verwendet, um die 
-zurückgelegte Strecke des Roboters zu messen und somit dessen __Odometrie zu verbessern__.
+zurückgelegte Strecke des Roboters zu messen und somit dessen 
+__Odometrie zu verbessern__.
 
 Als Programmiersprache wird in dem kompletten Projekt \b C++ 
 verwendet. Außerdem wird das Framework __Robot Operative System 
@@ -26,30 +27,35 @@ verteilten System stark abstrahiert und dadurch vereinfacht. Außerdem
 bietet es viele Funktionen und Programme zur Navigation und 
 Lokalisierung von Robotern. Die Hauptaufgabe von ROS in diesem Projekt 
 ist die __Interprozesskommunikation__ über das WLAN (siehe \ref 
-datenfluss-projekt). In einem der Ansätze wird außerdem auch der ROS
+kommunikation-roboter). In einem der Ansätze wird außerdem auch der ROS
 Navigation Stack verwendet, um den Roboter zu navigieren (siehe \ref 
 histogramm).
+
+In diesem Teil des Wikis wird der Roboter des Projekts und dessen 
+Implementierung näher beleuchtet. Da die Maussensoren nicht in den 
+Roboter implementiert wurden, sollte zu diesem Thema die Seite \ref 
+maussensoren herangezogen werden.
 
 \image html labyrinth_1.jpg "Labyrinth mit Roboter"
 
 ---
 
-\section struktur-projekt Struktur
+\section struktur-roboter Struktur
 
 Das Projekt ist in verschiedene __ROS-Packages__ unterteilt, sodass zu 
 jeder Zeit immer nur __die wirklich benötigten Packages kompiliert 
 werden können__. Dies ist vor allem in Hinblick auf die lange 
 Kompilierdauer auf dem Beagle Bone nützlich. Die einzelnen ROS-Packages 
-werden im folgenden Abschnitt \ref packages-projekt kurz beschrieben. Für weitere 
+werden im folgenden Abschnitt \ref packages-roboter kurz beschrieben. Für weitere 
 Informationen können die __Code Dokumentation__ und die genannten 
 Abschnitte und Wikiseiten herangezogen werden.
 
 In diesen ROS-Packages sind verschiedene ROS-Nodes enthalten, die alle 
-miteinander über das ROS-Kommunikationsystem kommunizieren. Die Art 
-und Richtung der Kommunikation wird in dem Abschnitt \ref datenfluss-projekt 
+miteinander über das __ROS-Kommunikationsystem__ kommunizieren. Die Art 
+und Richtung der Kommunikation wird in dem Abschnitt \ref kommunikation-roboter 
 erläutert.
 
-\subsection packages-projekt Packages
+\subsection packages-roboter Packages
 
 | Packagename              | Beschreibung|
 |:-------------------------|:------------|
@@ -64,20 +70,21 @@ erläutert.
 | __mouse_monitor_beagle__ |TODO |
 | __minotaur_teleop__      |Das Package __minotaur_teleop__ enthält ROS-Nodes, um den Roboter remote mit einem Gamepad zu steuern. Dies kann beispielsweise benutzt werden, um den Roboter in Kombination mit dem GUI-Tool \ref map_monitor-gui-tools. |
 
-\subsection datenfluss-projekt Datenfluss
+\subsection kommunikation-roboter Kommunikation
 
 Das folgende Diagramm zeigt die Kommunikationsstruktur in diesem Projekt.
 
 \image html minotaur-dataflow.png
 
 Die zentrale ROS-Node __RobotControl__ wird in dem Abschnitt \ref 
-robot-control-projekt genauer betrachtet. __Movebase__ ist eine ROS interne 
-Node. Sie ist zuständig für die grundlegende Kommunikation innerhalb 
-des ROS Navigation Stack. Daher wird sie auch nur von Applikationen 
-benötigt, die den ROS Navigation Stack benutzen, ansonsten muss diese 
-Node nicht gestartet werden. __moveInMaze__ ist die ROS-Node, die den 
-\ref graphen realisiert. Um diese Node zu benutzen muss 
-__RobotControl__ gestartet sein.
+robot-control-roboter genauer betrachtet. Mit ihr kann der Roboter 
+über das ROS Kommunikationssystem angesteuert werden.__Movebase__ ist 
+eine ROS interne Node. Sie ist zuständig für die grundlegende 
+Kommunikation innerhalb des ROS Navigation Stack. Daher wird sie auch 
+nur von Applikationen benötigt, die den ROS Navigation Stack benutzen, 
+ansonsten muss diese Node nicht gestartet werden. __moveInMaze__ ist 
+die ROS-Node, die den \ref graphen realisiert. Um diese Node zu 
+benutzen muss __RobotControl__ gestartet sein.
 
 Auf dem Desktop Computer laufen sämtliche GUI Aplikationen. Diese 
 kommunizieren über das ROS Kommunikationssystem mit der 
@@ -92,21 +99,31 @@ den Brick sind wiederum die Motoren und Ultraschallsensoren des
 Roboters angeschlossen. Somit kann das Beagle Bone nur indirekt über 
 den Brick auf die __Aktoren und Sensoren__ des Roboters zugreifen. Neben 
 dem Brick nutzt das BBB einen SPI-Bus, um die angeschlossenen 
-__Maussensoren__ anzusteuern.
+__Maussensoren__ anzusteuern. Diese wurden im Rahmen diese Projektes 
+jedoch noch nicht implementiert, da sich die Maussensoren noch in 
+einem __Prototypenstatus__ befinden.
 
 ---
 
-\section implementierung-projekt Implementierung
+\section implementierung-roboter Implementierung
 
 Das Projekt umfasst viele einzelne __ROS-Nodes__ (Applikationen). Dabei 
 handelt es sich um __ineinandergreifende Anwendungen__, die über das 
 ROS-Kommunikationssystem zusammenarbeiten. Einige davon dienen 
 ausschließlich __Debuggingzwecken__ und sind zumeist graphischer Natur.
 Ihre __Funktionsweise__ und das korrekte __Starten dieser Anwendungen__ 
-(beispielsweise zur remote Steuerung des Roboters) wird 
-in den folgenden Abschnitten näher beleuchtet.
+(beispielsweise zur remote Steuerung des Roboters) wird in den folgenden 
+Abschnitten näher beleuchtet.
 
-\subsection robot-control-projekt RobotControl
+\subsection nxt-control-roboter NXTControl
+
+__NXTControl__ ist eine Bibliothek um den Lego NXT Brick über USB 
+anzusteuern. Da diese Bibliothek eine Eigenentwicklung ist wird sie 
+auf der folgenden Seite detaillierter beschrieben.
+
+* @subpage nxt-control
+
+\subsection robot-control-roboter RobotControl
 
 __RobotControl__ ist die zentrale ROS-Node des Projektes. Sie wird in 
 dem Package __robot_control__ realisiert.
@@ -117,13 +134,13 @@ Außerdem regelt sie über einen __PID-Regler__ die Geschwindigkeiten der
 Motoren getrennt. Zur Regelung werden außerdem __die Geschwindigkeiten 
 der Motoren ausgelesen__ und wiederrum in Geschwindigkeit und 
 Winkelgeschwindigkeit umgerechnet. Die angeschlossenen 
-__Ultraschallsensoren__ werden __in regelmäßigen Intervallen 
-ausgelesen__.
+__Ultraschallsensoren__ werden in regelmäßigen Intervallen 
+ausgelesen.
 
 Weiterhin nimmt RobotControl __ROS-Messages__ entgegen, mit denen die 
 Geschwindigkeiten des Roboters gesetzt werden können. Die von den 
 Motoren __gemessenen Geschwindigkeiten__ werden wiederum __in regelmäßigen 
-Abständen an eine ROS-Topic gesendet__. Dabei werden für die 
+Abständen an eine ROS-Topic gesendet__. Dabei werden für diese 
 Nachrichten die __Standard-ROS-Topics für den ROS Navigation Stack__ 
 verwendet, sodass der Roboter __vollständig kompatibel zu dem ROS 
 Navigation Stack__ ist. Dies bedeutet, dass Odometriedaten an die Topic 
@@ -144,24 +161,23 @@ der __Code Dokumentation__ entnommen werden.
 Eine weitere komfortable Funktion von RobotControl ist, dass __sämtliche 
 Einstellungen__ des PID-Reglers, Dimensionen des Roboters und 
 angeschlossene Sensoren über __den ROS-Param-Server geladen werden können__.
-Diese Daten müssten ansonsten über ROS-Messages eingestellt 
+Diese Daten können alternativ auch über ROS-Messages eingestellt 
 werden. Dabei werden die Einstellungen auf dem ROS-Param-Server unter 
 dem Namespace __minotaur__ hinterlegt. Danach folgt der __Name der 
 Einstellungen__ und darunter die einzelnen Parameter. Die ganze Struktur 
-kann aus der Datei models.yaml entnommen werden. Beim Start der 
-RobotControl Node schaut diese nach dem Parameter __CurrentModel__. Ist 
-dieser vorhanden wird dessen Inhalt als Name der initialen Einstellungen 
-behandelt und die Node lädt diese Einstellungen.
+kann aus der Datei models.yaml in dem Package __minotaur_common__ 
+entnommen werden. Beim Start der RobotControl Node schaut diese nach 
+dem Parameter __CurrentModel__. Ist dieser vorhanden wird dessen Inhalt 
+als Name der initialen Einstellungen behandelt und die Node lädt diese 
+Einstellungen.
 
 Damit übernimmt diese ROS-Node die __komplette Ansteuerung des Brick__ und 
-abstrahiert diese auf ROS-Messages. Damit muss lediglich diese Node auf 
+abstrahiert diese auf ROS-Messages. Somit muss lediglich diese Node auf 
 dem Beagle Bone Black ausgeführt werden. Alle anderen Nodes können 
 ebenfalls auf dem BBB oder aber auch auf einem anderen Computer im 
 selben Netzwerk ausgeführt werden.
 
 \subsection gui-tools-projekt GUI Tools
-
-* @subpage gui-tools
 
 Während dieses Projektes wurde es notwendig __grafische Anwendungen__ zu 
 entwickeln, um bestimmte __Systemteile zu debuggen__ und deren Verhalten 
@@ -171,9 +187,12 @@ Analysieren von Daten vereinfacht wird. Alle in diesem Projekt
 entwickelten grafischen Anwendungen werden auf der folgenden Seite 
 näher beschrieben:
 
-\subsection ansätze-projekt Ansätze
+* @subpage gui-tools
 
-Im Rahmen dieses Projektes wurden mehrere Lösungsansätze zum Lösen des Labyrinths verfolgt.
+\subsection ansaetze-roboter Ansätze
+
+Im Rahmen dieses Projektes wurden mehrere Lösungsansätze zum Lösen 
+des Labyrinths verfolgt.
 
 1. @subpage histogramm
 2. @subpage graphen
@@ -185,18 +204,18 @@ durch das Labyrinth bewegen.
 Im __zweiten Ansatz__ wurde der Roboter direkt angesteuert. Das Labyrinth 
 wurde als __Graph__ betracht und in Zellen gleicher Größe unterteilt.
 
-\subsection maussensoren1-projekt Maussensoren
+\subsection maussensoren-roboter Maussensoren
 
 Da die Odometrie der Lego NXT Motoren nicht sehr gut ist und vor allem 
 bei Drehungen des Roboter oft Fehler verursachen, __da die Reifen 
 durchdrehen__, sollten __Maussensoren__ genutzt werden, um die Odometrie zu 
-verbessern. Genauere Informationen zur Implementierung, dem 
-Entwicklungshergang und gelösten wie ungelösten Problemen finden sich 
-auf der folgenden Seite.
+verbessern. Wie bereits erwähnt wurden die Maussensoren aufgrund ihres 
+Prototypenstatus nicht in den Roboter implementiert. Mehr 
+Informationen dazu finden sich auf der Seite \ref maussensoren.
 
 ---
 
-\section probleme-projekt Bleibende Probleme
+\section probleme-roboter Bleibende Probleme
 
 Im Verlauf des Projektes sind __mehrere Probleme__ aufgetreten, deren 
 Lösung bis zum derzeiten Zeitpunkt noch ausstehen.
