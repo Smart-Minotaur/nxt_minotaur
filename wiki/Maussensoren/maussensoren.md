@@ -409,8 +409,8 @@ Nur ein Sensor wird zum Bestimmen der Position und Ausrichtung benötigt.
 * Mehr teile vom PC zum BBB verlagern
 * Einzelne Schritte abspeichern anstatt aufsummieren
 * Bessere Hardware zum Montieren verwenden
-* ROS Topics anstatt Services verwenden (optional)
 ** die nicht wackelt
 ** Gleicher Abstand der Sensoren zum Boden ohne schleifen
+* ROS Topics anstatt Services verwenden (optional)
 
 \image html sensor_test_car.jpg "Testfahrzeug mit 2 PLN2033"
