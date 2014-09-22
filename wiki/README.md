@@ -16,7 +16,13 @@ USB wiederum an ein __Beagle Bone Black__ (BBB) angeschlossen. Zur
 Verbesserung der Odometrie des Roboters werden Lasersensoren von 
 Computer-Mäusen verwendet. 
 
+__Teammitglieder__
 
+* Tobias Birkle
+* Jens Gansloser
+* Fabian Meyer
+* Benjamin Kugler
+* Stefan Gebhard
 
 ## Übersicht
 
@@ -27,7 +33,7 @@ Computer-Mäusen verwendet.
 
 ## Der Roboter
 
-\image html roboter_front_5.jpg "ROBOTER OVERLORD"
+\image html roboter_front_5.jpg "Roboter Minotaurus"
 
 
 
