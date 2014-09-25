@@ -19,7 +19,10 @@ pln_2033 bietet folgende Features:
 * Viele verschiedene Funktionen zum Abfragen der Sensor Daten für verschiedene
 Anwendungsfälle
 * Abfrage von Displacement sowie Speed Werten des Sensors
+* Abfragen und Setzen verschiedener SPI Einstellungen
+* Abfragen von Sensor Einstellungen und Sensor Status (Alle Sensor Register)
 * Sehr abstrahiert vom Linux SPI Interface
+* Setzen von X- und Y-Auflösung eines Sensors
 * Einfache objektorientierte Benutzung
 * Keine externen Bibliotheken werden benötigt (benutzt Linux spidev Treiber)
 * Verfügbar für ARM sowie x86 Architekturen
@@ -37,7 +40,7 @@ Bibliothek kann für ARM sowie x86 Architekturen kompiliert werden. Im
 Projektverzeichnis ist jeweils eine statisch kompilierte ARM sowie x86 Version
 der Bibliothek verfügbar. Um pln_minotaur selbst zu kompilieren müssen für die
 Architektur passende toolchain files verwendet werden. In den toolchain files
-müssen die verwendeten ARM und x86 Compiler eingetragen sein. Folgende Befehle
+müssen die verwendeten ARM oder x86 Compiler eingetragen sein. Folgende Befehle
 werden ausgeführt um die Bibliotheken sowie ein Beispiel zu erstellen. Die
 erzeugten Dateien befinden sich im Ordner build.
 
@@ -59,7 +62,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain-x86-BeagleBoneBlack.cmake ..
 make
 ~~~
 
-\section api-implementation API sowie Implementierung
+\section api-implementation API und Implementierung
 
 \subsection classes Klassen
 
@@ -80,11 +83,12 @@ Hauptbestandteil sind die Klassen pln_minotaur::PLN2033 sowie
 pln_minotaur:: SPIDevice. Im folgenden werden die Funktionen der verschiedenen
 Klassen zusammengefasst:
 
-\image html PLN2033_interface.png "pln_2033 interfaces"
+\image html pln2033_interface.png "PLN2033 Interfaces"
 
 \subsubsection spidevice SPIDevice.h
 
-Wrapper-Klasse für den Linux SPI Treiber:
+Wrapper-Klasse für den Linux SPI Treiber. Bietet komfortablere Funktionen für den
+Zugriff auf den SPI-Bus.
 * Senden und Empfangen von Daten über SPI
 * Setzen verschiedener SPI Konfigurationen
 
@@ -110,8 +114,9 @@ const int SPIDevice::DEFAULT_SPI_BITS = 8;
 const int SPIDevice::DEFAULT_SPI_SPEED = 3000000;
 ~~~
 
-Sample Rate zum Abfragen der Displacement Register: 1kHz (1ms Interval).
-(Siehe Datenblatt PLN2033 Sensor)
+Optimale sample Rate zum Abfragen der Displacement Register: 1kHz (1ms Interval).
+
+(Siehe Datenblatt des PLN2033 Sensors für mögliche sample rates)
 
 \subsection API API
 
@@ -121,10 +126,11 @@ Zeitstempel versehen. Nach jedem Lesen werden die Displacement Register
 (X und Y) auf 0 zurückgesetzt. Um die Sensor Einstellungen abzufragen wird
 pln_minotaur::IPLNTrackingDevice::readPLNSettings() verwendet. Diese Funktion
 liefert ein Objekt der Klasse PLNSettings zurück und beschreibt die gesamte
-Sensor Konfiguration. Zum Abfragen des Status-Registers steht die Funktion
-pln_minotaur::IPLNTrackingDevice::readPLNStatusRegister() zu Verfügung. Achtung:
-Beim Auslesen des Status-Registers werden ebenfalls die Displacement Register
-zurück gesetzt.
+Sensor Konfiguration. Diese besteht aus allen internen Registerwerten. Zum Abfragen
+des Status-Registers steht die Funktion
+pln_minotaur::IPLNTrackingDevice::readPLNStatusRegister() zu Verfügung. Beim
+Auslesen des Status-Registers werden ebenfalls die Displacement Register zurück
+gesetzt.
 
 ACHTUNG: Wichtig zu wissen ist, wann die internen Zähler/Register des Sensors
 zurückgesetzt werden. Werden Displacement-Werte oder das Status-Register
@@ -134,21 +140,21 @@ von der Oberfläche entfernt ist).
 
 \subsection array-converter Array-Converter
 
-Um den Philips PLN2033 zu benutzen muss zuerst ein Patch Code ins RAM des DSP
-geladen werden. Das kleine Utility Programm arrayConverter konvertiert den
+Um den Philips PLN2033 zu benutzen, muss zuerst ein Patch Code ins RAM des DSP
+geladen werden. Das kleine Utility-Programm arrayConverter konvertiert den
 vorhandenen Patch Code in eine korrektes Format (Hex-Darstellung) um diesen
 komfortabel beim Start der Bibliothek ins RAM laden zu können. Der Patch Code
-wird im uint8 Array Format und in korrekte endian Darstellung in einer Datei
+wird im uint8 Array Format und in korrekter endian-Darstellung in eine Datei
 abgespeichert.
 
 \section example Beispiele
 
-Beispiele zur Benutzung der pln_minotaur Bibliothek befinden sich auf
-folgender Seite: TODO
+Beispiele zur Benutzung der pln_minotaur Bibliothek befinden sich in der Doxygen
+Dokumentation der pln_minotaur Bibliothek.
 
-\section improve Verbesserungen
+\section improvements Verbesserungen
 
 pln_2033 unterstützt nicht alle Funktionen des PLN2033. Eine Verbesserung der
 Bibliothek wäre das Hinzufügen von Möglichkeiten zum konfigurieren verschiedener
-Sleep-States des Sensors. Auch kann eine Interruptgesteuerte Funktion
-implementiert werden.
+Sleep-States des Sensors. Zusätzlich könnte die Möglichkeiten zum Ansteuern des
+Sensors über Interrupts implementiert werden.
