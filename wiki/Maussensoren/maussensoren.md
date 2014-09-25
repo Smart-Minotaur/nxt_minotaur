@@ -5,46 +5,46 @@ Der im Projekt verwendete Roboter stellt für die Odometrie Motoren zu Verfügun
 Diese bieten jedoch eine sehr geringe Genauigkeit und Zuverlässigkeit. Zusätzlich
 kann sich dies je nach Fahrfläche verschlimmern (Räder drehen durch). Um die
 Odometrie zu verbessern werden im Smart-Minotaur zusätzlich Maussensoren von
-herkömmlichen Gaming-Computermäusen verwendet. Diese Messen die zurückgelegte X-
+herkömmlichen Gaming-Computermäusen verwendet. Diese messen die zurückgelegte X-
 und Y-Distaz indem die mithilfe von Lasern erzeugten Bilder der Oberfläche
-verarbeitet werden. Die in diesem Projektve verwendete Sensoren sind die Philips
+verarbeitet werden. Die in diesem Projekt verwendete Sensoren sind die Philips
 PLN2033 twin-eye laser sensoren. Diese verfügen über eine sehr hohe Präzision
 (bis zu 6400 CPI - Counts Per Inch) beim Messen der zurückgelegten X- und
 Y-Distanzwerte.
 
 \section pln2033 PLN2033 Sensor
-In diesem Abschnitt werden die wichtigsten Funktionen des pln2033 Sensors
+In diesem Abschnitt werden die wichtigsten Funktionen des PLN2033 Sensors
 erläutert. Weitere Informationen befinden sich im Datenblatt: TODO.
 
 \image html mouse_sensor.jpg "Maussensor von unten"
 
-Der pln2033 besitzt verschiedene 16-Bit Register mit welchen dieser konfiguriert
+Der PLN2033 besitzt verschiedene 16-Bit Register mit welchen dieser konfiguriert
 und gesteuert werden kann. Es werden zwei Laser verwendet, um die X und Y
 Positionsänderungen zu messen. Mithilfe dieser Laser werden Bilder der Oberfläche
-erstellt. Intern verarbeitet ein DSP diese Bilder und bestimmt aus diesen den
+erstellt. Intern verarbeitet ein DSP (digital signal processor) diese Bilder und bestimmt aus diesen den
 zurückgelegten Weg. Die Auflösung kann von 100 bis 6400 CPI eingestellt werden.
-Die Ansteuerung des Sensors erflgt über SPI und kann mit bis zu 8Mhz (Linux SPI
-Treiber Clock) betrieben werden. Der pln2033 benötigt zum Arbeiten 3.3V.
+Die Ansteuerung des Sensors erfolgt über SPI und kann mit bis zu 8Mhz (Linux SPI
+Treiber Clock) betrieben werden. Der PLN2033 benötigt zum Arbeiten 3.3V.
 
 \section hardware-setup Hardware Setup
 
 Das Beagle Bone Black besitzt zwei SPI Ports. SPI1 wird verwendet, da zwei
-pln2033 Sensoren angeschlossen werden und dieser im gegensatz zu SPI0 zwei
+PLN2033 Sensoren angeschlossen werden und dieser im Gegensatz zu SPI0 zwei
 Chip-Selects besitzt.
 
-Gelötete Platine Bild
+TODO: Gelötete Platine Bild
 
 TODO: Fritzing Bild mit SPI
 
-\section spi-device-tree Linux SPI treiber und Device Tree
+\section spi-device-tree Linux SPI Treiber und Device Tree
 
-Zum Ansteuern des pln2033 wird der SPI-Bus verwendet. Für das Smart-Minotaur
+Zum Ansteuern des PLN2033 wird der SPI-Bus verwendet. Für das Smart-Minotaur
 Projekt wurden zwei Sensoren an den Roboter montiert (Nur einer wird benötigt, um
 Position und Ausrichtung zu bestimmen). Da zum Ansteuern von zwei Slaves auf dem
 SPI Bus zwei Chip-Selects benötigt werden wird der SPI1 Port des Beagle Bones
 verwendet. Um daten zu Senden und Empfangen wird der Linux spidev Treiber
 verwendet, welcher rudimentäre Funktionen anbietet. Um den SPI1 Port benutzen zu
-können muss dieser erst im Device Tree registriert werden. Dafür wird ein device
+können muss dieser erst im Device Tree registriert werden. Dafür wird ein Device
 Tree source file benötigt (dts), welche die korrekten Pins, Register und
 Funktionalitäten des SPI Gerätes spezifiziert. Diese Datei wird kompiliert und
 im Linux Kernel aktiviert. Wichtig ist das HDMI des BBB auszuschalten, da dieses
@@ -61,7 +61,7 @@ Aktivierung kann auf die Slaves über Gerätedateien zugegriffen werden:
 Die Mouse Monitor software wird zum Testen, Debuggen und Überprüfen der
 Maussensoren verwendet. Die Anwendung verfügt über eine Vielzahl von Funktionen.
 Sie besteht aus zwei Teilen:
-* Mouse Monitor beagle (mm_b)
+* Mouse Monitor Beagle (mm_b)
 * Mouse Monitor PC (mm_p)
 
 Zur Kommunikation wird das ROS message system verwendet. Daher sind beide Teile
@@ -74,7 +74,7 @@ TODO: Bild mit packages und beide Teile (Datenfluss)
 \subsection comp Kompilierung
 
 Die x86 Version der pln_minotaur Bibliothek muss beim Kompilieren des mm_p Package
-dazu gelinkt werden, da daraus Datenstrukturen verwedet werden. Zum erstellen
+dazu gelinkt werden, da daraus Datenstrukturen verwendet werden. Zum erstellen
 beider Teile kann das mitgelieferte compile script verwendet werden.
 
 ~~~
