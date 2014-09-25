@@ -1,6 +1,8 @@
 Maussensoren {#maussensoren}
 ===
 
+\tableofcontents
+
 Der im Projekt verwendete Roboter stellt für die Odometrie Motoren zu Verfügung.
 Diese bieten jedoch eine sehr geringe Genauigkeit und Zuverlässigkeit. Zusätzlich
 kann sich dies je nach Fahrfläche verschlimmern (Räder drehen durch). Um die
@@ -56,7 +58,7 @@ Aktivierung kann auf die Slaves über Gerätedateien zugegriffen werden:
 /dev/spidev1.1 CS1
 ~~~
 
-\section pln_minotaur software Mouse Monitor Software
+\section software Mouse Monitor Software
 
 Die Mouse Monitor software wird zum Testen, Debuggen und Überprüfen der
 Maussensoren verwendet. Die Anwendung verfügt über eine Vielzahl von Funktionen.
@@ -68,6 +70,9 @@ Zur Kommunikation wird das ROS message system verwendet. Daher sind beide Teile
 als ROS Packages realisiert. Entwickelt wurden beide Teile in C++. Zur Darstellung
 der Daten auf dem PC wird Qt verwendet. Die pln_minotaur Bibliothek wird zum
 Ansteuern der Sensoren benutzt.
+
+Eine genaue Beschreibung der pln_minotaur Bibliothek befindet sich auf
+folgender Seite: @subpage pln_minotaur
 
 TODO: Bild mit packages und beide Teile (Datenfluss)
 
