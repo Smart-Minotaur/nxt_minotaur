@@ -10,7 +10,7 @@ Durch das Benutzen dieser Bibliothek wird vom Benutzer keine genaue Kenntnis
 über das Linux SPI Interface sowie den PLN2033 Sensor benötigt. Das
 pln_minotaur::IPLNTrackingDevice Interface stellt Funktionen zum Abfragen der
 Entfernungs-Werte sowie Geschwindigkeits-Werte zur Verfügung. Zusätzlich können
-die Sensor-Einstellungen abgefragt sowie die Auflösung des Sensors gesetzt
+die Sensoreinstellungen abgefragt sowie die Auflösung des Sensors gesetzt
 werden. Durch die hohe Flexibilität und Skalierbarkeit der Bibliothek kann
 eine beliebige Anzahl von Sensoren angeschlossen werden. Der Benutzer benötigt
 lediglich den Namen des spidev device files.
@@ -91,7 +91,7 @@ Wrapper-Klasse für den Linux SPI Treiber:
 \subsubsection PLN2033 PLN2033.h
 
 Implementiert das SPI Bus Protokoll des PLN2033 Sensors.
-* Sensor Register schreiben und lesen
+* Sensorregister schreiben und lesen
 * RAM schreiben und lesen
 * RAM Code laden
 * RAM Code überprüfen
@@ -100,7 +100,7 @@ Implementiert das SPI Bus Protokoll des PLN2033 Sensors.
 * Power down
 * Soft reset
 
-\subsection config Optimale Enstellungen
+\subsection config Optimale Einstellungen
 
 SPI:
 ~~~
@@ -121,8 +121,8 @@ Zeitstempel versehen. Nach jedem Lesen werden die Displacement Register
 (X und Y) auf 0 zurückgesetzt. Um die Sensor Einstellungen abzufragen wird
 pln_minotaur::IPLNTrackingDevice::readPLNSettings() verwendet. Diese Funktion
 liefert ein Objekt der Klasse PLNSettings zurück und beschreibt die gesamte
-Sensor Konfiguration. Zum Abfragen des Status-Registers steht die Funktion
-pln_minotaur::IPLNTrackingDevice::readPLNStatusRegister() zu Verfügung. Achtung:
+Sensorkonfiguration. Zum Abfragen des Status-Registers steht die Funktion
+pln_minotaur::IPLNTrackingDevice::readPLNStatusRegister() zur Verfügung. Achtung:
 Beim Auslesen des Status-Registers werden ebenfalls die Displacement Register
 zurück gesetzt.
 
@@ -138,7 +138,7 @@ Um den Philips PLN2033 zu benutzen muss zuerst ein Patch Code ins RAM des DSP
 geladen werden. Das kleine Utility Programm arrayConverter konvertiert den
 vorhandenen Patch Code in eine korrektes Format (Hex-Darstellung) um diesen
 komfortabel beim Start der Bibliothek ins RAM laden zu können. Der Patch Code
-wird im uint8 Array Format und in korrekte endian Darstellung in einer Datei
+wird im uint8 Array Format und in korrekte Endian Darstellung in einer Datei
 abgespeichert.
 
 \section example Beispiele
