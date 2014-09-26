@@ -27,8 +27,8 @@ namespace minotaur
 		double xSpeed; //< Last x speed value
 		double ySpeed; //< Last y speed value
 
-		int liftBitErrors;
-		int otherErros;
+		int liftBitErrors; //< TODO
+		int otherErros; //< TODO
 
 		ProcessedSensorData(std::string spiDevice) :
 			spiDevice(spiDevice) {

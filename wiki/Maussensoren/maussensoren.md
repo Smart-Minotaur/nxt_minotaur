@@ -79,7 +79,7 @@ Ansteuern der Sensoren benutzt.
 Eine genaue Beschreibung der pln_minotaur Bibliothek befindet sich auf
 folgender Seite: @subpage pln_minotaur
 
-TODO: Bild mit packages und beide Teile (Datenfluss)
+\image html mm_software.png "Mouse Monitor Packages"
 
 \subsection comp Kompilierung
 
@@ -104,7 +104,7 @@ Die PC Node empfängt die Sensordaten, verarbeitet diese und stellt sie grafisch
 Zusätzlich kann eine variable sample rate der GUI konfiguriert werden
 (meist 15-100Hz). Im folgenden werden einige Features Der Anwendung erklärt.
 
-TODO BIld
+\image html mm_pc1.png "Mouse Monitor PC"
 
 Features:
 * Position, Ausrichtung und zurückgelegter Weg des Roboters sowie der Sensoren
@@ -133,49 +133,6 @@ zuständig und verwendet dafür die pln_minotaur Bibliothek. Daten werden mit ei
 Applikation die gesammelten Daten zur PC Node. Zusätzlich bietet diese Funktionen
 um von der PC Node die Auflösung (CPI) der Sensoren zu setzen sowie zum Abfragen
 des Status der Sensoren.
-
-\section calibration Kalibrierung
-
-Bei der Berechnung der Position und der Ausrichtung des Roboters wird eine
-korrekte Montierung der Maussensoren vorausgesetzt. Um exakte Berechnungen
-durchführen zu können, müssen die Sensoren richtig in Fahrtrichtung ausgerichtet
-sein. Das bedeutet, dass sich bei einer Vorwärtsbewegung nur die Y-Werte ändern.
-Da eine korrekte Montierung sehr schwierig ist (und das durch das Lego ohnehin
-unmöglich ist) müssen die Sensoren kalibriert werden um den Fehler der schrägen
-Montierung auszugleichen.
-
-TODO: Bild mit schrägen Sensoren und Achsen
-
-Über die GUI kann ein Kalibrierungswizard gestartet werden. Beim Kalibrieren
-wird die Gesamtdistanz einer gefahrenen Geradeausfahrt gemessen und der Winkel
-gegenüber der idealen Geradeausfahrt bestimmt. Alle folgenden Messdaten (Vektoren)
-werden mithilfe einer Rotationsmatrix um diesen Winkel gedreht.
-
-\image html rotationmatrix.png "2D Rotationsmatrix"
-
-
-Bestimmung des Winkels zwischen idealer Geradeausfahrt (X-Anteil = 0) und
-gemessener Geradeausfahrt (X-Anteil != 0 wegen schräger Montierung) beim
-Kalibrieren.
-
-~~~
-if (s1YDisplacement > 0)
-	atanRealDistance = M_PI/2;
-else if (s1YDisplacement < 0)
-	atanRealDistance = -M_PI/2;
-
-s1AngleOffset = atanRealDistance - std::atan2(s1YDisplacement, s1XDisplacement);
-~~~
-
-Anwendung der Rotationsmatrix für alle Messwerte.
-
-~~~
-double angle = calibrationData.getS1AngleOffset();
-
-// Rotationmatrix
-data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
-data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
-~~~
 
 \section communication Kommunikation
 
@@ -218,6 +175,61 @@ uint16 miscellaneous_register
 uint16 interrupt_output_register
 ~~~
 
+Die Sensor Displacement-Werte werden mit einer konfigurierbaren sample rate
+(zum Beispiel 15Hz) vom PC-Teil abgefragt. Pro Anfrage schickt die BBB Node
+die intern mit 1kHz aufsummierten Werte zurück.
+
+\image html mm_communication.png "Kommunikation zwischen BBB und PC"
+
+\section calibration Kalibrierung
+
+Bei der Berechnung der Position und der Ausrichtung des Roboters wird eine
+korrekte Montierung der Maussensoren vorausgesetzt. Um exakte Berechnungen
+durchführen zu können, müssen die Sensoren richtig in Fahrtrichtung ausgerichtet
+sein. Das bedeutet, dass sich bei einer Vorwärtsbewegung nur die Y-Werte ändern.
+Da eine korrekte Montierung sehr schwierig ist (und das durch das Lego ohnehin
+unmöglich ist) müssen die Sensoren kalibriert werden um den Fehler der schrägen
+Montierung auszugleichen.
+
+Über die GUI kann ein Kalibrierungswizard gestartet werden. Beim Kalibrieren
+wird die Gesamtdistanz einer gefahrenen Geradeausfahrt gemessen und der Winkel
+gegenüber der idealen Geradeausfahrt bestimmt. Alle folgenden Messdaten (Vektoren)
+werden mithilfe einer 2D Rotationsmatrix um diesen Winkel gedreht.
+
+\image html rotationmatrix.png "2D Rotationsmatrix"
+
+Folgendes Bild zeigt eine Geradeausfahrt ohne Kalibrierung. Beim Kalibrieren
+wird der Winkel gegenüber der idealen Fahrt bestimmt:
+
+\image html forward_no_calibration.png "Geradeausfahrt ohne Kalibrierung"
+
+Bestimmung des Winkels zwischen idealer Geradeausfahrt (X-Anteil = 0) und
+gemessener Geradeausfahrt (X-Anteil != 0 wegen schräger Montierung) beim
+Kalibrieren.
+
+~~~
+if (s1YDisplacement > 0)
+	atanRealDistance = M_PI/2;
+else if (s1YDisplacement < 0)
+	atanRealDistance = -M_PI/2;
+
+s1AngleOffset = atanRealDistance - std::atan2(s1YDisplacement, s1XDisplacement);
+~~~
+
+\image html calibration.png "Berechnung des Korrekturwinkels"
+
+Anwendung der Rotationsmatrix für alle Messwerte.
+
+~~~
+double angle = calibrationData.getS1AngleOffset();
+
+// Rotationmatrix
+data.x_disp = (std::cos(angle) * data.x_disp) + (-std::sin(angle) * data.y_disp);
+data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
+~~~
+
+\image html forward_with_calibration.png "Geradeausfahrt nach Kalibrierung"
+
 \section localization Berechnung der Position und Ausrichtung des Roboters
 
 Zum Bestimmen der Position und der Ausrichtung des Roboters wird nur 1 Sensor
@@ -235,7 +247,7 @@ montiert sind, wird nur einer zur Berechnung der Position verwendet.
 Mit der Annahme, dass der Sensor kalibriert wurde kann von folgender Situation
 ausgegangen werden.
 
-Todo: Bild
+\image html mm_robot.png "Ausganssituation"
 
 Bei einer Geradeausfahrt ändert sich nur die Y-Koordinate.
 
@@ -260,7 +272,7 @@ Bei einer Geradeausfahrt ändern sich nur die Y-Koordinaten. Werden die
 empfangenen Sensordaten direkt dargestellt, ergibt sich aufgrund der rotierten
 Montierung des Sensors eine Gerade mit fester Steigung:
 
-TODO: Bild
+\image html mm_rotation_edit2.png "Rohe und Verarbeitete Daten"
 
 Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen
 muss aus diesen Daten die jeweilige zurückgelegte Distanz bei einer Drehung
@@ -270,7 +282,7 @@ und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten herausgerec
 werden. Das Verhältnis von X- und Y-Werten bei einer Drehung ist
 bekannt. Es entspricht genau dem im folgenden Bild dargestellten Winkel.
 
-TODO: Bild mit Winkel
+\image html mm_angle.png "Winkel für Verhältnis von X- und Y- Änderung"
 
 Da die Maße des Roboters bekannt sind kann dieser Winkel sowie die Steigung
 bestimmt werden:
@@ -287,6 +299,10 @@ Drehung, sowie Geradeausfahrt berechnet. Da die zurückgelegte Distanz bei
 einer Drehung bekannt ist, kann mithilfe der Kreisbogenformel der Drehwinkel
 bestimmt werden. Die gesamte zurückgelegte Distanz minus die Kurvendistanz
 ergibt die zurückgelegte Strecke bei Geradeausfahrt (bzw. Rückwärtsfahrt).
+
+\image html mm_rotation_edit.png "Rotationswinkel"
+
+\image html mm_rotation_forward_edit.png "Rotationswinkel + Geradeausfahrt"
 
 \subsection impl Implementierung
 
@@ -385,8 +401,6 @@ werden ungenau.
 
 Das folgende Bild zeigt eine Geradeausfahrt des Roboters. Trotz Kalibrierung
 erkennt die Software eine Kurve.
-
-TODO: Bild mit Drift
 
 \subsection p3 Lift-Bit Problem
 
