@@ -14,7 +14,7 @@ PLN2033 twin-eye Laser Sensoren. Diese verfügen über eine sehr hohe Präzision
 (bis zu 6400 CPI - Counts Per Inch) beim Messen der zurückgelegten X- und
 Y-Distanzwerte.
 
-\section PLN2033 PLN2033 Sensor
+\section sensor PLN2033 Sensor
 
 In diesem Abschnitt werden die wichtigsten Funktionen des PLN2033 Sensors
 erläutert. Weitere Informationen befinden sich im Datenblatt.
@@ -199,14 +199,19 @@ werden mithilfe einer 2D Rotationsmatrix um diesen Winkel gedreht.
 
 \image html rotationmatrix.png "2D Rotationsmatrix"
 
-Folgendes Bild zeigt eine Geradeausfahrt ohne Kalibrierung. Beim Kalibrieren
-wird der Winkel gegenüber der idealen Fahrt bestimmt:
+Folgendes Bild zeigt eine Geradeausfahrt ohne Kalibrierung. Es ist deutlich
+der Drift des Roboters zu erkennen.
 
 \image html forward_no_calibration.png "Geradeausfahrt ohne Kalibrierung"
 
-Bestimmung des Winkels zwischen idealer Geradeausfahrt (X-Anteil = 0) und
-gemessener Geradeausfahrt (X-Anteil != 0 wegen schräger Montierung) beim
-Kalibrieren.
+Beim Kalibrieren wird der Winkel gegenüber der idealen Geradeausfahrt bestimmt.
+Zu beachten ist hierbei, dass der Korrektur-Winkel anhand der rohen Messdaten
+berechnet wird, nicht aus den verarbeiteten (Roboter Position und Ausrichtung)
+wie im Bild dargestellt.
+
+Nach einer Geradeausfahrt wird der Winkels zwischen idealer Geradeausfahrt
+(X-Anteil = 0) und gemessener Geradeausfahrt (X-Anteil != 0 wegen schräger Montierung)
+bestimmt:
 
 ~~~
 if (s1YDisplacement > 0)
@@ -219,7 +224,8 @@ s1AngleOffset = atanRealDistance - std::atan2(s1YDisplacement, s1XDisplacement);
 
 \image html calibration.png "Berechnung des Korrekturwinkels"
 
-Anwendung der Rotationsmatrix für alle Messwerte.
+Anschließend kann die Rotationsmatrix für alle empfangenen Messwerte angewendet
+werden:
 
 ~~~
 double angle = calibrationData.getS1AngleOffset();
@@ -273,15 +279,19 @@ Bei einer Geradeausfahrt ändern sich nur die Y-Koordinaten. Werden die
 empfangenen Sensordaten direkt dargestellt, ergibt sich aufgrund der rotierten
 Montierung des Sensors eine Gerade mit fester Steigung:
 
-\image html mm_rotation_edit2.png "Rohe und Verarbeitete Daten"
+\image html mm_rotation_edit2.png "Rohe und Verarbeitete Daten bei 90° links Drehung"
 
 Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen
 muss aus diesen Daten die jeweilige zurückgelegte Distanz bei einer Drehung
 sowie bei einer Geradeausfahrt bestimmt werden. Die Werte müssen in Drehung und
-Geradeausfahrt unterteilt werden. Dafür wird das Verhältnis der Änderung der X-
-und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten herausgerechnet
-werden. Das Verhältnis von X- und Y-Werten bei einer Drehung ist
-bekannt. Es entspricht genau dem im folgenden Bild dargestellten Winkel.
+Geradeausfahrt unterteilt werden.
+
+\image html mm_rotation_forward_edit.png "Rotationswinkel + Geradeausfahrt"
+
+Dafür wird das Verhältnis der Änderung der X-und Y-Koordinaten bei einer Drehung
+aus den empfangenen Sensorwerten herausgerechnet werden. Das Verhältnis von
+X- und Y-Werten bei einer Drehung ist bekannt. Es entspricht genau dem im
+folgenden Bild dargestellten Winkel.
 
 \image html mm_angle.png "Winkel für Verhältnis von X- und Y- Änderung"
 
@@ -302,8 +312,6 @@ bestimmt werden. Die gesamte zurückgelegte Distanz minus die Kurvendistanz
 ergibt die zurückgelegte Strecke bei Geradeausfahrt (bzw. Rückwärtsfahrt).
 
 \image html mm_rotation_edit.png "Rotationswinkel"
-
-\image html mm_rotation_forward_edit.png "Rotationswinkel + Geradeausfahrt"
 
 \subsection impl Implementierung
 
