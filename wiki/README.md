@@ -26,10 +26,10 @@ __Teammitglieder__
 
 ## Übersicht
 
-1. \ref installation
-2. \ref maussensoren
-3. \ref roboter
-4. \ref ausblick
+1. \subpage installation
+2. \subpage maussensoren
+3. \subpage roboter
+4. \subpage ausblick
 
 ## Der Roboter
 
