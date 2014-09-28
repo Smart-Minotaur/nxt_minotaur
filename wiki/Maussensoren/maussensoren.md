@@ -15,6 +15,7 @@ PLN2033 twin-eye Laser Sensoren. Diese verfügen über eine sehr hohe Präzision
 Y-Distanzwerte.
 
 \section PLN2033 PLN2033 Sensor
+
 In diesem Abschnitt werden die wichtigsten Funktionen des PLN2033 Sensors
 erläutert. Weitere Informationen befinden sich im Datenblatt.
 
@@ -123,7 +124,7 @@ wird auf einer Karte dargestellt.
 * Optionaler Median Filter mit dynamisch veränderbaren Parametern kann jeweils
 für Sensor 1 oder Sensor 2 aktiviert werden
 
-TODO: Bilder der verschiedenen Funktionen
+TODO: Bild mit disp. Graphen
 
 \subsection bbbNode Mouse Monitor Beagle
 
@@ -140,7 +141,7 @@ Für die WLAN Kommunikation zwischen Beagle Bone und PC existiert jeweils eine
 ROS Node. Dabei werden ROS Services verwendet. Mouse Monitor PC kann in
 konfigurierbaren Intervallen die Sensordaten abfragen.
 
-Beim Abfragen der Sensordaten schickt die Beagle Bonde Node folgende ROS
+Beim Abfragen der Sensordaten schickt die Beagle Bone Node folgende ROS
 Message:
 
 ~~~
