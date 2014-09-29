@@ -49,6 +49,7 @@ then
 	export ROS_MASTER_URI=http://$PC_IP:11311
 	roslaunch map_monitor mapteleop.launch
 elif [ "$1" == "maze_b" ]
+then
 	export ROS_IP=$PC_IP
         export ROS_MASTER_URI=http://$PC_IP:11311
 	roslaunch minotaur_maze local_solver.launch
