@@ -124,7 +124,12 @@ wird auf einer Karte dargestellt.
 * Optionaler Median Filter mit dynamisch veränderbaren Parametern kann jeweils
 für Sensor 1 oder Sensor 2 aktiviert werden
 
-TODO: Bild mit disp. Graphen
+Folgendes Bild zeigt die Y- und X-Displacement Werte der zwei Sensoren bei einer
+Geradeausfahrt. Dabei ändern sich die X-Werte nur minimal. Die Ausreißer bei den
+Y-Werten entstehen aufgrund der WLAN Latenz, welche aber keine negativen Auswirkungen
+auf die Funktionalität hat.
+
+\image html mm_disp_graph.png "Displacement Grafiken"
 
 \subsection bbbNode Mouse Monitor Beagle
 
