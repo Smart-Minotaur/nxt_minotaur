@@ -19,7 +19,7 @@ Um Ubuntu 12.04 auf dem BBB zu installieren, muss das Image auf die
 Micro-SD Karte entpackt werden.
 
 Die Micro-SD Karte muss mit dem PC verbunden werden. Danach müssen die
-nachfolgenden Kommandos ausgeführt werden. Für __/dev/sdX__ im letzten
+nachfolgenden Kommandos ausgeführt werden. Für \b /dev/sdX im letzten
 Schritt muss das entsprechende Gerät für die Micro-SD Karte eingesetzt
 werden.
 
@@ -69,7 +69,7 @@ sudo apt-get install ros-hydro-move-base
 Damit der Lego NXT Brick als USB-Gerät erkannt wird und somit auch die
 Kommunikation zwischen Brick und BBB stattfinden kann, muss eine neue
 Benutzergruppe erzeugt werden. Die Benutzer, die den Brick nutzen
-möchten müssen Teil dieser Gruppe sein.
+möchten, müssen Teil dieser Gruppe sein.
 
 ~~~
 sudo su
@@ -79,13 +79,13 @@ touch /etc/udev/rules.d/70-lego.rules
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /etc/udev/rules.d/70-lego.rules
 ~~~
 
-\b <username> muss dabei durch den Benutzer ersetzt werden, der Teil
+\b <username> muss dabei durch den Benutzer ersetzt werden, der Teil der
 Gruppe werden soll. Nun muss das BBB neugestartet werden.
 
 \subsection wlan-installation-bbb WLAN
 
-Folgendes muss in die Datei `/etc/network/interfaces` eingefügt und angepasst werden.
-Wenn dort bereits ein Adapter namens wlan0 existiert, sollte dieser
+Folgendes muss in die Datei \b /etc/network/interfaces eingefügt und angepasst werden.
+Falls dort bereits ein Adapter namens wlan0 existiert, sollte dieser
 überschrieben werden.
 
 ~~~
@@ -102,26 +102,26 @@ gateway 192.168.11.1
 
 Um den SPI-Bus auf dem BBB zu verwenden, müssen die jeweiligen SPI-Ports über den Device-Tree aktiviert werden. In diesem Abschnitt wird die Installation von SPI0 und SPI1 auf dem Beagle Bone Black erläutert.
 
-Das Script addOverlayToDeviceTree installiert die overlay Dateien für '''SPI0 (1 chip select)''' und '''SPI1 (2 chips selects)'''.
+Das Script addOverlayToDeviceTree installiert die Overlay-Dateien für '''SPI0 (1 chip select)''' und '''SPI1 (2 chips selects)'''.
 
-> __Nur für angstrom linux__
+> __Nur für Angstrom Linux__
 >
-> Achtung! Für das neuste angstrom image ist kein opkg dtc Paket verfügbar. Eine einfach Lösung dafür ist das kompilierte dtbo Dateui auf einem Ubuntu Desktop PC zu erzwugen und dann aufs BBB zu kpoeren.
+> Achtung! Für das neuste Angstrom image ist kein opkg dtc Paket verfügbar. Eine einfach Lösung dafür ist, die kompilierte dtbo Datei auf einem Ubuntu Desktop PC zu erzeugen und dann aufs BBB zu kopieren.
 
 * Klonen des bbb_setup repository
-* Installation von dtc (device tree compiler)
+* Installation des dtc (device tree compiler)
 
 ~~~
 sudo ./dtc.sh
 ~~~
 
-* Das addOverlayToDeviceTree Skript kompiliert und installiert das SPI0 und SPI1 Overlay File.
+* Das addOverlayToDeviceTree Skript kompiliert und installiert das SPI0 und SPI1 Overlay-File.
 
 ~~~
 sudo ./addOverlayToDeviceTree
 ~~~
 
-* Aktivieren von SPI1 beim Start (HDMI wird deaktiviert, da HDMI auch Pins die von SPI1 verwendet werden benutzt und das zu fehlerhafter Kommunikation führt)
+* Aktivieren von SPI1 beim Start (HDMI wird deaktiviert, da HDMI auch Pins, die von SPI1 verwendet werden benutzt und das zu fehlerhafter Kommunikation führt)
 * Boot Partition mounten.
 
 ~~~
@@ -149,14 +149,14 @@ In dem Repository des Projekts existiert die Datei __compile__. Diese
 beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 
 das Projekt auf dem Beagle Bone Black zu kompileren, muss __in das 
 Repositoryverzeichnis gewechselt__ und folgendes Kommando ausgeführt 
-werden:
+werden.
 
 ~~~
 ./compile beagle
 ~~~
 
-Um einen kompletten Rebuild durchzuführen muss __vor dem oben genannten 
-Befehl__, folgender Befehl ausgeführt werden:
+Um einen kompletten Rebuild durchzuführen, muss __vor dem oben genannten 
+Befehl__ folgender Befehl ausgeführt werden.
 
 ~~~
 ./compile clean
