@@ -55,7 +55,7 @@ Versuchen auf dem BBB wurde jedoch schnell klar, dass eine
 Interpretersprache wie Python für ein kleines Board wie das Beagle Bone
 ungeeignet ist. Die __Auslastung war deutlich zu hoch__ und Abtastintervalle
 konnten nicht eingehalten werden. Ein Blick auf die Systemauslastung
-mit dem Befehl *top* hat diesen Verdacht auch gleich bestätigt. Der
+mit dem Befehl *top* hat diesen Verdacht bestätigt. Der
 Pythoninterpreter hat das System zu 100% ausgelastet.
 
 Damit wurde die Bibliothek unbrauchbar für dieses Projekt. Es gibt auch
@@ -65,6 +65,6 @@ nicht so komfortabel und schön objektorientiert zu nutzen wie die
 Pythonbibliothek. Daher wurde eine eigene kleine Bibliothek
 implementiert, die in ihrer Struktur der Pythonbibliothek sehr ähnelt.
 Durch eigene Implementierung in C++ war nun auch die CPU-Auslastung des
-Systems auf __unter 30%__ gesunken, wodurch alle Abtastintervall eingehalten
-werden konnten und noch genügend Resourcen für größere Aufgaben
+Systems auf __unter 30%__ gesunken, wodurch alle Abtastintervalle eingehalten
+werden konnten und noch genügend Ressourcen für größere Aufgaben
 vorhanden waren.

@@ -28,7 +28,7 @@ Zuerst muss das PPA hinzugefügt werden:
 https://launchpad.net/gcc-arm-embedded
 ~~~
 
-Die Installation erfolgt üpber apt-get:
+Die Installation erfolgt über apt-get:
 
 ~~~
 sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded

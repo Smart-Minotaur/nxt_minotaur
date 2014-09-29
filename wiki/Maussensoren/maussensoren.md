@@ -5,14 +5,14 @@ Maussensoren {#maussensoren}
 
 Der im Projekt verwendete Roboter stellt für die Odometrie Motoren zur Verfügung.
 Diese bieten jedoch eine sehr geringe Genauigkeit und Zuverlässigkeit. Zusätzlich
-kann sich dies je nach Fahrfläche verschlechtern (Räder drehen durch). Um die
-Odometrie zu verbessern werden im Smart-Minotaur Projekt zusätzlich Maussensoren
+kann sich dies, je nach Fahrfläche verschlechtern (Räder drehen durch). Um die
+Odometrie zu verbessern, werden im Smart-Minotaur Projekt zusätzlich Maussensoren
 von herkömmlichen Gaming-Computermäusen verwendet. Diese messen die zurückgelegte
-X- und Y-Distanz indem die mithilfe von Lasern erzeugten Bilder der Oberfläche
-verarbeitet werden. Die in diesem Projekt verwendete Sensoren sind die Philips
-PLN2033 twin-eye Laser Sensoren. Diese verfügen über eine sehr hohe Präzision
+X- und Y-Distanz, indem die mithilfe von Lasern erzeugten Bilder der Oberfläche
+verarbeitet werden. Die in diesem Projekt verwendeten Sensoren sind vom Typ Philips
+PLN2033 twin-eye Laser. Diese verfügen über eine sehr hohe Präzision
 (bis zu 6400 CPI - Counts Per Inch) beim Messen der zurückgelegten X- und
-Y-Distanzwerte.
+Y-Distanzen.
 
 \section sensor PLN2033 Sensor
 
@@ -26,7 +26,7 @@ und gesteuert werden kann. Es werden zwei Laser verwendet, um die X- und
 Y-Positionsänderungen zu messen. Mithilfe dieser Laser werden Bilder der Oberfläche
 erstellt. Intern verarbeitet ein DSP (digital signal processor) diese Bilder und
 bestimmt aus diesen den zurückgelegten Weg. Die Auflösung kann von 100 bis 6400
-CPI eingestellt werden. CPI (counts per inch) bestimmt wie oft der Sensor pro
+CPI eingestellt werden. CPI (counts per inch) bestimmt, wie oft der Sensor pro
 Inch (2.54cm) die internen Zähler erhöht. Daher bestimmen die CPI-Einstellung die
 Auflösung des Sensors. Die Ansteuerung des Sensors erfolgt über SPI und kann mit
 bis zu 8Mhz (Linux SPI Treiber Clock) betrieben werden. Der PLN2033 benötigt zum
@@ -49,13 +49,13 @@ Chip-Selects besitzt.
 Zum Ansteuern des PLN2033 wird der SPI-Bus verwendet. Für das Smart-Minotaur
 Projekt wurden zwei Sensoren an den Roboter montiert (Nur einer wird benötigt, um
 Position und Ausrichtung zu bestimmen). Da zum Ansteuern von zwei Slaves auf dem
-SPI Bus zwei Chip-Selects benötigt werden wird der SPI1 Port des Beagle Bones
+SPI Bus zwei Chip-Selects benötigt werden, wird der SPI1 Port des Beagle Bones
 verwendet. Um Daten zu Senden und Empfangen wird der Linux spidev Treiber
 verwendet, welcher rudimentäre Funktionen anbietet. Um den SPI1 Port benutzen zu
-können muss dieser erst im Device Tree registriert werden. Dafür wird ein Device
-Tree source file benötigt (dts), welche die korrekten Pins, Register und
+können, muss dieser erst im Device Tree registriert werden. Dafür wird ein Device-
+Tree-Source-File benötigt (dts), welche die korrekten Pins, Register und
 Funktionalitäten des SPI Gerätes spezifiziert. Diese Datei wird kompiliert und
-im Linux Kernel aktiviert. Wichtig ist das HDMI des BBB auszuschalten, da dieses
+im Linux Kernel aktiviert. Wichtig ist, das HDMI des BBB auszuschalten, da dieses
 auch SPI1 Ports verwendet und die Kommunikation stören würde. Nach erfolgreicher
 Aktivierung kann auf die Slaves über Gerätedateien zugegriffen werden:
 
@@ -102,8 +102,8 @@ dem BBB kompiliert werden.
 
 Die PC Node empfängt die Sensordaten, verarbeitet diese und stellt sie grafisch dar.
 Über diese Anwendung kann die CPI Auflösung der Sensoren eingestellt werden.
-Zusätzlich kann eine variable sample rate der GUI konfiguriert werden
-(meist 15-100Hz). Im folgenden werden einige Features Der Anwendung erklärt.
+Zusätzlich kann eine variable Sample Rate der GUI konfiguriert werden
+(meist 15-100Hz). Im folgenden werden einige Features der Anwendung erklärt.
 
 \image html mm_pc1.png "Mouse Monitor PC"
 
@@ -113,15 +113,15 @@ wird auf einer Karte dargestellt.
 * Kalibrierungsfunktion für die Sensoren
 * Darstellung der Sensorkonfigurationen
 * Einstellen der Auflösung beider Sensoren
-* Konfigurierbare sample rate des PC Teils
+* Konfigurierbare Sample Rate des PC Teils
 * Darstellung aller Sensorregister
 * Verschiedene Darstellungen der Displacement Daten
-** Direction Widget
-** Path Widget
-** Graphen
-** Plain Data List
+    * Direction Widget
+    * Path Widget
+    * Graphen
+    * Plain Data List
 * Debugging feature zum manuellen Abfragen der Sensor Daten
-* Optionaler Median Filter mit dynamisch veränderbaren Parametern kann jeweils
+* Optionaler Median Filter mit dynamisch veränderbaren Parametern. Kann jeweils
 für Sensor 1 oder Sensor 2 aktiviert werden
 
 Folgendes Bild zeigt die Y- und X-Displacement Werte der zwei Sensoren bei einer
@@ -137,7 +137,7 @@ Diese Anwendung ist für das Auslesen der Maussensor Displacement und Speed Date
 zuständig und verwendet dafür die pln_minotaur Bibliothek. Daten werden mit einer
 1kHz Frequenz ausgelesen und aufsummiert. Auf Anfrage der PC Node sendet die
 Applikation die gesammelten Daten zur PC Node. Zusätzlich bietet diese Funktionen
-um von der PC Node die Auflösung (CPI) der Sensoren zu setzen sowie zum Abfragen
+an, um von der PC Node die Auflösung (CPI) der Sensoren zu setzen, sowie zum Abfragen
 des Status der Sensoren.
 
 \section communication Kommunikation
@@ -244,14 +244,14 @@ data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 
 \section localization Berechnung der Position und Ausrichtung des Roboters
 
-Zum Bestimmen der Position und der Ausrichtung des Roboters wird nur 1 Sensor
+Zum Bestimmen der Position und der Ausrichtung des Roboters wird nur ein Sensor
 benötigt. Die Berechnung der Roboterposition sowie Ausrichtung wird in diesem
 Abschnitt beschrieben.
 
 Ist der Sensor in einer rechtwinkligen Position zur Tangente des Kreises montiert,
 den der Sensor um die Achse des Roboters bildet, vereinfacht sich
 die Berechnung sehr. In diesem Abschnitt wird die Lösung bei einer variablen
-Montierung beschrieben, da dies allgemeiner ist. Obwohl am Roboter 2 Sensoren
+Montierung beschrieben, da dies allgemeiner ist. Obwohl am Roboter zwei Sensoren
 montiert sind, wird nur einer zur Berechnung der Position verwendet.
 
 \subsection ausgang Ausgangssituation
@@ -272,7 +272,7 @@ double distanceToSensor_y; // cm
 
 double distanceToSensor_radius; // cm
 double distanceToWheel; // cm
-double sensorAngle; // Radiants
+double sensorAngle; // Radians
 double m;
 ~~~
 
@@ -286,7 +286,7 @@ Montierung des Sensors eine Gerade mit fester Steigung:
 
 \image html mm_rotation_edit2.png "Rohe und Verarbeitete Daten bei 90° links Drehung"
 
-Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen
+Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen,
 muss aus diesen Daten die jeweilige zurückgelegte Distanz bei einer Drehung
 sowie bei einer Geradeausfahrt bestimmt werden. Die Werte müssen in Drehung und
 Geradeausfahrt unterteilt werden.
@@ -392,29 +392,31 @@ Fehlersuche sowie Validierung der Sensor-Funktionalität sehr schwierig. Der
 PLN2033 ist ein hoch-präziser Lasersensor. Um korrekte Aussagen über seine
 Funktionsweise zu machen, ist ein professioneller Prüfstand erforderlich welcher
 in diesem Projekt nicht vorhanden war. Die Tests mussten per Hand (Lego-Wagen
-per Hand schieben, drehen ...) durchgeführt werden, was genaues Messen
-unmöglich machte. Eine exakte Geradeausfahrt, Drehung, ... konnte damit nicht
+per Hand schieben, drehen etc.) durchgeführt werden, was genaues Messen
+unmöglich machte. Eine exakte Geradeausfahrt, Drehung, etc. konnte damit nicht
 erreicht werden.
 
 \subsection p2 Lego
 
 Zum Testen sowie bei der Endmontierung auf dem Roboter wird Lego benutzt, was
-wiederum einige Probleme mit sich führt
+wiederum einige Probleme mit sich führt:
 
 * Wackelnde Montage: Bei Bewegung des Roboters wackeln die Sensoren. Trotz
 Kalibrierung kann dadurch keine exakte Messung gemacht werden, da die Lage der
 Sensoren sich bei einer Fahrt immer ändert.
 * Die Sensoren sind sehr empfindlich. Mit Lego können diese nicht in einer
 exakten Höhe montiert werden (was das Lift-Bit auslöst, dazu später mehr).
-* Eine gerade Montierung der Sensoren ist nicht möglich.
-* Damit die Sensoren immer einen gleichen Abstand zum Boden haben setzen die
-Sensoren auf dem Boden auf, dadurch können sich diese verkanten und die Messungen
+* Eine korrekte ausgerichtete Montierung der Sensoren ist nicht möglich.
+* Damit die Sensoren immer einen gleichen Abstand zum Boden haben, setzen die
+Sensoren auf dem Boden auf. Dadurch können sich diese verkanten und die Messungen
 werden ungenau.
 
 \image html sensor_construction.jpg "Sensorbefestigung"
 
 Das folgende Bild zeigt eine Geradeausfahrt des Roboters. Trotz Kalibrierung
 erkennt die Software eine Kurve.
+
+TODO BILD EINFÜGEN
 
 \subsection p3 Lift-Bit Problem
 
@@ -460,26 +462,26 @@ Ursprünglich wurden die Messdaten mit einer sehr geringen Frequenz abgefragt.
 Dadurch entstand der oben genannte Fehler. Um diese kleinen Messwerte
 herauszufiltern wurde ein Median-Filter auf der PC-Seite eingesetzt.
 Allerdings verschlechtert dieser die Messergebnisse. Da die Kommunikation über
-WLAN erfolgt entstehen Latenzen bei der Übertragung der Messdaten. Bei der
+WLAN erfolgt, entstehen Latenzen bei der Übertragung der Messdaten. Bei der
 Abfrage der Messdaten wird erst auf eine Antwort der aktuellen Anfrage an das
-BBB gewartet. Erst wenn diese eingetroffen ist wird nach dem nächsten Paket
+BBB gewartet. Erst wenn diese eingetroffen sind wird nach dem nächsten Paket
 gefragt. Die übertragenen Daten bleiben zwar korrekt, allerdings kann die
 Übertragung von Paketen länger dauern. Dadurch hat der Sensor mehr Zeit
 Messdaten zu sammeln. Langsamere Pakete enthalten dadurch höhere
-Displacement-Werte. Da der Median diese als Ausreißer weg-filtert obwohl
+Displacement-Werte. Da der Median diese als Ausreißer ausfiltert obwohl
 diese korrekt sind, verschlechtert dieser die Messergebnisse.
 
-Durch das Speichern der Messwerte mit einer hohen sample-rate auf dem BBB
+Durch das Speichern der Messwerte mit einer hohen Sample-Rate auf dem BBB
 entsteht dieser Fehler nicht mehr.
 
 \subsection p5 SPI Device Tree
-Das Konfigurieren des Device Trees für SPI1 mit 2 Chip-Selects unter Ubuntu
+Das Konfigurieren des Device Trees für SPI1 mit zwei Chip-Selects unter Ubuntu
 brachte einige Probleme mit sich. Das Device Tree File musste mit den richtigen
 Pins erweitert werden. Zusätzlich musste HDMI deaktiviert werden.
 
 \section fazit Fazit und Erkenntnisse
 
-Mit einer hohen sample rate ist der Lift-Bit Fehler sehr gering. Mit einem
+Mit einer hohen Sample Rate ist der Lift-Bit Fehler sehr gering. Mit einem
 geeignetem Filter könnte der Fehler noch weiter verringert werden. Bei 1kHz kann
 dieser vernachlässigt werden. Zusätzlich könnten anstatt dem Aufsummieren der Daten
 auf dem BBB diese auch als Schritte abgespeichert werden. Allerdings reichen die
@@ -500,4 +502,4 @@ Bestimmen der Position und Ausrichtung benötigt.
   * Gleicher Abstand der Sensoren zum Boden ohne schleifen
 * ROS Topics anstatt Services verwenden (optional)
 
-\image html sensor_test_car.jpg "Testfahrzeug mit 2 PLN2033"
+\image html sensor_test_car.jpg "Testfahrzeug mit zwei PLN2033"
