@@ -32,6 +32,13 @@ Auflösung des Sensors. Die Ansteuerung des Sensors erfolgt über SPI und kann m
 bis zu 8Mhz (Linux SPI Treiber Clock) betrieben werden. Der PLN2033 benötigt zum
 Arbeiten 3.3V.
 
+Beim Abfragen der Sensor Displacement-Werte werden die Werte der internen X- und
+Y-Zähler zurückgegeben. Im folgenden Bild werden diese Register zwei mal (blauer
+Kasten) ausgelesen. Delta X/Y stellen dabei den zurückgelegten Weg in X- und
+Y-Richtung dar.
+
+\image html mm_sensor_axis.png "Sensor Achsen"
+
 \section hardware-setup Hardware Setup
 
 Das Beagle Bone Black (BBB) besitzt zwei SPI Ports. SPI1 wird verwendet, da zwei
@@ -417,6 +424,8 @@ Das folgende Bild zeigt eine Geradeausfahrt des Roboters. Trotz Kalibrierung
 erkennt die Software eine Kurve.
 
 TODO BILD EINFÜGEN
+
+\image html .jpg ""
 
 \subsection p3 Lift-Bit Problem
 
