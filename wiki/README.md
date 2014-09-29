@@ -5,8 +5,8 @@ Smart Minotaur {#mainpage}
 
 ## Beschreibung
 
-Smart Minotaur ist ein studentisches Projekt welches im Roboter-Labor 
-der HTWG Konstanz durchgeführt wurde. Ziel war es einen Roboter zu 
+Smart Minotaur ist ein studentisches Projekt, welches im Roboter-Labor 
+der HTWG Konstanz durchgeführt wurde. Ziel war es, einen Roboter zu 
 entwickeln, welcher __ein zufälliges Labyrinth kartografiert__. Dabei 
 hat der Roboter zu Beginn keinerlei Anhaltspunkte über das Labyrinth.
 
@@ -22,7 +22,7 @@ __Teammitglieder__
 * Jens Gansloser
 * Fabian Meyer
 * Benjamin Kugler
-* Stefan Gebhard
+* Stefan Gebhart
 
 ## Übersicht
 

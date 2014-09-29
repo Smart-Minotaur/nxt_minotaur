@@ -5,7 +5,7 @@ Installation PC {#installation-pc}
 
 \section beschreibung-installation-pc Beschreibung
 
-Auf dem Entwicklungsrechner wird ebenso wie auf dem Beagle Bone Black
+Auf dem Entwicklungsrechner wird, ebenso wie auf dem Beagle Bone Black,
 __Ubuntu in der Version 12.04__ verwendet. Vorzugsweise sollte die 32bit
 Version benutzt werden, da ansonsten die benötigten 64bit Bibliotheken
 nachinstalliert werden müssen. Die Installation des Betriebssystem wird
@@ -38,7 +38,7 @@ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 ~~~
 
 \subsection cross-gcc-installation-pc GCC-ARM 4.8
-Zum cross-compilieren der pln_minotaur Bibliothek welche zum Ansteuern der Maussensoren verwendet wird wird eine Cross-Compile Toolchain verwedet. Dabei wird eine bereits kompilierte Toolchain für Linux von Linaro verwendet.
+Zum cross-compilieren der pln_minotaur Bibliothek, welche zum Ansteuern der Maussensoren verwendet wird, wird eine Cross-Compile Toolchain verwendet. Dabei wird eine bereits kompilierte Toolchain für Linux von Linaro verwendet.
 
 \subsection ros-installation-pc ROS
 
@@ -74,7 +74,7 @@ sudo apt-get install ros-hydro-qt* libqwt-dev
 Damit der __Lego NXT Brick als USB-Gerät erkannt wird__ und somit auch die
 Kommunikation zwischen Brick und PC stattfinden kann, muss eine neue
 Benutzergruppe erzeugt werden. Die Benutzer, die den Brick nutzen
-möchten müssen Teil dieser Gruppe sein. Dieser Schritt ist nicht
+möchten, müssen Teil dieser Gruppe sein. Dieser Schritt ist nicht
 zwingend notwendig. Er wird nur benötigt, wenn der Brick zu Testzwecken
 direkt vom Computer aus angesteuert werden soll.
 
@@ -86,8 +86,8 @@ touch /etc/udev/rules.d/70-lego.rules
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0694", GROUP="lego", MODE="0660"' > /etc/udev/rules.d/70-lego.rules
 ~~~
 
-\b <username> muss dabei durch den Benutzer ersetzt werden, der Teil
-Gruppe werden soll. Um die Einstellungen zu übernehmen, muss der
+<username> muss dabei durch den Benutzer ersetzt werden, der Teil der
+Gruppe werden soll. Um diese Einstellungen zu übernehmen, muss der
 Computer neugestartet werden.
 
 ---
@@ -96,7 +96,7 @@ Computer neugestartet werden.
 
 In dem Repository des Projekts existiert die Datei __compile__. Diese 
 beinhaltet __verschiedene Kommandos um das Projekt zu kompilieren__. Um 
-das Projekt auf dem PC zu kompileren, muss __in das 
+das Projekt auf dem PC zu kompilieren, muss __in das 
 Repositoryverzeichnis gewechselt__ und folgendes Kommando ausgeführt 
 werden:
 
@@ -104,8 +104,8 @@ werden:
 ./compile pc
 ~~~
 
-Um einen kompletten Rebuild durchzuführen muss __vor dem oben genannten 
-Befehl__, folgender Befehl ausgeführt werden:
+Um einen kompletten Rebuild durchzuführen, muss __vor dem oben genannten 
+Befehl__ folgender Befehl ausgeführt werden:
 
 ~~~
 ./compile clean
