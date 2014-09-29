@@ -420,12 +420,11 @@ werden ungenau.
 
 \image html sensor_construction.jpg "Sensorbefestigung"
 
-Das folgende Bild zeigt eine Geradeausfahrt des Roboters. Trotz Kalibrierung
-erkennt die Software eine Kurve.
+Das folgende Bild zeigt eine Rundfahrt des Roboters. Trotz Kalibrierung
+erkennt die Software einen minimalen Drift - der Roboter stoppt nicht exakt
+an der Ausgangsposition.
 
-TODO BILD EINFÜGEN
-
-\image html .jpg ""
+\image html mm_drift.png "Drift"
 
 \subsection p3 Lift-Bit Problem
 
