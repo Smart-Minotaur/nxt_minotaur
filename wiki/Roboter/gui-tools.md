@@ -10,7 +10,7 @@ werden. Dabei wird auf ihren Nutzen und die Bedienung eingegangen.
 
 \subsection beschreibung-pid-gui-tools Beschreibung
 
-Die Anwendung __pid_monitor__, das sich im gleichnamigen Package befindet, 
+Die Anwendung __pid_monitor__, die sich im gleichnamigen Package befindet, 
 realisiert eine grafische Anwendung um den __PID-Regler der RobotControl 
 Node__ zu beobachten. Außerdem werden Hindernisse, die von den 
 Ultraschallsensoren registriert werden, dargestellt. Die aktuellen 
@@ -25,7 +25,7 @@ die optimalen PID-Parameter ermittelt werden.
 
 \subsection bedienung-pid-gui-tools Bedienung
 
-Um __pid_monitor__ zu starten werden ein Beagle Bone Black und ein 
+Um den __pid_monitor__ zu starten werden ein Beagle Bone Black und ein 
 Computer benötigt. Beide müssen sich im gleichen Netzwerk 
 befinden. Nun muss in das Wurzelverzeichnis des Repositorys gewechselt 
 werden. Dort muss nun die Datei __start__ mit einem beliebigen Editor
@@ -50,7 +50,7 @@ erläutert werden.
 
 Mit den Schiebereglern im rot umrahmten Bereich können die __Parameter 
 für den PID-Regler__ eingestellt werden. __Kp__ repräsentiert hierbei den 
-Proportional-, __Ki__ den Integral- und __Kp__ den Differentialanteil.
+Proportional-, __Ki__ den Integral- und __Kd__ den Differentialanteil.
 
 In dem hellblauen Bereich befinden sich die Schieberegler um die 
 Geschwindigkeit und die Winkelgeschwindigkeit einzustellen. Mit __v__ 
@@ -58,7 +58,7 @@ kann die Geschwindigkeit und mit __w__ die Winkelgeschwindigkeit
 geregelt werden. Der Button __brake__ stoppt die Motoren des Roboters.
 
 Der gelbe Bereich kennzeichnet die Geschwindigkeitsanzeigen. Auch gilt 
-für __v__ und __w__ das gleich wie im roten Bereich. Unter der 
+für __v__ und __w__ das gleich wie im hellblauen Bereich. Unter der 
 Überschrift __Target Velocity__ befinden sich die eingestellten 
 Sollgeschwindigkeiten. Bei __Measured Velocity__ befinden sich die 
 tatsächlich gemessenen Geschwindigkeiten, die über das 
@@ -68,7 +68,7 @@ Im grünen Bereich befinden sich nun die Graphen, die die
 Geschwindigkeit und Winkelgeschwindigkeit über die Zeit auftragen. Die 
 __Y-Achse__ stellt die gemessene Geschwindigkeit in m/s dar (bei 
 Winkelgeschwindigkeit Rad/s). Die X-Achse 
-zeigt die Nummer der Messung an. 3 bedeutet hierbei die 3. Messung. 
+zeigt die Nummer der Messung an. 50 bedeutet hierbei die 50. Messung. 
 Die Zeit zwischen zwei Messungen ist dabei vom eingestellten 
 Abtastintervall abhängig.
 
@@ -89,7 +89,7 @@ wie schlecht die Odometrie des Roboters tatsächlich ist.
 
 \subsection bedienung-map-gui-tools Bedienung
 
-Um __map_monitor__ zu starten werden ein Beagle Bone Black und ein 
+Um den __map_monitor__ zu starten werden ein Beagle Bone Black und ein 
 Computer benötigt. Beide müssen sich im gleichen Netzwerk 
 befinden. Nun muss in das Wurzelverzeichnis des Repositorys gewechselt 
 werden. Dort muss nun die Datei __start__ mit einem beliebigen Editor

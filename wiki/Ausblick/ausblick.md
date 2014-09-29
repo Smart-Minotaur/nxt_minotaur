@@ -5,18 +5,18 @@ Ausblick {#ausblick}
 
 \section fazit-ausblick Fazit
 
-Aufgrund verschiedener Faktoren konnte die Ziel des Projekts nicht erreicht
+Aufgrund verschiedener Faktoren konnte das Ziel des Projekts nicht erreicht
 werden.
 
-Zum einen bietet Lego keine stabile Platform für die Maussensoren. 
+Zuerst einmal bietet Lego keine stabile Platform für die Maussensoren. 
 
 Durch das instabile Verhalten der Konstruktion können die Maussensoren nicht
 optimal auf dem Roboter montiert werden. Da der Sensor nicht im optimalen
 Winkel (Y-Achse geradeaus) am Roboter befestigt ist, wird dieser kalibriert.
-Nach der Kalibrierung ergibt eine geradeaus Fahrt nur eine Änderung der
-Y-Koordinaten. Trotz Kalibrierung verändert sich während der Fahrt die Position
+Nach der Kalibrierung ergibt eine Geradeausfahrt nur eine Änderung der
+Y-Koordinaten. Trotz Kalibrierung, verändert sich während der Fahrt die Position
 des Sensors auf dem Roboter leicht. Da während der Fahrt nicht mehr kalibriert
-werden kann errechnet die Software trotz geradeaus Fahrt eine Kurvenfahrt, da
+werden kann errechnet die Software trotz Geradeausfahrt eine Kurvenfahrt, da
 sich nun Y- und X-Koordinaten ändern.
 
 Die Maussensoren müssen außerdem einen gewissen Abstand zum Boden konstant
@@ -38,9 +38,9 @@ für mehrere Messungen denselben falschen Wert liefern, muss man den Medianfilte
 vergrößern um die Fehler herauszufiltern. Dies führt jedoch 
 wiederum zu einer verlängerten Reaktionszeit des Roboters, wodurch 
 der Roboter Hindernissen nicht mehr rechtzeitig ausweichen kann. 
-Beim \ref graphen-ansatz fängt der Roboter durch die Fehlmessungen an seine 
+Beim \ref graphen fängt der Roboter durch die Fehlmessungen an seine 
 Position falsch zu korrigieren. Die Ursache für diese Fehler ist 
-unbekannt. Mehr dazu siehe: \ref ultraschallsensoren-roboter.
+unbekannt. Mehr dazu siehe: \ref ultraschallsensoren-projekt.
 
 Zuletzt sei noch gesagt, dass das ROS-Framework überdimensioniert für 
 dieses Projekt war und mehr Einarbeitungsaufwand generiert hat, als es 
@@ -89,14 +89,14 @@ Umgebung zu karthografieren. Da wir über kein Datenblatt der Sensoren
 verfügen und somit auch nicht deren Fehlertoleranz kennen, kann es 
 durchaus sein, dass die Sensoren ungeeignet sind.
 
-Sind zuguter letzt alle Hardwareprobleme gelöst, können Navigations- 
+Sind zu guter Letzt alle Hardwareprobleme gelöst, können Navigations- 
 und Erkundungsalgorithmen implementiert werden.
 
 Als Resultat dieses Projektes würden wir jedoch empfehlen, dass ein 
 zukünftiges Labyrinth-Projekt
 
 * einen normalen Roboter verwendet, anstatt Lego Mindstorm
-* einen kleineren und einfacheren Microcontroller nutzen (ohne Linux)
+* einen kleineren und einfacheren Microcontroller nutzt (ohne Linux)
 * kein ROS benutzt, da es überdimensioniert für so ein Projekt ist
 
 Als Vorschlag für einen alternativen Roboter, könnte der __Pololu 
