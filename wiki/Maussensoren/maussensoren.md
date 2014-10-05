@@ -251,15 +251,22 @@ data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 
 \section localization Berechnung der Position und Ausrichtung des Roboters
 
-Zum Bestimmen der Position und der Ausrichtung des Roboters wird nur ein Sensor
-benötigt. Die Berechnung der Roboterposition sowie Ausrichtung wird in diesem
-Abschnitt beschrieben.
+Die Berechnung der Roboterposition sowie Ausrichtung wird in diesem Abschnitt
+beschrieben. Dabei werden nicht wie ursprünglich angenommen zwei Sensoren
+benötigt, sondern lediglich ein Sensor. Es werden in diesem Abschnitt zwei
+Ansätze vorgestellt.
 
-Ist der Sensor in einer rechtwinkligen Position zur Tangente des Kreises montiert,
-den der Sensor um die Achse des Roboters bildet, vereinfacht sich
-die Berechnung sehr. In diesem Abschnitt wird die Lösung bei einer variablen
-Montierung beschrieben, da dies allgemeiner ist. Obwohl am Roboter zwei Sensoren
-montiert sind, wird nur einer zur Berechnung der Position verwendet.
+Das Bestimmen der Roboterposition aufgrund der rohen Sensor X- und
+Y-Displacement Daten ist nicht trivial. Es ist nicht möglich die reinen
+Sensordaten mit der aktuelle Position des Roboters/Sensors zu addieren. Da bei
+einer Rotation des Roboters auch das Koordinatensystem (die Ausrichtung) des
+Sensors rotiert, ergeben die gemessenen Werte nicht die benötigten Delta X und Y,
+sondern einen Vektor der erst auf einen Kreisbogen/Rotationswinkel umgerechnet
+werden muss. Lediglich die Y-Werte könnten bei einer reinen Geradeausfahrt
+(ICS im unendlichen) addiert werden (unter Berücksichtigung der aktuellen
+Ausrichtung), da der Sensor mit der Y-Achse in Roboterausrichtung montiert ist.
+Rotiert sich der Roboter gleichzeitig, müssen die oben genannten Probleme
+berücksichtigt werden.
 
 \subsection ausgang Ausgangssituation
 
@@ -268,9 +275,18 @@ ausgegangen werden.
 
 \image html mm_robot.png "Ausganssituation"
 
-Bei einer Geradeausfahrt ändert sich nur die Y-Koordinate.
+Folgende Koordinatensysteme sind dargestellt:
+* Türkis (Y-Achse) und Magenta (X-Achse): Sensor Koordinatensystem
+* Rot (Y-Achse) und Blau (X-Achse): Roboter Koordinatensystem
 
-Zusätzlich sind folgende Parameter des Roboters bekannt:
+Obwohl im Bild zwei Sensoren dargestellt sind, wird bei den Berechnungen nur der
+rechte Sensor verwendet. Bei einer Geradeausfahrt ändert sich nur die 
+Y-Koordinate. Bei einer Rotation ändern sich aufgrund der verschobenen Position
+des Sensors X- sowie Y-Koordinaten.
+
+Zusätzlich sind folgende Parameter des Roboters bekannt, welche durch Ausmessen
+bestimmt wurden.
+
 ~~~
 double axisLength; // cm
 
@@ -283,47 +299,132 @@ double sensorAngle; // Radians
 double m;
 ~~~
 
-\subsection ber Berechnung
+\subsection ansatz1 Ansatz 1
+
+Im nächsten Abschnitt wird von einer einfacheren Montierung des Sensors
+ausgegangen um die Herleitung zu verdeutlichten. Anschließend wird die
+flexiblere und allgemeinere Lösung besprochen, welche eine variable Montierung
+des Sensor erlaubt.
+
+\subsubsection ansatz1-einfach Ansatz 1 - einfache Montierung
+
+Ist der Sensor in einer rechtwinkligen Position zur Tangente des Kreises den der
+Sensor um die Achse des Roboters bildet montiert, vereinfacht sich die
+Berechnung sehr. 
+
+Bei einer reinen Rotation ändern sich lediglich die X-Werte des Sensors. Der
+Sensor bewegt sich nur auf dem Kreis den er mit den Roboter bildet - der Radius
+bleibt immer gleich. Der Y-Anteil ist 0. Bei einer Geradeausfahrt
+(Vorwärts oder Rückwärts) ändern sich nur die Y-Werte. Der X-Anteil ist 0.
+Geradeausfahrt und Rotation können daher einfach unterschieden werden.
+
+\image html mm_solution1_simple.png "Rotation und Geradeausfahrt"
+
+Die zu den Sensorwerten gehörenden Steuervektoren bei Geradeausfahrt und
+Rotation können einfach bestimmt werden. Die gemessene X-Strecke
+(in Abbildung 'X-Part') kann direkt über die Kreisbogenformel in den
+Rotationswinkel umgerechnet werden. Die gemessene Y-Strecke
+(in Abbildung 'Y-Part') wird über einfache trigonometrische Gleichungen in 
+die neue Roboterposition umgerechnet.
+
+Folgende Formel rechnet eine Strecke (Vr_distance -> X-Part) in einen Rotationswinkel um:
+
+\image html formulas/rotate.png "Rotation"
+
+Folgende Formel bewegt den Roboter mit Ausrichtung omega um eine gegebene Distanz (Vf_distance -> Y-Part)
+vorwärts/rückwärts (aktuelle Ausrichtung):
+
+\image html formulas/forward.png "Geradeausfahrt"
+
+\subsubsection ansatz1-flexibel Ansatz 1 - flexible Montierung
+
+Im oben Beschriebenen Ansatz muss der Sensor immer mit Y-Achse in Richtung Radius
+montiert werden. Da das nicht sehr flexibel ist wird nun ein Ansatz vorgestellt
+der eine variable Montierung des Sensors erlaubt. Dabei ist der Sensor wie
+im folgenden Bild verschoben, zeigt aber immer noch mit der Y-Achse in die gleiche
+Richtung wie der Roboter.
+
+\image html mm_solution1.png "Rotation"
 
 Da die Sensoren nicht im rechten Winkel mit der Kreistangente montiert sind,
-ändern sich bei einer Drehung des Roboters X- sowie Y-Koordinaten des Sensors.
-Bei einer Geradeausfahrt ändern sich nur die Y-Koordinaten. Werden die
-empfangenen Sensordaten direkt dargestellt, ergibt sich aufgrund der rotierten
-Montierung des Sensors eine Gerade mit fester Steigung:
-
-\image html mm_rotation_edit2.png "Rohe und Verarbeitete Daten bei 90° links Drehung"
+ändern sich bei einer reinen Drehung des Roboters X- sowie Y-Koordinaten des Sensors.
+Bei einer Geradeausfahrt ändern sich immer noch wie bei der einfachen Montierung
+nur die Y-Koordinaten.
 
 Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen,
-muss aus diesen Daten die jeweilige zurückgelegte Distanz bei einer Drehung
-sowie bei einer Geradeausfahrt bestimmt werden. Die Werte müssen in Drehung und
-Geradeausfahrt unterteilt werden.
+muss aus diesen Daten (Delta X, Delta Y) die jeweilige zurückgelegte Distanz bei
+einer Drehung sowie bei einer Geradeausfahrt bestimmt werden. Die Werte müssen in
+Drehung und Geradeausfahrt unterteilt werden, da bei gleichzeitiger Rotation und
+Geradeausfahrt diese nicht unterschieden werden können. Es muss bekannt sein
+welche Werte auf einen Rotationswinkel umgerechnet werden müssen und welche
+Werte für die Bewegung in positiver oder negativer Y-Richtung (Geradeausfahrt)
+verwendet werden.
 
 \image html mm_rotation_forward_edit.png "Rotationswinkel + Geradeausfahrt"
 
-Dafür wird das Verhältnis der Änderung der X-und Y-Koordinaten bei einer Drehung
-aus den empfangenen Sensorwerten herausgerechnet werden. Das Verhältnis von
-X- und Y-Werten bei einer Drehung ist bekannt. Es entspricht genau dem im
-folgenden Bild dargestellten Winkel.
+__Bekannt:__ Eingangsvektor des Sensors
 
-\image html mm_angle.png "Winkel für Verhältnis von X- und Y- Änderung"
+Vs = (dx, dy)
+
+Kann unterteilt werden in:
+* Rotation: Vr
+* Geradeausfahrt: Vf
+
+__Gesucht:__ Neue Position und Ausrichtung des Sensors
+
+* Um welchen Winkel rotiert der Roboter?
+* Um welche Distanz fährt dieser Vorwärts/Rückwärts (Y-Richtung)
+
+Ist die Distanz bekannt kann der Roboter bewegt werden:
+
+~~~
+rotate(omega)
+forward(distance)
+~~~
+
+Folgende Abbildung zeigt den Eingangsvektor (Vs) sowie die benötigten Vektoren
+Vr und Vf.
+
+\image html mm_vector.png "Vektordarstellung"
+
+Sind die Vektoren Vr und Vf welche die zurückgelegte Distanz bei Rotation oder
+Geradeausfahrt darstellen bekannt, kann aus diesen die neue Position sowie
+Ausrichtung bestimmt werden.
+
+Um diese Vektoren zu berechnen wird das Verhältnis der Änderung der
+X-und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten
+herausgerechnet. Das Verhältnis von X- und Y-Werten bei einer Drehung ist
+bekannt. Es entspricht genau dem im folgenden Bild dargestellten Winkel (alpha).
+
+\image html formulas/alpha.png "Berechnung von Winkel und Steigung"
 
 Da die Maße des Roboters bekannt sind kann dieser Winkel sowie die Steigung
-bestimmt werden:
+bestimmt werden. Dabei muss lediglich der Winkel der Y-Achse des Sensors gegenüber
+dem Radius bestimmt werden. Mit diesem Wissen kann der Y-Anteil bei einer Drehung bestimmt
+werden. Es ist bekannt, dass sich bei Geradeausfahrt nur die Y-Werte des Sensors
+ändern. Der X-Anteil des Eingansvektors Vs ist Bestandteil der Rotation. Da die
+Steigung sowie der X-Anteil von Vr bekannt sind, kann dessen Y-Anteil berechnet werden.
 
-~~~
-sensorAngle = (M_PI/2.0) - atan(distanceToSensor_y/distanceToSensor_x);
-m = tan(sensorAngle);
-~~~
+\image html formulas/distance.png "Berechnung der Vektoren"
 
-Dabei muss lediglich der Winkel der Y-Achse des Sensors gegenüber dem Radius
-bestimmt werden. Mit diesem Wissen kann der Y-Anteil bei einer Drehung bestimmt
-werden. Mithilfe des Satz des Pythagoras wird die zurückgelegte Distanz bei
-Drehung, sowie Geradeausfahrt berechnet. Da die zurückgelegte Distanz bei
-einer Drehung bekannt ist, kann mithilfe der Kreisbogenformel der Drehwinkel
-bestimmt werden. Die gesamte zurückgelegte Distanz minus die Kurvendistanz
-ergibt die zurückgelegte Strecke bei Geradeausfahrt (bzw. Rückwärtsfahrt).
+Mithilfe des Satz des Pythagoras wird die zurückgelegte Distanz bei
+Drehung sowie Geradeausfahrt berechnet. Die gesamte zurückgelegte Distanz
+minus die Kurvendistanz ergibt die zurückgelegte Strecke bei Geradeausfahrt
+(bzw. Rückwärtsfahrt).
 
-\image html mm_rotation_edit.png "Rotationswinkel"
+Da die zurückgelegte Distanz bei einer Drehung bekannt ist,
+kann mithilfe der Kreisbogenformel der Drehwinkel bestimmt werden.
+
+\image html formulas/rotate.png "Rotation"
+
+Anschließend wird der Roboter um Vf_distance in Y-Richtung (Ausrichtung) bewegt.
+
+\image html formulas/forward.png "Geradeausfahrt"
+
+Zusammengefasst ergene sich folgende Formeln zur Berechnung von Position und
+Ausrichtung:
+
+\image html formulas/all.png "Position und Ausrichtung"
 
 \subsection impl Implementierung
 
@@ -387,6 +488,23 @@ if (dY < 0)
 
 forward(Vdist_f);
 ~~~
+
+\subsection ansatz2 Ansatz 2
+
+Die Position und Ausrichtung kann auch über Geschwindigkeit (v) und
+Winkelgeschwindigkeit (omega) berechnet werden. Aber auch in diesem Ansatz bleibt das Problem der unterteilung der
+Sensordaten in Geschwindigkeit (In Ansatz 1: Geradeausfahrt) und
+Winkelgeschwindigkeit (in Ansatz 1: Rotation), was wie im Ansatz 1 beschrieben
+gelöst wird.
+
+\image html formulas/ansatz2_robo.png "Ansatz 2"
+
+Um v und omega zu berechnen, wird zusätzlich noch die Zeit mit einbezogen.
+Unter berücksichtigung dass Vr_distance und Vs_distance wie in Ansatz 1 beschrieben
+berechnet wurden lässt sich v und omega daraus ableiten. Sind v und omega
+bekannt, kann die neue Position über den Geschwindigkeitsvektor Vs berechnet werden.
+
+\image html formulas/ansatz2.png "Ansatz 2"
 
 \section problems Probleme
 Während der Durchführung des Projektes traten einige Probleme bezüglich der

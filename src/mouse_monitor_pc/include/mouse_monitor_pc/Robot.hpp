@@ -101,7 +101,7 @@ namespace minotaur
 			distanceToSensor_x(dx),
 			distanceToSensor_y(dy) {
 
-			sensorAngle = (M_PI/2.0) - atan(distanceToSensor_y/distanceToSensor_x);
+			sensorAngle = (M_PI/2.0) - std::atan2(distanceToSensor_y, distanceToSensor_x);
 			m = tan(sensorAngle);
 
 			distanceToSensor_radius = sqrt(pow(distanceToSensor_x, 2) + pow(distanceToSensor_y, 2));
