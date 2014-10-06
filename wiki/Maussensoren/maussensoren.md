@@ -421,7 +421,7 @@ Anschließend wird der Roboter um Vf_distance in Y-Richtung (Ausrichtung) bewegt
 
 \image html formulas/forward.png "Geradeausfahrt"
 
-Zusammengefasst ergibt sich folgende Formeln zur Berechnung von Position und
+Zusammengefasst ergeben sich folgende Formeln zur Berechnung von Position und
 Ausrichtung:
 
 \image html formulas/all.png "Position und Ausrichtung"
