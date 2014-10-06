@@ -427,6 +427,12 @@ Zusammengefasst ergeben sich folgende Formeln zur Berechnung des Steuervektors:
 
 \subsection pos Bestimmung der neuen Position und Ausrichtung
 
+
+omega ist vom roboter, nicht vom sensor!
+
+TODO: Koppelnavigation!
+
+
 Nachdem \f$v\f$ und \f$\omega\f$ bestimmt wurden kann nun die neue Position
 sowie die Ausrichtung des Roboters bestimmt werden.
 
