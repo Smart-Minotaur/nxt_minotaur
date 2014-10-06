@@ -257,7 +257,7 @@ benötigt, sondern lediglich ein Sensor.
 
 Das Bestimmen der Roboterposition aufgrund der rohen Sensor X- und
 Y-Displacement Daten ist nicht trivial. Es ist nicht möglich die reinen
-Sensordaten mit der aktuelle Position des Roboters/Sensors zu addieren. Da bei
+Sensordaten mit der aktuellen Position des Roboters/Sensors zu addieren. Da bei
 einer Rotation des Roboters auch das Koordinatensystem (die Ausrichtung) des
 Sensors rotiert, ergeben die gemessenen Werte nicht die benötigten Delta X und Y,
 sondern einen Vektor der erst auf einen Kreisbogen/Rotationswinkel umgerechnet
@@ -421,7 +421,7 @@ der Zeit ergibt dies \f$\omega\f$.
 
 \image html formulas/v2.png
 
-Zusammengefasst ergene sich folgende Formeln zur Berechnung des Steuervektors:
+Zusammengefasst ergeben sich folgende Formeln zur Berechnung des Steuervektors:
 
 \image html formulas/u2.png
 
