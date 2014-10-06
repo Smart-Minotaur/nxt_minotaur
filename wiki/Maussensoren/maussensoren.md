@@ -256,9 +256,9 @@ beschrieben. Dabei werden nicht wie ursprünglich angenommen zwei Sensoren
 benötigt, sondern lediglich ein Sensor. Es werden in diesem Abschnitt zwei
 Ansätze vorgestellt.
 
-Das Bestimmen der Roboterposition aufgrund der rohen Sensor X- und
+Das Bestimmen der Roboterposition anhand der rohen Sensor X- und
 Y-Displacement Daten ist nicht trivial. Es ist nicht möglich die reinen
-Sensordaten mit der aktuelle Position des Roboters/Sensors zu addieren. Da bei
+Sensordaten mit der aktuellen Position des Roboters/Sensors zu addieren. Da bei
 einer Rotation des Roboters auch das Koordinatensystem (die Ausrichtung) des
 Sensors rotiert, ergeben die gemessenen Werte nicht die benötigten Delta X und Y,
 sondern einen Vektor der erst auf einen Kreisbogen/Rotationswinkel umgerechnet
@@ -421,7 +421,7 @@ Anschließend wird der Roboter um Vf_distance in Y-Richtung (Ausrichtung) bewegt
 
 \image html formulas/forward.png "Geradeausfahrt"
 
-Zusammengefasst ergene sich folgende Formeln zur Berechnung von Position und
+Zusammengefasst ergibt sich folgende Formeln zur Berechnung von Position und
 Ausrichtung:
 
 \image html formulas/all.png "Position und Ausrichtung"
@@ -492,15 +492,15 @@ forward(Vdist_f);
 \subsection ansatz2 Ansatz 2
 
 Die Position und Ausrichtung kann auch über Geschwindigkeit (v) und
-Winkelgeschwindigkeit (omega) berechnet werden. Aber auch in diesem Ansatz bleibt das Problem der unterteilung der
+Winkelgeschwindigkeit (omega) berechnet werden. Aber auch in diesem Ansatz bleibt das Problem der Unterteilung der
 Sensordaten in Geschwindigkeit (In Ansatz 1: Geradeausfahrt) und
-Winkelgeschwindigkeit (in Ansatz 1: Rotation), was wie im Ansatz 1 beschrieben
+Winkelgeschwindigkeit (in Ansatz 1: Rotation), welches wie in Ansatz 1 beschrieben
 gelöst wird.
 
 \image html formulas/ansatz2_robo.png "Ansatz 2"
 
 Um v und omega zu berechnen, wird zusätzlich noch die Zeit mit einbezogen.
-Unter berücksichtigung dass Vr_distance und Vs_distance wie in Ansatz 1 beschrieben
+Unter Berücksichtigung dass Vr_distance und Vs_distance wie in Ansatz 1 beschrieben
 berechnet wurden lässt sich v und omega daraus ableiten. Sind v und omega
 bekannt, kann die neue Position über den Geschwindigkeitsvektor Vs berechnet werden.
 
