@@ -253,15 +253,16 @@ data.y_disp = (std::sin(angle) * data.x_disp) + (std::cos(angle) * data.y_disp);
 
 Die Berechnung der Roboterposition sowie Ausrichtung wird in diesem Abschnitt
 beschrieben. Dabei werden nicht wie ursprünglich angenommen zwei Sensoren
-benötigt, sondern lediglich ein Sensor.
+benötigt, sondern lediglich ein Sensor. Im folgenden werden zwei Lösungsansätze
+vorgestellt.
 
 Das Bestimmen der Roboterposition aufgrund der rohen Sensor X- und
 Y-Displacement Daten ist nicht trivial. Es ist nicht möglich die reinen
 Sensordaten mit der aktuellen Position des Roboters/Sensors zu addieren. Da bei
 einer Rotation des Roboters auch das Koordinatensystem (die Ausrichtung) des
 Sensors rotiert, ergeben die gemessenen Werte nicht die benötigten Delta X und Y,
-sondern einen Vektor der erst auf einen Kreisbogen/Rotationswinkel umgerechnet
-werden muss. Lediglich die Y-Werte könnten bei einer reinen Geradeausfahrt
+sondern einen Vektor der erst auf einen Steuervektor mit Geschwindigkeit und Winkelgeschwindigkeit
+umgerechnet werden muss. Lediglich die Y-Werte könnten bei einer reinen Geradeausfahrt
 (ICS im unendlichen) addiert werden (unter Berücksichtigung der aktuellen
 Ausrichtung), da der Sensor mit der Y-Achse in Roboterausrichtung montiert ist.
 Rotiert sich der Roboter gleichzeitig, müssen die oben genannten Probleme
@@ -303,9 +304,12 @@ double m;
 
 \subsection vandomega Bestimmung des Steuervektors
 
-Dieser Abschnitt beschreibt, wie aus den Sensordaten der Steuervektor \f$u_k\f$
+Die folgenden Abschnitte beschreiben, wie aus den Sensordaten der Steuervektor \f$u_k\f$
 mit Geschwindigkeit (\f$v\f$) sowie die Winkelgeschwindigkeit (\f$\omega\f$)
-bestimmt werden.
+des Roboters bestimmt wird. Ist der Steuervektor bekannt kann die Position
+sowie Ausrichtung des Roboters mithilfe der Koppelnavigation bestimmt werden.
+
+\subsection vandomega1 Bestimmung des Steuervektors - Ansatz 1
 
 Im nächsten Abschnitt wird von einer einfacheren Montierung des Sensors
 ausgegangen um die Herleitung zu verdeutlichten. Anschließend wird die
@@ -329,9 +333,9 @@ Geradeausfahrt und Rotation können daher einfach unterschieden werden.
 Der zu den Sensorwerten gehörende Steuervektor bei Geradeausfahrt und
 Rotation kann einfach bestimmt werden. Die gemessene X-Strecke
 (in Abbildung 'X-Part') kann direkt über die Kreisbogenformel in den
-Rotationswinkel (\f$\delta\beta\f$) umgerechnet werden. Da in jedem Messabschnitt von
-einer konstanten Geschwindigkeit ausgegangen wird der Betrag der
-Winkelgeschwindigkeit (\f$\omega\f$) bestimmt in dem der Rotationswinkel nach
+Rotationswinkel (\f$\Delta\beta\f$) umgerechnet werden. Da in jedem Messabschnitt von
+einer konstanten Geschwindigkeit ausgegangen wird, wird der Betrag der
+Winkelgeschwindigkeit (\f$\omega\f$) bestimmt indem der Rotationswinkel nach
 der Zeit abgeleitet wird.
 
 \image html formulas/omega.png
@@ -373,7 +377,7 @@ verwendet werden.
 
 __Bekannt:__ Eingangsvektor des Sensors
 
-\f$V_{sensor} = (dx, dy)\f$
+\f$V_{sensor} = (\Delta x, \Delta y)\f$
 
 Kann unterteilt werden in:
 * Rotation: \f$V_r\f$
@@ -391,8 +395,8 @@ Folgende Abbildung zeigt den Eingangsvektor (\f$V_{sensor}\f$) sowie die benöti
 
 Sind die Vektoren \f$V_r\f$ und \f$V_f\f$ welche die zurückgelegte Distanz bei Rotation oder
 Geradeausfahrt darstellen bekannt, kann aus diesen der benötigte Steuervektor
-berechnet werden. Um diese Vektoren zu berechnen wird das Verhältnis der Änderung der
-X-und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten
+berechnet werden. Um diesen Vektor zu berechnen wird das Verhältnis der Änderung der
+X- und Y-Koordinaten bei einer Drehung aus den empfangenen Sensorwerten
 herausgerechnet. Das Verhältnis von X- und Y-Werten bei einer Drehung ist
 bekannt. Es entspricht genau dem im folgenden Bild dargestellten Winkel (alpha).
 
@@ -402,8 +406,8 @@ Da die Maße des Roboters bekannt sind kann dieser Winkel sowie die Steigung
 bestimmt werden. Dabei muss lediglich der Winkel der Y-Achse des Sensors gegenüber
 dem Radius bestimmt werden. Mit diesem Wissen kann der Y-Anteil bei einer Drehung bestimmt
 werden. Es ist bekannt, dass sich bei Geradeausfahrt nur die Y-Werte des Sensors
-ändern. Der X-Anteil des Eingansvektors Vs ist Bestandteil der Rotation. Da die
-Steigung sowie der X-Anteil von Vr bekannt sind, kann dessen Y-Anteil berechnet werden.
+ändern. Der X-Anteil des Eingansvektors \f$V_s\f$ ist Bestandteil der Rotation. Da die
+Steigung sowie der X-Anteil von \f$V_r\f$ bekannt sind, kann dessen Y-Anteil berechnet werden.
 Mithilfe des Satz des Pythagoras wird die zurückgelegte Distanz bei
 Drehung sowie Geradeausfahrt berechnet. Die gesamte zurückgelegte Distanz
 minus die Kurvendistanz ergibt die zurückgelegte Strecke bei Geradeausfahrt
@@ -417,7 +421,7 @@ der Zeit ergibt dies \f$\omega\f$.
 
 \image html formulas/omega2.png
 
-\f$v\f$ wird aus \f$V_f_{distance}\f$ berechnet.
+\f$v\f$ wird aus \f$V_{fdistance}\f$ berechnet.
 
 \image html formulas/v2.png
 
@@ -425,18 +429,15 @@ Zusammengefasst ergeben sich folgende Formeln zur Berechnung des Steuervektors:
 
 \image html formulas/u2.png
 
-\subsection pos Bestimmung der neuen Position und Ausrichtung
+\subsection vandomega2 Bestimmung des Steuervektors - Ansatz 2
 
-
-omega ist vom roboter, nicht vom sensor!
-
-TODO: Koppelnavigation!
-
-
-Nachdem \f$v\f$ und \f$\omega\f$ bestimmt wurden kann nun die neue Position
-sowie die Ausrichtung des Roboters bestimmt werden.
+Über folgende Formel kann daher \f$v\f$ und \f$\omega\f$ bestimmt werden.
 
 \image html formulas/pos.png
+
+Um die Odometrie weiterhin zu verbessern, kann zusätzlich ein zweiter Sensor
+verwendet werden. Das Einbeziehen der zwei Räder zur Berechnung der Odometrie verbessert
+diese weiter.
 
 \subsection impl Implementierung
 
