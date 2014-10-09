@@ -360,9 +360,9 @@ Richtung wie der Roboter.
 \image html mm_solution1.png "Rotation"
 
 Da die Sensoren nicht im rechten Winkel mit der Kreistangente montiert sind,
-ändern sich bei einer reinen Drehung des Roboters X- sowie Y-Koordinaten des Sensors.
-Bei einer Geradeausfahrt ändern sich immer noch wie bei der einfachen Montierung
-nur die Y-Koordinaten.
+ändern sich bei einer reinen Drehung des Roboters X- sowie Y-Koordinaten des Sensors
+in einem linearen Verhältnis. Bei einer Geradeausfahrt ändern sich immer noch wie
+bei der einfachen Montierung nur die Y-Koordinaten.
 
 Um anhand der Sensor-Displacement Daten die Position des Roboters zu bestimmen,
 muss aus diesen Daten (Delta X, Delta Y) die jeweilige zurückgelegte Distanz bei
@@ -445,7 +445,7 @@ Die Berechnung wird bisher zu Debuggingzwecken auf einem PC ausgeführt. Die
 wichtigsten Klassen befinden sich in der Datei Robot.h. Roboter und Sensoren
 werden als Objekte der Superklasse Object erzeugt, welche als 
 Hauptfunktion die Methoden forward() sowie rotate() zum Bewegen der Objekte
-bietet.
+bietet. Implementiert wurde der im vorherigen Abschnitt beschriebene Ansatz 1.
 
 Robot:
 * X Position im globalen Koordinatensystem
