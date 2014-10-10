@@ -335,13 +335,13 @@ Rotation kann einfach bestimmt werden. Die gemessene X-Strecke
 (in Abbildung 'X-Part') kann direkt über die Kreisbogenformel in den
 Rotationswinkel (\f$\Delta\beta\f$) umgerechnet werden. Da in jedem Messabschnitt von
 einer konstanten Geschwindigkeit ausgegangen wird, wird der Betrag der
-Winkelgeschwindigkeit (\f$\omega\f$) bestimmt indem der Rotationswinkel nach
-der Zeit abgeleitet wird.
+Winkelgeschwindigkeit (\f$\omega\f$) bestimmt indem der Quotient aus Rotationswinkel 
+und der dafür benötigten Zeit berechnet wird.
 
 \image html formulas/omega.png
 
-Die gemessene Y-Strecke (in Abbildung 'Y-Part') wird ebenfalls nach der Zeit
-abgeleitet.
+Die gemessene Y-Strecke (in Abbildung 'Y-Part') wird ebenfalls durch \f$\Delta t\f$
+geteilt.
 
 \image html formulas/v.png
 
@@ -416,8 +416,8 @@ minus die Kurvendistanz ergibt die zurückgelegte Strecke bei Geradeausfahrt
 \image html formulas/distance.png
 
 Da die zurückgelegte Distanz bei einer Drehung bekannt ist,
-kann mithilfe der Kreisbogenformel der Drehwinkel bestimmt werden. Abgeleitet nach
-der Zeit ergibt dies \f$\omega\f$.
+kann mithilfe der Kreisbogenformel der Drehwinkel bestimmt werden. Der Quotient
+aus Drehwinkel und benötigter Zeit ergibt \f$\omega\f$.
 
 \image html formulas/omega2.png
 
@@ -431,7 +431,9 @@ Zusammengefasst ergeben sich folgende Formeln zur Berechnung des Steuervektors:
 
 \subsection vandomega2 Bestimmung des Steuervektors - Ansatz 2
 
-Über folgende Formel kann daher \f$v\f$ und \f$\omega\f$ bestimmt werden.
+Ein weiterer Ansatz zur Berechnung des Steuervektors ist über die allgemeinen Regeln
+der Kinematik. Folgende Formel beschreibt den Zusammenhang von Position sowie Geschwindigkeit
+zweier starrer Körper um \f$v\f$ und \f$\omega\f$ zu bestimmen.
 
 \image html formulas/pos.png
 
