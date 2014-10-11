@@ -437,6 +437,8 @@ zweier starrer Körper um \f$v\f$ und \f$\omega\f$ zu bestimmen.
 
 \image html formulas/pos.png
 
+Hierbei beschreibt \f$\omega * r\f$ den Geschwindigkeitsvektor der Rotation.
+
 Um die Odometrie weiterhin zu verbessern, kann zusätzlich ein zweiter Sensor
 verwendet werden. Das Einbeziehen der zwei Räder zur Berechnung der Odometrie verbessert
 diese weiter.
